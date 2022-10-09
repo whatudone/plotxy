@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/">
+        <file>toolbar/AddPlotPair.png</file>
+        <file>toolbar/AddTimeStep.png</file>
+        <file>toolbar/AdvancedDataManager.png</file>
+        <file>toolbar/autoadjust.png</file>
+        <file>toolbar/BackOneStep.png</file>
+        <file>toolbar/DecTimeStep.png</file>
+        <file>toolbar/GoOneStep.png</file>
+        <file>toolbar/loadpml.png</file>
+        <file>toolbar/openfile.png</file>
+        <file>toolbar/Play.png</file>
+        <file>toolbar/PlayBack.png</file>
+        <file>toolbar/plotmanager.png</file>
+        <file>toolbar/RealTime.png</file>
+        <file>toolbar/savepml.png</file>
+        <file>toolbar/snapshot.png</file>
+        <file>toolbar/Stop.png</file>
+        <file>toolbar/Takeback.png</file>
+        <file>toolbar/Takefront.png</file>
+        <file>toolbar/TimeClient.png</file>
+        <file>toolbar/TimeEditor.png</file>
+        <file>toolbar/TimeServer.png</file>
+        <file>toolbar/down-arrow.png</file>
+        <file>toolbar/left-arrow.png</file>
+    </qresource>
+</RCC>
