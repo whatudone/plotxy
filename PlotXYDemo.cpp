@@ -25,6 +25,9 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
     setMinimumSize(1600, 1200);
     showMaximized();
 
+
+
+
     //statusbar设置左侧信息提示
     QLabel* info = new QLabel;
     info->setText(QString::fromLocal8Bit("已选择的图层："));
