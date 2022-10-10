@@ -25,9 +25,6 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
     setMinimumSize(1600, 1200);
     showMaximized();
 
-
-
-
     //statusbar设置左侧信息提示
     QLabel* info = new QLabel;
     info->setText(QString::fromLocal8Bit("已选择的图层："));
@@ -44,9 +41,6 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
             this, SLOT(onCustomContextMenuRequested(const QPoint&)));
 
     connect(m_plotManager,SIGNAL(sigAddPlotPair()),this,SLOT(onAddPlotPair()));
-
-
-
 }
 
 PlotXYDemo::~PlotXYDemo()
@@ -149,7 +143,7 @@ void PlotXYDemo::onAddBarPlot()
     int currTabIndex = ui.tabWidget->currentIndex();
     QString currTabText = ui.tabWidget->tabText(currTabIndex);
 
-    PlotBar* plotItem = new PlotBar(this);
+    PlotBar* plotItem = new PlotBar(ui.tabWidget->currentWidget());
     //bool res = connect(ui.actionStop,SIGNAL(triggered(bool)), plotItem, SLOT(onSwitch(bool)));
     bool res = connect(ui.actionStop, &QAction::triggered, plotItem, &PlotBar::onSwitch);
     res = connect(m_AdvancedDataManager, &AdvancedDataManager::updateColorThresholdMap,
@@ -157,7 +151,7 @@ void PlotXYDemo::onAddBarPlot()
 
     initWidget(plotItem);
 
-    //控制其自由移动和缩放
+   // 控制其自由移动和缩放
     FreeWidgetWraper* m_freeWidgetWraper = new FreeWidgetWraper();
     m_freeWidgetWraper->setWidget(plotItem);
 
@@ -177,7 +171,7 @@ void PlotXYDemo::init()
 void PlotXYDemo::initWidget(QWidget* w)
 {
     //设置无边框属性
-    w->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Window);
+    w->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Widget);
     //w->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint);
     //w->setAttribute(Qt::WA_ShowModal,true);
     w->setMinimumSize(200, 150);

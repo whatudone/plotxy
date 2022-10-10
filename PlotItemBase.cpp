@@ -8,12 +8,12 @@
 
 
 PlotItemBase::PlotItemBase(QWidget* parent)
-    : QMainWindow(parent)
+    : QWidget(parent)
 {
     ui.setupUi(this);
     
     QWidget* centerWindow = new QWidget;
-    this->setCentralWidget(centerWindow);
+    //this->setCentralWidget(centerWindow);
 
     m_position = QPoint(0,0);
     m_width = 0;

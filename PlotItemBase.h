@@ -11,7 +11,7 @@
 #include "ui_PlotItemBase.h"
 
 
-class PlotItemBase : public QMainWindow
+class PlotItemBase : public QWidget
 {
     Q_OBJECT
 

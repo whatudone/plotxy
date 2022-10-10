@@ -4,6 +4,7 @@
 #include "DataManager.h"
 
 PlotBar::PlotBar(QWidget* parent)
+	:PlotItemBase(parent)
 {
 	m_bHorizontal = true;
 
