@@ -1,7 +1,7 @@
 #include <QtWidgets/QApplication>
 #include <QDebug>
 #include "PlotXYDemo.h"
-
+#pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup") 
 int main(int argc, char* argv[])
 {
     QApplication a(argc, argv);
