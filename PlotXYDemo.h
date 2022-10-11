@@ -35,6 +35,7 @@ public slots:
     void onRenameTabPage();
 
     void onAddBarPlot();
+	void onAddTextPlot();
 
 private:
     Ui::PlotXYDemo ui;

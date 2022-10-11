@@ -28,7 +28,7 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>Draw</string>
+        <string>绘制</string>
        </property>
       </widget>
      </item>
@@ -55,7 +55,7 @@
         <enum>Qt::LeftToRight</enum>
        </property>
        <property name="text">
-        <string>Match Color</string>
+        <string>颜色匹配</string>
        </property>
       </widget>
      </item>
@@ -82,7 +82,7 @@
         <enum>QFrame::Box</enum>
        </property>
        <property name="text">
-        <string>Color:                </string>
+        <string>颜色:           </string>
        </property>
       </widget>
      </item>
@@ -116,7 +116,7 @@
         <enum>QFrame::Box</enum>
        </property>
        <property name="text">
-        <string>Second Limit          </string>
+        <string>第二约束:       </string>
        </property>
       </widget>
      </item>
@@ -146,7 +146,7 @@
         <enum>QFrame::Box</enum>
        </property>
        <property name="text">
-        <string>Points Limit          </string>
+        <string>点约束:         </string>
        </property>
       </widget>
      </item>
@@ -176,7 +176,7 @@
         <enum>Qt::LeftToRight</enum>
        </property>
        <property name="text">
-        <string>Use Scripted Settings</string>
+        <string>利用脚本设置</string>
        </property>
       </widget>
      </item>
@@ -203,7 +203,7 @@
         <enum>QFrame::Box</enum>
        </property>
        <property name="text">
-        <string>Scripted Settings Code</string>
+        <string>脚本设置代码:   </string>
        </property>
       </widget>
      </item>

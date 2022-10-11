@@ -22,7 +22,7 @@
         <enum>Qt::RightToLeft</enum>
        </property>
        <property name="text">
-        <string>Extrapolate(Live Data Only)</string>
+        <string>推算(仅活跃数据)</string>
        </property>
       </widget>
      </item>
@@ -49,7 +49,7 @@
         <enum>QFrame::Box</enum>
        </property>
        <property name="text">
-        <string>Extrapolate Time Offset   </string>
+        <string>推算时间偏移</string>
        </property>
       </widget>
      </item>

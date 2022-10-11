@@ -19,7 +19,7 @@
      <item>
       <widget class="QGroupBox" name="groupBox">
        <property name="title">
-        <string>selected plots</string>
+        <string>选择图表</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
@@ -298,7 +298,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox_4">
          <property name="title">
-          <string>Limits</string>
+          <string>限制</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_6">
           <item>
@@ -306,7 +306,7 @@
             <item row="0" column="0">
              <widget class="QLabel" name="label_9">
               <property name="text">
-               <string>Bgn X:</string>
+               <string>X轴起始点:</string>
               </property>
              </widget>
             </item>
@@ -316,7 +316,7 @@
             <item row="0" column="2">
              <widget class="QLabel" name="label_11">
               <property name="text">
-               <string>End X:</string>
+               <string>X轴终点:</string>
               </property>
              </widget>
             </item>
@@ -326,14 +326,14 @@
             <item row="0" column="4">
              <widget class="QPushButton" name="pushButton_flipXValues">
               <property name="text">
-               <string>Flip X Values</string>
+               <string>翻转X轴起/终点</string>
               </property>
              </widget>
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="label_10">
               <property name="text">
-               <string>Bgn Y:</string>
+               <string>Y轴起始点:</string>
               </property>
              </widget>
             </item>
@@ -343,7 +343,7 @@
             <item row="1" column="2">
              <widget class="QLabel" name="label_12">
               <property name="text">
-               <string>End Y:</string>
+               <string>Y轴终点:</string>
               </property>
              </widget>
             </item>
@@ -353,7 +353,7 @@
             <item row="1" column="4">
              <widget class="QPushButton" name="pushButton_flipYValues">
               <property name="text">
-               <string>Flip Y Values</string>
+               <string>翻转y轴起/终点</string>
               </property>
              </widget>
             </item>
@@ -437,7 +437,7 @@
             <item>
              <widget class="QLabel" name="label_17">
               <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select&lt;/p&gt;&lt;p&gt;Plot Pair(s):&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;选择&lt;/p&gt;&lt;p&gt;数据对:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
              </widget>
             </item>
@@ -450,12 +450,12 @@
               </column>
               <column>
                <property name="text">
-                <string>X Column</string>
+                <string>X轴</string>
                </property>
               </column>
               <column>
                <property name="text">
-                <string>Y Column</string>
+                <string>Y轴</string>
                </property>
               </column>
               <column>
@@ -507,7 +507,7 @@
             <item>
              <widget class="QLabel" name="label_18">
               <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select&lt;/p&gt;&lt;p&gt;Plot Pair(s):&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;选择&lt;/p&gt;&lt;p&gt;数据对:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
              </widget>
             </item>
@@ -543,7 +543,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox_11">
          <property name="title">
-          <string>Axes And Grid</string>
+          <string>轴和网格</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_17" stretch="5,1">
           <item>
@@ -553,7 +553,7 @@
               <item row="0" column="0">
                <widget class="QLabel" name="label_30">
                 <property name="text">
-                 <string>Horz.Grids:</string>
+                 <string>水平网格:</string>
                 </property>
                </widget>
               </item>
@@ -563,7 +563,7 @@
               <item row="0" column="2">
                <widget class="QLabel" name="label_31">
                 <property name="text">
-                 <string>Axis Width</string>
+                 <string>轴宽</string>
                 </property>
                </widget>
               </item>
@@ -573,7 +573,7 @@
               <item row="1" column="0">
                <widget class="QLabel" name="label_32">
                 <property name="text">
-                 <string>Vert.Grids:</string>
+                 <string>垂直网格:</string>
                 </property>
                </widget>
               </item>
@@ -583,7 +583,7 @@
               <item row="1" column="2">
                <widget class="QLabel" name="label_33">
                 <property name="text">
-                 <string>Grid Width</string>
+                 <string>网格宽度</string>
                 </property>
                </widget>
               </item>

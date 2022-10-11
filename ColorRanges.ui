@@ -19,7 +19,7 @@
      <item>
       <widget class="QCheckBox" name="checkBox_8">
        <property name="text">
-        <string>Enable</string>
+        <string>开启</string>
        </property>
       </widget>
      </item>
@@ -46,7 +46,7 @@
         <enum>QFrame::Box</enum>
        </property>
        <property name="text">
-        <string>Default color</string>
+        <string>默认颜色</string>
        </property>
       </widget>
      </item>
@@ -80,7 +80,7 @@
         <enum>QFrame::Box</enum>
        </property>
        <property name="text">
-        <string>Display Options</string>
+        <string>显示选项</string>
        </property>
       </widget>
      </item>
@@ -88,17 +88,17 @@
       <widget class="QComboBox" name="comboBox_5">
        <item>
         <property name="text">
-         <string>Single Color</string>
+         <string>单色显示</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Sho Ranges</string>
+         <string>多段显示</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Gradient</string>
+         <string>渐变</string>
         </property>
        </item>
       </widget>
@@ -126,14 +126,14 @@
         <enum>QFrame::Box</enum>
        </property>
        <property name="text">
-        <string>Edit Color Ranges</string>
+        <string>编辑色彩范围:</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_more">
        <property name="text">
-        <string>More&gt;&gt;</string>
+        <string>更多&gt;&gt;</string>
        </property>
       </widget>
      </item>
