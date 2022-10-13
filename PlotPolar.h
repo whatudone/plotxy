@@ -2,6 +2,7 @@
 #include "PlotItemBase.h"
 #include <qtimer.h>
 #include "qcustomplot.h"
+#include <QHBoxLayout>
 class PlotPolar :
 	public PlotItemBase
 {
@@ -17,6 +18,7 @@ public slots:
 	void onTimeout();
 private:
 	QCustomPlot *customPlot;
+	QHBoxLayout *m_layout;
 	QTimer* m_timer;
 	bool m_started;
 	QMap<QString, QMap<int, QColor>> m_thresholdColorMap;

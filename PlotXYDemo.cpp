@@ -222,7 +222,6 @@ void PlotXYDemo::onAddPolarPlot()
 		plotItem, &PlotPolar::onUpdateColorThresholdMap);
 
 	initWidget(plotItem);
-	plotItem->initPlot();
 	// 控制其自由移动和缩放
 	FreeWidgetWraper* m_freeWidgetWraper = new FreeWidgetWraper();
 	m_freeWidgetWraper->setWidget(plotItem);

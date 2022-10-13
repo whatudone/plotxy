@@ -2267,6 +2267,7 @@ public:
   void setLowerEnding(const QCPLineEnding &ending);
   void setUpperEnding(const QCPLineEnding &ending);
   
+  void setAxisFormat(QString format);
   // reimplemented virtual methods:
   virtual double selectTest(const QPointF &pos, bool onlySelectable, QVariant *details=nullptr) const Q_DECL_OVERRIDE;
   
@@ -2378,6 +2379,8 @@ private:
   friend class QCustomPlot;
   friend class QCPGrid;
   friend class QCPAxisRect;
+
+  QString m_format;
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCPAxis::SelectableParts)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCPAxis::AxisTypes)
@@ -7119,6 +7122,7 @@ public:
   double coordToRadius(double coord) const;
   double radiusToCoord(double radius) const;
   SelectablePart getPartAt(const QPointF &pos) const;
+  void setFormat(QString format);
   
 signals:
   void rangeChanged(const QCPRange &newRange);
@@ -7164,6 +7168,7 @@ protected:
   QCPRange mRange;
   bool mRangeReversed;
   ScaleType mScaleType;
+  QString m_format;
   
   // non-property members:
   QPointF mCenter;
@@ -7206,6 +7211,7 @@ private:
   
   friend class QCustomPlot;
   friend class QCPPolarAxisAngular;
+	  
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCPPolarAxisRadial::SelectableParts)
 Q_DECLARE_METATYPE(QCPPolarAxisRadial::AngleReference)
@@ -7389,6 +7395,7 @@ public:
   QPoint bottomRight() const { return mRect.bottomRight(); }
   QPointF center() const { return mCenter; }
   double radius() const { return mRadius; }
+  void setFormat(QString format);
   
 signals:
   void rangeChanged(const QCPRange &newRange);
@@ -7454,6 +7461,7 @@ protected:
   QList<QCPRange> mDragRadialStart;
   QCP::AntialiasedElements mAADragBackup, mNotAADragBackup;
   QCPLabelPainterPrivate mLabelPainter;
+  QString m_format;
   
   // reimplemented virtual methods:
   virtual void applyDefaultAntialiasingHint(QCPPainter *painter) const Q_DECL_OVERRIDE;
@@ -7483,6 +7491,7 @@ private:
   friend class QCustomPlot;
   friend class QCPPolarGrid;
   friend class QCPPolarGraph;
+	  
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCPPolarAxisAngular::SelectableParts)
 Q_DECLARE_METATYPE(QCPPolarAxisAngular::SelectablePart)

@@ -9671,6 +9671,13 @@ void QCPAxis::applyDefaultAntialiasingHint(QCPPainter *painter) const
 
   \seebaseclassmethod
 */
+
+void QCPAxis::setAxisFormat(QString format)
+{
+	if (m_format != format)
+		m_format = format;
+}
+
 void QCPAxis::draw(QCPPainter *painter)
 {
   QVector<double> subTickPositions; // the final coordToPixel transformed vector passed to QCPAxisPainter
@@ -9686,7 +9693,7 @@ void QCPAxis::draw(QCPPainter *painter)
     {
       tickPositions.append(coordToPixel(mTickVector.at(i)));
       if (mTickLabels)
-        tickLabels.append(mTickVectorLabels.at(i));
+        tickLabels.append(mTickVectorLabels.at(i) + m_format);
     }
 
     if (mSubTicks)
@@ -32092,6 +32099,11 @@ QCPPolarAxisRadial::SelectablePart QCPPolarAxisRadial::getPartAt(const QPointF &
     return spNone;
 }
 
+void QCPPolarAxisRadial::setFormat(QString format)
+{
+	m_format = format;
+}
+
 /* inherits documentation from base class */
 double QCPPolarAxisRadial::selectTest(const QPointF &pos, bool onlySelectable, QVariant *details) const
 {
@@ -32332,7 +32344,7 @@ void QCPPolarAxisRadial::draw(QCPPainter *painter)
       {
         if ((!mRangeReversed && (i < mTickVectorLabels.count()-1 || mRadius-r > 10)) ||
             (mRangeReversed && (i > 0 || mRadius-r > 10))) // skip last label if it's closer than 10 pixels to angular axis
-          mLabelPainter.drawTickLabel(painter, tickPosition+tickNormal*mSubTickLengthOut, mTickVectorLabels.at(i));
+          mLabelPainter.drawTickLabel(painter, tickPosition+tickNormal*mSubTickLengthOut, mTickVectorLabels.at(i) + m_format);
       }
     }
   }
@@ -33056,7 +33068,7 @@ void QCPPolarAxisAngular::draw(QCPPainter *painter)
       if (!mTickVectorLabels.isEmpty())
       {
         if (i < mTickVectorLabels.count()-1 || (mTickVectorCosSin.at(i)-mTickVectorCosSin.first()).manhattanLength() > 5/180.0*M_PI) // skip last label if it's closer than approx 5 degrees to first
-          mLabelPainter.drawTickLabel(painter, outerTick, mTickVectorLabels.at(i));
+		mLabelPainter.drawTickLabel(painter, outerTick, mTickVectorLabels.at(i) + m_format);
       }
     }
   }
@@ -34157,11 +34169,11 @@ QCPPolarGrid::QCPPolarGrid(QCPPolarAxisAngular *parentAxis) :
   setType(gtAll);
   setSubGridType(gtNone);
   
-  setAngularPen(QPen(QColor(200,200,200), 0, Qt::DotLine));
-  setAngularSubGridPen(QPen(QColor(220,220,220), 0, Qt::DotLine));
+  setAngularPen(QPen(QColor(200,200,200), 0, Qt::SolidLine));
+  setAngularSubGridPen(QPen(QColor(220,220,220), 0, Qt::SolidLine));
   
-  setRadialPen(QPen(QColor(200,200,200), 0, Qt::DotLine));
-  setRadialSubGridPen(QPen(QColor(220,220,220), 0, Qt::DotLine));
+  setRadialPen(QPen(QColor(200,200,200), 0, Qt::SolidLine));
+  setRadialSubGridPen(QPen(QColor(220,220,220), 0, Qt::SolidLine));
   setRadialZeroLinePen(QPen(QColor(200,200,200), 0, Qt::SolidLine));
   
   setAntialiased(true);
@@ -35493,4 +35505,7 @@ QVector<QPointF> QCPPolarGraph::dataToLines(const QVector<QCPGraphData> &data) c
 }
 /* end of 'src/polar/polargraph.cpp' */
 
-
+void QCPPolarAxisAngular::setFormat(QString format)
+{
+	m_format = format;
+}
