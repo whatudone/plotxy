@@ -10,6 +10,7 @@
 #include "AddPlotPair.h"
 #include "PlotBar.h"
 #include "DataManager.h"
+#include "PlotAttitude.h"
 
 PlotXYDemo::PlotXYDemo(QWidget* parent)
     : QMainWindow(parent)
@@ -93,6 +94,7 @@ void PlotXYDemo::onCustomContextMenuRequested(const QPoint& point)
     QAction* renameTabPage = new QAction(QString::fromLocal8Bit("重命名tab页面"), this);
 
     QAction* addBarPlot = new QAction(QString::fromLocal8Bit("添加Bar组件"), this);
+	QAction* addAttitudePlot = new QAction(QString::fromLocal8Bit("添加Attitude组件"), this);
 
     /* 添加菜单项 */
     pMenu->addAction(addTabPage);
@@ -100,6 +102,7 @@ void PlotXYDemo::onCustomContextMenuRequested(const QPoint& point)
     pMenu->addAction(renameTabPage);
 
     pMenu->addAction(addBarPlot);
+	pMenu->addAction(addAttitudePlot);
 
     /* 连接槽函数 */
     connect(addTabPage, SIGNAL(triggered()), this, SLOT(onAddTabPage()));
@@ -107,6 +110,7 @@ void PlotXYDemo::onCustomContextMenuRequested(const QPoint& point)
     connect(renameTabPage, SIGNAL(triggered()), this, SLOT(onRenameTabPage()));
 
     connect(addBarPlot, SIGNAL(triggered()), this, SLOT(onAddBarPlot()));
+	connect(addAttitudePlot, SIGNAL(triggered()), this, SLOT(onAddAttitudePlot()));
 
     /* 在鼠标右键处显示菜单 */
     pMenu->exec(point);
@@ -163,8 +167,29 @@ void PlotXYDemo::onAddBarPlot()
     m_plotManager->addPlot(currTabText, plotItem); //tab页可能变更，存在bug
 }
 
+void PlotXYDemo::onAddAttitudePlot()
+{
+	int currTabIndex = ui.tabWidget->currentIndex();
+	QString currTabText = ui.tabWidget->tabText(currTabIndex);
+
+	PlotAttitude* plotItem = new PlotAttitude(ui.tabWidget->currentWidget());
+	initWidget(plotItem);
+
+	// 控制其自由移动和缩放
+	FreeWidgetWraper* m_freeWidgetWraper = new FreeWidgetWraper();
+	m_freeWidgetWraper->setWidget(plotItem);
+
+	m_freeWidgetWraper->setMoveEnable(true);
+	m_freeWidgetWraper->setMoveEnable(true);
+
+	plotItem->show();
+	plotItem->update();
+	m_plotManager->addPlot(currTabText, plotItem); //tab页可能变更，存在bug
+}
+
 void PlotXYDemo::init()
 {
+
 }
 
 
@@ -174,18 +199,18 @@ void PlotXYDemo::initWidget(QWidget* w)
     w->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Widget);
     //w->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint);
     //w->setAttribute(Qt::WA_ShowModal,true);
+	w->setAutoFillBackground(true);
     w->setMinimumSize(200, 150);
     w->resize(1600,800);
 
     //设置下背景颜色区别看
     QPalette palette = w->palette();
-    palette.setBrush(QPalette::Window, QColor(255,255,255));
+    palette.setColor(QPalette::Window, QColor(0,0,0));
     w->setPalette(palette);
 
     QPushButton* btn = new QPushButton(w);
     btn->setText(QString::fromLocal8Bit("关闭"));
     btn->setGeometry(10, 10, 130, 25);
     connect(btn, SIGNAL(clicked(bool)), w, SLOT(close()));
-
 }
 

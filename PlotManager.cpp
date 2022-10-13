@@ -103,7 +103,6 @@ PlotManager::PlotManager(QWidget* parent)
 	ui.pushButton_21->setFixedSize(21, 21);
 	ui.pushButton_22->setFixedSize(21, 21);
 	ui.pushButton_23->setFixedSize(21, 21);
-
 }
 
 PlotManager::~PlotManager()

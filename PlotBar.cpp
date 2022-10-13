@@ -75,7 +75,6 @@ void PlotBar::setInterPadding(int interPadding)
 	m_interPadding = interPadding;
 }
 
-
 void PlotBar::addPlotDataPair(const QString& entityType, const QString& entityAttr)
 {
 	if (entityType.isEmpty() || entityAttr.isEmpty())
