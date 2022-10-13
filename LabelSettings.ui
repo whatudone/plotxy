@@ -22,7 +22,7 @@
         <enum>Qt::LeftToRight</enum>
        </property>
        <property name="text">
-        <string>Enable</string>
+        <string>启用</string>
        </property>
        <property name="tristate">
         <bool>false</bool>
@@ -52,7 +52,7 @@
         <enum>QFrame::Box</enum>
        </property>
        <property name="text">
-        <string>Color           </string>
+        <string>颜色           </string>
        </property>
       </widget>
      </item>
@@ -86,7 +86,7 @@
         <enum>QFrame::Box</enum>
        </property>
        <property name="text">
-        <string>Background Color</string>
+        <string>背景颜色:</string>
        </property>
       </widget>
      </item>
@@ -120,7 +120,7 @@
         <enum>QFrame::Box</enum>
        </property>
        <property name="text">
-        <string>Secondary Color </string>
+        <string>混合色:</string>
        </property>
       </widget>
      </item>
@@ -154,7 +154,7 @@
         <enum>QFrame::Box</enum>
        </property>
        <property name="text">
-        <string>Font            </string>
+        <string>字体            </string>
        </property>
       </widget>
      </item>
@@ -190,7 +190,7 @@
         <enum>QFrame::Plain</enum>
        </property>
        <property name="text">
-        <string>X Units         </string>
+        <string>X 单位         </string>
        </property>
       </widget>
      </item>
@@ -220,7 +220,7 @@
         <enum>QFrame::Box</enum>
        </property>
        <property name="text">
-        <string>X Precision     </string>
+        <string>X 精度     </string>
        </property>
       </widget>
      </item>
@@ -250,7 +250,7 @@
         <enum>QFrame::Box</enum>
        </property>
        <property name="text">
-        <string>Position        </string>
+        <string>位置        </string>
        </property>
       </widget>
      </item>
@@ -258,47 +258,47 @@
       <widget class="QComboBox" name="comboBox_2">
        <item>
         <property name="text">
-         <string>Top Left</string>
+         <string>左上</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Top</string>
+         <string>上</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Top Right</string>
+         <string>右上</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Left</string>
+         <string>左</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Center</string>
+         <string>中心</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Right</string>
+         <string>右</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Bottom Left</string>
+         <string>坐下</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Bottom</string>
+         <string>下</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Bottom Right</string>
+         <string>右下</string>
         </property>
        </item>
       </widget>

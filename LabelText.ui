@@ -22,7 +22,7 @@
         <enum>QFrame::Box</enum>
        </property>
        <property name="text">
-        <string>Text Type    </string>
+        <string>文本格式:  </string>
        </property>
       </widget>
      </item>
@@ -30,17 +30,17 @@
       <widget class="QComboBox" name="comboBox_3">
        <item>
         <property name="text">
-         <string>Default</string>
+         <string>默认</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Custom</string>
+         <string>定制</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Scripted</string>
+         <string>脚本化</string>
         </property>
        </item>
       </widget>
@@ -68,14 +68,14 @@
         <enum>QFrame::Box</enum>
        </property>
        <property name="text">
-        <string>Scripted Text</string>
+        <string>脚本文本:  </string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_9">
        <property name="text">
-        <string>More&gt;&gt;</string>
+        <string>更多</string>
        </property>
       </widget>
      </item>
@@ -102,7 +102,7 @@
         <enum>QFrame::Box</enum>
        </property>
        <property name="text">
-        <string>Bar Plot Text</string>
+        <string>柱状图标题:</string>
        </property>
       </widget>
      </item>

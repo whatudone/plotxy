@@ -9,8 +9,11 @@
 #include "PlotManager.h"
 #include "AddPlotPair.h"
 #include "PlotBar.h"
+#include "PlotPolar.h"
 #include "DataManager.h"
 #include "PlotAttitude.h"
+#include "PlotText.h"
+
 
 PlotXYDemo::PlotXYDemo(QWidget* parent)
     : QMainWindow(parent)
@@ -96,6 +99,11 @@ void PlotXYDemo::onCustomContextMenuRequested(const QPoint& point)
     QAction* addBarPlot = new QAction(QString::fromLocal8Bit("添加Bar组件"), this);
 	QAction* addAttitudePlot = new QAction(QString::fromLocal8Bit("添加Attitude组件"), this);
 
+	QAction* addTextPlot = new QAction(QString::fromLocal8Bit("添加Text组件"), this);
+
+	QAction* addPolarPlot = new QAction(QString::fromLocal8Bit("添加极坐标组件"), this);
+
+
     /* 添加菜单项 */
     pMenu->addAction(addTabPage);
     pMenu->addAction(removeTabPage);
@@ -104,6 +112,11 @@ void PlotXYDemo::onCustomContextMenuRequested(const QPoint& point)
     pMenu->addAction(addBarPlot);
 	pMenu->addAction(addAttitudePlot);
 
+	pMenu->addAction(addTextPlot);
+
+	pMenu->addAction(addPolarPlot);
+
+
     /* 连接槽函数 */
     connect(addTabPage, SIGNAL(triggered()), this, SLOT(onAddTabPage()));
     connect(removeTabPage, SIGNAL(triggered()), this, SLOT(onRemoveTabPage()));
@@ -111,6 +124,11 @@ void PlotXYDemo::onCustomContextMenuRequested(const QPoint& point)
 
     connect(addBarPlot, SIGNAL(triggered()), this, SLOT(onAddBarPlot()));
 	connect(addAttitudePlot, SIGNAL(triggered()), this, SLOT(onAddAttitudePlot()));
+
+	connect(addTextPlot,SIGNAL(triggered()),this,SLOT(onAddTextPlot()));
+
+	connect(addPolarPlot, SIGNAL(triggered()), this, SLOT(onAddPolarPlot()));
+
 
     /* 在鼠标右键处显示菜单 */
     pMenu->exec(point);
@@ -165,6 +183,57 @@ void PlotXYDemo::onAddBarPlot()
     plotItem->show();
 
     m_plotManager->addPlot(currTabText, plotItem); //tab页可能变更，存在bug
+}
+void PlotXYDemo::onAddTextPlot()
+{
+	int currTabIndex = ui.tabWidget->currentIndex();
+	QString currTabText = ui.tabWidget->tabText(currTabIndex);
+
+	PlotText* plotItem = new PlotText(ui.tabWidget->currentWidget());
+	//bool res = connect(ui.actionStop,SIGNAL(triggered(bool)), plotItem, SLOT(onSwitch(bool)));
+	connect(ui.actionStop, &QAction::triggered, plotItem, &PlotText::onSwitch);
+	connect(m_AdvancedDataManager, &AdvancedDataManager::updateColorThresholdMap,
+		plotItem, &PlotText::onUpdateColorThresholdMap);
+	// 好像是数据处理有关的东西
+
+	initWidget(plotItem);
+
+	// 控制其自由移动和缩放
+	FreeWidgetWraper* m_freeWidgetWraper = new FreeWidgetWraper();
+	m_freeWidgetWraper->setWidget(plotItem);
+
+	m_freeWidgetWraper->setMoveEnable(true);
+	m_freeWidgetWraper->setMoveEnable(true);
+
+	plotItem->show();
+
+	m_plotManager->addPlot(currTabText, plotItem); //tab页可能变更，存在bug
+}
+
+void PlotXYDemo::onAddPolarPlot()
+{
+	int currTabIndex = ui.tabWidget->currentIndex();
+	QString currTabText = ui.tabWidget->tabText(currTabIndex);
+
+	PlotPolar* plotItem = new PlotPolar(ui.tabWidget->currentWidget());
+	//bool res = connect(ui.actionStop,SIGNAL(triggered(bool)), plotItem, SLOT(onSwitch(bool)));
+	bool res = connect(ui.actionStop, &QAction::triggered, plotItem, &PlotPolar::onSwitch);
+	res = connect(m_AdvancedDataManager, &AdvancedDataManager::updateColorThresholdMap,
+		plotItem, &PlotPolar::onUpdateColorThresholdMap);
+
+	initWidget(plotItem);
+	plotItem->initPlot();
+	// 控制其自由移动和缩放
+	FreeWidgetWraper* m_freeWidgetWraper = new FreeWidgetWraper();
+	m_freeWidgetWraper->setWidget(plotItem);
+
+	m_freeWidgetWraper->setMoveEnable(true);
+	m_freeWidgetWraper->setMoveEnable(true);
+
+	plotItem->show();
+
+	m_plotManager->addPlot(currTabText, plotItem); 
+
 }
 
 void PlotXYDemo::onAddAttitudePlot()

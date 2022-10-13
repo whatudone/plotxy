@@ -29,12 +29,12 @@
       </column>
       <column>
        <property name="text">
-        <string>？？？</string>
+        <string>图表名称</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>书签</string>
+        <string>所在Tab</string>
        </property>
       </column>
      </widget>
@@ -132,7 +132,7 @@
           <item>
            <widget class="QGroupBox" name="groupBox_2">
             <property name="title">
-             <string>Additional Settings</string>
+             <string>额外设置</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_2">
              <item>
@@ -142,14 +142,14 @@
                  <item>
                   <widget class="QPushButton" name="pushButton_clear">
                    <property name="text">
-                    <string>clear</string>
+                    <string>清理</string>
                    </property>
                   </widget>
                  </item>
                  <item>
                   <widget class="QPushButton" name="pushButton_insert">
                    <property name="text">
-                    <string>Insert If/Else</string>
+                    <string>插入 If/Else</string>
                    </property>
                   </widget>
                  </item>
@@ -179,7 +179,7 @@
                  <item>
                   <widget class="QPushButton" name="pushButton_insertcolor">
                    <property name="text">
-                    <string>Inseert Color</string>
+                    <string>插入颜色</string>
                    </property>
                   </widget>
                  </item>
@@ -190,21 +190,21 @@
                  <item>
                   <widget class="QPushButton" name="pushButton_save">
                    <property name="text">
-                    <string>Save</string>
+                    <string>保存</string>
                    </property>
                   </widget>
                  </item>
                  <item>
                   <widget class="QPushButton" name="pushButton_test">
                    <property name="text">
-                    <string>Test</string>
+                    <string>测试</string>
                    </property>
                   </widget>
                  </item>
                  <item>
                   <widget class="QPushButton" name="pushButton_help">
                    <property name="text">
-                    <string>Help...</string>
+                    <string>帮助...</string>
                    </property>
                   </widget>
                  </item>
@@ -246,7 +246,7 @@ p, li { white-space: pre-wrap; }
           <item>
            <widget class="QGroupBox" name="groupBox_4">
             <property name="title">
-             <string>Additional Settings</string>
+             <string>额外设置</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_7">
              <item>
@@ -254,13 +254,13 @@ p, li { white-space: pre-wrap; }
                <item>
                 <widget class="QGroupBox" name="groupBox_5">
                  <property name="title">
-                  <string>About Thresholds</string>
+                  <string>关于阈值</string>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_8">
                   <item>
                    <widget class="QLabel" name="label_2">
                     <property name="text">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A threshold contains a value and a color.The value&lt;/p&gt;&lt;p&gt;represents the minimum value of a color range and the &lt;/p&gt;&lt;p&gt;color is used to fill the range.A color range starts at a&lt;/p&gt;&lt;p&gt;threshold's value and ends at the next threshold's value.&lt;/p&gt;&lt;p&gt;Names and colors can be shared among thresholds,but &lt;/p&gt;&lt;p&gt;values cannot.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;阈值包含值和颜色。该值表示颜色范围的最小值，&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;该颜色用于填充该范围。颜色范围从一个阈值开始，&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;到下一个阈值结束。名称和颜色可以在阈值之间共&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;享，但值不能共享。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                     </property>
                    </widget>
                   </item>
@@ -270,7 +270,7 @@ p, li { white-space: pre-wrap; }
                <item>
                 <widget class="QGroupBox" name="groupBox_6">
                  <property name="title">
-                  <string>Threshold Options</string>
+                  <string>阈值选项</string>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_5">
                   <item>
@@ -278,7 +278,7 @@ p, li { white-space: pre-wrap; }
                     <item>
                      <widget class="QLabel" name="label_3">
                       <property name="text">
-                       <string> Name:</string>
+                       <string>名称:</string>
                       </property>
                      </widget>
                     </item>
@@ -292,7 +292,7 @@ p, li { white-space: pre-wrap; }
                     <item>
                      <widget class="QLabel" name="label_4">
                       <property name="text">
-                       <string>Value:</string>
+                       <string>  值:</string>
                       </property>
                      </widget>
                     </item>
@@ -302,7 +302,7 @@ p, li { white-space: pre-wrap; }
                     <item>
                      <widget class="QLabel" name="label_5">
                       <property name="text">
-                       <string>Color:</string>
+                       <string>颜色:</string>
                       </property>
                      </widget>
                     </item>
@@ -338,21 +338,21 @@ p, li { white-space: pre-wrap; }
                <item>
                 <widget class="QPushButton" name="pushButton_add_2">
                  <property name="text">
-                  <string>Add</string>
+                  <string>添加</string>
                  </property>
                 </widget>
                </item>
                <item>
                 <widget class="QPushButton" name="pushButton_4">
                  <property name="text">
-                  <string>Update</string>
+                  <string>更新</string>
                  </property>
                 </widget>
                </item>
                <item>
                 <widget class="QPushButton" name="pushButton_5">
                  <property name="text">
-                  <string>Remove</string>
+                  <string>移除</string>
                  </property>
                 </widget>
                </item>
@@ -361,31 +361,23 @@ p, li { white-space: pre-wrap; }
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_13">
                <item>
-                <widget class="QGroupBox" name="groupBox_7">
-                 <property name="title">
-                  <string>Preview</string>
-                 </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_8"/>
-                </widget>
-               </item>
-               <item>
                 <widget class="QTreeWidget" name="treeWidget_union">
                  <property name="indentation">
                   <number>0</number>
                  </property>
                  <column>
                   <property name="text">
-                   <string>Name</string>
+                   <string>名称</string>
                   </property>
                  </column>
                  <column>
                   <property name="text">
-                   <string>Value</string>
+                   <string>值</string>
                   </property>
                  </column>
                  <column>
                   <property name="text">
-                   <string>Color</string>
+                   <string>颜色</string>
                   </property>
                  </column>
                 </widget>
@@ -420,7 +412,7 @@ p, li { white-space: pre-wrap; }
       <item>
        <widget class="QPushButton" name="pushButton_close">
         <property name="text">
-         <string>Close</string>
+         <string>关闭</string>
         </property>
        </widget>
       </item>

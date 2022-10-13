@@ -37,6 +37,11 @@ public slots:
     void onAddBarPlot();
 	void onAddAttitudePlot();
 
+	void onAddTextPlot();
+
+	void onAddPolarPlot();
+
+
 private:
     Ui::PlotXYDemo ui;
 
