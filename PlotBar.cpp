@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <QPainter>
 #include "DataManager.h"
-
+int PlotBar::m_instanceCount = 1;
 PlotBar::PlotBar(QWidget* parent)
 	:PlotItemBase(parent)
 {
@@ -18,6 +18,10 @@ PlotBar::PlotBar(QWidget* parent)
 	m_verGridNum = 5;
 
 	m_started = false;
+
+	QString name = QString("Bar%1").arg(m_instanceCount);
+	this->setName(name);
+	m_instanceCount += 1;
 
 	m_defaultColor = Qt::gray;
 	m_timer = new QTimer(this);

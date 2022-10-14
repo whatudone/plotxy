@@ -1,17 +1,28 @@
 #include "PlotPolar.h"
 #include <qlabel.h>
+#include "QResizeEvent"
 
+int PlotPolar::m_instanceCount = 1;
 PlotPolar::PlotPolar(QWidget * parent)
 	:PlotItemBase(parent)
 {
+	QString name = QString("Polar%1").arg(m_instanceCount);
+	this->setName(name);
+	m_instanceCount += 1;
+
 	m_started = false;
 	m_timer = new QTimer(this);
 	connect(m_timer, &QTimer::timeout, this, &PlotPolar::onTimeout);
 	initPlot();
-	m_layout = new QHBoxLayout(this);
-	m_layout->addWidget(customPlot);
-}
+//	m_layout = new QHBoxLayout(this);
+//	m_layout->addWidget(customPlot);
 
+
+}
+//void PlotPolar::resizeEvent(QResizeEvent *event)
+//{
+//	customPlot->resize(event->size());
+//}
 PlotPolar::~PlotPolar()
 {
 }
@@ -36,12 +47,13 @@ void PlotPolar::initPlot()
 
 	customPlot = new QCustomPlot(this);
 	customPlot->setBackground(QBrush(QColor(0, 0, 0)));
-	customPlot->setGeometry(width()/2 - (height() - 20)/2, 10, height() - 20, height() - 20);
+	//customPlot->setGeometry(width()/2 - (height() - 20)/2, 10, height() - 20, height() - 20);
+	customPlot->setGeometry(0,0,width(),height());
 	customPlot->plotLayout()->clear();
 	QCPPolarAxisAngular *angularAxis = new QCPPolarAxisAngular(customPlot);
 	angularAxis->setBasePen(QPen(QColor(255, 255, 255), 2));
 	customPlot->plotLayout()->addElement(0, 0, angularAxis);
-	customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+	//customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
 	angularAxis->setRangeDrag(false);
 	angularAxis->setTickLabelMode(QCPPolarAxisAngular::lmUpright);
 	angularAxis->setFormat(QString::fromLocal8Bit("бу"));
@@ -73,7 +85,7 @@ void PlotPolar::initPlot()
 	angularAxis->radialAxis()->setRange(0, 90);
 #endif
 
-	customPlot->replot();
+	//customPlot->replot();
 }
 
 void PlotPolar::onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>> targetMap)

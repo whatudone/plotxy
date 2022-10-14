@@ -2,7 +2,7 @@
 #define  _PLOTXY_DEMO_H_
 
 #include <QtWidgets/QMainWindow>
-
+#include "QContextMenuEvent"
 #include "ui_PlotXYDemo.h"
 
 class FreeWidgetWraper;
@@ -29,6 +29,7 @@ public slots:
     void onOpenFile();
 
     void onCustomContextMenuRequested(const QPoint&);
+	void onContextMenu(const QPoint& point);
 
     void onAddTabPage();
     void onRemoveTabPage();

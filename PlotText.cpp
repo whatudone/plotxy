@@ -4,7 +4,7 @@
 #include <QPen>
 #include <QDebug>
 
-
+int PlotText::m_instanceCount = 1;
 PlotText::PlotText(QWidget* parent)
 	:PlotItemBase(parent)
 {
@@ -20,6 +20,10 @@ PlotText::PlotText(QWidget* parent)
 	m_verGridNum = 5;
 
 	m_started = false;
+
+	QString name = QString("Text%1").arg(m_instanceCount);
+	this->setName(name);
+	m_instanceCount += 1;
 
 	m_defaultColor = Qt::gray;
 	m_timer = new QTimer(this);

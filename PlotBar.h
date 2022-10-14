@@ -15,6 +15,7 @@
 
 class PlotBar :public PlotItemBase
 {
+	Q_OBJECT
 public:
     PlotBar(QWidget* parent = Q_NULLPTR);
     ~PlotBar();
@@ -30,7 +31,8 @@ public:
     void updateItems(); //实现核心绘制逻辑
 
     void drawRect(int itemIndex,bool bHorizontal,int itemLength,int leftBoundary, int rightBoundary, QColor color);
-
+public:
+	static int m_instanceCount;			//实体个数
 public slots:
     void onSwitch(bool);
     void onTimeout();

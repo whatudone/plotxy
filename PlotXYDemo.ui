@@ -17,7 +17,7 @@
    <string notr="true">alternate-background-color: rgb(0, 85, 127);</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
@@ -48,7 +48,7 @@
      <x>0</x>
      <y>0</y>
      <width>1079</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menufile">
@@ -526,10 +526,10 @@
      <normaloff>:/toolbar/plotmanager.png</normaloff>:/toolbar/plotmanager.png</iconset>
    </property>
    <property name="text">
-    <string>图表管理器</string>
+    <string>绘图管理器</string>
    </property>
    <property name="toolTip">
-    <string>图表管理器</string>
+    <string>绘图管理器</string>
    </property>
   </action>
   <action name="actionWidget_Editor">
@@ -587,7 +587,7 @@
      <normaloff>:/toolbar/AdvancedDataManager.png</normaloff>:/toolbar/AdvancedDataManager.png</iconset>
    </property>
    <property name="text">
-    <string>高级数据管理</string>
+    <string>高级数据管理器</string>
    </property>
   </action>
   <action name="actionAdd_Plot_Pair_Ctrl_A">

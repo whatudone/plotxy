@@ -3,6 +3,7 @@
 #include <QPainter>
 #include <QtMath>
 
+int PlotAttitude::m_instanceCount = 1;
 PlotAttitude::PlotAttitude(QWidget* parent)
 	: PlotItemBase(parent)
 {
@@ -18,8 +19,8 @@ PlotAttitude::PlotAttitude(QWidget* parent)
 	m_lineColor_pitch = Qt::red;	
 	m_textColor_pitch = Qt::red;
 
-	m_pitchValue = -45.0;
-	m_rollValue = 112.0;
+	m_pitchValue = 0.0;
+	m_rollValue = 0.0;
 
 	m_startAngle_pitch = -90.0;
 	m_endAngle_pitch = 90;
@@ -47,6 +48,10 @@ PlotAttitude::PlotAttitude(QWidget* parent)
 
 	m_textFont.setFamily("Microsoft YaHei");
 	m_textFont.setPointSizeF(10.0);
+
+	QString name = QString("Attitude%1").arg(m_instanceCount);
+	this->setName(name);
+	m_instanceCount += 1;
 }
 
 PlotAttitude::~PlotAttitude()
@@ -205,9 +210,7 @@ void PlotAttitude::drawLine_pitch(QPainter *painter, int radius)
 {
 	painter->save();
 	painter->setPen(QPen(m_lineColor_pitch, 4));
-	if (m_pitchValue <= m_startAngle_pitch || m_pitchValue >= m_endAngle_pitch)
-	{ }
-	else
+	if (m_pitchValue > m_startAngle_pitch && m_pitchValue < m_endAngle_pitch)
 	{ 
 		double translate_y = (m_endAngle_pitch - m_pitchValue) / (m_endAngle_pitch - m_startAngle_pitch) * 2 * radius - radius;
 		painter->translate(0, translate_y);

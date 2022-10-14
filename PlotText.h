@@ -15,6 +15,7 @@
 
 class PlotText :public PlotItemBase
 {
+	Q_OBJECT
 public:
 	PlotText(QWidget* parent = Q_NULLPTR);
 	~PlotText();
@@ -26,7 +27,8 @@ public:
 	void onSwitch(bool bOn);
 	void updateItems();
 	void drawRect(int itemIndex, bool bHorizontal, int itemLength, int leftBoundary, int rightBoundary, QColor color);
-
+public:
+	static int m_instanceCount;			//实体个数
 public slots:
 void onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>>);
 

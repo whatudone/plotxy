@@ -9,6 +9,7 @@
 class PlotAttitude :
 	public PlotItemBase
 {
+	Q_OBJECT
 public:
 	PlotAttitude(QWidget* parent = Q_NULLPTR);
 	~PlotAttitude();
@@ -26,6 +27,7 @@ public:
 	void drawText_roll(QPainter *painter, int radius);
 	void drawText_pitch(QPainter *painter, int radius);
 private:
+	
 	QColor m_titleColor;				//标题颜色
 	QColor m_border_ColorStart;			//边框渐变开始颜色
 	QColor m_border_ColorEnd;			//边框渐变结束颜色
@@ -60,7 +62,8 @@ private:
 	double m_bottomPadding;				//绘图间隔-bottom
 	double m_leftPadding;				//绘图间隔-left
 	double m_rightPadding;				//绘图间隔-right
-
+public:
+	static int m_instanceCount;			//实体个数
 public:
 	QColor getBorderOutColorStart() const;
 	QColor getBorderOutColorEnd()   const;

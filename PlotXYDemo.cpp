@@ -38,13 +38,15 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
     connect(ui.actionPlot_Manager_Ctrl_M, &QAction::triggered, this, &PlotXYDemo::onPlotManager);
     connect(ui.actionAdd_Plot_Pair_Ctrl_A, &QAction::triggered, this, &PlotXYDemo::onAddPlotPair);
     connect(ui.actionopen, &QAction::triggered, this, &PlotXYDemo::onOpenFile);
+
+	connect(m_plotManager, SIGNAL(sigAddPlotPair()), this, SLOT(onAddPlotPair()));
     
     //右键菜单栏
-    this->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), 
-            this, SLOT(onCustomContextMenuRequested(const QPoint&)));
-
-    connect(m_plotManager,SIGNAL(sigAddPlotPair()),this,SLOT(onAddPlotPair()));
+	ui.tabWidget->tabBar()->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui.tabWidget->tabBar(), SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onCustomContextMenuRequested(const QPoint&)));
+	ui.tabWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(ui.tabWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onContextMenu(const QPoint&)));
+    
 }
 
 PlotXYDemo::~PlotXYDemo()
@@ -90,53 +92,131 @@ void PlotXYDemo::onOpenFile()
 
 void PlotXYDemo::onCustomContextMenuRequested(const QPoint& point)
 {
+	qDebug() << sender();
     QMenu* pMenu = new QMenu(this);
 
     QAction* addTabPage = new QAction(QString::fromLocal8Bit("添加tab页面"), this);
     QAction* removeTabPage = new QAction(QString::fromLocal8Bit("删除tab页面"), this);
     QAction* renameTabPage = new QAction(QString::fromLocal8Bit("重命名tab页面"), this);
 
-    QAction* addBarPlot = new QAction(QString::fromLocal8Bit("添加Bar组件"), this);
-	QAction* addAttitudePlot = new QAction(QString::fromLocal8Bit("添加Attitude组件"), this);
-
-	QAction* addTextPlot = new QAction(QString::fromLocal8Bit("添加Text组件"), this);
-
-	QAction* addPolarPlot = new QAction(QString::fromLocal8Bit("添加极坐标组件"), this);
-
-
     /* 添加菜单项 */
     pMenu->addAction(addTabPage);
     pMenu->addAction(removeTabPage);
     pMenu->addAction(renameTabPage);
-
-    pMenu->addAction(addBarPlot);
-	pMenu->addAction(addAttitudePlot);
-
-	pMenu->addAction(addTextPlot);
-
-	pMenu->addAction(addPolarPlot);
-
 
     /* 连接槽函数 */
     connect(addTabPage, SIGNAL(triggered()), this, SLOT(onAddTabPage()));
     connect(removeTabPage, SIGNAL(triggered()), this, SLOT(onRemoveTabPage()));
     connect(renameTabPage, SIGNAL(triggered()), this, SLOT(onRenameTabPage()));
 
-    connect(addBarPlot, SIGNAL(triggered()), this, SLOT(onAddBarPlot()));
-	connect(addAttitudePlot, SIGNAL(triggered()), this, SLOT(onAddAttitudePlot()));
-
-	connect(addTextPlot,SIGNAL(triggered()),this,SLOT(onAddTextPlot()));
-
-	connect(addPolarPlot, SIGNAL(triggered()), this, SLOT(onAddPolarPlot()));
-
-
     /* 在鼠标右键处显示菜单 */
-    pMenu->exec(point);
+    pMenu->exec(QCursor::pos());
 
     /* 释放内存 */
     QList<QAction*> list = pMenu->actions();
     foreach(QAction * pAction, list) delete pAction;
     delete pMenu;
+}
+
+
+void PlotXYDemo::onContextMenu(const QPoint& point)
+{
+	QWidget* subWidget = QApplication::widgetAt(QCursor::pos().x(), QCursor::pos().y());
+	QString name = subWidget->objectName();
+	if (name == "PlotItemBase")
+	{
+		name = dynamic_cast<PlotItemBase*>(subWidget)->currName();
+	}
+	else
+	{
+		name = ui.tabWidget->tabText(ui.tabWidget->currentIndex());
+	}
+		
+
+	QMenu* pMenu = new QMenu(this);
+	//QWidgetAction
+	QWidgetAction* object_action = new QWidgetAction(this);
+	QLabel* label = new QLabel(name);
+	label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+	label->setStyleSheet("color:rgb(0,128,0);font:Bold");
+	object_action->setDefaultWidget(label);
+
+	//createPlot菜单
+	QMenu* createPlotMenu = new QMenu(QString::fromLocal8Bit("创建绘图组件"));
+	QAction* addBarPlot = new QAction(QString::fromLocal8Bit("添加Bar组件"), this);
+	QAction* addAttitudePlot = new QAction(QString::fromLocal8Bit("添加Attitude组件"), this);
+	QAction* addTextPlot = new QAction(QString::fromLocal8Bit("添加Text组件"), this);
+	QAction* addPolarPlot = new QAction(QString::fromLocal8Bit("添加Polar组件"), this);
+	/* 添加菜单项 */
+	createPlotMenu->addAction(addBarPlot);
+	createPlotMenu->addAction(addAttitudePlot);
+	createPlotMenu->addAction(addTextPlot);
+	createPlotMenu->addAction(addPolarPlot);
+	/* 连接槽函数 */
+	connect(addBarPlot, SIGNAL(triggered()), this, SLOT(onAddBarPlot()));
+	connect(addAttitudePlot, SIGNAL(triggered()), this, SLOT(onAddAttitudePlot()));
+	connect(addTextPlot, SIGNAL(triggered()), this, SLOT(onAddTextPlot()));
+	connect(addPolarPlot, SIGNAL(triggered()), this, SLOT(onAddPolarPlot()));
+
+	//QAction
+	QAction* Undo_Action = new QAction(QString::fromLocal8Bit("撤销"), this);
+	QAction* Cut_Action = new QAction(QString::fromLocal8Bit("剪切"), this);
+	QAction* Copy_Action = new QAction(QString::fromLocal8Bit("复制"), this);
+	QAction* Paste_Action = new QAction(QString::fromLocal8Bit("粘贴"), this);
+	QAction* Delete_Action = new QAction(QString::fromLocal8Bit("删除"), this);
+
+	QMenu* autofitMenu = new QMenu(QString::fromLocal8Bit("自动适应大小"));
+	QAction* autofit_x = new QAction(QString::fromLocal8Bit("X"), this);
+	QAction* autofit_y = new QAction(QString::fromLocal8Bit("Y"), this);
+	autofitMenu->addAction(autofit_x);
+	autofitMenu->addAction(autofit_y);
+
+	QAction* One2One_Action = new QAction(QString::fromLocal8Bit("One-To-One"), this);
+	QAction* RoundRanges_Action = new QAction(QString::fromLocal8Bit("Round Ranges"), this);
+
+	QAction* PlotManager_Action = new QAction(QString::fromLocal8Bit("绘图管理器"), this);
+	QAction* WidgetEditor_Action = new QAction(QString::fromLocal8Bit("控件编辑"), this);
+	QAction* DataManager_Action = new QAction(QString::fromLocal8Bit("高级数据管理器"), this);
+	QAction* PlotPair_Action = new QAction(QString::fromLocal8Bit("添加数据对"), this);
+	QAction* Screenshot_Action = new QAction(QString::fromLocal8Bit("保存截图"), this);
+
+	QAction* GOG_Action = new QAction(QString::fromLocal8Bit("导出GOG"), this);
+	QAction* HDF5_Action = new QAction(QString::fromLocal8Bit("导出HDF5"), this);
+
+	QMenu* OrderMenu = new QMenu(QString::fromLocal8Bit("Order"));
+	QMenu* ViewMenu = new QMenu(QString::fromLocal8Bit("View"));
+	QMenu* SelectPlotMenu = new QMenu(QString::fromLocal8Bit("Select Plot"));
+	//主菜单
+	pMenu->addAction(object_action);
+	pMenu->addSeparator();
+	pMenu->addMenu(createPlotMenu);
+	pMenu->addSeparator();
+	pMenu->addAction(Undo_Action);
+	pMenu->addSeparator();
+	pMenu->addAction(Cut_Action);
+	pMenu->addAction(Copy_Action);
+	pMenu->addAction(Paste_Action);
+	pMenu->addAction(Delete_Action);
+	pMenu->addSeparator();
+	pMenu->addMenu(autofitMenu);
+	pMenu->addAction(One2One_Action);
+	pMenu->addAction(RoundRanges_Action);
+	pMenu->addSeparator();
+	pMenu->addAction(PlotManager_Action);
+	pMenu->addAction(WidgetEditor_Action);
+	pMenu->addAction(DataManager_Action);
+	pMenu->addAction(PlotPair_Action);
+	pMenu->addAction(Screenshot_Action);
+	pMenu->addSeparator();
+	pMenu->addAction(GOG_Action);
+	pMenu->addAction(HDF5_Action);
+	pMenu->addSeparator();
+	pMenu->addMenu(OrderMenu);
+	pMenu->addMenu(ViewMenu);
+	pMenu->addMenu(SelectPlotMenu);
+
+	/* 在鼠标右键处显示菜单 */
+	pMenu->exec(QCursor::pos());
 }
 
 void PlotXYDemo::onAddTabPage()
@@ -281,4 +361,5 @@ void PlotXYDemo::initWidget(QWidget* w)
     btn->setGeometry(10, 10, 130, 25);
     connect(btn, SIGNAL(clicked(bool)), w, SLOT(close()));
 }
+
 
