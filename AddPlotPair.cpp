@@ -11,61 +11,94 @@ AddPlotPair::AddPlotPair(QWidget *parent) :
 {
     ui.setupUi(this);
     this->setWindowTitle("Add Plot Pair");
-	ui.treeWidget_Entity->setHeaderLabel("111");
-	ui.treeWidget_Entity->setHeaderHidden(true);
+	ui.tableWidget_Entity->setStyleSheet("QHeaderView::section{background:lightgray;}");
+	ui.tableWidget_Entity_2->setStyleSheet("QHeaderView::section{background:lightgray;}");
+	ui.tableWidget_Entity_3->setStyleSheet("QHeaderView::section{background:lightgray;}");
+	ui.tableWidget_Entity_Attitude1->setStyleSheet("QHeaderView::section{background:lightgray;}");
+	ui.tableWidget_Entity_Attitude2->setStyleSheet("QHeaderView::section{background:lightgray;}");
+
+	ui.tableWidget_Entity->horizontalHeader()->setStretchLastSection(true);
+	ui.tableWidget_Entity->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	ui.tableWidget_Entity->verticalHeader()->hide();
+	ui.tableWidget_Entity_2->horizontalHeader()->setStretchLastSection(true);
+	ui.tableWidget_Entity_2->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	ui.tableWidget_Entity_2->verticalHeader()->hide();
+	ui.tableWidget_Entity_3->horizontalHeader()->setStretchLastSection(true);
+	ui.tableWidget_Entity_3->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	ui.tableWidget_Entity_3->verticalHeader()->hide();
+	ui.tableWidget_Entity_Attitude1->horizontalHeader()->setStretchLastSection(true);
+	ui.tableWidget_Entity_Attitude1->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	ui.tableWidget_Entity_Attitude1->verticalHeader()->hide();
+	ui.tableWidget_Entity_Attitude2->horizontalHeader()->setStretchLastSection(true);
+	ui.tableWidget_Entity_Attitude2->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	ui.tableWidget_Entity_Attitude2->verticalHeader()->hide();
 
 	connect(ui.pushButton_add, SIGNAL(clicked()), this, SLOT(onBtnAddClicked()));
 	connect(ui.pushButton_close, SIGNAL(clicked()), this, SLOT(onBtnCloseClicked()));
 
-	connect(ui.treeWidget_Entity, SIGNAL(currentItemChanged(QTreeWidgetItem * , QTreeWidgetItem *)), 
-			this, SLOT(onEntityTreeWidgetItemClicked(QTreeWidgetItem*, QTreeWidgetItem*)));
-
+	connect(ui.tableWidget_Entity, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked(QTableWidgetItem*)));
 }
 
 AddPlotPair::~AddPlotPair()
 {
 }
 
-void AddPlotPair::init()
+void AddPlotPair::init(PlotType index)
 {
-	auto dataMap = DataManager::getInstance()->getDataMap();
-	if (dataMap.isEmpty())
+	switch (index)
 	{
-		qDebug() << QString::fromLocal8Bit("尚未加载数据,当前数据为空") << endl;
-		QMessageBox::information(NULL, QString::fromLocal8Bit("提示信息"), QString::fromLocal8Bit("尚未加载数据,当前数据为空"));
-		return;
+	case Type_PlotScatter:
+		ui.stackedWidget->setCurrentIndex(1);
+		break;
+	case Type_PlotAScope:
+		break;
+	case Type_PlotRTI:
+		break;
+	case Type_PlotText:
+		break;
+	case Type_PlotLight:
+		break;
+	case Type_PlotBar:
+	case Type_PlotDial:
+		ui.stackedWidget->setCurrentIndex(0);
+		break;
+	case Type_PlotAttitude:
+		ui.stackedWidget->setCurrentIndex(2);
+		break;
+	case Type_PlotPolar:
+		break;
+	case Type_PlotTrack:
+		break;
+	case Type_PlotDoppler:
+		break;
+	default:
+		ui.stackedWidget->setCurrentIndex(1);
+		break;
 	}
 
-	for (auto it = dataMap.begin();it!=dataMap.end();it++)
-	{
-		QString currEntityType = it.key();
-		QTreeWidgetItem* currTreeWidgetItem = new QTreeWidgetItem();
-		currTreeWidgetItem->setText(0, currEntityType);
-		ui.treeWidget_Entity->addTopLevelItem(currTreeWidgetItem);
-	}
+	updateData();
 }
 
 void AddPlotPair::onBtnAddClicked()
 {
-	QTreeWidgetItem* treewidgetEntity = new QTreeWidgetItem;
-	treewidgetEntity = ui.treeWidget_Entity->currentItem();
-	m_entityTypeList.append(treewidgetEntity->text(0));
+	QString str = ui.tableWidget_Entity->currentItem()->text();
+	QString str1 = ui.tableWidget_nameUnits->item(ui.tableWidget_nameUnits->currentRow(), 0)->text();
+	m_entityTypeList.append(str);
+	m_entityAttrList.append(str1);
 
-	QTreeWidgetItem* treewidgetNameUnits = new QTreeWidgetItem;
-	treewidgetNameUnits = ui.treeWidget_nameUnits->currentItem();
-	m_entityAttrList.append(treewidgetNameUnits->text(0));
+	QTableWidgetItem* addplot1 = new QTableWidgetItem(str + " " + str1);
+	QTableWidgetItem* addplot2 = new QTableWidgetItem("Time");
+	int row = ui.tableWidget_union->rowCount();
+	ui.tableWidget_union->insertRow(row);
+	ui.tableWidget_union->setItem(row, 0, addplot1);
+	ui.tableWidget_union->setItem(row, 1, addplot2);
 
-	QTreeWidgetItem* addplot = new QTreeWidgetItem;
-	addplot->setText(0, treewidgetEntity->text(0) + " " + treewidgetNameUnits->text(0));
-	addplot->setText(1, "Time");
-	ui.treeWidget_union->addTopLevelItem(addplot);
-
-	emit sigAddPlotPair(treewidgetEntity->text(0), treewidgetNameUnits->text(0));
+	emit sigAddPlotPair(str, str1);
 }
 
-void AddPlotPair::onEntityTreeWidgetItemClicked(QTreeWidgetItem* currItem, QTreeWidgetItem* preItem)
+void AddPlotPair::onTableWidgetItemClicked(QTableWidgetItem * curItem)
 {
-	QString currEntityTypeSelected = currItem->text(0);
+	QString currEntityTypeSelected = curItem->text();
 	auto dataMap = DataManager::getInstance()->getDataMap();
 	if (dataMap.isEmpty())
 		return;
@@ -75,13 +108,44 @@ void AddPlotPair::onEntityTreeWidgetItemClicked(QTreeWidgetItem* currItem, QTree
 
 	QStringList currEntityAttrList = dataMap.value(currEntityTypeSelected).keys();
 
-	for (int i = 0;i < currEntityAttrList.size();i++)
+	ui.tableWidget_nameUnits->setRowCount(currEntityAttrList.size());
+	for (int i = 0; i < currEntityAttrList.size(); i++)
 	{
 		QString currEntityAttr = currEntityAttrList.at(i);
 
-		QTreeWidgetItem* currTreeWidgetItem = new QTreeWidgetItem();
-		currTreeWidgetItem->setText(0, currEntityAttr);
-		ui.treeWidget_nameUnits->addTopLevelItem(currTreeWidgetItem);
+		QTableWidgetItem* item = new QTableWidgetItem(currEntityAttr);
+		ui.tableWidget_nameUnits->setItem(i, 0, item);
+	}
+}
+
+void AddPlotPair::updateData()
+{
+	auto dataMap = DataManager::getInstance()->getDataMap();
+	if (dataMap.isEmpty())
+	{
+		qDebug() << QString::fromLocal8Bit("尚未加载数据,当前数据为空") << endl;
+		QMessageBox::information(NULL, QString::fromLocal8Bit("提示信息"), QString::fromLocal8Bit("尚未加载数据,当前数据为空"));
+		return;
+	}
+	int index = 0;
+	int icount = dataMap.size();
+	ui.tableWidget_Entity->setRowCount(icount);
+	ui.tableWidget_Entity_2->setRowCount(icount);
+	ui.tableWidget_Entity_3->setRowCount(icount);
+	ui.tableWidget_Entity_Attitude1->setRowCount(icount);
+	ui.tableWidget_Entity_Attitude2->setRowCount(icount);
+
+	for (auto it = dataMap.begin(); it != dataMap.end(); it++)
+	{
+		QString currEntityType = it.key();
+		QTableWidgetItem* item = new QTableWidgetItem(currEntityType);
+		ui.tableWidget_Entity->setItem(index, 0, item);
+		ui.tableWidget_Entity_2->setItem(index, 0, item);
+		ui.tableWidget_Entity_3->setItem(index, 0, item);
+		ui.tableWidget_Entity_Attitude1->setItem(index, 0, item);
+		ui.tableWidget_Entity_Attitude2->setItem(index, 0, item);
+
+		index ++;
 	}
 }
 

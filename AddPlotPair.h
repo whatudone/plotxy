@@ -2,7 +2,9 @@
 #define _ADD_PLOT_PAIR_H_
 
 #include <QWidget>
+#include <QTableWidgetItem>
 #include "ui_AddPlotPair.h"
+#include "constdef.h"
 
 class AddPlotPair : public QWidget
 {
@@ -12,7 +14,7 @@ public:
     explicit AddPlotPair(QWidget *parent = 0);
     ~AddPlotPair();
 
-    void init();
+    void init(PlotType index = PlotType::Type_PlotScatter);
 
     QStringList m_entityTypeList;
     QStringList m_entityAttrList;
@@ -23,8 +25,8 @@ signals:
 public slots:
     void onBtnAddClicked();
     void onBtnCloseClicked();
-    void onEntityTreeWidgetItemClicked(QTreeWidgetItem*, QTreeWidgetItem*);
-
+	void onTableWidgetItemClicked(QTableWidgetItem*);
+	void updateData();
 private:
     Ui::AddPlotPair ui;
 };

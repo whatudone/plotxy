@@ -4,6 +4,7 @@
 #include <QtWidgets/QMainWindow>
 #include "QContextMenuEvent"
 #include "ui_PlotXYDemo.h"
+#include "constdef.h"
 
 class FreeWidgetWraper;
 class PlotItemBase;
@@ -21,6 +22,7 @@ public:
 
     void init();            //初始化函数，连接信号槽
     void initWidget(QWidget* w);
+	PlotType getCurrentFocusPlot();
 
 public slots:
     void onAdvancedData();
@@ -37,15 +39,16 @@ public slots:
 
     void onAddBarPlot();
 	void onAddAttitudePlot();
-
 	void onAddTextPlot();
-
 	void onAddPolarPlot();
 
-
+	void onFocusChanged(QWidget* oldWidget, QWidget* newWidget);
+	
+signals:
+	void sgn_loadDataReady();
 private:
     Ui::PlotXYDemo ui;
-
+	QWidget* m_nowFocusWidget;
     //FreeWidgetWraper* m_freeWidgetWraper;
     PlotManager* m_plotManager;
     AddPlotPair* m_addPlotPair;
