@@ -1,0 +1,137 @@
+﻿生成启动时间为 2022/10/18 9:29:52。
+     1>项目“F:\plotxy\plotxy\PlotXYDemo.vcxproj”在节点 2 上(Rebuild 个目标)。
+     1>项目“F:\plotxy\plotxy\PlotXYDemo.vcxproj”(1)正在节点 2 上生成“F:\plotxy\plotxy\PlotXYDemo.vcxproj”(1:2) (Build 个目标)。
+     1>QtRccSetDependencies:
+         "C:\Qt\Qt5.9.1\5.9.1\msvc2015_64\\bin\rcc.exe" --list "resources\toolbar.qrc" > "x64\Debug\rcc_list.txt" 2> nul
+       QtWork:
+         uic AddPlotPair.ui
+         uic AdvancedDataManager.ui
+         uic ColorRanges.ui
+         uic Extrapolation.ui
+         uic General.ui
+         uic LabelSettings.ui
+         uic LabelText.ui
+         uic PlotItemBase.ui
+         uic PlotManager.ui
+         uic PlotXYDemo.ui
+         uic ToolBox.ui
+         uic ToolPage.ui
+         rcc resources\toolbar.qrc
+         moc PlotXYDemo.h
+         moc PlotManager.h
+         moc PlotItemBase.h
+         moc FreeWidgetWraper.h
+         Moc'ing qcustomplot.h...
+         Moc'ing PlotPolar.h...
+         Moc'ing PlotAttitude.h...
+         Moc'ing PlotText.h...
+         moc SubSettingWidgetContainer.h
+         moc ToolPage.h
+         moc ToolBox.h
+         moc AddPlotPair.h
+         moc AdvancedDataManager.h
+         Moc'ing PlotBar.h...
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /IF:\plotxy\plotxy\GeneratedFiles\Debug /IF:\plotxy\plotxy\GeneratedFiles\Debug /IC:\Qt\Qt5.9.1\5.9.1\msvc2015_64\\include\QtCore /IC:\Qt\Qt5.9.1\5.9.1\msvc2015_64\\include\QtGui /IC:\Qt\Qt5.9.1\5.9.1\msvc2015_64\\include\QtANGLE /IC:\Qt\Qt5.9.1\5.9.1\msvc2015_64\\include\QtWidgets /Zi /nologo /W1 /WX- /MP /Od /D QT_CORE_LIB /D QT_GUI_LIB /D QT_WIDGETS_LIB /Gm- /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"x64\Debug\\" /Fd"x64\Debug\vc140.pdb" /Gd /TP /errorReport:prompt AddPlotPair.cpp AdvancedDataManager.cpp DataManager.cpp FreeWidgetWraper.cpp main.cpp PlotAttitude.cpp PlotPolar.cpp PlotText.cpp qcustomplot.cpp SubSettingWidgetContainer.cpp PlotBar.cpp PlotItemBase.cpp PlotManager.cpp PlotXYDemo.cpp ToolBox.cpp Toolpage.cpp
+         AddPlotPair.cpp
+         AdvancedDataManager.cpp
+         DataManager.cpp
+         FreeWidgetWraper.cpp
+         main.cpp
+         PlotAttitude.cpp
+         PlotPolar.cpp
+         PlotText.cpp
+     1>AdvancedDataManager.cpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+         qcustomplot.cpp
+         SubSettingWidgetContainer.cpp
+         PlotBar.cpp
+         PlotItemBase.cpp
+         PlotManager.cpp
+         PlotXYDemo.cpp
+         ToolBox.cpp
+         Toolpage.cpp
+     1>C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\xutility(2230): warning C4996: 'std::_Copy_impl': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators' (编译源文件 qcustomplot.cpp)
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\xutility(2216): note: 参见“std::_Copy_impl”的声明 (编译源文件 qcustomplot.cpp)
+         qcustomplot.cpp(21746): note: 参见对正在编译的函数 模板 实例化“_OutIt std::copy<const QCPGraphData*,QCPGraphData*>(_InIt,_InIt,_OutIt)”的引用
+                 with
+                 [
+                     _OutIt=QCPGraphData *,
+                     _InIt=const QCPGraphData *
+                 ]
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\xutility(2216): note: 参见“std::_Copy_impl”的声明 (编译源文件 qcustomplot.cpp)
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\xutility(2216): note: 参见“std::_Copy_impl”的声明 (编译源文件 qcustomplot.cpp)
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\xutility(2216): note: 参见“std::_Copy_impl”的声明 (编译源文件 qcustomplot.cpp)
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\xutility(2216): note: 参见“std::_Copy_impl”的声明 (编译源文件 qcustomplot.cpp)
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\xutility(2216): note: 参见“std::_Copy_impl”的声明 (编译源文件 qcustomplot.cpp)
+     1>C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\xutility(2507): warning C4996: 'std::_Copy_backward': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators' (编译源文件 qcustomplot.cpp)
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\xutility(2493): note: 参见“std::_Copy_backward”的声明 (编译源文件 qcustomplot.cpp)
+         f:\plotxy\plotxy\qcustomplot.h(3368): note: 参见对正在编译的函数 模板 实例化“_BidIt2 std::copy_backward<QCPGraphData*,QCPGraphData*>(_BidIt1,_BidIt1,_BidIt2)”的引用
+                 with
+                 [
+                     _BidIt2=QCPGraphData *,
+                     _BidIt1=QCPGraphData *
+                 ] (编译源文件 qcustomplot.cpp)
+         f:\plotxy\plotxy\qcustomplot.h(3358): note: 编译类 模板 成员函数“void QCPDataContainer<QCPGraphData>::preallocateGrow(int)”时 (编译源文件 qcustomplot.cpp)
+         f:\plotxy\plotxy\qcustomplot.h(2917): note: 参见对正在编译的函数 模板 实例化“void QCPDataContainer<QCPGraphData>::preallocateGrow(int)”的引用 (编译源文件 qcustomplot.cpp)
+         f:\plotxy\plotxy\qcustomplot.h(2775): note: 编译类 模板 成员函数“QCPDataContainer<QCPGraphData>::QCPDataContainer(void)”时 (编译源文件 qcustomplot.cpp)
+         qcustomplot.cpp(34450): note: 参见对正在编译的函数 模板 实例化“QCPDataContainer<QCPGraphData>::QCPDataContainer(void)”的引用
+         f:\plotxy\plotxy\qcustomplot.h(5536): note: 参见对正在编译的类 模板 实例化“QCPDataContainer<QCPGraphData>”的引用 (编译源文件 qcustomplot.cpp)
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\xutility(2493): note: 参见“std::_Copy_backward”的声明 (编译源文件 qcustomplot.cpp)
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\xutility(2493): note: 参见“std::_Copy_backward”的声明 (编译源文件 qcustomplot.cpp)
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\xutility(2493): note: 参见“std::_Copy_backward”的声明 (编译源文件 qcustomplot.cpp)
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\xutility(2493): note: 参见“std::_Copy_backward”的声明 (编译源文件 qcustomplot.cpp)
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /IF:\plotxy\plotxy\GeneratedFiles\Debug /IF:\plotxy\plotxy\ /IF:\plotxy\plotxy\GeneratedFiles\Debug /IC:\Qt\Qt5.9.1\5.9.1\msvc2015_64\\include\QtCore /IC:\Qt\Qt5.9.1\5.9.1\msvc2015_64\\include\QtGui /IC:\Qt\Qt5.9.1\5.9.1\msvc2015_64\\include\QtANGLE /IC:\Qt\Qt5.9.1\5.9.1\msvc2015_64\\include\QtWidgets /Zi /nologo /W1 /WX- /MP /Od /D QT_CORE_LIB /D QT_GUI_LIB /D QT_WIDGETS_LIB /Gm- /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"x64\Debug\\" /Fd"x64\Debug\vc140.pdb" /Gd /TP /errorReport:prompt GeneratedFiles\Debug\qrc_toolbar.cpp GeneratedFiles\Debug\moc_PlotXYDemo.cpp GeneratedFiles\Debug\moc_PlotManager.cpp GeneratedFiles\Debug\moc_PlotItemBase.cpp GeneratedFiles\Debug\moc_FreeWidgetWraper.cpp GeneratedFiles\Debug\moc_qcustomplot.cpp GeneratedFiles\Debug\moc_PlotPolar.cpp GeneratedFiles\Debug\moc_PlotAttitude.cpp GeneratedFiles\Debug\moc_PlotText.cpp GeneratedFiles\Debug\moc_SubSettingWidgetContainer.cpp GeneratedFiles\Debug\moc_ToolPage.cpp GeneratedFiles\Debug\moc_ToolBox.cpp GeneratedFiles\Debug\moc_AddPlotPair.cpp GeneratedFiles\Debug\moc_AdvancedDataManager.cpp GeneratedFiles\Debug\moc_PlotBar.cpp
+         qrc_toolbar.cpp
+         moc_PlotXYDemo.cpp
+         moc_PlotManager.cpp
+         moc_PlotItemBase.cpp
+         moc_FreeWidgetWraper.cpp
+         moc_PlotPolar.cpp
+         moc_qcustomplot.cpp
+         moc_PlotAttitude.cpp
+         moc_PlotText.cpp
+         moc_SubSettingWidgetContainer.cpp
+         moc_ToolPage.cpp
+         moc_ToolBox.cpp
+         moc_AddPlotPair.cpp
+         moc_AdvancedDataManager.cpp
+         moc_PlotBar.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"F:\plotxy\plotxy\x64\Debug\PlotXYDemo.exe" /NOLOGO Qt5Cored.lib Qt5Guid.lib Qt5Widgetsd.lib Qt5PrintSupportd.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"F:\plotxy\plotxy\x64\Debug\PlotXYDemo.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\plotxy\plotxy\x64\Debug\PlotXYDemo.lib" /MACHINE:X64 x64\Debug\AddPlotPair.obj
+         x64\Debug\AdvancedDataManager.obj
+         x64\Debug\DataManager.obj
+         x64\Debug\FreeWidgetWraper.obj
+         x64\Debug\main.obj
+         x64\Debug\PlotAttitude.obj
+         x64\Debug\PlotPolar.obj
+         x64\Debug\PlotText.obj
+         x64\Debug\qcustomplot.obj
+         x64\Debug\SubSettingWidgetContainer.obj
+         x64\Debug\PlotBar.obj
+         x64\Debug\PlotItemBase.obj
+         x64\Debug\PlotManager.obj
+         x64\Debug\PlotXYDemo.obj
+         x64\Debug\ToolBox.obj
+         x64\Debug\Toolpage.obj
+         x64\Debug\qrc_toolbar.obj
+         x64\Debug\moc_PlotXYDemo.obj
+         x64\Debug\moc_PlotManager.obj
+         x64\Debug\moc_PlotItemBase.obj
+         x64\Debug\moc_FreeWidgetWraper.obj
+         x64\Debug\moc_qcustomplot.obj
+         x64\Debug\moc_PlotPolar.obj
+         x64\Debug\moc_PlotAttitude.obj
+         x64\Debug\moc_PlotText.obj
+         x64\Debug\moc_SubSettingWidgetContainer.obj
+         x64\Debug\moc_ToolPage.obj
+         x64\Debug\moc_ToolBox.obj
+         x64\Debug\moc_AddPlotPair.obj
+         x64\Debug\moc_AdvancedDataManager.obj
+         x64\Debug\moc_PlotBar.obj
+         PlotXYDemo.vcxproj -> F:\plotxy\plotxy\x64\Debug\PlotXYDemo.exe
+     1>已完成生成项目“F:\plotxy\plotxy\PlotXYDemo.vcxproj”(Build 个目标)的操作。
+     1>已完成生成项目“F:\plotxy\plotxy\PlotXYDemo.vcxproj”(Rebuild 个目标)的操作。
+
+已成功生成。
+
+已用时间 00:00:23.40

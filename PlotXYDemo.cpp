@@ -15,6 +15,7 @@
 #include "PlotText.h"
 
 
+
 PlotXYDemo::PlotXYDemo(QWidget* parent)
     : QMainWindow(parent)
 {

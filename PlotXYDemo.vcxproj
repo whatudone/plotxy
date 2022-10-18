@@ -88,13 +88,15 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <IncludePath>C:\Qt\Qt5.9.2\5.9.2\msvc2015_64\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Qt\Qt5.9.2\5.9.2\msvc2015_64\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Qt\Qt5.9.1\5.9.1\msvc2015_64\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Qt\Qt5.9.1\5.9.1\msvc2015_64\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <IncludePath>C:\Qt\Qt5.9.1\5.9.1\msvc2015_64\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Qt\Qt5.9.1\5.9.1\msvc2015_64\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile />
@@ -116,7 +118,7 @@
     </ClCompile>
     <Link />
     <Link>
-      <AdditionalDependencies>Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;Qt5PrintSupportd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -163,7 +165,7 @@
     </ClCompile>
     <Link />
     <Link>
-      <AdditionalDependencies>Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;Qt5PrintSupportd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -248,6 +250,10 @@
     <ClCompile Include="DataManager.cpp" />
     <ClCompile Include="FreeWidgetWraper.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PlotAttitude.cpp" />
+    <ClCompile Include="PlotPolar.cpp" />
+    <ClCompile Include="PlotText.cpp" />
+    <ClCompile Include="qcustomplot.cpp" />
     <ClCompile Include="SubSettingWidgetContainer.cpp" />
     <ClCompile Include="PlotBar.cpp" />
     <ClCompile Include="PlotItemBase.cpp" />
@@ -283,6 +289,31 @@
     <QtMoc Include="FreeWidgetWraper.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
+    <QtMoc Include="qcustomplot.h">
+      <ExecutionDescription Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc'ing %(Identity)...</ExecutionDescription>
+      <ExecutionDescription Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc'ing %(Identity)...</ExecutionDescription>
+      <ExecutionDescription Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc'ing %(Identity)...</ExecutionDescription>
+      <ExecutionDescription Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc'ing %(Identity)...</ExecutionDescription>
+    </QtMoc>
+    <QtMoc Include="PlotPolar.h">
+      <ExecutionDescription Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc'ing %(Identity)...</ExecutionDescription>
+      <ExecutionDescription Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc'ing %(Identity)...</ExecutionDescription>
+      <ExecutionDescription Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc'ing %(Identity)...</ExecutionDescription>
+      <ExecutionDescription Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc'ing %(Identity)...</ExecutionDescription>
+    </QtMoc>
+    <QtMoc Include="PlotAttitude.h">
+      <ExecutionDescription Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc'ing %(Identity)...</ExecutionDescription>
+      <ExecutionDescription Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc'ing %(Identity)...</ExecutionDescription>
+      <ExecutionDescription Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc'ing %(Identity)...</ExecutionDescription>
+      <ExecutionDescription Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc'ing %(Identity)...</ExecutionDescription>
+    </QtMoc>
+    <QtMoc Include="PlotText.h">
+      <ExecutionDescription Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc'ing %(Identity)...</ExecutionDescription>
+      <ExecutionDescription Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc'ing %(Identity)...</ExecutionDescription>
+      <ExecutionDescription Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc'ing %(Identity)...</ExecutionDescription>
+      <ExecutionDescription Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc'ing %(Identity)...</ExecutionDescription>
+    </QtMoc>
     <QtMoc Include="SubSettingWidgetContainer.h" />
     <QtMoc Include="ToolPage.h" />
     <QtMoc Include="ToolBox.h" />
@@ -290,7 +321,12 @@
     <QtMoc Include="AdvancedDataManager.h" />
     <ClInclude Include="BaseData.h" />
     <ClInclude Include="DataManager.h" />
-    <ClInclude Include="PlotBar.h" />
+    <QtMoc Include="PlotBar.h">
+      <ExecutionDescription Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc'ing %(Identity)...</ExecutionDescription>
+      <ExecutionDescription Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc'ing %(Identity)...</ExecutionDescription>
+      <ExecutionDescription Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc'ing %(Identity)...</ExecutionDescription>
+      <ExecutionDescription Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc'ing %(Identity)...</ExecutionDescription>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="resources\toolbar.qrc" />
@@ -303,7 +339,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Qt5Version_x0020_Win32="qt5.8" Qt5Version_x0020_x64="qt5.9" />
+      <UserProperties Qt5Version_x0020_Win32="qt5.8" Qt5Version_x0020_x64="msvc2015_64" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

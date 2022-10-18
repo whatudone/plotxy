@@ -1,0 +1,38 @@
+﻿生成启动时间为 2022/10/10 10:14:09。
+     1>项目“F:\plotxy\plotxy\PlotXYDemo.vcxproj”在节点 2 上(Build 个目标)。
+     1>项目“F:\plotxy\plotxy\PlotXYDemo.vcxproj”(1)正在节点 2 上生成“F:\plotxy\plotxy\PlotXYDemo.vcxproj”(1:2) (Build 个目标)。
+     1>QtRccSetDependencies:
+         "C:\Qt\Qt5.9.1\5.9.1\msvc2015_64\\bin\rcc.exe" --list "resources\toolbar.qrc" > "x64\Release\rcc_list.txt" 2> nul
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /IF:\plotxy\plotxy\GeneratedFiles\Release /IF:\plotxy\plotxy\GeneratedFiles\Release /IC:\Qt\Qt5.9.1\5.9.1\msvc2015_64\\include\QtCore /IC:\Qt\Qt5.9.1\5.9.1\msvc2015_64\\include\QtGui /IC:\Qt\Qt5.9.1\5.9.1\msvc2015_64\\include\QtANGLE /IC:\Qt\Qt5.9.1\5.9.1\msvc2015_64\\include\QtWidgets /nologo /W1 /WX- /MP /O2 /D QT_CORE_LIB /D QT_GUI_LIB /D QT_WIDGETS_LIB /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"x64\Release\\" /Fd"x64\Release\vc140.pdb" /Gd /TP /errorReport:prompt main.cpp
+         main.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"F:\plotxy\plotxy\x64\Release\PlotXYDemo.exe" /NOLOGO Qt5Core.lib Qt5Gui.lib Qt5Widgets.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:"F:\plotxy\plotxy\x64\Release\PlotXYDemo.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\plotxy\plotxy\x64\Release\PlotXYDemo.lib" /MACHINE:X64 x64\Release\AddPlotPair.obj
+         x64\Release\AdvancedDataManager.obj
+         x64\Release\DataManager.obj
+         x64\Release\FreeWidgetWraper.obj
+         x64\Release\main.obj
+         x64\Release\SubSettingWidgetContainer.obj
+         x64\Release\PlotBar.obj
+         x64\Release\PlotItemBase.obj
+         x64\Release\PlotManager.obj
+         x64\Release\PlotXYDemo.obj
+         x64\Release\ToolBox.obj
+         x64\Release\Toolpage.obj
+         x64\Release\qrc_toolbar.obj
+         x64\Release\moc_PlotXYDemo.obj
+         x64\Release\moc_PlotManager.obj
+         x64\Release\moc_PlotItemBase.obj
+         x64\Release\moc_FreeWidgetWraper.obj
+         x64\Release\moc_SubSettingWidgetContainer.obj
+         x64\Release\moc_ToolPage.obj
+         x64\Release\moc_ToolBox.obj
+         x64\Release\moc_AddPlotPair.obj
+         x64\Release\moc_AdvancedDataManager.obj
+         PlotXYDemo.vcxproj -> F:\plotxy\plotxy\x64\Release\PlotXYDemo.exe
+     1>已完成生成项目“F:\plotxy\plotxy\PlotXYDemo.vcxproj”(Build 个目标)的操作。
+     1>已完成生成项目“F:\plotxy\plotxy\PlotXYDemo.vcxproj”(Build 个目标)的操作。
+
+已成功生成。
+
+已用时间 00:00:03.17
