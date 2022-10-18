@@ -12,7 +12,6 @@
 #include <QTimer>
 #include <QMap>
 #include <QString>
-#include <QPaintEvent>
 
 class PlotBar :public PlotItemBase
 {

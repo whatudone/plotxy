@@ -59,18 +59,6 @@
     <ClCompile Include="SubSettingWidgetContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PlotText.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PlotAttitude.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PlotPolar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qcustomplot.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="PlotXYDemo.h">
@@ -98,21 +86,6 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="AdvancedDataManager.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="PlotText.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="PlotBar.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="PlotAttitude.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="PlotPolar.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="qcustomplot.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
@@ -161,7 +134,7 @@
     <ClInclude Include="DataManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
+    <ClInclude Include="PlotBar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

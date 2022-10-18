@@ -57,7 +57,6 @@ void PlotText::paintEvent(QPaintEvent* event)
 	//绘制x轴和y轴
 	QPainter painter(this);
 	QPen pen;
-	m_axisColor = Qt::white;
 	pen.setColor(m_axisColor);
 	pen.setWidth(2);
 	painter.setPen(pen);
@@ -65,12 +64,10 @@ void PlotText::paintEvent(QPaintEvent* event)
 	painter.drawLine(QPoint(0, height()), QPoint(0, 0));		//y轴
 
 																//绘制网格
-	m_gridColor = Qt::white;
 	pen.setColor(m_gridColor);
 	painter.setPen(pen);
 
 	QBrush brush;   //画刷。填充几何图形的调色板，由颜色和填充风格组成
-	m_gridFillColor = Qt::white;
 	brush.setColor(m_gridFillColor);
 	brush.setStyle(Qt::SolidPattern);
 	//painter.setBrush(brush);
@@ -109,7 +106,6 @@ void PlotText::drawRect(int itemIndex, bool bHorizontal, int itemLength, int lef
 {
 	QPainter painter(this);
 	QPen pen;
-	color = Qt::white;
 	pen.setColor(color);
 	QBrush brush;
 	brush.setColor(color);
