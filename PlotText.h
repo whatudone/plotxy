@@ -12,6 +12,7 @@
 #include "BaseData.h"
 #include <QTimer>
 #include <QColor>
+#include <QDebug>
 
 class PlotText :public PlotItemBase
 {

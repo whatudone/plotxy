@@ -2,7 +2,7 @@
 #include "DataManager.h"
 #include <QPainter>
 #include <QPen>
-#include <QDebug>
+
 
 int PlotText::m_instanceCount = 1;
 PlotText::PlotText(QWidget* parent)
