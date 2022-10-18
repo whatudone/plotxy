@@ -25,7 +25,7 @@ public:
 
 
 	void onSwitch(bool bOn);
-	void updateItems();
+	//void updateItems();
 	void drawRect(int itemIndex, bool bHorizontal, int itemLength, int leftBoundary, int rightBoundary, QColor color);
 public:
 	static int m_instanceCount;			//实体个数

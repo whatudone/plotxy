@@ -57,6 +57,7 @@ void PlotText::paintEvent(QPaintEvent* event)
 	//绘制x轴和y轴
 	QPainter painter(this);
 	QPen pen;
+	m_axisColor = Qt::white;
 	pen.setColor(m_axisColor);
 	pen.setWidth(2);
 	painter.setPen(pen);
@@ -64,10 +65,12 @@ void PlotText::paintEvent(QPaintEvent* event)
 	painter.drawLine(QPoint(0, height()), QPoint(0, 0));		//y轴
 
 																//绘制网格
+	m_gridColor = Qt::white;
 	pen.setColor(m_gridColor);
 	painter.setPen(pen);
 
 	QBrush brush;   //画刷。填充几何图形的调色板，由颜色和填充风格组成
+	m_gridFillColor = Qt::white;
 	brush.setColor(m_gridFillColor);
 	brush.setStyle(Qt::SolidPattern);
 	//painter.setBrush(brush);
@@ -97,15 +100,13 @@ void PlotText::paintEvent(QPaintEvent* event)
 		gridRect.setRect(0, (i + 1) * verGridWidth, width(), verGridWidth);
 		painter.drawRect(gridRect);
 	}
-
-	if (m_started)
-		updateItems();
 }
 
 void PlotText::drawRect(int itemIndex, bool bHorizontal, int itemLength, int leftBoundary, int rightBoundary, QColor color)
 {
 	QPainter painter(this);
 	QPen pen;
+	color = Qt::white;
 	pen.setColor(color);
 	QBrush brush;
 	brush.setColor(color);
@@ -127,105 +128,4 @@ void PlotText::drawRect(int itemIndex, bool bHorizontal, int itemLength, int lef
 		rect.setRect(m_leftPadding + itemIndex * (itemLength + m_interPadding), height - rightBoundary, itemLength, rightBoundary - leftBoundary);
 	}
 	painter.drawRect(rect);
-}
-
-void PlotText::updateItems()
-{
-	if (m_entityTypeList.isEmpty() || m_entityAttrList.isEmpty())
-	{
-		qDebug() << "PlotBar::updateItems either m_entityTypeList or m_entityAttrList is empty." << endl;
-		return;
-	}
-
-	if (m_entityTypeList.size() != m_entityAttrList.size())
-	{
-		qDebug() << "PlotBar::updateItems  m_entityTypeList and m_entityAttrList don't match." << endl;
-		return;
-	}
-
-	//首先计算每个item的宽度/高度
-	int perItemLength = 0;
-	int width = this->width();
-	int height = this->height();
-	if (m_bHorizontal)		//item水平方向延展
-	{
-		perItemLength = (height - m_leftPadding - m_rightPadding - (m_entityTypeList.size() - 1) * m_interPadding) / m_entityTypeList.size();
-	}
-	else					//item垂直方向延展
-	{
-		perItemLength = (width - m_leftPadding - m_rightPadding - (m_entityTypeList.size() - 1) * m_interPadding) / m_entityTypeList.size();
-	}
-
-	//逐item遍历
-	for (int itemIndex = 0; itemIndex < m_entityTypeList.size(); itemIndex++)
-	{
-		QString currEntityType = m_entityTypeList.at(itemIndex);
-		QString currEntityAttr = m_entityAttrList.at(itemIndex);
-
-		auto dataMap = DataManager::getInstance()->getDataMap();
-		if (!dataMap.contains(currEntityType))
-		{
-			continue;
-		}
-		if (!dataMap.value(currEntityType).contains(currEntityAttr))
-		{
-			continue;
-		}
-
-		if (m_currTimeIndex >= dataMap.value(currEntityType).value(currEntityAttr).size())
-		{
-			continue;
-		}
-
-		//*获取当前Attr值
-		double currValue = dataMap.value(currEntityType).value(currEntityAttr).at(m_currTimeIndex);
-
-		QString currKey = currEntityType + '_' + currEntityAttr;
-		if (!m_thresholdColorMap.contains(currKey) || m_thresholdColorMap.value(currKey).keys().isEmpty())
-		{
-			//没有设置阈值，则无需分开绘制多个矩形，以默认颜色绘制一个即可
-			drawRect(itemIndex, m_bHorizontal, perItemLength, 0, currValue, m_defaultColor);
-			continue;
-		}
-
-		//根据颜色阈值来分开绘制
-		auto colorMap = m_thresholdColorMap.value(currKey);
-		QList<int> thresholdList = colorMap.keys();
-		if (currValue < thresholdList.first())
-		{
-			drawRect(itemIndex, m_bHorizontal, perItemLength, 0, currValue, m_defaultColor);
-			continue;
-		}
-
-		//以默认颜色绘制第一个矩形
-		drawRect(itemIndex, m_bHorizontal, perItemLength, 0, thresholdList.first(), m_defaultColor);
-
-		if (thresholdList.size() == 1)
-		{
-			drawRect(itemIndex, m_bHorizontal, perItemLength, thresholdList.first(), currValue, colorMap.value(thresholdList.first()));
-			continue;
-		}
-
-		for (int i = 0; i < thresholdList.size() - 1; i++)
-		{
-			QColor currColor = colorMap.value(thresholdList.at(i));
-
-			if (currValue < thresholdList.at(i + 1))
-			{
-				drawRect(itemIndex, m_bHorizontal, perItemLength, thresholdList.at(i), currValue, colorMap.value(thresholdList.at(i)));
-				break;
-			}
-			else
-			{
-				drawRect(itemIndex, m_bHorizontal, perItemLength, thresholdList.at(i), thresholdList.at(i + 1), colorMap.value(thresholdList.at(i)));
-			}
-		}
-
-		if (currValue > thresholdList.last())
-		{
-			drawRect(itemIndex, m_bHorizontal, perItemLength, thresholdList.last(), currValue, colorMap.value(thresholdList.last()));
-			continue;
-		}
-	}
-	update();
 }
