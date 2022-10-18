@@ -23,6 +23,8 @@ PlotManager::PlotManager(QWidget* parent)
 
 	ui.treeWidget_selectedPlots->setHeaderItem(itemselPlotH);
 	ui.treeWidget_selectedPlots->addTopLevelItem(itemselPlotI);*/
+	ui.treeWidget_selectedPlots->setHeaderHidden(true);
+	ui.treeWidget_selectedPlots->expandAll();
 
 	ui.treeWidget_settings->setHeaderHidden(false);
 	ui.treeWidget_settings->setHeaderLabel(QString::fromLocal8Bit("设置"));
@@ -119,17 +121,27 @@ void PlotManager::init()
 
 void PlotManager::addPlot(/*int currTabIndex*/const QString& tabName, PlotItemBase* plotItem)
 {
+	//显示层更新
+	if (m_plotManager.contains(tabName))
+	{
+		QList<QTreeWidgetItem*> topWidget = ui.treeWidget_selectedPlots->findItems(tabName, Qt::MatchCaseSensitive, 0);
+		if (topWidget.size() != 0)
+		{
+			QTreeWidgetItem* itemselPlotI = new QTreeWidgetItem(QStringList() << plotItem->currName());
+			topWidget[0]->addChild(itemselPlotI);
+		}
+	} 
+	else
+	{
+		QTreeWidgetItem* itemselPlotH = new QTreeWidgetItem(QStringList()<<tabName);
+		ui.treeWidget_selectedPlots->addTopLevelItem(itemselPlotH);
+
+		QTreeWidgetItem* itemselPlotI = new QTreeWidgetItem(QStringList() << plotItem->currName());
+		itemselPlotH->addChild(itemselPlotI);
+	}
+
 	//数据层更新
 	m_plotManager[tabName].append(plotItem);
-
-	//显示层更新
-	QTreeWidgetItem* itemselPlotH = new QTreeWidgetItem;
-	QTreeWidgetItem* itemselPlotI = new QTreeWidgetItem;
-	itemselPlotH->setText(0, tabName);
-	itemselPlotI->setText(0, "Bar");
-
-	ui.treeWidget_selectedPlots->setHeaderItem(itemselPlotH);
-	ui.treeWidget_selectedPlots->addTopLevelItem(itemselPlotI); 
 }
 
 void PlotManager::onTWSPclicked(QTreeWidgetItem* item, int i)

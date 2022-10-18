@@ -18,6 +18,7 @@ public:
 
     QStringList m_entityTypeList;
     QStringList m_entityAttrList;
+	void onChangeStackIndex(PlotType index);
 
 signals:
     void sigAddPlotPair(QString,QString);
@@ -26,7 +27,12 @@ public slots:
     void onBtnAddClicked();
     void onBtnCloseClicked();
 	void onTableWidgetItemClicked(QTableWidgetItem*);
-	void updateData();
+	void onTableWidgetItemClicked_2(QTableWidgetItem*);
+	void onTableWidgetItemClicked_3(QTableWidgetItem*);
+	void onTableWidgetItemClicked_Attitude1(QTableWidgetItem*);
+	void onTableWidgetItemClicked_Attitude2(QTableWidgetItem*);
+	void onUpdateData();
+	
 private:
     Ui::AddPlotPair ui;
 };

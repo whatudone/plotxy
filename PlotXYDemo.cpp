@@ -79,10 +79,10 @@ void PlotXYDemo::onAddPlotPair()
             m_plotManager, SLOT(onAddPlotPair(QString, QString)));
         connect(m_addPlotPair, SIGNAL(sigAddPlotPair(QString, QString)), 
             m_AdvancedDataManager, SLOT(onAdvancedDataManagerAddPair(QString, QString)));
-		connect(this, SIGNAL(sgn_loadDataReady()), m_addPlotPair, SLOT(updateData()));
-        m_addPlotPair->init();
+		connect(this, SIGNAL(sgn_loadDataReady()), m_addPlotPair, SLOT(onUpdateData()));
+        m_addPlotPair->init(getCurrentFocusPlot());
     }
-        
+	m_addPlotPair->onChangeStackIndex(getCurrentFocusPlot());
     m_addPlotPair->show();
 }
 
@@ -182,6 +182,7 @@ void PlotXYDemo::onContextMenu(const QPoint& point)
 	QAction* DataManager_Action = new QAction(QString::fromLocal8Bit("高级数据管理器"), this);
 	QAction* PlotPair_Action = new QAction(QString::fromLocal8Bit("添加数据对"), this);
 	QAction* Screenshot_Action = new QAction(QString::fromLocal8Bit("保存截图"), this);
+	connect(PlotPair_Action, SIGNAL(triggered()), this, SLOT(onAddPlotPair()));
 
 	QAction* GOG_Action = new QAction(QString::fromLocal8Bit("导出GOG"), this);
 	QAction* HDF5_Action = new QAction(QString::fromLocal8Bit("导出HDF5"), this);

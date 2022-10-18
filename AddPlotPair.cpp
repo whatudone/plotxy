@@ -37,6 +37,10 @@ AddPlotPair::AddPlotPair(QWidget *parent) :
 	connect(ui.pushButton_close, SIGNAL(clicked()), this, SLOT(onBtnCloseClicked()));
 
 	connect(ui.tableWidget_Entity, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked(QTableWidgetItem*)));
+	connect(ui.tableWidget_Entity_2, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked_2(QTableWidgetItem*)));
+	connect(ui.tableWidget_Entity_3, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked_3(QTableWidgetItem*)));
+	connect(ui.tableWidget_Entity_Attitude1, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked_Attitude1(QTableWidgetItem*)));
+	connect(ui.tableWidget_Entity_Attitude2, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked_Attitude2(QTableWidgetItem*)));
 }
 
 AddPlotPair::~AddPlotPair()
@@ -44,6 +48,12 @@ AddPlotPair::~AddPlotPair()
 }
 
 void AddPlotPair::init(PlotType index)
+{
+	onChangeStackIndex(index);
+	onUpdateData();
+}
+
+void AddPlotPair::onChangeStackIndex(PlotType index)
 {
 	switch (index)
 	{
@@ -75,25 +85,62 @@ void AddPlotPair::init(PlotType index)
 		ui.stackedWidget->setCurrentIndex(1);
 		break;
 	}
-
-	updateData();
 }
 
 void AddPlotPair::onBtnAddClicked()
 {
-	QString str = ui.tableWidget_Entity->currentItem()->text();
-	QString str1 = ui.tableWidget_nameUnits->item(ui.tableWidget_nameUnits->currentRow(), 0)->text();
-	m_entityTypeList.append(str);
-	m_entityAttrList.append(str1);
+	int index = ui.stackedWidget->currentIndex();
+	QString strEntity1, strNameUnit1, strSum1, strEntity2, strNameUnit2, strSum2;
+	switch (index)
+	{
+	case 0:
+		strEntity1 = ui.tableWidget_Entity->currentItem()->text();
+		strNameUnit1 = ui.tableWidget_nameUnits->item(ui.tableWidget_nameUnits->currentRow(), 0)->text();
+		strSum1 = strEntity1 + " " + strNameUnit1;
+		strSum2 = "Time";
 
-	QTableWidgetItem* addplot1 = new QTableWidgetItem(str + " " + str1);
-	QTableWidgetItem* addplot2 = new QTableWidgetItem("Time");
+		m_entityTypeList.append(strEntity1);
+		m_entityAttrList.append(strNameUnit1);
+		emit sigAddPlotPair(strEntity1, strNameUnit1);
+		break;
+	case 1:
+		strEntity1 = ui.tableWidget_Entity_2->currentItem()->text();
+		strNameUnit1 = ui.tableWidget_nameUnits_2->item(ui.tableWidget_nameUnits_2->currentRow(), 0)->text();
+		strSum1 = strEntity1 + " " + strNameUnit1;
+		strEntity2 = ui.tableWidget_Entity_3->currentItem()->text();
+		strNameUnit2 = ui.tableWidget_nameUnits_3->item(ui.tableWidget_nameUnits_3->currentRow(), 0)->text();
+		strSum2 = strEntity2 + " " + strNameUnit2;
+
+		m_entityTypeList.append(strEntity1);
+		m_entityAttrList.append(strNameUnit1);
+//		emit sigAddPlotPair(strEntity1, strNameUnit1);
+		m_entityTypeList.append(strEntity2);
+		m_entityAttrList.append(strNameUnit2);
+//		emit sigAddPlotPair(strEntity2, strNameUnit2);
+		break;
+	case 2:
+		strEntity1 = ui.tableWidget_Entity_Attitude1->currentItem()->text();
+		strNameUnit1 = ui.tableWidget_nameUnits_Attitude1->item(ui.tableWidget_nameUnits_Attitude1->currentRow(), 0)->text();
+		strSum1 = strEntity1 + " " + strNameUnit1;
+		strEntity2 = ui.tableWidget_Entity_Attitude2->currentItem()->text();
+		strNameUnit2 = ui.tableWidget_nameUnits_Attitude2->item(ui.tableWidget_nameUnits_Attitude2->currentRow(), 0)->text();
+		strSum2 = strEntity2 + " " + strNameUnit2;
+
+		m_entityTypeList.append(strEntity1);
+		m_entityAttrList.append(strNameUnit1);
+//		emit sigAddPlotPair(strEntity1, strNameUnit1);
+		m_entityTypeList.append(strEntity2);
+		m_entityAttrList.append(strNameUnit2);
+//		emit sigAddPlotPair(strEntity2, strNameUnit2);
+		break;
+	}
+	
+	QTableWidgetItem* addplot1 = new QTableWidgetItem(strSum1);
+	QTableWidgetItem* addplot2 = new QTableWidgetItem(strSum2);
 	int row = ui.tableWidget_union->rowCount();
 	ui.tableWidget_union->insertRow(row);
 	ui.tableWidget_union->setItem(row, 0, addplot1);
-	ui.tableWidget_union->setItem(row, 1, addplot2);
-
-	emit sigAddPlotPair(str, str1);
+	ui.tableWidget_union->setItem(row, 1, addplot2);	
 }
 
 void AddPlotPair::onTableWidgetItemClicked(QTableWidgetItem * curItem)
@@ -118,7 +165,95 @@ void AddPlotPair::onTableWidgetItemClicked(QTableWidgetItem * curItem)
 	}
 }
 
-void AddPlotPair::updateData()
+void AddPlotPair::onTableWidgetItemClicked_2(QTableWidgetItem * curItem)
+{
+	QString currEntityTypeSelected = curItem->text();
+	auto dataMap = DataManager::getInstance()->getDataMap();
+	if (dataMap.isEmpty())
+		return;
+
+	if (!dataMap.contains(currEntityTypeSelected))
+		return;
+
+	QStringList currEntityAttrList = dataMap.value(currEntityTypeSelected).keys();
+
+	ui.tableWidget_nameUnits_2->setRowCount(currEntityAttrList.size());
+	for (int i = 0; i < currEntityAttrList.size(); i++)
+	{
+		QString currEntityAttr = currEntityAttrList.at(i);
+
+		QTableWidgetItem* item = new QTableWidgetItem(currEntityAttr);
+		ui.tableWidget_nameUnits_2->setItem(i, 0, item);
+	}
+}
+
+void AddPlotPair::onTableWidgetItemClicked_3(QTableWidgetItem * curItem)
+{
+	QString currEntityTypeSelected = curItem->text();
+	auto dataMap = DataManager::getInstance()->getDataMap();
+	if (dataMap.isEmpty())
+		return;
+
+	if (!dataMap.contains(currEntityTypeSelected))
+		return;
+
+	QStringList currEntityAttrList = dataMap.value(currEntityTypeSelected).keys();
+
+	ui.tableWidget_nameUnits_3->setRowCount(currEntityAttrList.size());
+	for (int i = 0; i < currEntityAttrList.size(); i++)
+	{
+		QString currEntityAttr = currEntityAttrList.at(i);
+
+		QTableWidgetItem* item = new QTableWidgetItem(currEntityAttr);
+		ui.tableWidget_nameUnits_3->setItem(i, 0, item);
+	}
+}
+
+void AddPlotPair::onTableWidgetItemClicked_Attitude1(QTableWidgetItem * curItem)
+{
+	QString currEntityTypeSelected = curItem->text();
+	auto dataMap = DataManager::getInstance()->getDataMap();
+	if (dataMap.isEmpty())
+		return;
+
+	if (!dataMap.contains(currEntityTypeSelected))
+		return;
+
+	QStringList currEntityAttrList = dataMap.value(currEntityTypeSelected).keys();
+
+	ui.tableWidget_nameUnits_Attitude1->setRowCount(currEntityAttrList.size());
+	for (int i = 0; i < currEntityAttrList.size(); i++)
+	{
+		QString currEntityAttr = currEntityAttrList.at(i);
+
+		QTableWidgetItem* item = new QTableWidgetItem(currEntityAttr);
+		ui.tableWidget_nameUnits_Attitude1->setItem(i, 0, item);
+	}
+}
+
+void AddPlotPair::onTableWidgetItemClicked_Attitude2(QTableWidgetItem * curItem)
+{
+	QString currEntityTypeSelected = curItem->text();
+	auto dataMap = DataManager::getInstance()->getDataMap();
+	if (dataMap.isEmpty())
+		return;
+
+	if (!dataMap.contains(currEntityTypeSelected))
+		return;
+
+	QStringList currEntityAttrList = dataMap.value(currEntityTypeSelected).keys();
+
+	ui.tableWidget_nameUnits_Attitude2->setRowCount(currEntityAttrList.size());
+	for (int i = 0; i < currEntityAttrList.size(); i++)
+	{
+		QString currEntityAttr = currEntityAttrList.at(i);
+
+		QTableWidgetItem* item = new QTableWidgetItem(currEntityAttr);
+		ui.tableWidget_nameUnits_Attitude2->setItem(i, 0, item);
+	}
+}
+
+void AddPlotPair::onUpdateData()
 {
 	auto dataMap = DataManager::getInstance()->getDataMap();
 	if (dataMap.isEmpty())
@@ -140,10 +275,10 @@ void AddPlotPair::updateData()
 		QString currEntityType = it.key();
 		QTableWidgetItem* item = new QTableWidgetItem(currEntityType);
 		ui.tableWidget_Entity->setItem(index, 0, item);
-		ui.tableWidget_Entity_2->setItem(index, 0, item);
-		ui.tableWidget_Entity_3->setItem(index, 0, item);
-		ui.tableWidget_Entity_Attitude1->setItem(index, 0, item);
-		ui.tableWidget_Entity_Attitude2->setItem(index, 0, item);
+		ui.tableWidget_Entity_2->setItem(index, 0, new QTableWidgetItem(*item));
+		ui.tableWidget_Entity_3->setItem(index, 0, new QTableWidgetItem(*item));
+		ui.tableWidget_Entity_Attitude1->setItem(index, 0, new QTableWidgetItem(*item));
+		ui.tableWidget_Entity_Attitude2->setItem(index, 0, new QTableWidgetItem(*item));
 
 		index ++;
 	}
