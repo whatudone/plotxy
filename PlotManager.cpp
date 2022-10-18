@@ -267,6 +267,9 @@ void PlotManager::onAddPlotPair(QString entityType, QString entityAttr)
 	//数据层更新 ->更新对应Item数据
 	// tmpCode
 	//获取当前plotBar控件
+	if (m_plotManager.isEmpty())
+		return;
+
 	auto it = m_plotManager.begin();
 	PlotItemBase* currItem = it.value().at(0);
 	if (currItem)

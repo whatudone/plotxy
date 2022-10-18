@@ -47,6 +47,8 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
 	ui.tabWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(ui.tabWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onContextMenu(const QPoint&)));
     
+	m_nowFocusWidget = new QWidget(this);
+	connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(onFocusChanged(QWidget*, QWidget*)));
 }
 
 PlotXYDemo::~PlotXYDemo()
@@ -77,7 +79,7 @@ void PlotXYDemo::onAddPlotPair()
             m_plotManager, SLOT(onAddPlotPair(QString, QString)));
         connect(m_addPlotPair, SIGNAL(sigAddPlotPair(QString, QString)), 
             m_AdvancedDataManager, SLOT(onAdvancedDataManagerAddPair(QString, QString)));
-
+		connect(this, SIGNAL(sgn_loadDataReady()), m_addPlotPair, SLOT(updateData()));
         m_addPlotPair->init();
     }
         
@@ -88,6 +90,8 @@ void PlotXYDemo::onOpenFile()
 {
     QString path = QFileDialog::getOpenFileName(this, "open File", "/home", tr("Microsoft CSV(*.csv)"));
     DataManager::getInstance()->loadCSV(path);
+
+	sgn_loadDataReady();
 }
 
 void PlotXYDemo::onCustomContextMenuRequested(const QPoint& point)
@@ -117,7 +121,6 @@ void PlotXYDemo::onCustomContextMenuRequested(const QPoint& point)
     foreach(QAction * pAction, list) delete pAction;
     delete pMenu;
 }
-
 
 void PlotXYDemo::onContextMenu(const QPoint& point)
 {
@@ -315,6 +318,11 @@ void PlotXYDemo::onAddPolarPlot()
 
 }
 
+void PlotXYDemo::onFocusChanged(QWidget * oldWidget, QWidget * newWidget)
+{
+	m_nowFocusWidget = newWidget;
+}
+
 void PlotXYDemo::onAddAttitudePlot()
 {
 	int currTabIndex = ui.tabWidget->currentIndex();
@@ -360,6 +368,58 @@ void PlotXYDemo::initWidget(QWidget* w)
     btn->setText(QString::fromLocal8Bit("¹Ø±Õ"));
     btn->setGeometry(10, 10, 130, 25);
     connect(btn, SIGNAL(clicked(bool)), w, SLOT(close()));
+}
+
+PlotType PlotXYDemo::getCurrentFocusPlot()
+{
+	QWidget* subWidget = QApplication::widgetAt(QCursor::pos().x(), QCursor::pos().y());
+	QString name = subWidget->metaObject()->className();
+	if (name.compare("PlotPlotScatter") == 0)
+	{
+		return PlotType::Type_PlotScatter;
+	}
+	else if (name.compare("PlotAScope") == 0)
+	{
+		return PlotType::Type_PlotAScope;
+	} 
+	else if (name.compare("PlotRTI") == 0)
+	{
+		return PlotType::Type_PlotRTI;
+	}
+	else if (name.compare("PlotText") == 0)
+	{
+		return PlotType::Type_PlotText;
+	}
+	else if (name.compare("PlotLight") == 0)
+	{
+		return PlotType::Type_PlotLight;
+	}
+	else if (name.compare("PlotBar") == 0)
+	{
+		return PlotType::Type_PlotBar;
+	}
+	else if (name.compare("PlotDial") == 0)
+	{
+		return PlotType::Type_PlotDial;
+	}
+	else if (name.compare("PlotAttitude") == 0)
+	{
+		return PlotType::Type_PlotAttitude;
+	}
+	else if (name.compare("PlotPolar") == 0)
+	{
+		return PlotType::Type_PlotPolar;
+	}
+	else if (name.compare("PlotTrack") == 0)
+	{
+		return PlotType::Type_PlotTrack;
+	}
+	else if (name.compare("PlotDoppler") == 0)
+	{
+		return PlotType::Type_PlotDoppler;
+	}
+	else
+		return PlotType::Type_PlotScatter;
 }
 
 
