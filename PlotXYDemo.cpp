@@ -1,6 +1,7 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QCheckBox>
 #include <QFileDialog>
+#include <QMetaType>
 
 #include "PlotXYDemo.h"
 #include "FreeWidgetWraper.h"
@@ -22,9 +23,16 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
 
     //m_plotItem = nullptr;
     //m_freeWidgetWraper = nullptr;
+	m_AdvancedDataManager = new AdvancedDataManager();
     m_plotManager = new PlotManager();
-    m_addPlotPair = NULL;
-    m_AdvancedDataManager = new AdvancedDataManager();
+	m_addPlotPair = new AddPlotPair();
+	connect(m_addPlotPair, SIGNAL(sigAddPlotPair(QString, QString)),m_plotManager, SLOT(onAddPlotPair(QString, QString)));
+	connect(m_addPlotPair, SIGNAL(sigAddPlotPair(QString, QString)),m_AdvancedDataManager, SLOT(onAdvancedDataManagerAddPair(QString, QString)));
+	connect(this, SIGNAL(sgn_loadDataReady()), m_addPlotPair, SLOT(onUpdateData()));
+
+	m_curBaseInfo.Base_TabName = nullptr;
+	m_curBaseInfo.Base_PlotName = nullptr;
+	qRegisterMetaType<BaseInfo>("BaseInfo");
 
     setMinimumSize(1600, 1200);
     showMaximized();
@@ -49,11 +57,18 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
     
 	m_nowFocusWidget = new QWidget(this);
 	connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(onFocusChanged(QWidget*, QWidget*)));
+
+	m_lastSelectedType = PlotType::Type_PlotScatter;
 }
 
 PlotXYDemo::~PlotXYDemo()
 {
-
+	if(m_plotManager)
+		m_plotManager->deleteLater();
+	if(m_addPlotPair)
+		m_addPlotPair->deleteLater();
+	if(m_AdvancedDataManager)
+		m_AdvancedDataManager->deleteLater();
 }
 
 void PlotXYDemo::onAdvancedData()
@@ -82,7 +97,8 @@ void PlotXYDemo::onAddPlotPair()
 		connect(this, SIGNAL(sgn_loadDataReady()), m_addPlotPair, SLOT(onUpdateData()));
         m_addPlotPair->init(getCurrentFocusPlot());
     }
-	m_addPlotPair->onChangeStackIndex(getCurrentFocusPlot());
+	m_addPlotPair->onChangeStackIndex(m_lastSelectedType);
+	m_addPlotPair->setPlotBaseInfo(m_curBaseInfo);
     m_addPlotPair->show();
 }
 
@@ -124,6 +140,8 @@ void PlotXYDemo::onCustomContextMenuRequested(const QPoint& point)
 
 void PlotXYDemo::onContextMenu(const QPoint& point)
 {
+	getCurrentFocusPlot();
+
 	QWidget* subWidget = QApplication::widgetAt(QCursor::pos().x(), QCursor::pos().y());
 	QString name = subWidget->objectName();
 	if (name == "PlotItemBase")
@@ -135,7 +153,6 @@ void PlotXYDemo::onContextMenu(const QPoint& point)
 		name = ui.tabWidget->tabText(ui.tabWidget->currentIndex());
 	}
 		
-
 	QMenu* pMenu = new QMenu(this);
 	//QWidgetAction
 	QWidgetAction* object_action = new QWidgetAction(this);
@@ -250,6 +267,7 @@ void PlotXYDemo::onAddBarPlot()
     QString currTabText = ui.tabWidget->tabText(currTabIndex);
 
     PlotBar* plotItem = new PlotBar(ui.tabWidget->currentWidget());
+	plotItem->setTabName(currTabText);
     //bool res = connect(ui.actionStop,SIGNAL(triggered(bool)), plotItem, SLOT(onSwitch(bool)));
     bool res = connect(ui.actionStop, &QAction::triggered, plotItem, &PlotBar::onSwitch);
     res = connect(m_AdvancedDataManager, &AdvancedDataManager::updateColorThresholdMap,
@@ -266,7 +284,9 @@ void PlotXYDemo::onAddBarPlot()
 
     plotItem->show();
 
-    m_plotManager->addPlot(currTabText, plotItem); //tab页可能变更，存在bug
+	m_lastSelectedType = PlotType::Type_PlotBar;
+    m_plotManager->addPlot(currTabText, plotItem);
+	m_addPlotPair->onAddPlot(currTabText, plotItem);
 }
 void PlotXYDemo::onAddTextPlot()
 {
@@ -274,6 +294,7 @@ void PlotXYDemo::onAddTextPlot()
 	QString currTabText = ui.tabWidget->tabText(currTabIndex);
 
 	PlotText* plotItem = new PlotText(ui.tabWidget->currentWidget());
+	plotItem->setTabName(currTabText);
 	//bool res = connect(ui.actionStop,SIGNAL(triggered(bool)), plotItem, SLOT(onSwitch(bool)));
 	connect(ui.actionStop, &QAction::triggered, plotItem, &PlotText::onSwitch);
 	connect(m_AdvancedDataManager, &AdvancedDataManager::updateColorThresholdMap,
@@ -291,7 +312,9 @@ void PlotXYDemo::onAddTextPlot()
 
 	plotItem->show();
 
-	m_plotManager->addPlot(currTabText, plotItem); //tab页可能变更，存在bug
+	m_lastSelectedType = PlotType::Type_PlotText;
+	m_plotManager->addPlot(currTabText, plotItem);
+	m_addPlotPair->onAddPlot(currTabText, plotItem);
 }
 
 void PlotXYDemo::onAddPolarPlot()
@@ -300,6 +323,7 @@ void PlotXYDemo::onAddPolarPlot()
 	QString currTabText = ui.tabWidget->tabText(currTabIndex);
 
 	PlotPolar* plotItem = new PlotPolar(ui.tabWidget->currentWidget());
+	plotItem->setTabName(currTabText);
 	//bool res = connect(ui.actionStop,SIGNAL(triggered(bool)), plotItem, SLOT(onSwitch(bool)));
 	bool res = connect(ui.actionStop, &QAction::triggered, plotItem, &PlotPolar::onSwitch);
 	res = connect(m_AdvancedDataManager, &AdvancedDataManager::updateColorThresholdMap,
@@ -315,7 +339,9 @@ void PlotXYDemo::onAddPolarPlot()
 
 	plotItem->show();
 
+	m_lastSelectedType = PlotType::Type_PlotPolar;
 	m_plotManager->addPlot(currTabText, plotItem); 
+	m_addPlotPair->onAddPlot(currTabText, plotItem);
 
 }
 
@@ -330,6 +356,8 @@ void PlotXYDemo::onAddAttitudePlot()
 	QString currTabText = ui.tabWidget->tabText(currTabIndex);
 
 	PlotAttitude* plotItem = new PlotAttitude(ui.tabWidget->currentWidget());
+	plotItem->setTabName(currTabText);
+	connect(ui.actionStop, &QAction::triggered, plotItem, &PlotAttitude::onSwitch);
 	initWidget(plotItem);
 
 	// 控制其自由移动和缩放
@@ -341,14 +369,16 @@ void PlotXYDemo::onAddAttitudePlot()
 
 	plotItem->show();
 	plotItem->update();
-	m_plotManager->addPlot(currTabText, plotItem); //tab页可能变更，存在bug
+
+	m_lastSelectedType = PlotType::Type_PlotAttitude;
+	m_plotManager->addPlot(currTabText, plotItem);
+	m_addPlotPair->onAddPlot(currTabText, plotItem);	
 }
 
 void PlotXYDemo::init()
 {
 
 }
-
 
 void PlotXYDemo::initWidget(QWidget* w)
 {
@@ -375,52 +405,67 @@ PlotType PlotXYDemo::getCurrentFocusPlot()
 {
 	QWidget* subWidget = QApplication::widgetAt(QCursor::pos().x(), QCursor::pos().y());
 	QString name = subWidget->metaObject()->className();
+
+	QString objname = subWidget->objectName();
+	if (objname == "PlotItemBase")
+	{
+		m_curBaseInfo.Base_PlotName = dynamic_cast<PlotItemBase*>(subWidget)->currName();
+		m_curBaseInfo.Base_TabName = dynamic_cast<PlotItemBase*>(subWidget)->currTabName();
+	}
+	else
+	{
+		m_curBaseInfo.Base_PlotName = nullptr;
+		m_curBaseInfo.Base_TabName = ui.tabWidget->tabText(ui.tabWidget->currentIndex());
+	}
+
 	if (name.compare("PlotPlotScatter") == 0)
 	{
-		return PlotType::Type_PlotScatter;
+		m_lastSelectedType =  PlotType::Type_PlotScatter;
 	}
 	else if (name.compare("PlotAScope") == 0)
 	{
-		return PlotType::Type_PlotAScope;
+		m_lastSelectedType = PlotType::Type_PlotAScope;
 	} 
 	else if (name.compare("PlotRTI") == 0)
 	{
-		return PlotType::Type_PlotRTI;
+		m_lastSelectedType = PlotType::Type_PlotRTI;
 	}
 	else if (name.compare("PlotText") == 0)
 	{
-		return PlotType::Type_PlotText;
+		m_lastSelectedType = PlotType::Type_PlotText;
 	}
 	else if (name.compare("PlotLight") == 0)
 	{
-		return PlotType::Type_PlotLight;
+		m_lastSelectedType = PlotType::Type_PlotLight;
 	}
 	else if (name.compare("PlotBar") == 0)
 	{
-		return PlotType::Type_PlotBar;
+		m_lastSelectedType = PlotType::Type_PlotBar;
 	}
 	else if (name.compare("PlotDial") == 0)
 	{
-		return PlotType::Type_PlotDial;
+		m_lastSelectedType = PlotType::Type_PlotDial;
 	}
 	else if (name.compare("PlotAttitude") == 0)
 	{
-		return PlotType::Type_PlotAttitude;
+		m_lastSelectedType = PlotType::Type_PlotAttitude;
 	}
 	else if (name.compare("PlotPolar") == 0)
 	{
-		return PlotType::Type_PlotPolar;
+		m_lastSelectedType = PlotType::Type_PlotPolar;
 	}
 	else if (name.compare("PlotTrack") == 0)
 	{
-		return PlotType::Type_PlotTrack;
+		m_lastSelectedType = PlotType::Type_PlotTrack;
 	}
 	else if (name.compare("PlotDoppler") == 0)
 	{
-		return PlotType::Type_PlotDoppler;
+		m_lastSelectedType = PlotType::Type_PlotDoppler;
 	}
 	else
-		return PlotType::Type_PlotScatter;
+		m_lastSelectedType = PlotType::Type_PlotScatter;
+
+	return m_lastSelectedType;
 }
 
 

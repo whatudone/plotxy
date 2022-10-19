@@ -6,6 +6,7 @@
 
 #pragma once
 #include "PlotItemBase.h"
+#include <QTimer>
 class PlotAttitude :
 	public PlotItemBase
 {
@@ -27,7 +28,11 @@ public:
 	void drawText_roll(QPainter *painter, int radius);
 	void drawText_pitch(QPainter *painter, int radius);
 private:
-	
+	QTimer* m_timer;
+	int m_currTimeIndex;
+	bool m_started;
+
+
 	QColor m_titleColor;				//标题颜色
 	QColor m_border_ColorStart;			//边框渐变开始颜色
 	QColor m_border_ColorEnd;			//边框渐变结束颜色
@@ -81,6 +86,8 @@ public:
 	QSize sizeHint()                const;
 	QSize minimumSizeHint()         const;
 
+	void updateItems();
+
 public slots:
 	//设置边框渐变颜色
 	void slot_setBorderColorStart(const QColor &borderOutColorStart);
@@ -117,9 +124,13 @@ public slots:
 	void slot_setTitle(QString title);
 
 	//设置旋转角度值
-	void slot_setDegValue(int pitchValue);
+	void slot_setPitchValue(double pitchValue);
 
 	//设置前进旋转值
-	void slot_setRollValue(int rollValue);
+	void slot_setRollValue(double rollValue);
+
+	//
+	void onTimerout();
+	void onSwitch(bool);
 };
 

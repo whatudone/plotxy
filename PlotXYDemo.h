@@ -53,6 +53,8 @@ private:
     PlotManager* m_plotManager;
     AddPlotPair* m_addPlotPair;
     AdvancedDataManager* m_AdvancedDataManager;
+	BaseInfo m_curBaseInfo;
+	PlotType m_lastSelectedType;
 };
 
 #endif // ! 

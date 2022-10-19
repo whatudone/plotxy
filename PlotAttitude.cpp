@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QPainter>
 #include <QtMath>
+#include "DataManager.h"
 
 int PlotAttitude::m_instanceCount = 1;
 PlotAttitude::PlotAttitude(QWidget* parent)
@@ -22,8 +23,8 @@ PlotAttitude::PlotAttitude(QWidget* parent)
 	m_pitchValue = 0.0;
 	m_rollValue = 0.0;
 
-	m_startAngle_pitch = -90.0;
-	m_endAngle_pitch = 90;
+	m_startAngle_pitch = 0.0;
+	m_endAngle_pitch = 360.0;
 	m_startAngle_roll = 0.0;
 	m_endAngle_roll = 360.0;
 	m_coordNum_roll = 4;
@@ -52,6 +53,10 @@ PlotAttitude::PlotAttitude(QWidget* parent)
 	QString name = QString("Attitude%1").arg(m_instanceCount);
 	this->setName(name);
 	m_instanceCount += 1;
+
+	m_currTimeIndex = 0;
+	m_timer = new QTimer(this);
+	connect(m_timer, &QTimer::timeout, this, &PlotAttitude::onTimerout);
 }
 
 PlotAttitude::~PlotAttitude()
@@ -87,6 +92,11 @@ void PlotAttitude::paintEvent(QPaintEvent* event)
 	//»æÖÆÎÄ±¾
 	drawText_roll(&painter, side / 2);
 	drawText_pitch(&painter, side / 2);
+
+	if (m_started)
+	{
+		updateItems();
+	}
 }
 
 void PlotAttitude::drawTitle(QPainter * painter, int radius)
@@ -199,7 +209,7 @@ void PlotAttitude::drawLine_roll(QPainter *painter, int radius)
 {
 	painter->save();
 	painter->setPen(QPen(m_lineColor_roll, 4));
-	painter->rotate(m_rollValue - m_startAngle_roll);
+	painter->rotate(fmodf(m_rollValue, 360) - m_startAngle_roll);
 	painter->drawLine(QPoint(-radius / 2, 0), QPoint(radius / 2, 0));
 	painter->drawLine(QPoint(0, 0), QPoint(0, -radius / 2));
 
@@ -210,9 +220,9 @@ void PlotAttitude::drawLine_pitch(QPainter *painter, int radius)
 {
 	painter->save();
 	painter->setPen(QPen(m_lineColor_pitch, 4));
-	if (m_pitchValue > m_startAngle_pitch && m_pitchValue < m_endAngle_pitch)
+	if (fmodf(m_pitchValue,360) > m_startAngle_pitch && fmodf(m_pitchValue, 360) < m_endAngle_pitch)
 	{ 
-		double translate_y = (m_endAngle_pitch - m_pitchValue) / (m_endAngle_pitch - m_startAngle_pitch) * 2 * radius - radius;
+		double translate_y = (m_endAngle_pitch - fmodf(m_pitchValue, 360)) / (m_endAngle_pitch - m_startAngle_pitch) * 2 * radius - radius;
 		painter->translate(0, translate_y);
 		painter->drawLine(QPoint(-radius / 2, 0), QPoint(radius / 2, 0));
 	}
@@ -324,6 +334,55 @@ QSize PlotAttitude::minimumSizeHint() const
 	return QSize();
 }
 
+void PlotAttitude::updateItems()
+{
+	if (getPlotPairData().isEmpty())
+		return;
+	
+	int isize = getPlotPairData().size();
+	QString xcolumn = getPlotPairData().at(0).first;
+	QString ycolumn = getPlotPairData().at(0).second;
+	QStringList xlist = xcolumn.split(" ");
+	QStringList ylist = ycolumn.split(" ");
+
+	auto dataMap = DataManager::getInstance()->getDataMap();
+	if (xlist.size() == 2)
+	{
+		if (dataMap.contains(xlist.at(0)))
+		{
+			if (dataMap.value(xlist.at(0)).contains(xlist.at(1)))
+			{
+				if (m_currTimeIndex < dataMap.value(xlist.at(0)).value(xlist.at(1)).size())
+				{
+					slot_setRollValue(dataMap.value(xlist.at(0)).value(xlist.at(1)).at(m_currTimeIndex));
+				}
+			}
+		}
+	}
+	else if (xlist.size() == 1)
+	{
+
+	}
+
+	if (ylist.size() == 2)
+	{
+		if (dataMap.contains(ylist.at(0)))
+		{
+			if (dataMap.value(ylist.at(0)).contains(ylist.at(1)))
+			{
+				if (m_currTimeIndex < dataMap.value(ylist.at(0)).value(ylist.at(1)).size())
+				{
+					slot_setPitchValue(dataMap.value(ylist.at(0)).value(ylist.at(1)).at(m_currTimeIndex));
+				}
+			}
+		}
+	}
+	else if (ylist.size() == 1)
+	{
+
+	}
+}
+
 void PlotAttitude::slot_setBorderColorStart(const QColor &borderOutColorStart)
 {
 	m_border_ColorStart = borderOutColorStart;
@@ -408,14 +467,34 @@ void PlotAttitude::slot_setTitle(QString title)
 	update();
 }
 
-void PlotAttitude::slot_setDegValue(int pitchValue)
+void PlotAttitude::slot_setPitchValue(double pitchValue)
 {
 	m_pitchValue = pitchValue;
 	update();
 }
 
-void PlotAttitude::slot_setRollValue(int rollValue)
+void PlotAttitude::slot_setRollValue(double rollValue)
 {
 	m_rollValue = rollValue;
 	update();
+}
+
+void PlotAttitude::onTimerout()
+{
+	m_currTimeIndex++;
+	update();
+}
+
+void PlotAttitude::onSwitch(bool bOn)
+{
+	if (!m_started)
+	{
+		m_timer->start(500);
+		m_started = true;
+	}
+	else
+	{
+		m_timer->stop();
+		m_started = false;
+	}
 }
