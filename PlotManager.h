@@ -40,6 +40,7 @@ public slots:
 	void spinboxRightChanged();
 
 	void onAddPlotPair(QString,QString);
+	void onAddPlotPair(QString tabName, QString plotName, QString xColumn, QString yColumn);
 
 signals:
 	void sigAddPlotPair();

@@ -146,12 +146,42 @@ void PlotManager::addPlot(/*int currTabIndex*/const QString& tabName, PlotItemBa
 
 void PlotManager::onTWSPclicked(QTreeWidgetItem* item, int i)
 {
-	QString compare;
-	compare = item->text(i);
-	if (compare == "Bar")
+	QTreeWidgetItem *parent = item->parent();
+	if (NULL == parent)
+		return;
+
+	QString parent_text = parent->text(0);
+	QString child_text = item->text(i);
+
+	if (m_plotManager.contains(parent_text))
+	{
+		for (int i = 0; i < m_plotManager[parent_text].size(); ++i)
+		{
+			PlotItemBase *tempPlot = m_plotManager[parent_text].at(i);
+			if (child_text == tempPlot->currName())
+			{
+				ui.treeWidget_4->clear();
+
+				QList<QPair<QString, QString>> plotPairData = tempPlot->getPlotPairData();
+				for (int k = 0; k < plotPairData.size(); ++k)
+				{
+					//界面更新
+					QTreeWidgetItem* addplotItem = new QTreeWidgetItem;
+					addplotItem->setText(0, plotPairData[k].first);
+					addplotItem->setText(1, plotPairData[k].second);
+
+					ui.treeWidget_4->addTopLevelItem(addplotItem);
+				}
+
+				break;
+			}
+		}
+	}
+
+	/*if (child_text == "Bar")
 	{
 		m_itemBar->setDisabled(false);
-	}
+	}*/
 }
 
 void PlotManager::onAddNewClicked()
@@ -288,6 +318,69 @@ void PlotManager::onAddPlotPair(QString entityType, QString entityAttr)
 	{
 		PlotBar* currBarItem = dynamic_cast<PlotBar*>(currItem);
 		currBarItem->addPlotDataPair(entityType, entityAttr);
+	}
+}
+
+void PlotManager::onAddPlotPair(QString tabName, QString plotName, QString xColumn, QString yColumn)
+{
+	//界面更新
+	QTreeWidgetItem* addplotItem = new QTreeWidgetItem;
+	addplotItem->setText(0, xColumn);
+	addplotItem->setText(1, yColumn);
+	ui.treeWidget_4->addTopLevelItem(addplotItem);
+
+	//获取当前plotBar控件
+	if (m_plotManager[tabName].isEmpty())
+		return;
+
+	for (int i = 0; i < m_plotManager[tabName].size(); ++i)
+	{
+		PlotItemBase* currItem = m_plotManager[tabName].at(i);
+		QString name = currItem->metaObject()->className();
+		if (name.compare("PlotPlotScatter") == 0)
+		{
+			
+		}
+		else if (name.compare("PlotAScope") == 0)
+		{
+			
+		}
+		else if (name.compare("PlotRTI") == 0)
+		{
+			
+		}
+		else if (name.compare("PlotText") == 0)
+		{
+			
+		}
+		else if (name.compare("PlotLight") == 0)
+		{
+			
+		}
+		else if (name.compare("PlotBar") == 0)
+		{
+			
+		}
+		else if (name.compare("PlotDial") == 0)
+		{
+			
+		}
+		else if (name.compare("PlotAttitude") == 0)
+		{
+			
+		}
+		else if (name.compare("PlotPolar") == 0)
+		{
+			
+		}
+		else if (name.compare("PlotTrack") == 0)
+		{
+			
+		}
+		else if (name.compare("PlotDoppler") == 0)
+		{
+			
+		}
 	}
 }
 

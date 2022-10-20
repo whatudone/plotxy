@@ -84,6 +84,16 @@ QString PlotItemBase::currTabName()
     return m_tabName;
 }
 
+void PlotItemBase::addPlotPairData(QPair<QString, QString> pair)
+{
+	m_plotPairData.append(pair);
+}
+
+QList<QPair<QString, QString>> PlotItemBase::getPlotPairData()
+{
+	return m_plotPairData;
+}
+
 //void PlotItemBase::setVisible(bool bVisible)
 //{
 //    m_bVisible = bVisible;

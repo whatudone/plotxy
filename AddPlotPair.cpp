@@ -102,11 +102,20 @@ void AddPlotPair::onChangeStackIndex(PlotType index)
 	}
 }
 
+void AddPlotPair::setPlotBaseInfo(BaseInfo info)
+{
+	memcpy(&m_curPlotInfo, &info, sizeof(BaseInfo));
+}
+
 void AddPlotPair::onBtnAddClicked()
 {
 	int index = ui.stackedWidget->currentIndex();
 	QString strEntity1, strNameUnit1, strSum1, strEntity2, strNameUnit2, strSum2;
+//<<<<<<< HEAD
 
+//=======
+	QPair<QString, QString> p1, p2;
+//>>>>>>> fb07a5330de0134b60fc6116b66a57a1e531dac2
 	switch (index)
 	{
 	case 0:
@@ -118,6 +127,7 @@ void AddPlotPair::onBtnAddClicked()
 
 		m_entityTypeList.append(strEntity1);
 		m_entityAttrList.append(strNameUnit1);
+
 		emit sigAddPlotPair(strEntity1, strNameUnit1);
 		break;
 
@@ -134,9 +144,6 @@ void AddPlotPair::onBtnAddClicked()
 		m_entityTypeList.append(strEntity1);
 		m_entityAttrList.append(strNameUnit1);
 //		emit sigAddPlotPair(strEntity1, strNameUnit1);
-		m_entityTypeList.append(strEntity2);
-		m_entityAttrList.append(strNameUnit2);
-//		emit sigAddPlotPair(strEntity2, strNameUnit2);
 		break;
 	case 2:
 		strEntity1 = ui.tableWidget_Entity_Attitude1->currentItem()->text();
@@ -149,9 +156,6 @@ void AddPlotPair::onBtnAddClicked()
 		m_entityTypeList.append(strEntity1);
 		m_entityAttrList.append(strNameUnit1);
 //		emit sigAddPlotPair(strEntity1, strNameUnit1);
-		m_entityTypeList.append(strEntity2);
-		m_entityAttrList.append(strNameUnit2);
-//		emit sigAddPlotPair(strEntity2, strNameUnit2);
 		break;
 	case 3:
 		
@@ -166,13 +170,28 @@ void AddPlotPair::onBtnAddClicked()
 
 		break;
 	}
-	
+//	p1 = qMakePair(m_curPlotInfo.Base_TabName, m_curPlotInfo.Base_PlotName);
+	p2 = qMakePair(strSum1, strSum2);
+
+	if (m_plotManager.contains(m_curPlotInfo.Base_TabName))
+	{
+		for (int i = 0; i < m_plotManager[m_curPlotInfo.Base_TabName].size(); ++i)
+		{
+			PlotItemBase* tempPlot = m_plotManager[m_curPlotInfo.Base_TabName].at(i);
+			if (m_curPlotInfo.Base_PlotName == tempPlot->currName())
+			{
+				tempPlot->addPlotPairData(p2);
+				break;
+			}
+		}
+	}
+
 	QTableWidgetItem* addplot1 = new QTableWidgetItem(strSum1);
 	QTableWidgetItem* addplot2 = new QTableWidgetItem(strSum2);
 	int row = ui.tableWidget_union->rowCount();
 	ui.tableWidget_union->insertRow(row);
 	ui.tableWidget_union->setItem(row, 0, addplot1);
-	ui.tableWidget_union->setItem(row, 1, addplot2);	
+	ui.tableWidget_union->setItem(row, 1, addplot2);
 }
 
 void AddPlotPair::onTableWidgetItemClicked(QTableWidgetItem * curItem)
@@ -363,6 +382,12 @@ int AddPlotPair::textCloumnCount()
 	}
 	textCountSum = m_temSet2.size();
 	return  textCountSum;
+}
+
+void AddPlotPair::onAddPlot(const QString &tabName, PlotItemBase *plotItem)
+{
+	//数据层更新
+	m_plotManager[tabName].append(plotItem);
 }
 
 void AddPlotPair::onBtnCloseClicked()

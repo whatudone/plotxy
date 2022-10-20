@@ -38,6 +38,10 @@ public:
     QString currName();
     QString currTabName();
 
+	void addPlotPairData(QPair<QString, QString>);
+	void delPlotPairData(QPair<QString, QString>);
+	QList<QPair<QString, QString>> getPlotPairData();
+
 protected:
     //virtual void paintEvent(QPaintEvent* event);
 
@@ -48,6 +52,7 @@ private:
     QString m_plotItemName;
     QString m_tabName;
     bool    m_bVisible;
+	QList<QPair<QString, QString>> m_plotPairData;
 
     Ui::PlotItemBase ui;
 };

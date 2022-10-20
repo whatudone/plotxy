@@ -17,5 +17,11 @@ enum PlotType
 	Type_PlotDoppler
 };
 
+struct BaseInfo
+{
+	QString Base_TabName;
+	QString Base_PlotName;
+};
+
 
 #endif // _CONST_DEF_H_
