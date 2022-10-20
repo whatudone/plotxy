@@ -25,7 +25,7 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
     //m_freeWidgetWraper = nullptr;
 	m_AdvancedDataManager = new AdvancedDataManager();
     m_plotManager = new PlotManager();
-	m_addPlotPair = new AddPlotPair();
+	m_addPlotPair = AddPlotPair::m_getInstance();
 	connect(m_addPlotPair, SIGNAL(sigAddPlotPair(QString, QString)),m_plotManager, SLOT(onAddPlotPair(QString, QString)));
 	connect(m_addPlotPair, SIGNAL(sigAddPlotPair(QString, QString)),m_AdvancedDataManager, SLOT(onAdvancedDataManagerAddPair(QString, QString)));
 	connect(this, SIGNAL(sgn_loadDataReady()), m_addPlotPair, SLOT(onUpdateData()));

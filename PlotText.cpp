@@ -139,9 +139,9 @@ void PlotText::paintEvent(QPaintEvent* event)
 			painter.drawRect(gridRect);
 			painter.drawText(0.35* horiGridWidth, (j + 1.5) * verGridWidth, *it2);
 			j++;
-			list = smallMap.value(*it2);
+			/*list = smallMap.value(*it2);
 			QString str = QString("%1").arg(list.first());
-			painter.drawText((i + 0.35)* horiGridWidth, (j + 1.5) * verGridWidth, str);
+			painter.drawText((i + 0.35)* horiGridWidth, (j + 1.5) * verGridWidth, str);*/
 		}
 	}
 }
