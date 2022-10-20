@@ -11,10 +11,18 @@ class AddPlotPair : public QWidget
     Q_OBJECT
 
 public:
-    explicit AddPlotPair(QWidget *parent = 0);
+	static AddPlotPair* m_getInstance();
+	
     ~AddPlotPair();
 
     void init(PlotType index = PlotType::Type_PlotScatter);
+	int textRowCount();
+	int textCloumnCount();
+
+	QSet<QString> m_temSet1;
+	QSet<QString> m_temSet2;
+
+
 
     QStringList m_entityTypeList;
     QStringList m_entityAttrList;
@@ -29,12 +37,15 @@ public slots:
 	void onTableWidgetItemClicked(QTableWidgetItem*);
 	void onTableWidgetItemClicked_2(QTableWidgetItem*);
 	void onTableWidgetItemClicked_3(QTableWidgetItem*);
+	void onTableWidgetItemClicked_4(QTableWidgetItem*);
 	void onTableWidgetItemClicked_Attitude1(QTableWidgetItem*);
 	void onTableWidgetItemClicked_Attitude2(QTableWidgetItem*);
 	void onUpdateData();
 	
 private:
     Ui::AddPlotPair ui;
+	static AddPlotPair* thispoint;
+	explicit AddPlotPair(QWidget *parent = 0);
 };
 
 #endif // _ADD_PLOT_PAIR_H_

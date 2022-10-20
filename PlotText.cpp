@@ -1,6 +1,8 @@
 #include "PlotText.h"
 #include "DataManager.h"
+#include "AddPlotPair.h"
 #include <QPainter>
+#include <QStringList>
 #include <QPen>
 
 
@@ -15,6 +17,8 @@ PlotText::PlotText(QWidget* parent)
 	m_interPadding = 20;
 
 	m_currTimeIndex = 0;
+
+
 
 	m_horiGridNum = 4;
 	m_verGridNum = 5;
@@ -48,12 +52,14 @@ void PlotText::onSwitch(bool bOn)
 		m_started = false;
 	}
 }
-void PlotText::onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>>targetMap)
-{
-	m_thresholdColorMap = targetMap;
-}
+
 void PlotText::paintEvent(QPaintEvent* event)
 {
+	AddPlotPair* addPP = AddPlotPair::m_getInstance();
+	m_horiGridNum = addPP->textRowCount()+1;
+	m_verGridNum = addPP->textCloumnCount()+1;
+	std::shared_ptr<DataManager> dataM = DataManager::getInstance();
+
 	//绘制x轴和y轴
 	QPainter painter(this);
 	QPen pen;
@@ -75,34 +81,72 @@ void PlotText::paintEvent(QPaintEvent* event)
 	brush.setStyle(Qt::SolidPattern);
 	//painter.setBrush(brush);
 
-	int horiGridWidth = 0;
+	//拿set里面的string
+	QSet<QString> set1,set2;
+	set1 = addPP->m_temSet1;
+	set2 = addPP->m_temSet2;
+	int i = 0,j = 0;
+	double horiGridWidth = 0;
+	QMap<QString, QMap<QString, QList<double>>> map;
+	QMap<QString, QList<double>> smallMap;
+	map = dataM->getDataMap();
+	QList<double> list;
+
+
 	if (m_horiGridNum)		//item水平方向延展
 	{
 		horiGridWidth = width() / m_horiGridNum;
 	}
+	pen.setColor(Qt::white);
+	brush.setColor(Qt::white);
+	//横向（列）
+	//for (QSet<QString>::iterator it = set1.begin(); it != set1.end();it++)
+	//{
+	//	i++;
+	//	QRect gridRect;
+	//	gridRect.setRect(i* horiGridWidth, 0, horiGridWidth, height());
+	//	painter.drawRect(gridRect);
+	//	painter.drawText((i+0.35)* horiGridWidth, (height() / m_verGridNum)*0.5, *it);
+	//}
 
-	for (int i = 0; i < m_horiGridNum; i++)
-	{
-		QRect gridRect;
-		gridRect.setRect(i* horiGridWidth, 0, horiGridWidth, height());
-		painter.drawRect(gridRect);
-	}
-
-	int verGridWidth = 0;
+	double verGridWidth = 0;
 	if (m_verGridNum)		//item水平方向延展
 	{
 		verGridWidth = height() / m_verGridNum;
 	}
+	//纵向（行）
+	//for (QSet<QString>::iterator it = set2.begin(); it != set2.end(); it++)
+	//{
+	//	
+	//	QRect gridRect;
+	//	gridRect.setRect(0, (j + 1) * verGridWidth, width(), verGridWidth);
+	//	painter.drawRect(gridRect);
+	//	painter.drawText(0.35* horiGridWidth, (j + 1.5) * verGridWidth, *it);
+	//	j++;
+	//}
 
-	for (int i = 0; i < m_verGridNum; i++)
+	for (QSet<QString>::iterator it = set1.begin(); it != set1.end(); it++)
 	{
+		i++;
 		QRect gridRect;
-		gridRect.setRect(0, (i + 1) * verGridWidth, width(), verGridWidth);
+		gridRect.setRect(i* horiGridWidth, 0, horiGridWidth, height());
 		painter.drawRect(gridRect);
+		painter.drawText((i + 0.35)* horiGridWidth, (height() / m_verGridNum)*0.5, *it);
+		for (QSet<QString>::iterator it2 = set2.begin(); it2 != set2.end(); it2++)
+		{
+			QRect gridRect;
+			gridRect.setRect(0, (j + 1) * verGridWidth, width(), verGridWidth);
+			painter.drawRect(gridRect);
+			painter.drawText(0.35* horiGridWidth, (j + 1.5) * verGridWidth, *it2);
+			j++;
+			list = smallMap.value(*it2);
+			QString str = QString("%1").arg(list.first());
+			painter.drawText((i + 0.35)* horiGridWidth, (j + 1.5) * verGridWidth, str);
+		}
 	}
 }
 
-void PlotText::drawRect(int itemIndex, bool bHorizontal, int itemLength, int leftBoundary, int rightBoundary, QColor color)
+void PlotText::drawRect(double itemIndex, bool bHorizontal, double itemLength, double leftBoundary, double rightBoundary, QColor color)
 {
 	QPainter painter(this);
 	QPen pen;
@@ -115,8 +159,11 @@ void PlotText::drawRect(int itemIndex, bool bHorizontal, int itemLength, int lef
 	painter.setPen(pen);
 	painter.setBrush(brush);
 
-	int height = this->height();
-	int width = this->width();
+	
+
+
+	double height = this->height();
+	double width = this->width();
 
 	QRect rect;
 	if (bHorizontal)

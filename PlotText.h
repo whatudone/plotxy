@@ -27,11 +27,10 @@ public:
 
 	void onSwitch(bool bOn);
 	//void updateItems();
-	void drawRect(int itemIndex, bool bHorizontal, int itemLength, int leftBoundary, int rightBoundary, QColor color);
+	void drawRect(double itemIndex, bool bHorizontal, double itemLength, double leftBoundary, double rightBoundary, QColor color);
 public:
 	static int m_instanceCount;			//实体个数
 public slots:
-void onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>>);
 
 
 private:

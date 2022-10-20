@@ -74,7 +74,7 @@ void PlotXYDemo::onAddPlotPair()
 {
     if (!m_addPlotPair)
     {
-        m_addPlotPair = new AddPlotPair();
+		m_addPlotPair = AddPlotPair::m_getInstance();
         connect(m_addPlotPair, SIGNAL(sigAddPlotPair(QString, QString)), 
             m_plotManager, SLOT(onAddPlotPair(QString, QString)));
         connect(m_addPlotPair, SIGNAL(sigAddPlotPair(QString, QString)), 
@@ -276,8 +276,8 @@ void PlotXYDemo::onAddTextPlot()
 	PlotText* plotItem = new PlotText(ui.tabWidget->currentWidget());
 	//bool res = connect(ui.actionStop,SIGNAL(triggered(bool)), plotItem, SLOT(onSwitch(bool)));
 	connect(ui.actionStop, &QAction::triggered, plotItem, &PlotText::onSwitch);
-	connect(m_AdvancedDataManager, &AdvancedDataManager::updateColorThresholdMap,
-		plotItem, &PlotText::onUpdateColorThresholdMap);
+	//connect(m_AdvancedDataManager, &AdvancedDataManager::updateColorThresholdMap,
+	//	plotItem, &PlotText::onUpdateColorThresholdMap);
 	// 好像是数据处理有关的东西
 
 	initWidget(plotItem);

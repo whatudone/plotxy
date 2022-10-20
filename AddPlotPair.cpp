@@ -3,17 +3,27 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QDebug>
+#include <QSet>
 #include <QMessageBox>
 #include "DataManager.h"
+AddPlotPair* AddPlotPair::thispoint = nullptr;
+AddPlotPair* AddPlotPair::m_getInstance()
+{
+	if (thispoint == nullptr)
+		thispoint = new AddPlotPair;
+	return thispoint;
+}
 
 AddPlotPair::AddPlotPair(QWidget *parent) :
     QWidget(parent)
 {
+
     ui.setupUi(this);
     this->setWindowTitle("Add Plot Pair");
 	ui.tableWidget_Entity->setStyleSheet("QHeaderView::section{background:lightgray;}");
 	ui.tableWidget_Entity_2->setStyleSheet("QHeaderView::section{background:lightgray;}");
 	ui.tableWidget_Entity_3->setStyleSheet("QHeaderView::section{background:lightgray;}");
+	ui.tableWidget_Entity_4->setStyleSheet("QHeaderView::section{background:lightgray;}");
 	ui.tableWidget_Entity_Attitude1->setStyleSheet("QHeaderView::section{background:lightgray;}");
 	ui.tableWidget_Entity_Attitude2->setStyleSheet("QHeaderView::section{background:lightgray;}");
 
@@ -26,6 +36,9 @@ AddPlotPair::AddPlotPair(QWidget *parent) :
 	ui.tableWidget_Entity_3->horizontalHeader()->setStretchLastSection(true);
 	ui.tableWidget_Entity_3->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui.tableWidget_Entity_3->verticalHeader()->hide();
+	ui.tableWidget_Entity_4->horizontalHeader()->setStretchLastSection(true);
+	ui.tableWidget_Entity_4->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	ui.tableWidget_Entity_4->verticalHeader()->hide();
 	ui.tableWidget_Entity_Attitude1->horizontalHeader()->setStretchLastSection(true);
 	ui.tableWidget_Entity_Attitude1->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui.tableWidget_Entity_Attitude1->verticalHeader()->hide();
@@ -39,6 +52,7 @@ AddPlotPair::AddPlotPair(QWidget *parent) :
 	connect(ui.tableWidget_Entity, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked(QTableWidgetItem*)));
 	connect(ui.tableWidget_Entity_2, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked_2(QTableWidgetItem*)));
 	connect(ui.tableWidget_Entity_3, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked_3(QTableWidgetItem*)));
+	connect(ui.tableWidget_Entity_4, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked_4(QTableWidgetItem*)));
 	connect(ui.tableWidget_Entity_Attitude1, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked_Attitude1(QTableWidgetItem*)));
 	connect(ui.tableWidget_Entity_Attitude2, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked_Attitude2(QTableWidgetItem*)));
 }
@@ -65,6 +79,7 @@ void AddPlotPair::onChangeStackIndex(PlotType index)
 	case Type_PlotRTI:
 		break;
 	case Type_PlotText:
+		ui.stackedWidget->setCurrentIndex(3);
 		break;
 	case Type_PlotLight:
 		break;
@@ -82,7 +97,7 @@ void AddPlotPair::onChangeStackIndex(PlotType index)
 	case Type_PlotDoppler:
 		break;
 	default:
-		ui.stackedWidget->setCurrentIndex(1);
+		ui.stackedWidget->setCurrentIndex(3);
 		break;
 	}
 }
@@ -91,11 +106,13 @@ void AddPlotPair::onBtnAddClicked()
 {
 	int index = ui.stackedWidget->currentIndex();
 	QString strEntity1, strNameUnit1, strSum1, strEntity2, strNameUnit2, strSum2;
+
 	switch (index)
 	{
 	case 0:
 		strEntity1 = ui.tableWidget_Entity->currentItem()->text();
 		strNameUnit1 = ui.tableWidget_nameUnits->item(ui.tableWidget_nameUnits->currentRow(), 0)->text();
+
 		strSum1 = strEntity1 + " " + strNameUnit1;
 		strSum2 = "Time";
 
@@ -103,6 +120,9 @@ void AddPlotPair::onBtnAddClicked()
 		m_entityAttrList.append(strNameUnit1);
 		emit sigAddPlotPair(strEntity1, strNameUnit1);
 		break;
+
+
+
 	case 1:
 		strEntity1 = ui.tableWidget_Entity_2->currentItem()->text();
 		strNameUnit1 = ui.tableWidget_nameUnits_2->item(ui.tableWidget_nameUnits_2->currentRow(), 0)->text();
@@ -132,6 +152,18 @@ void AddPlotPair::onBtnAddClicked()
 		m_entityTypeList.append(strEntity2);
 		m_entityAttrList.append(strNameUnit2);
 //		emit sigAddPlotPair(strEntity2, strNameUnit2);
+		break;
+	case 3:
+		
+		strEntity1 = ui.tableWidget_Entity_4->currentItem()->text();
+		strNameUnit1 = ui.tableWidget_nameUnits_4->item(ui.tableWidget_nameUnits_4->currentRow(), 0)->text();
+
+		strSum1 = strEntity1;
+		strSum2 = strNameUnit1;
+
+		m_entityTypeList.append(strEntity1);
+		m_entityAttrList.append(strNameUnit1);
+
 		break;
 	}
 	
@@ -209,6 +241,28 @@ void AddPlotPair::onTableWidgetItemClicked_3(QTableWidgetItem * curItem)
 	}
 }
 
+void AddPlotPair::onTableWidgetItemClicked_4(QTableWidgetItem * curItem)
+{
+	QString currEntityTypeSelected = curItem->text();
+	auto dataMap = DataManager::getInstance()->getDataMap();
+	if (dataMap.isEmpty())
+		return;
+
+	if (!dataMap.contains(currEntityTypeSelected))
+		return;
+
+	QStringList currEntityAttrList = dataMap.value(currEntityTypeSelected).keys();
+
+	ui.tableWidget_nameUnits_4->setRowCount(currEntityAttrList.size());
+	for (int i = 0; i < currEntityAttrList.size(); i++)
+	{
+		QString currEntityAttr = currEntityAttrList.at(i);
+
+		QTableWidgetItem* item = new QTableWidgetItem(currEntityAttr);
+		ui.tableWidget_nameUnits_4->setItem(i, 0, item);
+	}
+}
+
 void AddPlotPair::onTableWidgetItemClicked_Attitude1(QTableWidgetItem * curItem)
 {
 	QString currEntityTypeSelected = curItem->text();
@@ -267,6 +321,7 @@ void AddPlotPair::onUpdateData()
 	ui.tableWidget_Entity->setRowCount(icount);
 	ui.tableWidget_Entity_2->setRowCount(icount);
 	ui.tableWidget_Entity_3->setRowCount(icount);
+	ui.tableWidget_Entity_4->setRowCount(icount);
 	ui.tableWidget_Entity_Attitude1->setRowCount(icount);
 	ui.tableWidget_Entity_Attitude2->setRowCount(icount);
 
@@ -277,11 +332,37 @@ void AddPlotPair::onUpdateData()
 		ui.tableWidget_Entity->setItem(index, 0, item);
 		ui.tableWidget_Entity_2->setItem(index, 0, new QTableWidgetItem(*item));
 		ui.tableWidget_Entity_3->setItem(index, 0, new QTableWidgetItem(*item));
+		ui.tableWidget_Entity_4->setItem(index, 0, new QTableWidgetItem(*item));
 		ui.tableWidget_Entity_Attitude1->setItem(index, 0, new QTableWidgetItem(*item));
 		ui.tableWidget_Entity_Attitude2->setItem(index, 0, new QTableWidgetItem(*item));
 
 		index ++;
 	}
+}
+int AddPlotPair::textRowCount()
+{
+	//计算X格子和Y格子
+	QString temText;
+	int textCountSum;
+	for (int row = 0; row < ui.tableWidget_union->rowCount(); row++)
+	{
+		temText = ui.tableWidget_union->item(row, 0)->text();
+		m_temSet1.insert(temText);
+	}
+	textCountSum = m_temSet1.size();
+	return textCountSum;
+}
+int AddPlotPair::textCloumnCount()
+{
+	QString temText;
+	int textCountSum;
+	for (int row = 0; row < ui.tableWidget_union->rowCount(); row++)
+	{
+		temText = ui.tableWidget_union->item(row, 1)->text();
+		m_temSet2.insert(temText);
+	}
+	textCountSum = m_temSet2.size();
+	return  textCountSum;
 }
 
 void AddPlotPair::onBtnCloseClicked()
