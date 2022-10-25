@@ -2,12 +2,21 @@
 #define _ADD_PLOT_PAIR_H_
 
 #include <QWidget>
+#include <QString>
 #include <QTableWidgetItem>
 #include <QPair>
 #include <QMap>
 #include "ui_AddPlotPair.h"
 #include "constdef.h"
 #include "PlotItemBase.h"
+
+struct textUserData
+{
+	int row;
+	int column;
+	QString str;
+};
+
 
 class AddPlotPair : public QWidget
 {
@@ -21,6 +30,12 @@ public:
     void init(PlotType index = PlotType::Type_PlotScatter);
 	int textRowCount();
 	int textCloumnCount();
+	QList<textUserData> getUserText();
+	int m_textUserX;
+	int m_textUserY;
+	QString m_textUser;
+
+
 
 	QSet<QString> m_temSet1;
 	QSet<QString> m_temSet2;
@@ -50,13 +65,15 @@ public slots:
 	
 private:
     Ui::AddPlotPair ui;
-//<<<<<<< HEAD
+
 	static AddPlotPair* thispoint;
 	explicit AddPlotPair(QWidget *parent = 0);
-//=======
+
 	BaseInfo m_curPlotInfo;
 	QMap<QString, QList<PlotItemBase*>> m_plotManager; //tabName
-//>>>>>>> fb07a5330de0134b60fc6116b66a57a1e531dac2
+
 };
+
+
 
 #endif // _ADD_PLOT_PAIR_H_

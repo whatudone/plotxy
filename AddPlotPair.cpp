@@ -4,6 +4,9 @@
 #include <QTreeWidgetItem>
 #include <QDebug>
 #include <QSet>
+#include <qradiobutton>
+#include <QPoint>
+#include <QSpinBox>
 #include <QMessageBox>
 #include "DataManager.h"
 AddPlotPair* AddPlotPair::thispoint = nullptr;
@@ -19,6 +22,11 @@ AddPlotPair::AddPlotPair(QWidget *parent) :
 {
 
     ui.setupUi(this);
+	//update();
+	//m_textUserX = ui.spinBox_textX->value();
+	//m_textUserY = ui.spinBox_textY->value();
+	//m_textUser = ui.lineEdit_textEdit->text();
+
     this->setWindowTitle("Add Plot Pair");
 	ui.tableWidget_Entity->setStyleSheet("QHeaderView::section{background:lightgray;}");
 	ui.tableWidget_Entity_2->setStyleSheet("QHeaderView::section{background:lightgray;}");
@@ -45,16 +53,28 @@ AddPlotPair::AddPlotPair(QWidget *parent) :
 	ui.tableWidget_Entity_Attitude2->horizontalHeader()->setStretchLastSection(true);
 	ui.tableWidget_Entity_Attitude2->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui.tableWidget_Entity_Attitude2->verticalHeader()->hide();
+	ui.stackedWidget_textEdit->setCurrentIndex(0);
+
 
 	connect(ui.pushButton_add, SIGNAL(clicked()), this, SLOT(onBtnAddClicked()));
 	connect(ui.pushButton_close, SIGNAL(clicked()), this, SLOT(onBtnCloseClicked()));
 
+
+	connect(ui.radioButton_userDefine,&QRadioButton::toggled, this, [=](){
+		ui.stackedWidget_textEdit->setCurrentIndex(1);});
+	connect(ui.radioButton_12, &QRadioButton::toggled, this, [=]() {
+		ui.stackedWidget_textEdit->setCurrentIndex(0); });
+	connect(ui.radioButton_9, &QRadioButton::toggled, this, [=]() {
+		ui.stackedWidget_textEdit->setCurrentIndex(0); });
+	connect(ui.radioButton_10, &QRadioButton::toggled, this, [=]() {
+		ui.stackedWidget_textEdit->setCurrentIndex(0); });
 	connect(ui.tableWidget_Entity, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked(QTableWidgetItem*)));
 	connect(ui.tableWidget_Entity_2, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked_2(QTableWidgetItem*)));
 	connect(ui.tableWidget_Entity_3, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked_3(QTableWidgetItem*)));
 	connect(ui.tableWidget_Entity_4, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked_4(QTableWidgetItem*)));
 	connect(ui.tableWidget_Entity_Attitude1, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked_Attitude1(QTableWidgetItem*)));
 	connect(ui.tableWidget_Entity_Attitude2, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked_Attitude2(QTableWidgetItem*)));
+
 }
 
 AddPlotPair::~AddPlotPair()
@@ -110,12 +130,12 @@ void AddPlotPair::setPlotBaseInfo(BaseInfo info)
 void AddPlotPair::onBtnAddClicked()
 {
 	int index = ui.stackedWidget->currentIndex();
-	QString strEntity1, strNameUnit1, strSum1, strEntity2, strNameUnit2, strSum2;
-//<<<<<<< HEAD
+	QString strEntity1, strNameUnit1, strSum1, strEntity2, strNameUnit2, strSum2,strSum3;
 
-//=======
+
+
 	QPair<QString, QString> p1, p2;
-//>>>>>>> fb07a5330de0134b60fc6116b66a57a1e531dac2
+
 	switch (index)
 	{
 	case 0:
@@ -158,17 +178,31 @@ void AddPlotPair::onBtnAddClicked()
 //		emit sigAddPlotPair(strEntity1, strNameUnit1);
 		break;
 	case 3:
-		
-		strEntity1 = ui.tableWidget_Entity_4->currentItem()->text();
-		strNameUnit1 = ui.tableWidget_nameUnits_4->item(ui.tableWidget_nameUnits_4->currentRow(), 0)->text();
+		QTableWidgetItem *item1=nullptr;
+		QTableWidgetItem *item2=nullptr;
 
-		strSum1 = strEntity1;
-		strSum2 = strNameUnit1;
+		if (ui.stackedWidget_textEdit->currentIndex() == 0)
+		{
+			strEntity1 = ui.tableWidget_Entity_4->currentItem()->text();
+			strNameUnit1 = ui.tableWidget_nameUnits_4->item(ui.tableWidget_nameUnits_4->currentRow(), 0)->text();
 
-		m_entityTypeList.append(strEntity1);
-		m_entityAttrList.append(strNameUnit1);
+			strSum1 = strEntity1 + " " + strNameUnit1;
+			strSum2 = "Time";
 
+			m_entityTypeList.append(strEntity1);
+			m_entityAttrList.append(strNameUnit1);
+
+		}
+		else
+		{
+			m_textUserX = ui.spinBox_textX->value();
+			m_textUserY = ui.spinBox_textY->value();
+			strSum1 = QString::number(m_textUserX,10);
+			strSum2 = QString::number(m_textUserY, 10);
+			strSum3 = ui.lineEdit_textEdit->text();
+		}
 		break;
+
 	}
 //	p1 = qMakePair(m_curPlotInfo.Base_TabName, m_curPlotInfo.Base_PlotName);
 	p2 = qMakePair(strSum1, strSum2);
@@ -188,10 +222,12 @@ void AddPlotPair::onBtnAddClicked()
 
 	QTableWidgetItem* addplot1 = new QTableWidgetItem(strSum1);
 	QTableWidgetItem* addplot2 = new QTableWidgetItem(strSum2);
+	QTableWidgetItem* addplot3 = new QTableWidgetItem(strSum3);
 	int row = ui.tableWidget_union->rowCount();
 	ui.tableWidget_union->insertRow(row);
 	ui.tableWidget_union->setItem(row, 0, addplot1);
 	ui.tableWidget_union->setItem(row, 1, addplot2);
+	ui.tableWidget_union->setItem(row, 2, addplot3);
 }
 
 void AddPlotPair::onTableWidgetItemClicked(QTableWidgetItem * curItem)
@@ -358,6 +394,7 @@ void AddPlotPair::onUpdateData()
 		index ++;
 	}
 }
+
 int AddPlotPair::textRowCount()
 {
 	//计算X格子和Y格子
@@ -365,8 +402,14 @@ int AddPlotPair::textRowCount()
 	int textCountSum;
 	for (int row = 0; row < ui.tableWidget_union->rowCount(); row++)
 	{
-		temText = ui.tableWidget_union->item(row, 0)->text();
-		m_temSet1.insert(temText);
+		
+		if (ui.tableWidget_union->item(row, 2)->text().isEmpty()==true)
+		{
+			temText = ui.tableWidget_union->item(row, 0)->text();
+			m_temSet1.insert(temText);
+		}
+		else
+			continue;
 	}
 	textCountSum = m_temSet1.size();
 	return textCountSum;
@@ -377,11 +420,40 @@ int AddPlotPair::textCloumnCount()
 	int textCountSum;
 	for (int row = 0; row < ui.tableWidget_union->rowCount(); row++)
 	{
-		temText = ui.tableWidget_union->item(row, 1)->text();
-		m_temSet2.insert(temText);
+		if (ui.tableWidget_union->item(row, 2)->text().isEmpty() == true)
+		{
+			temText = ui.tableWidget_union->item(row, 1)->text();
+			m_temSet2.insert(temText);
+		}
+		else
+			continue;
 	}
 	textCountSum = m_temSet2.size();
 	return  textCountSum;
+}
+
+QList<textUserData> AddPlotPair::getUserText()
+{
+	QList<textUserData> mylist;
+	textUserData tUD1;
+	tUD1.row = 0;
+	tUD1.column = 0;
+	tUD1.str = ' ';
+	mylist.push_back(tUD1);
+	for (int row = 0; row < ui.tableWidget_union->rowCount(); row++)
+	{
+		if (ui.tableWidget_union->item(row, 2)->text().isEmpty() == false)
+		{
+			textUserData tUD;
+			tUD.row = ui.tableWidget_union->item(row, 0)->text().toInt();
+			tUD.column = ui.tableWidget_union->item(row, 1)->text().toInt();
+			tUD.str = ui.tableWidget_union->item(row, 2)->text();
+
+			mylist.push_back(tUD);
+
+		}
+	}
+	return mylist;
 }
 
 void AddPlotPair::onAddPlot(const QString &tabName, PlotItemBase *plotItem)
@@ -389,6 +461,8 @@ void AddPlotPair::onAddPlot(const QString &tabName, PlotItemBase *plotItem)
 	//数据层更新
 	m_plotManager[tabName].append(plotItem);
 }
+
+
 
 void AddPlotPair::onBtnCloseClicked()
 {
