@@ -12,6 +12,7 @@
 #include "BaseData.h"
 #include <QTimer>
 #include <QColor>
+#include <QMap>
 #include <QDebug>
 
 class PlotText :public PlotItemBase
@@ -20,10 +21,9 @@ class PlotText :public PlotItemBase
 public:
 	PlotText(QWidget* parent = Q_NULLPTR);
 	~PlotText();
-
+	void onTimeout();
 
 	
-
 
 	void onSwitch(bool bOn);
 	//void updateItems();
@@ -46,12 +46,13 @@ private:
 	QColor m_axisColor;
 
 
+	QStringList m_entityTypeList;
+	QStringList m_entityAttrList;
+
 	int m_horiGridNum;
 	int m_verGridNum;
 
 
-	QStringList m_entityTypeList;
-	QStringList m_entityAttrList;
 
 	int m_leftPadding;
 	int m_rightPadding;

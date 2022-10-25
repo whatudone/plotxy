@@ -4,6 +4,7 @@
 #include <QPainter>
 #include <QStringList>
 #include <QPen>
+#include <QList>
 
 
 int PlotText::m_instanceCount = 1;
@@ -31,7 +32,7 @@ PlotText::PlotText(QWidget* parent)
 
 	m_defaultColor = Qt::gray;
 	m_timer = new QTimer(this);
-	//connect(m_timer, &QTimer::timeout, this, &PlotText::onTimeout);
+	bool res = connect(m_timer, &QTimer::timeout, this, &PlotText::onTimeout);
 }
 
 PlotText::~PlotText()
@@ -58,14 +59,15 @@ void PlotText::paintEvent(QPaintEvent* event)
 	AddPlotPair* addPP = AddPlotPair::m_getInstance();
 	m_horiGridNum = addPP->textRowCount()+1;
 	m_verGridNum = addPP->textCloumnCount()+1;
-	std::shared_ptr<DataManager> dataM = DataManager::getInstance();
 
 	//绘制x轴和y轴
 	QPainter painter(this);
 	QPen pen;
+	QFont font;
 	m_axisColor = Qt::white;
 	pen.setColor(m_axisColor);
 	pen.setWidth(2);
+
 	painter.setPen(pen);
 	painter.drawLine(QPoint(0, height()), QPoint(width(), height()));	//x轴
 	painter.drawLine(QPoint(0, height()), QPoint(0, 0));		//y轴
@@ -87,9 +89,6 @@ void PlotText::paintEvent(QPaintEvent* event)
 	set2 = addPP->m_temSet2;
 	int i = 0,j = 0;
 	double horiGridWidth = 0;
-	QMap<QString, QMap<QString, QList<double>>> map;
-	QMap<QString, QList<double>> smallMap;
-	map = dataM->getDataMap();
 	QList<double> list;
 
 
@@ -99,15 +98,21 @@ void PlotText::paintEvent(QPaintEvent* event)
 	}
 	pen.setColor(Qt::white);
 	brush.setColor(Qt::white);
+
+	font.setPointSize(18);
+	painter.setFont(font);
 	//横向（列）
-	//for (QSet<QString>::iterator it = set1.begin(); it != set1.end();it++)
-	//{
-	//	i++;
-	//	QRect gridRect;
-	//	gridRect.setRect(i* horiGridWidth, 0, horiGridWidth, height());
-	//	painter.drawRect(gridRect);
-	//	painter.drawText((i+0.35)* horiGridWidth, (height() / m_verGridNum)*0.5, *it);
-	//}
+	for (QSet<QString>::iterator it = set1.begin(); it != set1.end();it++)
+	{
+		i++;
+		QRect gridRect,rect;
+		gridRect.setRect(i* horiGridWidth, 0, horiGridWidth, height());
+		painter.drawRect(gridRect);
+
+		rect.setRect(i*horiGridWidth, 0, horiGridWidth, (height() / m_verGridNum));
+
+		painter.drawText(rect,Qt::AlignCenter| Qt::TextWordWrap, *it);
+	}
 
 	double verGridWidth = 0;
 	if (m_verGridNum)		//item水平方向延展
@@ -115,36 +120,62 @@ void PlotText::paintEvent(QPaintEvent* event)
 		verGridWidth = height() / m_verGridNum;
 	}
 	//纵向（行）
-	//for (QSet<QString>::iterator it = set2.begin(); it != set2.end(); it++)
-	//{
-	//	
-	//	QRect gridRect;
-	//	gridRect.setRect(0, (j + 1) * verGridWidth, width(), verGridWidth);
-	//	painter.drawRect(gridRect);
-	//	painter.drawText(0.35* horiGridWidth, (j + 1.5) * verGridWidth, *it);
-	//	j++;
-	//}
+	for (QSet<QString>::iterator it = set2.begin(); it != set2.end(); it++)
+	{
+		QRect gridRect,rect;
+		gridRect.setRect(0, (j + 1) * verGridWidth, width(), verGridWidth);
+		painter.drawRect(gridRect);
 
+		rect.setRect(0, (j+1)  * verGridWidth, horiGridWidth, verGridWidth);
+
+		painter.drawText(rect, Qt::AlignCenter|Qt::TextWordWrap, *it);
+		j++;
+	}
+	//画数据
+	i = 0;
+	j = 0;
+	
 	for (QSet<QString>::iterator it = set1.begin(); it != set1.end(); it++)
 	{
 		i++;
-		QRect gridRect;
-		gridRect.setRect(i* horiGridWidth, 0, horiGridWidth, height());
-		painter.drawRect(gridRect);
-		painter.drawText((i + 0.35)* horiGridWidth, (height() / m_verGridNum)*0.5, *it);
 		for (QSet<QString>::iterator it2 = set2.begin(); it2 != set2.end(); it2++)
 		{
-			QRect gridRect;
-			gridRect.setRect(0, (j + 1) * verGridWidth, width(), verGridWidth);
-			painter.drawRect(gridRect);
-			painter.drawText(0.35* horiGridWidth, (j + 1.5) * verGridWidth, *it2);
 			j++;
-			/*list = smallMap.value(*it2);
-			QString str = QString("%1").arg(list.first());
-			painter.drawText((i + 0.35)* horiGridWidth, (j + 1.5) * verGridWidth, str);*/
+			//动态数据
+			QRect rect;
+			QString currEntityType = *it;
+			QString currEntityAttr = *it2;
+			auto dataMap = DataManager::getInstance()->getDataMap();
+			if (!dataMap.contains(currEntityType))
+			{
+				continue;
+			}
+			if (!dataMap.value(currEntityType).contains(currEntityAttr))
+			{
+				continue;
+			}
+
+			if (m_currTimeIndex >= dataMap.value(currEntityType).value(currEntityAttr).size())
+			{
+				continue;
+			}
+
+			//*获取当前Attr值
+			double currValue = dataMap.value(currEntityType).value(currEntityAttr).at(m_currTimeIndex);
+			rect.setRect(i*horiGridWidth, j*verGridWidth, horiGridWidth, verGridWidth);
+			painter.drawText(rect,Qt::AlignCenter|Qt::TextWrapAnywhere, QString::number(currValue, 'f', 2));
 		}
+		j = 0;
 	}
+
+
 }
+void PlotText::onTimeout()
+{
+	m_currTimeIndex++;
+	update();
+}
+
 
 void PlotText::drawRect(double itemIndex, bool bHorizontal, double itemLength, double leftBoundary, double rightBoundary, QColor color)
 {
