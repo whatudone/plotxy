@@ -2,9 +2,14 @@
 #define _ADD_PLOT_PAIR_H_
 
 #include <QWidget>
+#include <QTableWidget>
 #include <QTableWidgetItem>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
 #include <QPair>
 #include <QMap>
+#include <QMenu>
+#include <QWidgetAction>
 #include "ui_AddPlotPair.h"
 #include "constdef.h"
 #include "PlotItemBase.h"
@@ -25,12 +30,13 @@ public:
 	QSet<QString> m_temSet1;
 	QSet<QString> m_temSet2;
 
-
-
-    QStringList m_entityTypeList;
-    QStringList m_entityAttrList;
 	void onChangeStackIndex(PlotType index);
 	void setPlotBaseInfo(BaseInfo);
+
+private:
+	void initTreePlot();
+	void updatePlotTrees();
+	PlotType getPlotType(PlotItemBase*);
 	
 signals:
     void sigAddPlotPair(QString,QString);
@@ -38,6 +44,8 @@ signals:
 
 public slots:
     void onBtnAddClicked();
+	void onBtnUpdateClicked();
+	void onBtnRemoveClicked();
     void onBtnCloseClicked();
 	void onTableWidgetItemClicked(QTableWidgetItem*);
 	void onTableWidgetItemClicked_2(QTableWidgetItem*);
@@ -47,16 +55,18 @@ public slots:
 	void onTableWidgetItemClicked_Attitude2(QTableWidgetItem*);
 	void onUpdateData();
 	void onAddPlot(const QString&, PlotItemBase*);
+	void onDoubleClickedTreeWidgetItem(QTreeWidgetItem *item, int column);
 	
 private:
     Ui::AddPlotPair ui;
-//<<<<<<< HEAD
 	static AddPlotPair* thispoint;
 	explicit AddPlotPair(QWidget *parent = 0);
-//=======
 	BaseInfo m_curPlotInfo;
 	QMap<QString, QList<PlotItemBase*>> m_plotManager; //tabName
-//>>>>>>> fb07a5330de0134b60fc6116b66a57a1e531dac2
+
+	QTreeWidget* m_treePlot;
+	QMenu* m_menuPlot;
+	QWidgetAction* m_widgetActionPlot;
 };
 
 #endif // _ADD_PLOT_PAIR_H_
