@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QAction>
 #include <QString>
+#include <QStyleFactory>
 
 #include "PlotBar.h"
 
@@ -15,6 +16,7 @@ PlotManager::PlotManager(QWidget* parent)
 
 	this->resize(800, 600);
 	this->setWindowTitle(QString::fromLocal8Bit("图表管理器"));
+	ui.treeWidget_selectedPlots->setStyle(QStyleFactory::create("windows"));
 
 	/*QTreeWidgetItem* itemselPlotH = new QTreeWidgetItem;
 	QTreeWidgetItem* itemselPlotI = new QTreeWidgetItem;
@@ -119,7 +121,7 @@ void PlotManager::init()
 }
 
 
-void PlotManager::addPlot(/*int currTabIndex*/const QString& tabName, PlotItemBase* plotItem)
+void PlotManager::addPlot(const QString& tabName, PlotItemBase* plotItem)
 {
 	//显示层更新
 	if (m_plotManager.contains(tabName))
@@ -135,6 +137,7 @@ void PlotManager::addPlot(/*int currTabIndex*/const QString& tabName, PlotItemBa
 	{
 		QTreeWidgetItem* itemselPlotH = new QTreeWidgetItem(QStringList()<<tabName);
 		ui.treeWidget_selectedPlots->addTopLevelItem(itemselPlotH);
+		ui.treeWidget_selectedPlots->expandAll();
 
 		QTreeWidgetItem* itemselPlotI = new QTreeWidgetItem(QStringList() << plotItem->currName());
 		itemselPlotH->addChild(itemselPlotI);

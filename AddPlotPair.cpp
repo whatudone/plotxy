@@ -8,6 +8,7 @@
 #include <QPoint>
 #include <QSpinBox>
 #include <QMessageBox>
+#include <QStyleFactory>
 #include "DataManager.h"
 AddPlotPair* AddPlotPair::thispoint = nullptr;
 AddPlotPair* AddPlotPair::m_getInstance()
@@ -20,7 +21,6 @@ AddPlotPair* AddPlotPair::m_getInstance()
 AddPlotPair::AddPlotPair(QWidget *parent) :
     QWidget(parent)
 {
-
     ui.setupUi(this);
 	//update();
 	//m_textUserX = ui.spinBox_textX->value();
@@ -75,10 +75,29 @@ AddPlotPair::AddPlotPair(QWidget *parent) :
 	connect(ui.tableWidget_Entity_Attitude1, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked_Attitude1(QTableWidgetItem*)));
 	connect(ui.tableWidget_Entity_Attitude2, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked_Attitude2(QTableWidgetItem*)));
 
+	initTreePlot();
 }
 
 AddPlotPair::~AddPlotPair()
 {
+}
+
+
+void AddPlotPair::initTreePlot()
+{
+	m_treePlot = new QTreeWidget();
+	m_menuPlot = new QMenu(this);
+	m_widgetActionPlot = new QWidgetAction(m_treePlot);
+	m_treePlot->setFrameShape(QFrame::NoFrame);
+	m_treePlot->setFixedWidth(ui.toolButton_plot->maximumWidth());
+	m_treePlot->setStyle(QStyleFactory::create("windows"));
+	m_treePlot->setHeaderHidden(true);
+	m_treePlot->expandAll();
+	m_widgetActionPlot->setDefaultWidget(m_treePlot);
+	m_menuPlot->addAction(m_widgetActionPlot);
+	ui.toolButton_plot->setMenu(m_menuPlot);
+
+	connect(m_treePlot, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(onDoubleClickedTreeWidgetItem(QTreeWidgetItem*, int)));
 }
 
 void AddPlotPair::init(PlotType index)
@@ -125,35 +144,124 @@ void AddPlotPair::onChangeStackIndex(PlotType index)
 void AddPlotPair::setPlotBaseInfo(BaseInfo info)
 {
 	memcpy(&m_curPlotInfo, &info, sizeof(BaseInfo));
+
+	QList<QTreeWidgetItem*> plotItems = m_treePlot->findItems(m_curPlotInfo.Base_PlotName, Qt::MatchCaseSensitive|Qt::MatchRecursive, 0);
+	if (plotItems.size() != 0)
+	{
+		m_treePlot->itemDoubleClicked(plotItems[0], 0);
+	}
+}
+
+void AddPlotPair::updatePlotTrees()
+{
+	if (m_plotManager.isEmpty())
+		return;
+
+	m_treePlot->clear();
+
+	for (int i = 0; i < m_plotManager.size(); ++i)
+	{
+		QString tabString = m_plotManager.keys().at(i);
+		QTreeWidgetItem* itemselPlotH = new QTreeWidgetItem(QStringList() << tabString);
+		m_treePlot->addTopLevelItem(itemselPlotH);
+		m_treePlot->expandAll();
+
+		for (int j = 0; j < m_plotManager[tabString].size(); ++j)
+		{
+			QString plotString = m_plotManager[tabString].at(j)->currName();
+			QTreeWidgetItem* itemselPlotI = new QTreeWidgetItem(QStringList() << plotString);
+			itemselPlotH->addChild(itemselPlotI);
+		}	
+	}
+}
+
+PlotType AddPlotPair::getPlotType(PlotItemBase *plotItem)
+{
+	QString name = plotItem->metaObject()->className();
+	PlotType type;
+	if (name.compare("PlotPlotScatter") == 0)
+	{
+		type = PlotType::Type_PlotScatter;
+	}
+	else if (name.compare("PlotAScope") == 0)
+	{
+		type = PlotType::Type_PlotAScope;
+	}
+	else if (name.compare("PlotRTI") == 0)
+	{
+		type = PlotType::Type_PlotRTI;
+	}
+	else if (name.compare("PlotText") == 0)
+	{
+		type = PlotType::Type_PlotText;
+	}
+	else if (name.compare("PlotLight") == 0)
+	{
+		type = PlotType::Type_PlotLight;
+	}
+	else if (name.compare("PlotBar") == 0)
+	{
+		type = PlotType::Type_PlotBar;
+	}
+	else if (name.compare("PlotDial") == 0)
+	{
+		type = PlotType::Type_PlotDial;
+	}
+	else if (name.compare("PlotAttitude") == 0)
+	{
+		type = PlotType::Type_PlotAttitude;
+	}
+	else if (name.compare("PlotPolar") == 0)
+	{
+		type = PlotType::Type_PlotPolar;
+	}
+	else if (name.compare("PlotTrack") == 0)
+	{
+		type = PlotType::Type_PlotTrack;
+	}
+	else if (name.compare("PlotDoppler") == 0)
+	{
+		type = PlotType::Type_PlotDoppler;
+	}
+	else
+		type = PlotType::Type_PlotScatter;
+
+	return type;
 }
 
 void AddPlotPair::onBtnAddClicked()
 {
 	int index = ui.stackedWidget->currentIndex();
+
 	QString strEntity1, strNameUnit1, strSum1, strEntity2, strNameUnit2, strSum2,strSum3;
 
 
+
+
+	QString strEntity1, strNameUnit1, strSum1, strEntity2, strNameUnit2, strSum2;
 
 	QPair<QString, QString> p1, p2;
 
 	switch (index)
 	{
 	case 0:
+		if (ui.tableWidget_Entity->currentItem() == NULL || ui.tableWidget_nameUnits->item(ui.tableWidget_nameUnits->currentRow(), 0) == NULL)
+			return;
+
 		strEntity1 = ui.tableWidget_Entity->currentItem()->text();
 		strNameUnit1 = ui.tableWidget_nameUnits->item(ui.tableWidget_nameUnits->currentRow(), 0)->text();
 
 		strSum1 = strEntity1 + " " + strNameUnit1;
 		strSum2 = "Time";
 
-		m_entityTypeList.append(strEntity1);
-		m_entityAttrList.append(strNameUnit1);
-
 		emit sigAddPlotPair(strEntity1, strNameUnit1);
 		break;
 
-
-
 	case 1:
+		if (ui.tableWidget_Entity_2->currentItem() == NULL || ui.tableWidget_nameUnits_2->item(ui.tableWidget_nameUnits_2->currentRow(), 0) == NULL ||
+			ui.tableWidget_Entity_3->currentItem() == NULL || ui.tableWidget_nameUnits_3->item(ui.tableWidget_nameUnits_2->currentRow(), 0) == NULL)
+			return;
+
 		strEntity1 = ui.tableWidget_Entity_2->currentItem()->text();
 		strNameUnit1 = ui.tableWidget_nameUnits_2->item(ui.tableWidget_nameUnits_2->currentRow(), 0)->text();
 		strSum1 = strEntity1 + " " + strNameUnit1;
@@ -161,11 +269,12 @@ void AddPlotPair::onBtnAddClicked()
 		strNameUnit2 = ui.tableWidget_nameUnits_3->item(ui.tableWidget_nameUnits_3->currentRow(), 0)->text();
 		strSum2 = strEntity2 + " " + strNameUnit2;
 
-		m_entityTypeList.append(strEntity1);
-		m_entityAttrList.append(strNameUnit1);
-//		emit sigAddPlotPair(strEntity1, strNameUnit1);
 		break;
 	case 2:
+		if (ui.tableWidget_Entity_Attitude1->currentItem() == NULL || ui.tableWidget_nameUnits_Attitude1->item(ui.tableWidget_nameUnits_Attitude1->currentRow(), 0) == NULL ||
+			ui.tableWidget_Entity_Attitude2->currentItem() == NULL || ui.tableWidget_nameUnits_Attitude1->item(ui.tableWidget_nameUnits_Attitude2->currentRow(), 0) == NULL)
+			return;
+
 		strEntity1 = ui.tableWidget_Entity_Attitude1->currentItem()->text();
 		strNameUnit1 = ui.tableWidget_nameUnits_Attitude1->item(ui.tableWidget_nameUnits_Attitude1->currentRow(), 0)->text();
 		strSum1 = strEntity1 + " " + strNameUnit1;
@@ -173,11 +282,9 @@ void AddPlotPair::onBtnAddClicked()
 		strNameUnit2 = ui.tableWidget_nameUnits_Attitude2->item(ui.tableWidget_nameUnits_Attitude2->currentRow(), 0)->text();
 		strSum2 = strEntity2 + " " + strNameUnit2;
 
-		m_entityTypeList.append(strEntity1);
-		m_entityAttrList.append(strNameUnit1);
-//		emit sigAddPlotPair(strEntity1, strNameUnit1);
 		break;
 	case 3:
+
 		QTableWidgetItem *item1=nullptr;
 		QTableWidgetItem *item2=nullptr;
 
@@ -188,6 +295,15 @@ void AddPlotPair::onBtnAddClicked()
 
 			strSum1 = strEntity1 + " " + strNameUnit1;
 			strSum2 = "Time";
+
+		if (ui.tableWidget_Entity_4->currentItem() == NULL || ui.tableWidget_nameUnits_4->item(ui.tableWidget_nameUnits_4->currentRow(), 0) == NULL)
+			return;
+
+		strEntity1 = ui.tableWidget_Entity_4->currentItem()->text();
+		strNameUnit1 = ui.tableWidget_nameUnits_4->item(ui.tableWidget_nameUnits_4->currentRow(), 0)->text();
+
+		strSum1 = strEntity1 + " " + strNameUnit1;
+		strSum2 = "Time";
 
 			m_entityTypeList.append(strEntity1);
 			m_entityAttrList.append(strNameUnit1);
@@ -460,6 +576,60 @@ void AddPlotPair::onAddPlot(const QString &tabName, PlotItemBase *plotItem)
 {
 	//数据层更新
 	m_plotManager[tabName].append(plotItem);
+
+	updatePlotTrees();
+}
+
+void AddPlotPair::onDoubleClickedTreeWidgetItem(QTreeWidgetItem * item, int column)
+{
+	QTreeWidgetItem *parent = item->parent();
+	if (NULL == parent)
+		return;
+
+	QString parent_text = parent->text(0);
+	QString child_text = item->text(column);
+	ui.toolButton_plot->setText(child_text);
+
+	if (m_plotManager.contains(parent_text))
+	{
+		for (int i = 0; i < m_plotManager[parent_text].size(); ++i)
+		{
+			PlotItemBase *tempPlot = m_plotManager[parent_text].at(i);
+			if (child_text == tempPlot->currName())
+			{
+				onChangeStackIndex(getPlotType(tempPlot));
+
+				ui.tableWidget_union->setRowCount(0);
+
+				QList<QPair<QString, QString>> plotPairData = tempPlot->getPlotPairData();
+				for (int k = 0; k < plotPairData.size(); ++k)
+				{
+					//界面更新
+					QTableWidgetItem* addplot1 = new QTableWidgetItem(plotPairData[k].first);
+					QTableWidgetItem* addplot2 = new QTableWidgetItem(plotPairData[k].second);
+					int row = ui.tableWidget_union->rowCount();
+					ui.tableWidget_union->insertRow(row);
+					ui.tableWidget_union->setItem(row, 0, addplot1);
+					ui.tableWidget_union->setItem(row, 1, addplot2);
+				}
+				break;
+			}
+		}	
+	}
+}
+
+void AddPlotPair::onBtnUpdateClicked()
+{
+
+}
+
+void AddPlotPair::onBtnRemoveClicked()
+{
+	int row = ui.tableWidget_union->currentRow();
+	if (row != -1)
+	{
+		ui.tableWidget_union->removeRow(row);
+	}
 }
 
 
