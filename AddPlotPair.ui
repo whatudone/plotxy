@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>638</width>
-    <height>823</height>
+    <width>720</width>
+    <height>847</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,14 +17,23 @@
    <item>
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="page">
-      <layout class="QVBoxLayout" name="verticalLayout_6">
+      <layout class="QVBoxLayout" name="verticalLayout_30">
+       <property name="spacing">
+        <number>5</number>
+       </property>
        <property name="leftMargin">
         <number>0</number>
        </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
        <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
         <number>0</number>
        </property>
        <item>
@@ -88,101 +97,309 @@
         </widget>
        </item>
        <item>
-        <widget class="QTableWidget" name="tableWidget_Entity">
-         <column>
-          <property name="text">
-           <string>实体</string>
-          </property>
-          <property name="textAlignment">
-           <set>AlignCenter</set>
-          </property>
-         </column>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>筛选器</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="lineEdit"/>
-         </item>
-         <item>
-          <widget class="QToolButton" name="toolButton">
-           <property name="text">
-            <string>...</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_3">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButton_4">
-           <property name="text">
-            <string>筛选</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QTableWidget" name="tableWidget_nameUnits">
-         <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
+        <widget class="QStackedWidget" name="stackedWidget_4">
+         <property name="currentIndex">
+          <number>1</number>
          </property>
-         <column>
-          <property name="text">
-           <string>名称</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>单位</string>
-          </property>
-         </column>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
-         <item>
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>筛选:</string>
+         <widget class="QWidget" name="page_11">
+          <layout class="QVBoxLayout" name="verticalLayout_26">
+           <property name="spacing">
+            <number>5</number>
            </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="lineEdit_2"/>
-         </item>
-        </layout>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_6">
+             <item>
+              <widget class="QTableWidget" name="tableWidget_Entity">
+               <column>
+                <property name="text">
+                 <string>实体</string>
+                </property>
+                <property name="textAlignment">
+                 <set>AlignCenter</set>
+                </property>
+               </column>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <item>
+                <widget class="QLabel" name="label">
+                 <property name="text">
+                  <string>筛选器</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="lineEdit"/>
+               </item>
+               <item>
+                <widget class="QToolButton" name="toolButton">
+                 <property name="text">
+                  <string>...</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_3">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButton_4">
+                 <property name="text">
+                  <string>筛选</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QTableWidget" name="tableWidget_nameUnits">
+               <property name="selectionBehavior">
+                <enum>QAbstractItemView::SelectRows</enum>
+               </property>
+               <column>
+                <property name="text">
+                 <string>名称</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>单位</string>
+                </property>
+               </column>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <item>
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>筛选:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="lineEdit_2"/>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="page_12">
+          <layout class="QVBoxLayout" name="verticalLayout_29">
+           <property name="spacing">
+            <number>5</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_27">
+             <item>
+              <widget class="QTableWidget" name="tableWidget_Entity_9">
+               <column>
+                <property name="text">
+                 <string>实体</string>
+                </property>
+               </column>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_33">
+               <item>
+                <widget class="QLabel" name="label_26">
+                 <property name="text">
+                  <string>筛选器</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="lineEdit_13"/>
+               </item>
+               <item>
+                <widget class="QToolButton" name="toolButton_9">
+                 <property name="text">
+                  <string>...</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_23">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButton_13">
+                 <property name="text">
+                  <string>筛选</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_28">
+             <item>
+              <widget class="QTableWidget" name="tableWidget_Entity_10">
+               <column>
+                <property name="text">
+                 <string>目标实体</string>
+                </property>
+               </column>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_34">
+               <item>
+                <widget class="QLabel" name="label_27">
+                 <property name="text">
+                  <string>筛选器</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="lineEdit_14"/>
+               </item>
+               <item>
+                <widget class="QToolButton" name="toolButton_10">
+                 <property name="text">
+                  <string>...</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_24">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButton_14">
+                 <property name="text">
+                  <string>筛选</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QGridLayout" name="gridLayout_3" columnstretch="0,1">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_28">
+               <property name="text">
+                <string>计算类型：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QComboBox" name="comboBox_5">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <item>
+                <property name="text">
+                 <string>Ground Rng</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_29">
+               <property name="text">
+                <string>地球模型：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QComboBox" name="comboBox_6">
+               <item>
+                <property name="text">
+                 <string>WGS-84</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </widget>
        </item>
       </layout>
      </widget>
      <widget class="QWidget" name="page_2">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QHBoxLayout" name="horizontalLayout_19">
+       <property name="spacing">
+        <number>5</number>
+       </property>
        <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
         <number>0</number>
        </property>
        <property name="rightMargin">
         <number>0</number>
        </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_19">
+        <layout class="QVBoxLayout" name="verticalLayout_24">
          <item>
           <widget class="QGroupBox" name="groupBox_3">
            <property name="title">
@@ -219,6 +436,9 @@
                <widget class="QRadioButton" name="radioButton_5">
                 <property name="text">
                  <string>参数</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
@@ -265,6 +485,342 @@
           </widget>
          </item>
          <item>
+          <widget class="QStackedWidget" name="stackedWidget_2">
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="page_5">
+            <layout class="QVBoxLayout" name="verticalLayout_14">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="label_14">
+               <property name="frameShape">
+                <enum>QFrame::Box</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Sunken</enum>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_15">
+               <property name="frameShape">
+                <enum>QFrame::Box</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Sunken</enum>
+               </property>
+               <property name="text">
+                <string>Time Data</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="page_6">
+            <layout class="QVBoxLayout" name="verticalLayout_15">
+             <property name="spacing">
+              <number>5</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_2">
+               <item>
+                <widget class="QTableWidget" name="tableWidget_Entity_2">
+                 <column>
+                  <property name="text">
+                   <string>X轴实体</string>
+                  </property>
+                 </column>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_10">
+                 <item>
+                  <widget class="QLabel" name="label_5">
+                   <property name="text">
+                    <string>筛选器</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_5"/>
+                 </item>
+                 <item>
+                  <widget class="QToolButton" name="toolButton_3">
+                   <property name="text">
+                    <string>...</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_15">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButton_8">
+                   <property name="text">
+                    <string>筛选</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_12">
+               <item>
+                <widget class="QTableWidget" name="tableWidget_nameUnits_2">
+                 <attribute name="horizontalHeaderDefaultSectionSize">
+                  <number>130</number>
+                 </attribute>
+                 <column>
+                  <property name="text">
+                   <string>名称</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>单位</string>
+                  </property>
+                 </column>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_18">
+                 <item>
+                  <widget class="QLabel" name="label_6">
+                   <property name="text">
+                    <string>筛选:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_6"/>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="page_7">
+            <layout class="QVBoxLayout" name="verticalLayout_18">
+             <property name="spacing">
+              <number>5</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_16">
+               <item>
+                <widget class="QTableWidget" name="tableWidget_Entity_5">
+                 <column>
+                  <property name="text">
+                   <string>X轴实体</string>
+                  </property>
+                 </column>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_20">
+                 <item>
+                  <widget class="QLabel" name="label_16">
+                   <property name="text">
+                    <string>筛选器</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_9"/>
+                 </item>
+                 <item>
+                  <widget class="QToolButton" name="toolButton_5">
+                   <property name="text">
+                    <string>...</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_19">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButton_9">
+                   <property name="text">
+                    <string>筛选</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_17">
+               <item>
+                <widget class="QTableWidget" name="tableWidget_Entity_6">
+                 <column>
+                  <property name="text">
+                   <string>X轴目标实体</string>
+                  </property>
+                 </column>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_21">
+                 <item>
+                  <widget class="QLabel" name="label_17">
+                   <property name="text">
+                    <string>筛选器</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_10"/>
+                 </item>
+                 <item>
+                  <widget class="QToolButton" name="toolButton_6">
+                   <property name="text">
+                    <string>...</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_20">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButton_10">
+                   <property name="text">
+                    <string>筛选</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QGridLayout" name="gridLayout" columnstretch="0,1">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_18">
+                 <property name="text">
+                  <string>计算类型：</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QComboBox" name="comboBox">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>Ground Rng</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_19">
+                 <property name="text">
+                  <string>地球模型：</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="comboBox_2">
+                 <item>
+                  <property name="text">
+                   <string>WGS-84</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_25">
+         <item>
           <widget class="QGroupBox" name="groupBox_2">
            <property name="title">
             <string>Y轴数据源</string>
@@ -300,6 +856,9 @@
                <widget class="QRadioButton" name="radioButton_3">
                 <property name="text">
                  <string>参数</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
@@ -345,183 +904,337 @@
            </layout>
           </widget>
          </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_20">
          <item>
-          <widget class="QTableWidget" name="tableWidget_Entity_2">
-           <column>
-            <property name="text">
-             <string>X轴实体</string>
-            </property>
-           </column>
+          <widget class="QStackedWidget" name="stackedWidget_3">
+           <property name="currentIndex">
+            <number>1</number>
+           </property>
+           <widget class="QWidget" name="page_8">
+            <layout class="QVBoxLayout" name="verticalLayout_19">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="label_21">
+               <property name="frameShape">
+                <enum>QFrame::Box</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Sunken</enum>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_20">
+               <property name="frameShape">
+                <enum>QFrame::Box</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Sunken</enum>
+               </property>
+               <property name="text">
+                <string>Time Data</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="page_9">
+            <layout class="QVBoxLayout" name="verticalLayout_20">
+             <property name="spacing">
+              <number>5</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_11">
+               <item>
+                <widget class="QTableWidget" name="tableWidget_Entity_3">
+                 <column>
+                  <property name="text">
+                   <string>Y轴实体</string>
+                  </property>
+                 </column>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_12">
+                 <item>
+                  <widget class="QLabel" name="label_4">
+                   <property name="text">
+                    <string>筛选器</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_4"/>
+                 </item>
+                 <item>
+                  <widget class="QToolButton" name="toolButton_2">
+                   <property name="text">
+                    <string>...</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_10">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButton_7">
+                   <property name="text">
+                    <string>筛选</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_13">
+               <item>
+                <widget class="QTableWidget" name="tableWidget_nameUnits_3">
+                 <attribute name="horizontalHeaderDefaultSectionSize">
+                  <number>130</number>
+                 </attribute>
+                 <column>
+                  <property name="text">
+                   <string>名称</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>单位</string>
+                  </property>
+                 </column>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_17">
+                 <item>
+                  <widget class="QLabel" name="label_3">
+                   <property name="text">
+                    <string>筛选:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_3"/>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="page_10">
+            <layout class="QVBoxLayout" name="verticalLayout_23">
+             <property name="spacing">
+              <number>5</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_21">
+               <item>
+                <widget class="QTableWidget" name="tableWidget_Entity_7">
+                 <column>
+                  <property name="text">
+                   <string>Y轴实体</string>
+                  </property>
+                 </column>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_22">
+                 <item>
+                  <widget class="QLabel" name="label_22">
+                   <property name="text">
+                    <string>筛选器</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_11"/>
+                 </item>
+                 <item>
+                  <widget class="QToolButton" name="toolButton_7">
+                   <property name="text">
+                    <string>...</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_21">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButton_11">
+                   <property name="text">
+                    <string>筛选</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_22">
+               <item>
+                <widget class="QTableWidget" name="tableWidget_Entity_8">
+                 <column>
+                  <property name="text">
+                   <string>Y轴目标实体</string>
+                  </property>
+                 </column>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_23">
+                 <item>
+                  <widget class="QLabel" name="label_23">
+                   <property name="text">
+                    <string>筛选器</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_12"/>
+                 </item>
+                 <item>
+                  <widget class="QToolButton" name="toolButton_8">
+                   <property name="text">
+                    <string>...</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_22">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButton_12">
+                   <property name="text">
+                    <string>筛选</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,1">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_24">
+                 <property name="text">
+                  <string>计算类型：</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QComboBox" name="comboBox_3">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>Ground Rng</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_25">
+                 <property name="text">
+                  <string>地球模型：</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="comboBox_4">
+                 <item>
+                  <property name="text">
+                   <string>WGS-84</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
           </widget>
-         </item>
-         <item>
-          <widget class="QTableWidget" name="tableWidget_Entity_3">
-           <column>
-            <property name="text">
-             <string>Y轴实体</string>
-            </property>
-           </column>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_21">
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_17">
-           <item>
-            <widget class="QLabel" name="label_5">
-             <property name="text">
-              <string>筛选器</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEdit_5"/>
-           </item>
-           <item>
-            <widget class="QToolButton" name="toolButton_3">
-             <property name="text">
-              <string>...</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_15">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_8">
-             <property name="text">
-              <string>筛选</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_12">
-           <item>
-            <widget class="QLabel" name="label_4">
-             <property name="text">
-              <string>筛选器</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEdit_4"/>
-           </item>
-           <item>
-            <widget class="QToolButton" name="toolButton_2">
-             <property name="text">
-              <string>...</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_10">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_7">
-             <property name="text">
-              <string>筛选</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_22">
-         <item>
-          <widget class="QTableWidget" name="tableWidget_nameUnits_2">
-           <attribute name="horizontalHeaderDefaultSectionSize">
-            <number>130</number>
-           </attribute>
-           <column>
-            <property name="text">
-             <string>名称</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>单位</string>
-            </property>
-           </column>
-          </widget>
-         </item>
-         <item>
-          <widget class="QTableWidget" name="tableWidget_nameUnits_3">
-           <attribute name="horizontalHeaderDefaultSectionSize">
-            <number>130</number>
-           </attribute>
-           <column>
-            <property name="text">
-             <string>名称</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>单位</string>
-            </property>
-           </column>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_23">
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_18">
-           <item>
-            <widget class="QLabel" name="label_6">
-             <property name="text">
-              <string>筛选:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEdit_6"/>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_10">
-           <item>
-            <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string>筛选:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEdit_3"/>
-           </item>
-          </layout>
          </item>
         </layout>
        </item>
@@ -719,7 +1432,7 @@
       </layout>
      </widget>
      <widget class="QWidget" name="page_4">
-      <layout class="QVBoxLayout" name="verticalLayout_10">
+      <layout class="QVBoxLayout" name="verticalLayout_34">
        <item>
         <widget class="QGroupBox" name="groupBox_6">
          <property name="title">
@@ -829,88 +1542,190 @@
         </widget>
        </item>
        <item>
-        <widget class="QTableWidget" name="tableWidget_Entity_4">
-         <column>
-          <property name="text">
-           <string>实体</string>
-          </property>
-          <property name="textAlignment">
-           <set>AlignCenter</set>
-          </property>
-         </column>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_29">
-         <item>
-          <widget class="QLabel" name="label_12">
-           <property name="text">
-            <string>筛选器</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="lineEdit_7"/>
-         </item>
-         <item>
-          <widget class="QToolButton" name="toolButton_4">
-           <property name="text">
-            <string>...</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_16">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButton_5">
-           <property name="text">
-            <string>筛选</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QTableWidget" name="tableWidget_nameUnits_4">
-         <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
+        <widget class="QStackedWidget" name="stackedWidget_5">
+         <property name="currentIndex">
+          <number>0</number>
          </property>
-         <column>
-          <property name="text">
-           <string>名称</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>单位</string>
-          </property>
-         </column>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_30">
-         <item>
-          <widget class="QLabel" name="label_13">
-           <property name="text">
-            <string>筛选:</string>
+         <widget class="QWidget" name="page_13">
+          <layout class="QVBoxLayout" name="verticalLayout_10">
+           <property name="spacing">
+            <number>5</number>
            </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="lineEdit_8"/>
-         </item>
-        </layout>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_30">
+             <property name="frameShape">
+              <enum>QFrame::Box</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_31">
+             <property name="frameShape">
+              <enum>QFrame::Box</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
+             <property name="text">
+              <string>Time Data</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="page_14">
+          <layout class="QVBoxLayout" name="verticalLayout_31">
+           <property name="spacing">
+            <number>5</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QTableWidget" name="tableWidget_Entity_4">
+             <column>
+              <property name="text">
+               <string>实体</string>
+              </property>
+              <property name="textAlignment">
+               <set>AlignCenter</set>
+              </property>
+             </column>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_29">
+             <item>
+              <widget class="QLabel" name="label_12">
+               <property name="text">
+                <string>筛选器</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_7"/>
+             </item>
+             <item>
+              <widget class="QToolButton" name="toolButton_4">
+               <property name="text">
+                <string>...</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_16">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_5">
+               <property name="text">
+                <string>筛选</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QTableWidget" name="tableWidget_nameUnits_4">
+             <property name="selectionBehavior">
+              <enum>QAbstractItemView::SelectRows</enum>
+             </property>
+             <column>
+              <property name="text">
+               <string>名称</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>单位</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_30">
+             <item>
+              <widget class="QLabel" name="label_13">
+               <property name="text">
+                <string>筛选:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_8"/>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="page_15">
+          <layout class="QVBoxLayout" name="verticalLayout_33">
+           <item>
+            <widget class="QLabel" name="label_32">
+             <property name="text">
+              <string>范围计算</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="page_16">
+          <layout class="QVBoxLayout" name="verticalLayout_32">
+           <item>
+            <widget class="QLabel" name="label_33">
+             <property name="text">
+              <string>自定义</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
        </item>
       </layout>
      </widget>

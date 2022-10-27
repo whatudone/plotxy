@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1079</width>
-    <height>684</height>
+    <width>1097</width>
+    <height>788</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_6">
+   <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
      <widget class="QTreeWidget" name="treeWidget_xy">
       <column>
@@ -95,129 +95,201 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,0">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
        <widget class="QGroupBox" name="groupBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="title">
          <string/>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <property name="spacing">
+          <number>5</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QWidget" name="widget_drawer" native="true">
-           <widget class="QPushButton" name="pushButton">
-            <property name="geometry">
-             <rect>
-              <x>11</x>
-              <y>139</y>
-              <width>93</width>
-              <height>28</height>
-             </rect>
+           <layout class="QVBoxLayout" name="verticalLayout_9">
+            <property name="spacing">
+             <number>5</number>
             </property>
-            <property name="text">
-             <string>PushButton</string>
+            <property name="leftMargin">
+             <number>0</number>
             </property>
-           </widget>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_8"/>
+            </item>
+           </layout>
           </widget>
          </item>
         </layout>
        </widget>
       </item>
       <item>
-       <widget class="QStackedWidget" name="stackedWidget_aDMrpart">
-        <property name="currentIndex">
-         <number>1</number>
+       <widget class="QGroupBox" name="groupBox_7">
+        <property name="title">
+         <string>附加设置</string>
         </property>
-        <widget class="QWidget" name="page">
-         <layout class="QVBoxLayout" name="verticalLayout_4">
-          <item>
-           <widget class="QGroupBox" name="groupBox_2">
-            <property name="title">
-             <string>额外设置</string>
-            </property>
+        <layout class="QVBoxLayout" name="verticalLayout_11">
+         <property name="spacing">
+          <number>5</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QStackedWidget" name="stackedWidget_aDMrpart">
+           <property name="currentIndex">
+            <number>2</number>
+           </property>
+           <widget class="QWidget" name="page_4"/>
+           <widget class="QWidget" name="page">
             <layout class="QVBoxLayout" name="verticalLayout_2">
+             <property name="spacing">
+              <number>5</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="2,1">
+              <layout class="QHBoxLayout" name="horizontalLayout_2">
                <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_2">
-                 <item>
-                  <widget class="QPushButton" name="pushButton_clear">
-                   <property name="text">
-                    <string>清理</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="pushButton_insert">
-                   <property name="text">
-                    <string>插入 If/Else</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="pushButton_choosecolor">
-                   <property name="styleSheet">
-                    <string notr="true"/>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="pushButton_insertcolor">
-                   <property name="text">
-                    <string>插入颜色</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
+                <widget class="QPushButton" name="pushButton_clear">
+                 <property name="text">
+                  <string>清理</string>
+                 </property>
+                </widget>
                </item>
                <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_4">
-                 <item>
-                  <widget class="QPushButton" name="pushButton_save">
-                   <property name="text">
-                    <string>保存</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="pushButton_test">
-                   <property name="text">
-                    <string>测试</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="pushButton_help">
-                   <property name="text">
-                    <string>帮助...</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
+                <widget class="QPushButton" name="pushButton_insert">
+                 <property name="text">
+                  <string>插入 If/Else</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButton_choosecolor">
+                 <property name="maximumSize">
+                  <size>
+                   <width>20</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">background-color: rgb(0, 255, 0);</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButton_insertcolor">
+                 <property name="text">
+                  <string>插入颜色</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButton_save">
+                 <property name="text">
+                  <string>保存</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButton_test">
+                 <property name="text">
+                  <string>测试</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButton_help">
+                 <property name="text">
+                  <string>帮助...</string>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
              <item>
-              <widget class="QGroupBox" name="groupBox_3">
+              <widget class="QGroupBox" name="groupBox_2">
                <property name="title">
-                <string>Code</string>
+                <string>code</string>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout">
+                <property name="spacing">
+                 <number>5</number>
+                </property>
+                <property name="leftMargin">
+                 <number>2</number>
+                </property>
+                <property name="topMargin">
+                 <number>2</number>
+                </property>
+                <property name="rightMargin">
+                 <number>2</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>2</number>
+                </property>
                 <item>
                  <widget class="QTextEdit" name="textEdit">
                   <property name="html">
@@ -227,8 +299,8 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'SimSun'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;#xVal and yVal contain the x and y value of the plot data for 2d plots.&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;#xVal contains the value of the plot data  for 1D plots.&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;#plot Data can be used in set functions to set properties of the plot pair.&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Set Color (olot Data,RGBA(255,0,0,255))&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;#plotData can be used in set functions to set properties of the plot pair.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Set Color (plotData,RGBA(255,0,0,255))&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                  </widget>
@@ -238,27 +310,33 @@ p, li { white-space: pre-wrap; }
              </item>
             </layout>
            </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="page_2">
-         <layout class="QHBoxLayout" name="horizontalLayout_7">
-          <item>
-           <widget class="QGroupBox" name="groupBox_4">
-            <property name="title">
-             <string>额外设置</string>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_7">
+           <widget class="QWidget" name="page_2">
+            <layout class="QVBoxLayout" name="verticalLayout_10">
+             <property name="spacing">
+              <number>5</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_11">
+              <layout class="QHBoxLayout" name="horizontalLayout_16">
                <item>
-                <widget class="QGroupBox" name="groupBox_5">
+                <widget class="QGroupBox" name="groupBox_8">
                  <property name="title">
                   <string>关于阈值</string>
                  </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_8">
+                 <layout class="QVBoxLayout" name="verticalLayout_7">
                   <item>
-                   <widget class="QLabel" name="label_2">
+                   <widget class="QLabel" name="label_6">
                     <property name="text">
                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;阈值包含值和颜色。该值表示颜色范围的最小值，&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;该颜色用于填充该范围。颜色范围从一个阈值开始，&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;到下一个阈值结束。名称和颜色可以在阈值之间共&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;享，但值不能共享。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                     </property>
@@ -268,39 +346,53 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QGroupBox" name="groupBox_6">
+                <widget class="QGroupBox" name="groupBox_9">
                  <property name="title">
                   <string>阈值选项</string>
                  </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_5">
+                 <layout class="QVBoxLayout" name="verticalLayout_6">
                   <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_10">
+                   <layout class="QHBoxLayout" name="horizontalLayout_18">
                     <item>
-                     <widget class="QLabel" name="label_3">
+                     <widget class="QLabel" name="label_7">
                       <property name="text">
                        <string>名称:</string>
                       </property>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLineEdit" name="lineEdit_name"/>
+                     <widget class="QLineEdit" name="lineEdit_name">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>26</height>
+                       </size>
+                      </property>
+                     </widget>
                     </item>
                    </layout>
                   </item>
                   <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_9">
+                   <layout class="QHBoxLayout" name="horizontalLayout_19">
                     <item>
-                     <widget class="QLabel" name="label_4">
+                     <widget class="QLabel" name="label_8">
                       <property name="text">
                        <string>  值:</string>
                       </property>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLineEdit" name="lineEdit_value"/>
+                     <widget class="QLineEdit" name="lineEdit_value">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>26</height>
+                       </size>
+                      </property>
+                     </widget>
                     </item>
                     <item>
-                     <widget class="QLabel" name="label_5">
+                     <widget class="QLabel" name="label_9">
                       <property name="text">
                        <string>颜色:</string>
                       </property>
@@ -308,6 +400,15 @@ p, li { white-space: pre-wrap; }
                     </item>
                     <item>
                      <widget class="QPushButton" name="pushButton_color">
+                      <property name="maximumSize">
+                       <size>
+                        <width>20</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">background-color: rgb(0, 255, 0);</string>
+                      </property>
                       <property name="text">
                        <string/>
                       </property>
@@ -321,9 +422,9 @@ p, li { white-space: pre-wrap; }
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_12">
+              <layout class="QHBoxLayout" name="horizontalLayout_5">
                <item>
-                <spacer name="horizontalSpacer_4">
+                <spacer name="horizontalSpacer_5">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -343,14 +444,14 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButton_4">
+                <widget class="QPushButton" name="pushButton_6">
                  <property name="text">
                   <string>更新</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButton_5">
+                <widget class="QPushButton" name="pushButton_7">
                  <property name="text">
                   <string>移除</string>
                  </property>
@@ -359,37 +460,277 @@ p, li { white-space: pre-wrap; }
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_13">
+              <widget class="QTreeWidget" name="treeWidget_union">
+               <property name="indentation">
+                <number>0</number>
+               </property>
+               <column>
+                <property name="text">
+                 <string>名称</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>值</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>颜色</string>
+                </property>
+               </column>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="page_3">
+            <layout class="QVBoxLayout" name="verticalLayout_13">
+             <property name="spacing">
+              <number>5</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_11">
                <item>
-                <widget class="QTreeWidget" name="treeWidget_union">
-                 <property name="indentation">
-                  <number>0</number>
+                <layout class="QVBoxLayout" name="verticalLayout_12">
+                 <item>
+                  <widget class="QLabel" name="label_2">
+                   <property name="text">
+                    <string>事件实体</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QTableWidget" name="tableWidget"/>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_7">
+                   <item>
+                    <widget class="QPushButton" name="pushButton">
+                     <property name="text">
+                      <string>Filter...</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="pushButton_2">
+                     <property name="text">
+                      <string>Sort</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="pushButton_3">
+                     <property name="text">
+                      <string>Refresh</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="checkBox">
+                     <property name="text">
+                      <string>Limit:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="lineEdit_2">
+                     <property name="text">
+                      <string>3</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_5">
+                 <item>
+                  <widget class="QLabel" name="label_3">
+                   <property name="text">
+                    <string>事件标签</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QTableWidget" name="tableWidget_2"/>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_4">
+                   <item>
+                    <widget class="QCheckBox" name="checkBox_2">
+                     <property name="text">
+                      <string>Show Reserved Tags</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_6">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>28</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_10">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_8">
+                 <item>
+                  <widget class="QLabel" name="label_4">
+                   <property name="text">
+                    <string>颜色：</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButton_4">
+                   <property name="maximumSize">
+                    <size>
+                     <width>20</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">background-color: rgb(0, 255, 0);</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_5">
+                   <property name="text">
+                    <string>风格：</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QComboBox" name="comboBox">
+                   <item>
+                    <property name="text">
+                     <string>Small X</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_4">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
                  </property>
-                 <column>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="0,1,0,0">
+               <item>
+                <widget class="QLabel" name="label_10">
+                 <property name="text">
+                  <string>字体：</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QFontComboBox" name="fontComboBox"/>
+               </item>
+               <item>
+                <widget class="QComboBox" name="comboBox_2">
+                 <property name="minimumSize">
+                  <size>
+                   <width>70</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <item>
                   <property name="text">
-                   <string>名称</string>
+                   <string>8</string>
                   </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>值</string>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>颜色</string>
-                  </property>
-                 </column>
+                 </item>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="checkBox_3">
+                 <property name="text">
+                  <string>Include Tag in Text</string>
+                 </property>
                 </widget>
                </item>
               </layout>
              </item>
+             <item>
+              <widget class="QTableWidget" name="tableWidget_3">
+               <column>
+                <property name="text">
+                 <string>实体Entity</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>标签Tag</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>X轴</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>Y轴</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>绘图空间</string>
+                </property>
+               </column>
+              </widget>
+             </item>
             </layout>
            </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="page_3"/>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>

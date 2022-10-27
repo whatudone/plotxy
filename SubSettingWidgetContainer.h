@@ -7,6 +7,9 @@
 #include "ui_LabelSettings.h"
 #include "ui_LabelText.h"
 #include "ui_ColorRanges.h"
+#include "IconSetting.h"
+#include "StippleSetting.h"
+#include "EventSetting.h"
 
 class General;
 class ColorRanges;
@@ -21,6 +24,9 @@ public:
 
 	General* m_general;
 	ColorRanges* m_colorRanges;
+	IconSetting* m_iconSetting;
+	StippleSetting* m_stippleSetting;
+	EventSetting* m_eventSetting;
 };
 
 class General :public QWidget
@@ -36,6 +42,7 @@ signals:
 
 public slots:
 	void onPushbuttonMoreClicked();
+	void onBtnColorClicked();
 
 private:
 	Ui::General ui;
@@ -85,9 +92,11 @@ signals:
 	void sigBtnColorRangesMoreclicked();
 public slots:
 	void onBtnCRMoreclicked();
+	void onBtnColorClicked();
 private:
 	Ui::ColorRanges ui;
 };
+
 
 
 #endif // _SUB_SETTING_WIDGET_CONTAINER_H

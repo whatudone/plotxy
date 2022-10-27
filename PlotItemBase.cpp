@@ -104,6 +104,21 @@ void PlotItemBase::delPlotPairData(QPair<QString, QString> pair)
 	}
 }
 
+void PlotItemBase::updatePlotPairData(QPair<QString, QString> oldPair, QPair<QString, QString> newPair)
+{
+	if (m_plotPairData.isEmpty())
+		return;
+
+	for (int i = 0; i < m_plotPairData.size(); ++i)
+	{
+		if (m_plotPairData.at(i) == oldPair)
+		{
+			m_plotPairData.replace(i, newPair);
+			break;
+		}
+	}
+}
+
 QList<QPair<QString, QString>> PlotItemBase::getPlotPairData()
 {
 	return m_plotPairData;

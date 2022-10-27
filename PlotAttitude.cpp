@@ -342,8 +342,8 @@ void PlotAttitude::updateItems()
 	int isize = getPlotPairData().size();
 	QString xcolumn = getPlotPairData().at(0).first;
 	QString ycolumn = getPlotPairData().at(0).second;
-	QStringList xlist = xcolumn.split(" ");
-	QStringList ylist = ycolumn.split(" ");
+	QStringList xlist = xcolumn.split("+");
+	QStringList ylist = ycolumn.split("+");
 
 	auto dataMap = DataManager::getInstance()->getDataMap();
 	if (xlist.size() == 2)

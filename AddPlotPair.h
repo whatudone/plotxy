@@ -34,9 +34,15 @@ public:
 	void setPlotBaseInfo(BaseInfo);
 
 private:
+	void initStackedWidget_page1();
+	void initStackedWidget_page2();
+	void initStackedWidget_page3();
+	void initStackedWidget_page4();
+
 	void initTreePlot();
 	void updatePlotTrees();
 	PlotType getPlotType(PlotItemBase*);
+	bool getCurrentSelectParam(QString&, QString&);
 	
 signals:
     void sigAddPlotPair(QString,QString);

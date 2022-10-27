@@ -28,6 +28,7 @@ public slots:
     void onBtnColorMore();
     void onBtnAdd();
     void onBtnColorClicked();
+	void onEventBtnMoreClicked();
 
     void onAdvancedDataManagerAddPair(QString,QString);
     void onCurrentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*);

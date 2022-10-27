@@ -40,6 +40,7 @@ public:
 
 	void addPlotPairData(QPair<QString, QString>);
 	void delPlotPairData(QPair<QString, QString>);
+	void updatePlotPairData(QPair<QString, QString> oldPair, QPair<QString, QString> newPair);
 	QList<QPair<QString, QString>> getPlotPairData();
 
 protected:
