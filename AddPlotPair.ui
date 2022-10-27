@@ -1611,7 +1611,6 @@
            <property name="bottomMargin">
             <number>0</number>
            </property>
-        <widget class="QStackedWidget" name="stackedWidget_textEdit">
          <property name="currentIndex">
           <number>0</number>
          </property>
