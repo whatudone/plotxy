@@ -85,12 +85,6 @@ private:
 
 	static AddPlotPair* thispoint;
 	explicit AddPlotPair(QWidget *parent = 0);
-
-	BaseInfo m_curPlotInfo;
-	QMap<QString, QList<PlotItemBase*>> m_plotManager; //tabName
-
-	static AddPlotPair* thispoint;
-	explicit AddPlotPair(QWidget *parent = 0);
 	BaseInfo m_curPlotInfo;
 	QMap<QString, QList<PlotItemBase*>> m_plotManager; //tabName
 

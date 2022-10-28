@@ -126,20 +126,7 @@ void AddPlotPair::initStackedWidget_page3()
 	ui.tableWidget_Entity_Attitude2->horizontalHeader()->setStretchLastSection(true);
 	ui.tableWidget_Entity_Attitude2->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui.tableWidget_Entity_Attitude2->verticalHeader()->hide();
-	ui.stackedWidget_textEdit->setCurrentIndex(0);
 
-	connect(ui.pushButton_add, SIGNAL(clicked()), this, SLOT(onBtnAddClicked()));
-	connect(ui.pushButton_close, SIGNAL(clicked()), this, SLOT(onBtnCloseClicked()));
-
-
-	connect(ui.radioButton_userDefine,&QRadioButton::toggled, this, [=](){
-		ui.stackedWidget_textEdit->setCurrentIndex(1);});
-	connect(ui.radioButton_12, &QRadioButton::toggled, this, [=]() {
-		ui.stackedWidget_textEdit->setCurrentIndex(0); });
-	connect(ui.radioButton_9, &QRadioButton::toggled, this, [=]() {
-		ui.stackedWidget_textEdit->setCurrentIndex(0); });
-	connect(ui.radioButton_10, &QRadioButton::toggled, this, [=]() {
-		ui.stackedWidget_textEdit->setCurrentIndex(0); });
 	connect(ui.tableWidget_Entity, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked(QTableWidgetItem*)));
 	connect(ui.tableWidget_Entity_2, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked_2(QTableWidgetItem*)));
 	connect(ui.tableWidget_Entity_3, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked_3(QTableWidgetItem*)));
@@ -315,9 +302,7 @@ PlotType AddPlotPair::getPlotType(PlotItemBase *plotItem)
 bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 {
 	int index = ui.stackedWidget->currentIndex();
-	//QString strEntity1, strNameUnit1, strEntity2, strNameUnit2;
-	QString strEntity1, strNameUnit1, strSum1, strEntity2, strNameUnit2, strSum2,strSum3;
-	//QString strEntity1, strNameUnit1, strSum1, strEntity2, strNameUnit2, strSum2;
+	QString strEntity1, strNameUnit1, strEntity2, strNameUnit2;
 	QPair<QString, QString> p1, p2;
 
 	switch (index)
@@ -418,20 +403,6 @@ bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 			if (ui.tableWidget_Entity_4->currentItem() == NULL || ui.tableWidget_nameUnits_4->item(ui.tableWidget_nameUnits_4->currentRow(), 0) == NULL)
 				return false;
 
-		QTableWidgetItem *item1=nullptr;
-		QTableWidgetItem *item2=nullptr;
-
-		if (ui.stackedWidget_textEdit->currentIndex() == 0)
-		{
-			strEntity1 = ui.tableWidget_Entity_4->currentItem()->text();
-			strNameUnit1 = ui.tableWidget_nameUnits_4->item(ui.tableWidget_nameUnits_4->currentRow(), 0)->text();
-
-			strSum1 = strEntity1 + " " + strNameUnit1;
-			strSum2 = "Time";
-
-		if (ui.tableWidget_Entity_4->currentItem() == NULL || ui.tableWidget_nameUnits_4->item(ui.tableWidget_nameUnits_4->currentRow(), 0) == NULL)
-			return;
-
 			strEntity1 = ui.tableWidget_Entity_4->currentItem()->text();
 			strNameUnit1 = ui.tableWidget_nameUnits_4->item(ui.tableWidget_nameUnits_4->currentRow(), 0)->text();
 
@@ -447,19 +418,6 @@ bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 		}
 
 		strSum2 = "Time";
-
-			m_entityTypeList.append(strEntity1);
-			m_entityAttrList.append(strNameUnit1);
-
-		}
-		else
-		{
-			m_textUserX = ui.spinBox_textX->value();
-			m_textUserY = ui.spinBox_textY->value();
-			strSum1 = QString::number(m_textUserX,10);
-			strSum2 = QString::number(m_textUserY, 10);
-			strSum3 = ui.lineEdit_textEdit->text();
-		}
 		break;
 
 	}
@@ -492,12 +450,11 @@ void AddPlotPair::onBtnAddClicked()
 
 	QTableWidgetItem* addplot1 = new QTableWidgetItem(strSum1);
 	QTableWidgetItem* addplot2 = new QTableWidgetItem(strSum2);
-	QTableWidgetItem* addplot3 = new QTableWidgetItem(strSum3);
 	int row = ui.tableWidget_union->rowCount();
 	ui.tableWidget_union->insertRow(row);
 	ui.tableWidget_union->setItem(row, 0, addplot1);
 	ui.tableWidget_union->setItem(row, 1, addplot2);
-	ui.tableWidget_union->setItem(row, 2, addplot3);
+//	ui.tableWidget_union->setItem(row, 2, addplot3);
 }
 
 void AddPlotPair::onTableWidgetItemClicked(QTableWidgetItem * curItem)
