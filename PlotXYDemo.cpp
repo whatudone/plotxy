@@ -27,6 +27,7 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
 	m_AdvancedDataManager = new AdvancedDataManager();
     m_plotManager = new PlotManager();
 	m_addPlotPair = AddPlotPair::m_getInstance();
+	m_timeCtrl = new TimeControls();
 	connect(m_addPlotPair, SIGNAL(sigAddPlotPair(QString, QString)),m_plotManager, SLOT(onAddPlotPair(QString, QString)));
 	connect(m_addPlotPair, SIGNAL(sigAddPlotPair(QString, QString)),m_AdvancedDataManager, SLOT(onAdvancedDataManagerAddPair(QString, QString)));
 	connect(this, SIGNAL(sgn_loadDataReady()), m_addPlotPair, SLOT(onUpdateData()));
@@ -47,6 +48,7 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
     connect(ui.actionPlot_Manager_Ctrl_M, &QAction::triggered, this, &PlotXYDemo::onPlotManager);
     connect(ui.actionAdd_Plot_Pair_Ctrl_A, &QAction::triggered, this, &PlotXYDemo::onAddPlotPair);
     connect(ui.actionopen, &QAction::triggered, this, &PlotXYDemo::onOpenFile);
+	connect(ui.actionTime_Controls, &QAction::triggered, this, &PlotXYDemo::onTimeControl);
 
 	connect(m_plotManager, SIGNAL(sigAddPlotPair()), this, SLOT(onAddPlotPair()));
     
@@ -109,6 +111,11 @@ void PlotXYDemo::onOpenFile()
     DataManager::getInstance()->loadCSV(path);
 
 	sgn_loadDataReady();
+}
+
+void PlotXYDemo::onTimeControl()
+{
+	m_timeCtrl->show();
 }
 
 void PlotXYDemo::onCustomContextMenuRequested(const QPoint& point)
@@ -203,7 +210,11 @@ void PlotXYDemo::onContextMenu(const QPoint& point)
 	QAction* DataManager_Action = new QAction(QString::fromLocal8Bit("高级数据管理器"), this);
 	QAction* PlotPair_Action = new QAction(QString::fromLocal8Bit("添加数据对"), this);
 	QAction* Screenshot_Action = new QAction(QString::fromLocal8Bit("保存截图"), this);
+
+	connect(PlotManager_Action, SIGNAL(triggered()), this, SLOT(onPlotManager()));
+	connect(DataManager_Action, SIGNAL(triggered()), this, SLOT(onAdvancedData()));
 	connect(PlotPair_Action, SIGNAL(triggered()), this, SLOT(onAddPlotPair()));
+	
 
 	QAction* GOG_Action = new QAction(QString::fromLocal8Bit("导出GOG"), this);
 	QAction* HDF5_Action = new QAction(QString::fromLocal8Bit("导出HDF5"), this);

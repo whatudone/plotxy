@@ -5,6 +5,7 @@
 #include "QContextMenuEvent"
 #include "ui_PlotXYDemo.h"
 #include "constdef.h"
+#include "TimeControls.h"
 
 class FreeWidgetWraper;
 class PlotItemBase;
@@ -29,6 +30,7 @@ public slots:
     void onPlotManager();
     void onAddPlotPair();
     void onOpenFile();
+	void onTimeControl();
 
     void onCustomContextMenuRequested(const QPoint&);
 	void onContextMenu(const QPoint& point);
@@ -56,6 +58,7 @@ private:
     AdvancedDataManager* m_AdvancedDataManager;
 	BaseInfo m_curBaseInfo;
 	PlotType m_lastSelectedType;
+	TimeControls* m_timeCtrl;
 };
 
 #endif // ! 

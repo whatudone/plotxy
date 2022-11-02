@@ -1,33 +1,42 @@
 ﻿#include "SubSettingWidgetContainer.h"
 #include "ToolBox.h"
 #include <QTextEdit>
-
+#include <QColorDialog>
 
 SubSettingWidgetContainer::SubSettingWidgetContainer(QWidget* parent)
 	: QMainWindow(parent)
 {
-	this->setFixedWidth(610);
-
-	QString pageTitle;
 	ToolBox* toolBox = new ToolBox(this);
 
-	//第一项General
+	//General
 	m_general = new General(this);
 	toolBox->addWidget("General", m_general);
 
-	//第二项Extrapolation
+	//Extrapolation
 	Extrapolation* extrapolation = new Extrapolation(this);
 	toolBox->addWidget("Extrapolation", extrapolation);
 
-	//第三项Label Settings
-	LabelSettings* label_Settings = new LabelSettings(this);
-	toolBox->addWidget("labelSettings", label_Settings);
+	//icon
+	m_iconSetting = new IconSetting(this);
+	toolBox->addWidget("Icon", m_iconSetting);
 
-	//第四项Label Text
+	//Label Settings
+	LabelSettings* label_Settings = new LabelSettings(this);
+	toolBox->addWidget("label Settings", label_Settings);
+
+	//Stipple
+	m_stippleSetting = new StippleSetting(this);
+	toolBox->addWidget("Stipple", m_stippleSetting);
+
+	//Event
+	m_eventSetting = new EventSetting(this);
+	toolBox->addWidget("Events", m_eventSetting);
+
+	//Label Text
 	LabelText* label_Text = new LabelText(this);
 	toolBox->addWidget("labelText", label_Text);
 
-	//第五项Color Ranges
+	//Color Ranges
 	m_colorRanges = new ColorRanges(this);
 	toolBox->addWidget("colorRanges", m_colorRanges);
 
@@ -43,7 +52,9 @@ General::General(QWidget* parent) :
 	QWidget(parent)
 {
 	ui.setupUi(this);
+	ui.pushButton_12->setStyleSheet("background-color: rgb(0,255,0);");
 	connect(ui.pushButton_more, &QPushButton::clicked, this, &General::onPushbuttonMoreClicked);
+	connect(ui.pushButton_12, &QPushButton::clicked, this, &General::onBtnColorClicked);
 }
 
 General::~General()
@@ -54,6 +65,20 @@ void General::onPushbuttonMoreClicked()
 {
 	emit sigBtnGenneralMoreclicked();
 }
+
+void General::onBtnColorClicked()
+{
+	QColor selectedcolor;
+	selectedcolor = QColorDialog::getColor(Qt::green, this);
+	if (!selectedcolor.isValid())
+	{
+	}
+	else
+	{
+		ui.pushButton_12->setStyleSheet("background-color: " + selectedcolor.name() + ";");
+	}
+}
+
 
 Extrapolation::Extrapolation(QWidget* parent) :
 	QWidget(parent)
@@ -89,7 +114,9 @@ ColorRanges::ColorRanges(QWidget* parent) :
 	QWidget(parent)
 {
 	ui.setupUi(this);
+	ui.pushButton->setStyleSheet("background-color: rgb(0,255,0);");
 	connect(ui.pushButton_more, &QPushButton::clicked, this, &ColorRanges::onBtnCRMoreclicked);
+	connect(ui.pushButton, &QPushButton::clicked, this, &ColorRanges::onBtnColorClicked);
 }
 
 ColorRanges::~ColorRanges()
@@ -99,5 +126,18 @@ ColorRanges::~ColorRanges()
 void ColorRanges::onBtnCRMoreclicked()
 {
 	emit sigBtnColorRangesMoreclicked();
+}
+
+void ColorRanges::onBtnColorClicked()
+{
+	QColor selectedcolor;
+	selectedcolor = QColorDialog::getColor(Qt::green, this);
+	if (!selectedcolor.isValid())
+	{
+	}
+	else
+	{
+		ui.pushButton->setStyleSheet("background-color: " + selectedcolor.name() + ";");
+	}
 }
 

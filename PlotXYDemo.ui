@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1079</width>
+    <width>1060</width>
     <height>584</height>
    </rect>
   </property>
@@ -18,10 +18,25 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="spacing">
+     <number>5</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -40,6 +55,13 @@
       </widget>
      </widget>
     </item>
+    <item>
+     <widget class="QSlider" name="timeSlider">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -47,7 +69,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1079</width>
+     <width>1060</width>
      <height>26</height>
     </rect>
    </property>
@@ -651,7 +673,7 @@
      <normaloff>:/toolbar/RealTime.png</normaloff>:/toolbar/RealTime.png</iconset>
    </property>
    <property name="text">
-    <string>正常倍速     Shift+R</string>
+    <string>实时模式     Shift+R</string>
    </property>
   </action>
   <action name="actionTime_Controls">

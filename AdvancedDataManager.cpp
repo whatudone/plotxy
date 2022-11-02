@@ -11,12 +11,10 @@ AdvancedDataManager::AdvancedDataManager(QWidget *parent) :
     this->setWindowTitle(QString::fromLocal8Bit("AdvancedDataManager"));
     this->resize(1440,960);
 
-	QVBoxLayout* vBoxLayout = new QVBoxLayout;
-	SubSettingWidgetContainer* subSettingWidgetContainer = new SubSettingWidgetContainer();
-	vBoxLayout->addWidget(subSettingWidgetContainer);
+	SubSettingWidgetContainer* subSettingWidgetContainer = new SubSettingWidgetContainer(this);
+	ui.verticalLayout_8->addWidget(subSettingWidgetContainer);
 
-	ui.widget_drawer->setLayout(vBoxLayout);
-	ui.stackedWidget_aDMrpart->setCurrentIndex(2);
+	ui.stackedWidget_aDMrpart->setCurrentIndex(0);
 
     connect(ui.pushButton_choosecolor,&QPushButton::clicked,this,&AdvancedDataManager::onBtnColorChooseClicked);
 	
@@ -25,9 +23,12 @@ AdvancedDataManager::AdvancedDataManager(QWidget *parent) :
 
 	connect(subSettingWidgetContainer->m_general, SIGNAL(sigBtnGenneralMoreclicked()), this, SLOT(onBtnMore()));
 	connect(subSettingWidgetContainer->m_colorRanges, SIGNAL(sigBtnColorRangesMoreclicked()), this, SLOT(onBtnColorMore()));
+	connect(subSettingWidgetContainer->m_eventSetting, SIGNAL(sgn_BtnMoreClicked()), this, SLOT(onEventBtnMoreClicked()));
 
 	connect(ui.treeWidget_xy,SIGNAL(currentItemChanged(QTreeWidgetItem * , QTreeWidgetItem * )),
 			this,SLOT(onCurrentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+
+	ui.pushButton_color->setStyleSheet("background-color: rgb(0,255,0);");
 }
 
 AdvancedDataManager::~AdvancedDataManager()
@@ -50,7 +51,7 @@ void AdvancedDataManager::onBtnColorChooseClicked()
 void AdvancedDataManager::onBtnColorClicked()
 {
 	QColor selectedcolor;
-	selectedcolor = QColorDialog::getColor(Qt::yellow, this);
+	selectedcolor = QColorDialog::getColor(Qt::green, this);
 	if (!selectedcolor.isValid())
 	{
 	}
@@ -118,13 +119,17 @@ void AdvancedDataManager::onBtnAdd()
 	emit updateColorThresholdMap(m_map);
 }
 
-
 void AdvancedDataManager::onBtnMore()
 {
-	ui.stackedWidget_aDMrpart->setCurrentIndex(0);
+	ui.stackedWidget_aDMrpart->setCurrentIndex(1);
 }
 
 void AdvancedDataManager::onBtnColorMore()
 {
-	ui.stackedWidget_aDMrpart->setCurrentIndex(1);
+	ui.stackedWidget_aDMrpart->setCurrentIndex(2);
+}
+
+void AdvancedDataManager::onEventBtnMoreClicked()
+{
+	ui.stackedWidget_aDMrpart->setCurrentIndex(3);
 }
