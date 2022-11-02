@@ -32,6 +32,7 @@ AddPlotPair::AddPlotPair(QWidget *parent) :
 	ui.tableWidget_Entity_2->setStyleSheet("QHeaderView::section{background:lightgray;}");
 	ui.tableWidget_Entity_3->setStyleSheet("QHeaderView::section{background:lightgray;}");
 	ui.tableWidget_Entity_4->setStyleSheet("QHeaderView::section{background:lightgray;}");
+	ui.tableWidget_Entity_5->setStyleSheet("QHeaderView::section{background:lightgray;}");
 	ui.tableWidget_Entity_Attitude1->setStyleSheet("QHeaderView::section{background:lightgray;}");
 	ui.tableWidget_Entity_Attitude2->setStyleSheet("QHeaderView::section{background:lightgray;}");
 
@@ -47,6 +48,9 @@ AddPlotPair::AddPlotPair(QWidget *parent) :
 	ui.tableWidget_Entity_4->horizontalHeader()->setStretchLastSection(true);
 	ui.tableWidget_Entity_4->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui.tableWidget_Entity_4->verticalHeader()->hide();
+	ui.tableWidget_Entity_5->horizontalHeader()->setStretchLastSection(true);
+	ui.tableWidget_Entity_5->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	ui.tableWidget_Entity_5->verticalHeader()->hide();
 	ui.tableWidget_Entity_Attitude1->horizontalHeader()->setStretchLastSection(true);
 	ui.tableWidget_Entity_Attitude1->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui.tableWidget_Entity_Attitude1->verticalHeader()->hide();
@@ -121,6 +125,7 @@ void AddPlotPair::onChangeStackIndex(PlotType index)
 		ui.stackedWidget->setCurrentIndex(3);
 		break;
 	case Type_PlotLight:
+		ui.stackedWidget->setCurrentIndex(4);
 		break;
 	case Type_PlotBar:
 	case Type_PlotDial:
@@ -136,7 +141,7 @@ void AddPlotPair::onChangeStackIndex(PlotType index)
 	case Type_PlotDoppler:
 		break;
 	default:
-		ui.stackedWidget->setCurrentIndex(3);
+		ui.stackedWidget->setCurrentIndex(0);
 		break;
 	}
 }
@@ -238,7 +243,6 @@ void AddPlotPair::onBtnAddClicked()
 
 
 
-	QString strEntity1, strNameUnit1, strSum1, strEntity2, strNameUnit2, strSum2;
 
 	QPair<QString, QString> p1, p2;
 
@@ -251,7 +255,7 @@ void AddPlotPair::onBtnAddClicked()
 		strEntity1 = ui.tableWidget_Entity->currentItem()->text();
 		strNameUnit1 = ui.tableWidget_nameUnits->item(ui.tableWidget_nameUnits->currentRow(), 0)->text();
 
-		strSum1 = strEntity1 + " " + strNameUnit1;
+		strSum1 = strEntity1 + "+" + strNameUnit1;
 		strSum2 = "Time";
 
 		emit sigAddPlotPair(strEntity1, strNameUnit1);
@@ -264,10 +268,10 @@ void AddPlotPair::onBtnAddClicked()
 
 		strEntity1 = ui.tableWidget_Entity_2->currentItem()->text();
 		strNameUnit1 = ui.tableWidget_nameUnits_2->item(ui.tableWidget_nameUnits_2->currentRow(), 0)->text();
-		strSum1 = strEntity1 + " " + strNameUnit1;
+		strSum1 = strEntity1 + "+" + strNameUnit1;
 		strEntity2 = ui.tableWidget_Entity_3->currentItem()->text();
 		strNameUnit2 = ui.tableWidget_nameUnits_3->item(ui.tableWidget_nameUnits_3->currentRow(), 0)->text();
-		strSum2 = strEntity2 + " " + strNameUnit2;
+		strSum2 = strEntity2 + "+" + strNameUnit2;
 
 		break;
 	case 2:
@@ -277,10 +281,10 @@ void AddPlotPair::onBtnAddClicked()
 
 		strEntity1 = ui.tableWidget_Entity_Attitude1->currentItem()->text();
 		strNameUnit1 = ui.tableWidget_nameUnits_Attitude1->item(ui.tableWidget_nameUnits_Attitude1->currentRow(), 0)->text();
-		strSum1 = strEntity1 + " " + strNameUnit1;
+		strSum1 = strEntity1 + "+" + strNameUnit1;
 		strEntity2 = ui.tableWidget_Entity_Attitude2->currentItem()->text();
 		strNameUnit2 = ui.tableWidget_nameUnits_Attitude2->item(ui.tableWidget_nameUnits_Attitude2->currentRow(), 0)->text();
-		strSum2 = strEntity2 + " " + strNameUnit2;
+		strSum2 = strEntity2 + "+" + strNameUnit2;
 
 		break;
 	case 3:
@@ -293,7 +297,7 @@ void AddPlotPair::onBtnAddClicked()
 			strEntity1 = ui.tableWidget_Entity_4->currentItem()->text();
 			strNameUnit1 = ui.tableWidget_nameUnits_4->item(ui.tableWidget_nameUnits_4->currentRow(), 0)->text();
 
-			strSum1 = strEntity1 + " " + strNameUnit1;
+			strSum1 = strEntity1 + "+" + strNameUnit1;
 			strSum2 = "Time";
 
 		if (ui.tableWidget_Entity_4->currentItem() == NULL || ui.tableWidget_nameUnits_4->item(ui.tableWidget_nameUnits_4->currentRow(), 0) == NULL)
@@ -302,11 +306,10 @@ void AddPlotPair::onBtnAddClicked()
 		strEntity1 = ui.tableWidget_Entity_4->currentItem()->text();
 		strNameUnit1 = ui.tableWidget_nameUnits_4->item(ui.tableWidget_nameUnits_4->currentRow(), 0)->text();
 
-		strSum1 = strEntity1 + " " + strNameUnit1;
+		strSum1 = strEntity1 + "+" + strNameUnit1;
 		strSum2 = "Time";
 
-			m_entityTypeList.append(strEntity1);
-			m_entityAttrList.append(strNameUnit1);
+			
 
 		}
 		else
@@ -638,3 +641,5 @@ void AddPlotPair::onBtnCloseClicked()
 {
 	close();
 }
+
+
