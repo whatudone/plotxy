@@ -10,7 +10,7 @@ class PlotManager : public QWidget
     Q_OBJECT
 
 public:
-    PlotManager(QWidget* parent = Q_NULLPTR);
+    explicit PlotManager(QWidget* parent = Q_NULLPTR);
     ~PlotManager();
 
     void init();								//初始化函数，连接信号槽
