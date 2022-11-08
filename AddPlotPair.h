@@ -40,6 +40,9 @@ public:
 	int m_textUserY;
 	QString m_textUser;
 
+
+	bool m_isUserDefine();
+
 	QSet<QString> m_temSet1;
 	QSet<QString> m_temSet2;
 
@@ -81,8 +84,13 @@ private:
 
 	static AddPlotPair* thispoint;
 	explicit AddPlotPair(QWidget *parent = 0);
+
+
 	BaseInfo m_curPlotInfo;
 	QMap<QString, QList<PlotItemBase*>> m_plotManager; //tabName
+
+
+
 
 	QTreeWidget* m_treePlot;
 	QMenu* m_menuPlot;

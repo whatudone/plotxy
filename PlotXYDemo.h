@@ -44,6 +44,7 @@ public slots:
 	void onAddAttitudePlot();
 	void onAddTextPlot();
 	void onAddPolarPlot();
+	void onAddLightPlot();
 
 	void onFocusChanged(QWidget* oldWidget, QWidget* newWidget);
 

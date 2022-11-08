@@ -14,6 +14,7 @@
 #include "DataManager.h"
 #include "PlotAttitude.h"
 #include "PlotText.h"
+#include "PlotLight.h"
 
 
 PlotXYDemo::PlotXYDemo(QWidget* parent)
@@ -183,16 +184,19 @@ void PlotXYDemo::onContextMenu(const QPoint& point)
 	QAction* addAttitudePlot = new QAction(QString::fromLocal8Bit("添加Attitude组件"), this);
 	QAction* addTextPlot = new QAction(QString::fromLocal8Bit("添加Text组件"), this);
 	QAction* addPolarPlot = new QAction(QString::fromLocal8Bit("添加Polar组件"), this);
+	QAction* addLightPlot = new QAction(QString::fromLocal8Bit("添加Light组件"), this);
 	/* 添加菜单项 */
 	createPlotMenu->addAction(addBarPlot);
 	createPlotMenu->addAction(addAttitudePlot);
 	createPlotMenu->addAction(addTextPlot);
 	createPlotMenu->addAction(addPolarPlot);
+	createPlotMenu->addAction(addLightPlot);
 	/* 连接槽函数 */
 	connect(addBarPlot, SIGNAL(triggered()), this, SLOT(onAddBarPlot()));
 	connect(addAttitudePlot, SIGNAL(triggered()), this, SLOT(onAddAttitudePlot()));
 	connect(addTextPlot, SIGNAL(triggered()), this, SLOT(onAddTextPlot()));
 	connect(addPolarPlot, SIGNAL(triggered()), this, SLOT(onAddPolarPlot()));
+	connect(addLightPlot, SIGNAL(triggered()), this, SLOT(onAddLightPlot()));
 
 	//QAction
 	QAction* Undo_Action = new QAction(QString::fromLocal8Bit("撤销"), this);
@@ -333,6 +337,35 @@ void PlotXYDemo::onAddTextPlot()
 	plotItem->show();
 
 	m_lastSelectedType = PlotType::Type_PlotText;
+	m_plotManager->addPlot(currTabText, plotItem);
+	m_addPlotPair->onAddPlot(currTabText, plotItem);
+}
+
+void PlotXYDemo::onAddLightPlot()
+{
+	int currTabIndex = ui.tabWidget->currentIndex();
+	QString currTabText = ui.tabWidget->tabText(currTabIndex);
+
+	PlotLight* plotItem = new PlotLight(ui.tabWidget->currentWidget());
+	plotItem->setTabName(currTabText);
+	//bool res = connect(ui.actionStop,SIGNAL(triggered(bool)), plotItem, SLOT(onSwitch(bool)));
+	//connect(ui.actionStop, &QAction::triggered, plotItem, &PlotText::onSwitch);
+	//connect(m_AdvancedDataManager, &AdvancedDataManager::updateColorThresholdMap,
+	//	plotItem, &PlotText::onUpdateColorThresholdMap);
+
+
+	initWidget(plotItem);
+
+	// 控制其自由移动和缩放
+	FreeWidgetWraper* m_freeWidgetWraper = new FreeWidgetWraper();
+	m_freeWidgetWraper->setWidget(plotItem);
+
+	m_freeWidgetWraper->setMoveEnable(true);
+	m_freeWidgetWraper->setMoveEnable(true);
+
+	plotItem->show();
+
+	m_lastSelectedType = PlotType::Type_PlotLight;
 	m_plotManager->addPlot(currTabText, plotItem);
 	m_addPlotPair->onAddPlot(currTabText, plotItem);
 }

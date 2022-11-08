@@ -28,11 +28,21 @@ AddPlotPair::AddPlotPair(QWidget *parent) :
 	//m_textUser = ui.lineEdit_textEdit->text();
 
     this->setWindowTitle("Add Plot Pair");
+
+	ui.tableWidget_Entity->setStyleSheet("QHeaderView::section{background:lightgray;}");
+	ui.tableWidget_Entity_2->setStyleSheet("QHeaderView::section{background:lightgray;}");
+	ui.tableWidget_Entity_3->setStyleSheet("QHeaderView::section{background:lightgray;}");
+	ui.tableWidget_Entity_4->setStyleSheet("QHeaderView::section{background:lightgray;}");
+	ui.tableWidget_Entity_5->setStyleSheet("QHeaderView::section{background:lightgray;}");
+	ui.tableWidget_Entity_Attitude1->setStyleSheet("QHeaderView::section{background:lightgray;}");
+	ui.tableWidget_Entity_Attitude2->setStyleSheet("QHeaderView::section{background:lightgray;}");
+
 	
 	initStackedWidget_page1();
 	initStackedWidget_page2();
 	initStackedWidget_page3();
 	initStackedWidget_page4();
+
 
 	initTreePlot();
 
@@ -85,6 +95,14 @@ void AddPlotPair::initStackedWidget_page2()
 	ui.tableWidget_Entity_3->horizontalHeader()->setStretchLastSection(true);
 	ui.tableWidget_Entity_3->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui.tableWidget_Entity_3->verticalHeader()->hide();
+
+	ui.tableWidget_Entity_4->horizontalHeader()->setStretchLastSection(true);
+	ui.tableWidget_Entity_4->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	ui.tableWidget_Entity_4->verticalHeader()->hide();
+	ui.tableWidget_Entity_5->horizontalHeader()->setStretchLastSection(true);
+	ui.tableWidget_Entity_5->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	ui.tableWidget_Entity_5->verticalHeader()->hide();
+
 	ui.tableWidget_Entity_5->horizontalHeader()->setStretchLastSection(true);
 	ui.tableWidget_Entity_5->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui.tableWidget_Entity_5->verticalHeader()->hide();
@@ -120,6 +138,7 @@ void AddPlotPair::initStackedWidget_page3()
 {
 	ui.tableWidget_Entity_Attitude1->setStyleSheet("QHeaderView::section{background:lightgray;}");
 	ui.tableWidget_Entity_Attitude2->setStyleSheet("QHeaderView::section{background:lightgray;}");
+
 	ui.tableWidget_Entity_Attitude1->horizontalHeader()->setStretchLastSection(true);
 	ui.tableWidget_Entity_Attitude1->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui.tableWidget_Entity_Attitude1->verticalHeader()->hide();
@@ -193,6 +212,7 @@ void AddPlotPair::onChangeStackIndex(PlotType index)
 		ui.stackedWidget->setCurrentIndex(3);
 		break;
 	case Type_PlotLight:
+		ui.stackedWidget->setCurrentIndex(4);
 		break;
 	case Type_PlotBar:
 	case Type_PlotDial:
@@ -206,7 +226,7 @@ void AddPlotPair::onChangeStackIndex(PlotType index)
 	case Type_PlotDoppler:
 		break;
 	default:
-		ui.stackedWidget->setCurrentIndex(3);
+		ui.stackedWidget->setCurrentIndex(0);
 		break;
 	}
 }
@@ -302,7 +322,12 @@ PlotType AddPlotPair::getPlotType(PlotItemBase *plotItem)
 bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 {
 	int index = ui.stackedWidget->currentIndex();
-	QString strEntity1, strNameUnit1, strEntity2, strNameUnit2;
+
+
+	QString strEntity1, strNameUnit1, strSum1, strEntity2, strNameUnit2, strSum2,strSum3;
+
+
+
 	QPair<QString, QString> p1, p2;
 
 	switch (index)
@@ -328,6 +353,9 @@ bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 			strSum1 = strEntity1 + "+" + strNameUnit1;
 		}
 
+
+		strSum1 = strEntity1 + "+" + strNameUnit1;
+
 		strSum2 = "Time";
 
 		emit sigAddPlotPair(strEntity1, strNameUnit1);
@@ -343,6 +371,14 @@ bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 			if (ui.tableWidget_Entity_2->currentItem() == NULL || ui.tableWidget_nameUnits_2->item(ui.tableWidget_nameUnits_2->currentRow(), 0) == NULL)
 				return false;
 
+
+		strEntity1 = ui.tableWidget_Entity_2->currentItem()->text();
+		strNameUnit1 = ui.tableWidget_nameUnits_2->item(ui.tableWidget_nameUnits_2->currentRow(), 0)->text();
+		strSum1 = strEntity1 + "+" + strNameUnit1;
+		strEntity2 = ui.tableWidget_Entity_3->currentItem()->text();
+		strNameUnit2 = ui.tableWidget_nameUnits_3->item(ui.tableWidget_nameUnits_3->currentRow(), 0)->text();
+		strSum2 = strEntity2 + "+" + strNameUnit2;
+
 			strEntity1 = ui.tableWidget_Entity_2->currentItem()->text();
 			strNameUnit1 = ui.tableWidget_nameUnits_2->item(ui.tableWidget_nameUnits_2->currentRow(), 0)->text();
 			strSum1 = strEntity1 + "+" + strNameUnit1;
@@ -351,6 +387,7 @@ bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 		{
 			if (ui.tableWidget_Entity_5->currentItem() == NULL || ui.tableWidget_Entity_6->currentItem() == NULL)
 				return false;
+
 
 			strEntity1 = ui.tableWidget_Entity_5->currentItem()->text();
 			strNameUnit1 = ui.tableWidget_Entity_6->currentItem()->text();
@@ -407,6 +444,22 @@ bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 			strNameUnit1 = ui.tableWidget_nameUnits_4->item(ui.tableWidget_nameUnits_4->currentRow(), 0)->text();
 
 			strSum1 = strEntity1 + "+" + strNameUnit1;
+
+			strSum2 = "Time";
+
+		if (ui.tableWidget_Entity_4->currentItem() == NULL || ui.tableWidget_nameUnits_4->item(ui.tableWidget_nameUnits_4->currentRow(), 0) == NULL)
+			return;
+
+		strEntity1 = ui.tableWidget_Entity_4->currentItem()->text();
+		strNameUnit1 = ui.tableWidget_nameUnits_4->item(ui.tableWidget_nameUnits_4->currentRow(), 0)->text();
+
+		strSum1 = strEntity1 + "+" + strNameUnit1;
+		strSum2 = "Time";
+
+			
+
+
+
 		}
 		else if (ui.radioButton_10->isChecked())
 		{
@@ -812,3 +865,5 @@ void AddPlotPair::onBtnCloseClicked()
 {
 	close();
 }
+
+
