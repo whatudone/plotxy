@@ -1,11 +1,13 @@
 #include "PlotText.h"
 #include "DataManager.h"
 #include "AddPlotPair.h"
+#include "PlotItemBase.h"
 #include <QPainter>
 #include <QStringList>
 #include <QPen>
+#include <QFont>
 #include <QList>
-
+#include <QDebug>
 
 int PlotText::m_instanceCount = 1;
 PlotText::PlotText(QWidget* parent)
@@ -16,13 +18,8 @@ PlotText::PlotText(QWidget* parent)
 	m_leftPadding = 50;
 	m_rightPadding = 50;
 	m_interPadding = 20;
-
+	m_horiGridNum = m_verGridNum = 1;
 	m_currTimeIndex = 0;
-
-
-
-	m_horiGridNum = 4;
-	m_verGridNum = 5;
 
 	m_started = false;
 
@@ -32,7 +29,7 @@ PlotText::PlotText(QWidget* parent)
 
 	m_defaultColor = Qt::gray;
 	m_timer = new QTimer(this);
-	bool res = connect(m_timer, &QTimer::timeout, this, &PlotText::onTimeout);
+	connect(m_timer, &QTimer::timeout, this, &PlotText::onTimeout);
 }
 
 PlotText::~PlotText()
@@ -56,120 +53,151 @@ void PlotText::onSwitch(bool bOn)
 
 void PlotText::paintEvent(QPaintEvent* event)
 {
-	AddPlotPair* addPP = AddPlotPair::m_getInstance();
-	m_horiGridNum = addPP->textRowCount()+1;
-	m_verGridNum = addPP->textCloumnCount()+1;
-
-	//绘制x轴和y轴
+	//以下绘制标题“Text Plot”
 	QPainter painter(this);
 	QPen pen;
 	QFont font;
-	m_axisColor = Qt::white;
-	pen.setColor(m_axisColor);
-	pen.setWidth(2);
+	QRect rect;
 
-	painter.setPen(pen);
-	painter.drawLine(QPoint(0, height()), QPoint(width(), height()));	//x轴
-	painter.drawLine(QPoint(0, height()), QPoint(0, 0));		//y轴
-
-																//绘制网格
-	m_gridColor = Qt::white;
-	pen.setColor(m_gridColor);
-	painter.setPen(pen);
-
-	QBrush brush;   //画刷。填充几何图形的调色板，由颜色和填充风格组成
-	m_gridFillColor = Qt::white;
-	brush.setColor(m_gridFillColor);
-	brush.setStyle(Qt::SolidPattern);
-	//painter.setBrush(brush);
-
-	//拿set里面的string
-	QSet<QString> set1,set2;
-	set1 = addPP->m_temSet1;
-	set2 = addPP->m_temSet2;
-	int i = 0,j = 0;
-	double horiGridWidth = 0;
-	QList<double> list;
-
-
-	if (m_horiGridNum)		//item水平方向延展
-	{
-		horiGridWidth = width() / m_horiGridNum;
-	}
 	pen.setColor(Qt::white);
-	brush.setColor(Qt::white);
-
-	font.setPointSize(18);
+	painter.setPen(pen);
+	font.setPointSize(20);
 	painter.setFont(font);
-	//横向（列）
-	for (QSet<QString>::iterator it = set1.begin(); it != set1.end();it++)
+	rect.setRect(0, 0, width(), 0.1*height());
+	painter.drawText(rect,Qt::AlignCenter|Qt::TextWordWrap,"Text Plot");
+
+	//以下绘制n×m的格子
+	QList<QPair<QString, QString>> dataList;
+	QSet<QString> xset, yset;
+	int i = 0,j = 0;
+	dataList = getPlotPairData();
+	for (int i = 0; i < dataList.size(); i++)
 	{
-		i++;
-		QRect gridRect,rect;
-		gridRect.setRect(i* horiGridWidth, 0, horiGridWidth, height());
-		painter.drawRect(gridRect);
-
-		rect.setRect(i*horiGridWidth, 0, horiGridWidth, (height() / m_verGridNum));
-
-		painter.drawText(rect,Qt::AlignCenter| Qt::TextWordWrap, *it);
+		QString xIncludePlus = dataList.at(i).first;
+		int pos = xIncludePlus.indexOf("+");
+		QString xColumn = xIncludePlus.mid(0, pos);
+		QString yColumn = xIncludePlus.mid(pos + 1);
+		
+		xset.insert(xColumn);
+		yset.insert(yColumn);
+		m_horiGridNum = xset.size() + 1;
+		m_verGridNum = yset.size() + 1;
 	}
-
-	double verGridWidth = 0;
-	if (m_verGridNum)		//item水平方向延展
+	if (!dataList.empty())
 	{
-		verGridWidth = height() / m_verGridNum;
-	}
-	//纵向（行）
-	for (QSet<QString>::iterator it = set2.begin(); it != set2.end(); it++)
-	{
-		QRect gridRect,rect;
-		gridRect.setRect(0, (j + 1) * verGridWidth, width(), verGridWidth);
-		painter.drawRect(gridRect);
-
-		rect.setRect(0, (j+1)  * verGridWidth, horiGridWidth, verGridWidth);
-
-		painter.drawText(rect, Qt::AlignCenter|Qt::TextWordWrap, *it);
-		j++;
-	}
-	//画数据
-	i = 0;
-	j = 0;
-	
-	for (QSet<QString>::iterator it = set1.begin(); it != set1.end(); it++)
-	{
-		i++;
-		for (QSet<QString>::iterator it2 = set2.begin(); it2 != set2.end(); it2++)
+		int horiGridWidth = 0;
+		if (m_horiGridNum)		//item水平方向延展
 		{
-			j++;
-			//动态数据
-			QRect rect;
-			QString currEntityType = *it;
-			QString currEntityAttr = *it2;
-			auto dataMap = DataManager::getInstance()->getDataMap();
-			if (!dataMap.contains(currEntityType))
-			{
-				continue;
-			}
-			if (!dataMap.value(currEntityType).contains(currEntityAttr))
-			{
-				continue;
-			}
-
-			if (m_currTimeIndex >= dataMap.value(currEntityType).value(currEntityAttr).size())
-			{
-				continue;
-			}
-
-			//*获取当前Attr值
-			double currValue = dataMap.value(currEntityType).value(currEntityAttr).at(m_currTimeIndex);
-			rect.setRect(i*horiGridWidth, j*verGridWidth, horiGridWidth, verGridWidth);
-			painter.drawText(rect,Qt::AlignCenter|Qt::TextWrapAnywhere, QString::number(currValue, 'f', 2));
+			horiGridWidth = 0.9*width() / m_horiGridNum;
 		}
-		j = 0;
+
+		for (int i = 0; i < m_horiGridNum; i++)
+		{
+			QRect gridRect;
+			//gridRect.setRect(  0.05*width()+i* horiGridWidth, 0.1*height(), horiGridWidth, 0.85*height());
+			//painter.drawRect(gridRect);
+			painter.drawLine(0.05*width() + i* horiGridWidth, 0.1*height(), 0.05*width() + i* horiGridWidth, 0.95*height());
+		}
+
+		int verGridWidth = 0;
+		if (m_verGridNum)		//item水平方向延展
+		{
+			verGridWidth = 0.85*height() / m_verGridNum;
+		}
+
+		for (int i = 0; i < m_verGridNum; i++)
+		{
+			QRect gridRect;
+			gridRect.setRect(0.05*width(), i * verGridWidth + 0.1*height(), 0.9*width(), verGridWidth);
+			painter.drawRect(gridRect);
+
+		}
+
+		//以下为绘制X/Y轴item名字
+		QRect rectXName, rectYName;
+		for (auto it = xset.begin(); it != xset.end(); it++)
+		{
+			rectXName.setRect(0.05*width() + (i+1)* horiGridWidth, 0.1*height(),horiGridWidth,verGridWidth);
+			painter.drawText(rectXName, Qt::AlignCenter | Qt::TextWordWrap, *it);
+			i++;
+		}
+		for (auto it = yset.begin(); it != yset.end(); it++)
+		{
+			rectXName.setRect(0.05*width(), 0.1*height()+(1+j)*verGridWidth, horiGridWidth, verGridWidth);
+			painter.drawText(rectXName, Qt::AlignCenter | Qt::TextWordWrap, *it);
+			j++;
+		}
+		//以下为绘制对应的数据
+		i = j = 0;
+		for (auto it = xset.begin(); it != xset.end(); it++)
+		{
+			i++;
+			for (auto it2 = yset.begin(); it2 != yset.end(); it2++)
+			{
+				j++;
+				//动态数据
+				QString currEntityType = *it;
+				QString currEntityAttr = *it2;
+				auto dataMap = DataManager::getInstance()->getDataMap();
+				if (!dataMap.contains(currEntityType))
+				{
+					continue;
+				}
+				if (!dataMap.value(currEntityType).contains(currEntityAttr))
+				{
+					continue;
+				}
+
+				if (m_currTimeIndex >= dataMap.value(currEntityType).value(currEntityAttr).size())
+				{
+					continue;
+				}
+
+				//*获取当前Attr值
+				double currValue = dataMap.value(currEntityType).value(currEntityAttr).at(m_currTimeIndex);
+				rect.setRect(0.05*width()+i*horiGridWidth, 0.1*height()+j*verGridWidth, horiGridWidth, verGridWidth);
+				painter.drawText(rect,Qt::AlignCenter|Qt::TextWrapAnywhere, QString::number(currValue, 'f', 2));
+			}
+			j = 0;
+		}
 	}
 
 
+
+
+	//以下为用户自定义数据
+	//QList<textUserData> list1;
+	//QRect rect, rectErase;
+	//list1 = addPP->getUserText();
+	//for (int i = 0; i < list1.size(); i++)
+	//{
+	//	int x = list1.at(i).row;
+	//	int y = list1.at(i).column;
+	//	if (x <= m_verGridNum || y <= m_horiGridNum)
+	//	{
+
+	//		rect.setRect(y*horiGridWidth, x*verGridWidth, horiGridWidth, verGridWidth);
+	//		rectErase.setRect(y*horiGridWidth + 3, x*verGridWidth + 3, horiGridWidth - 3, verGridWidth - 3);
+	//		painter.eraseRect(rectErase);
+	//		painter.drawText(rect, Qt::AlignCenter | Qt::TextWordWrap, list1.at(i).str);
+	//	}
+	//	else
+	//	{
+	//		m_verGridNum = x;
+	//		m_horiGridNum = y;
+
+
+	//		rect.setRect(y*horiGridWidth, x*verGridWidth, horiGridWidth, verGridWidth);
+	//		painter.eraseRect(rect);
+	//		painter.drawText(rect, Qt::AlignCenter | Qt::TextWordWrap, list1.at(i).str);
+
+	//	}
+	//}
 }
+
+
+
+
 void PlotText::onTimeout()
 {
 	m_currTimeIndex++;
@@ -177,33 +205,4 @@ void PlotText::onTimeout()
 }
 
 
-void PlotText::drawRect(double itemIndex, bool bHorizontal, double itemLength, double leftBoundary, double rightBoundary, QColor color)
-{
-	QPainter painter(this);
-	QPen pen;
-	color = Qt::white;
-	pen.setColor(color);
-	QBrush brush;
-	brush.setColor(color);
-	brush.setStyle(Qt::SolidPattern);
 
-	painter.setPen(pen);
-	painter.setBrush(brush);
-
-	
-
-
-	double height = this->height();
-	double width = this->width();
-
-	QRect rect;
-	if (bHorizontal)
-	{
-		rect.setRect(leftBoundary, height - (m_leftPadding + itemIndex * (itemLength + m_interPadding) + itemLength), rightBoundary - leftBoundary, itemLength);
-	}
-	else
-	{
-		rect.setRect(m_leftPadding + itemIndex * (itemLength + m_interPadding), height - rightBoundary, itemLength, rightBoundary - leftBoundary);
-	}
-	painter.drawRect(rect);
-}
