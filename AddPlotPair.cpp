@@ -28,11 +28,22 @@ AddPlotPair::AddPlotPair(QWidget *parent) :
 	//m_textUser = ui.lineEdit_textEdit->text();
 
     this->setWindowTitle("Add Plot Pair");
+
+	ui.tableWidget_Entity->setStyleSheet("QHeaderView::section{background:lightgray;}");
+	ui.tableWidget_Entity_2->setStyleSheet("QHeaderView::section{background:lightgray;}");
+	ui.tableWidget_Entity_3->setStyleSheet("QHeaderView::section{background:lightgray;}");
+	ui.tableWidget_Entity_4->setStyleSheet("QHeaderView::section{background:lightgray;}");
+	ui.tableWidget_Entity_5->setStyleSheet("QHeaderView::section{background:lightgray;}");
+	ui.tableWidget_Entity_Attitude1->setStyleSheet("QHeaderView::section{background:lightgray;}");
+	ui.tableWidget_Entity_Attitude2->setStyleSheet("QHeaderView::section{background:lightgray;}");
+
 	
 	initStackedWidget_page1();
 	initStackedWidget_page2();
 	initStackedWidget_page3();
 	initStackedWidget_page4();
+	initStackedWidget_page5();
+
 
 	initTreePlot();
 
@@ -85,6 +96,14 @@ void AddPlotPair::initStackedWidget_page2()
 	ui.tableWidget_Entity_3->horizontalHeader()->setStretchLastSection(true);
 	ui.tableWidget_Entity_3->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui.tableWidget_Entity_3->verticalHeader()->hide();
+
+	ui.tableWidget_Entity_4->horizontalHeader()->setStretchLastSection(true);
+	ui.tableWidget_Entity_4->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	ui.tableWidget_Entity_4->verticalHeader()->hide();
+	ui.tableWidget_Entity_5->horizontalHeader()->setStretchLastSection(true);
+	ui.tableWidget_Entity_5->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	ui.tableWidget_Entity_5->verticalHeader()->hide();
+
 	ui.tableWidget_Entity_5->horizontalHeader()->setStretchLastSection(true);
 	ui.tableWidget_Entity_5->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui.tableWidget_Entity_5->verticalHeader()->hide();
@@ -120,6 +139,7 @@ void AddPlotPair::initStackedWidget_page3()
 {
 	ui.tableWidget_Entity_Attitude1->setStyleSheet("QHeaderView::section{background:lightgray;}");
 	ui.tableWidget_Entity_Attitude2->setStyleSheet("QHeaderView::section{background:lightgray;}");
+
 	ui.tableWidget_Entity_Attitude1->horizontalHeader()->setStretchLastSection(true);
 	ui.tableWidget_Entity_Attitude1->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui.tableWidget_Entity_Attitude1->verticalHeader()->hide();
@@ -151,6 +171,18 @@ void AddPlotPair::initStackedWidget_page4()
 
 	ui.radioButton_9->clicked();
 	ui.radioButton_9->setChecked(true);
+}
+
+void AddPlotPair::initStackedWidget_page5()
+{
+	ui.tableWidget_lightEntity->setStyleSheet("QHeaderView::section{background:lightgray;}");
+	ui.tableWidget_lightEntity->horizontalHeader()->setStretchLastSection(true);
+	ui.tableWidget_lightEntity->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	ui.tableWidget_lightEntity->verticalHeader()->hide();
+	ui.tableWidget_lightNameUnits->setSelectionBehavior(QAbstractItemView::SelectRows);
+	ui.radioButton_lightParameter->setChecked(true);
+
+	connect(ui.tableWidget_lightEntity, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetLightEntityClicked(QTableWidgetItem*)));
 }
 
 
@@ -193,6 +225,7 @@ void AddPlotPair::onChangeStackIndex(PlotType index)
 		ui.stackedWidget->setCurrentIndex(3);
 		break;
 	case Type_PlotLight:
+		ui.stackedWidget->setCurrentIndex(4);
 		break;
 	case Type_PlotBar:
 	case Type_PlotDial:
@@ -206,7 +239,7 @@ void AddPlotPair::onChangeStackIndex(PlotType index)
 	case Type_PlotDoppler:
 		break;
 	default:
-		ui.stackedWidget->setCurrentIndex(3);
+		ui.stackedWidget->setCurrentIndex(0);
 		break;
 	}
 }
@@ -302,7 +335,7 @@ PlotType AddPlotPair::getPlotType(PlotItemBase *plotItem)
 bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 {
 	int index = ui.stackedWidget->currentIndex();
-	QString strEntity1, strNameUnit1, strEntity2, strNameUnit2;
+	QString strEntity1, strNameUnit1, strEntity2, strNameUnit2, strSum3;
 	QPair<QString, QString> p1, p2;
 
 	switch (index)
@@ -328,6 +361,9 @@ bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 			strSum1 = strEntity1 + "+" + strNameUnit1;
 		}
 
+
+		strSum1 = strEntity1 + "+" + strNameUnit1;
+
 		strSum2 = "Time";
 
 		emit sigAddPlotPair(strEntity1, strNameUnit1);
@@ -342,6 +378,13 @@ bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 		{
 			if (ui.tableWidget_Entity_2->currentItem() == NULL || ui.tableWidget_nameUnits_2->item(ui.tableWidget_nameUnits_2->currentRow(), 0) == NULL)
 				return false;
+
+			strEntity1 = ui.tableWidget_Entity_2->currentItem()->text();
+			strNameUnit1 = ui.tableWidget_nameUnits_2->item(ui.tableWidget_nameUnits_2->currentRow(), 0)->text();
+			strSum1 = strEntity1 + "+" + strNameUnit1;
+			strEntity2 = ui.tableWidget_Entity_3->currentItem()->text();
+			strNameUnit2 = ui.tableWidget_nameUnits_3->item(ui.tableWidget_nameUnits_3->currentRow(), 0)->text();
+			strSum2 = strEntity2 + "+" + strNameUnit2;
 
 			strEntity1 = ui.tableWidget_Entity_2->currentItem()->text();
 			strNameUnit1 = ui.tableWidget_nameUnits_2->item(ui.tableWidget_nameUnits_2->currentRow(), 0)->text();
@@ -407,6 +450,9 @@ bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 			strNameUnit1 = ui.tableWidget_nameUnits_4->item(ui.tableWidget_nameUnits_4->currentRow(), 0)->text();
 
 			strSum1 = strEntity1 + "+" + strNameUnit1;
+
+			strSum2 = "Time";
+			
 		}
 		else if (ui.radioButton_10->isChecked())
 		{
@@ -416,13 +462,23 @@ bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 		{
 
 		}
-
-		strSum2 = "Time";
 		break;
+	case 4:
+	{
+		if (ui.radioButton_lightParameter->isChecked())
+		{
+			if (ui.tableWidget_lightEntity->currentItem() == NULL || ui.tableWidget_lightNameUnits->item(ui.tableWidget_lightNameUnits->currentRow(), 0) == NULL)
+				return false;
+			strEntity1 = ui.tableWidget_lightEntity->currentItem()->text();
+			strNameUnit1 = ui.tableWidget_lightNameUnits->item(ui.tableWidget_lightNameUnits->currentRow(), 0)->text();
 
+			strSum1 = strEntity1 + "+" + strNameUnit1;
+			strSum2 = "Time";
+		}
+			break;
 	}
 
-	return true;
+	}
 }
 
 void AddPlotPair::onBtnAddClicked()
@@ -545,6 +601,28 @@ void AddPlotPair::onTableWidgetItemClicked_4(QTableWidgetItem * curItem)
 	}
 }
 
+void AddPlotPair::onTableWidgetLightEntityClicked(QTableWidgetItem * curItem)
+{
+	QString currEntityTypeSelected = curItem->text();
+	auto dataMap = DataManager::getInstance()->getDataMap();
+	if (dataMap.isEmpty())
+		return;
+
+	if (!dataMap.contains(currEntityTypeSelected))
+		return;
+
+	QStringList currEntityAttrList = dataMap.value(currEntityTypeSelected).keys();
+
+	ui.tableWidget_lightNameUnits->setRowCount(currEntityAttrList.size());
+	for (int i = 0; i < currEntityAttrList.size(); i++)
+	{
+		QString currEntityAttr = currEntityAttrList.at(i);
+
+		QTableWidgetItem* item = new QTableWidgetItem(currEntityAttr);
+		ui.tableWidget_lightNameUnits->setItem(i, 0, item);
+	}
+}
+
 void AddPlotPair::onTableWidgetItemClicked_Attitude1(QTableWidgetItem * curItem)
 {
 	QString currEntityTypeSelected = curItem->text();
@@ -612,6 +690,7 @@ void AddPlotPair::onUpdateData()
 	ui.tableWidget_Entity_10->setRowCount(icount);
 	ui.tableWidget_Entity_Attitude1->setRowCount(icount);
 	ui.tableWidget_Entity_Attitude2->setRowCount(icount);
+	ui.tableWidget_lightEntity->setRowCount(icount);
 
 	for (auto it = dataMap.begin(); it != dataMap.end(); it++)
 	{
@@ -622,6 +701,7 @@ void AddPlotPair::onUpdateData()
 		ui.tableWidget_Entity_3->setItem(index, 0, new QTableWidgetItem(*item));
 		ui.tableWidget_Entity_4->setItem(index, 0, new QTableWidgetItem(*item));
 		ui.tableWidget_Entity_5->setItem(index, 0, item);
+		ui.tableWidget_lightEntity->setItem(index, 0, new QTableWidgetItem (*item));
 		ui.tableWidget_Entity_6->setItem(index, 0, new QTableWidgetItem(*item));
 		ui.tableWidget_Entity_7->setItem(index, 0, new QTableWidgetItem(*item));
 		ui.tableWidget_Entity_8->setItem(index, 0, new QTableWidgetItem(*item));
@@ -633,67 +713,67 @@ void AddPlotPair::onUpdateData()
 		index ++;
 	}
 }
-
-int AddPlotPair::textRowCount()
-{
-	//计算X格子和Y格子
-	QString temText;
-	int textCountSum;
-	for (int row = 0; row < ui.tableWidget_union->rowCount(); row++)
-	{
-		
-		if (ui.tableWidget_union->item(row, 2)->text().isEmpty()==true)
-		{
-			temText = ui.tableWidget_union->item(row, 0)->text();
-			m_temSet1.insert(temText);
-		}
-		else
-			continue;
-	}
-	textCountSum = m_temSet1.size();
-	return textCountSum;
-}
-int AddPlotPair::textCloumnCount()
-{
-	QString temText;
-	int textCountSum;
-	for (int row = 0; row < ui.tableWidget_union->rowCount(); row++)
-	{
-		if (ui.tableWidget_union->item(row, 2)->text().isEmpty() == true)
-		{
-			temText = ui.tableWidget_union->item(row, 1)->text();
-			m_temSet2.insert(temText);
-		}
-		else
-			continue;
-	}
-	textCountSum = m_temSet2.size();
-	return  textCountSum;
-}
-
-QList<textUserData> AddPlotPair::getUserText()
-{
-	QList<textUserData> mylist;
-	textUserData tUD1;
-	tUD1.row = 0;
-	tUD1.column = 0;
-	tUD1.str = ' ';
-	mylist.push_back(tUD1);
-	for (int row = 0; row < ui.tableWidget_union->rowCount(); row++)
-	{
-		if (ui.tableWidget_union->item(row, 2)->text().isEmpty() == false)
-		{
-			textUserData tUD;
-			tUD.row = ui.tableWidget_union->item(row, 0)->text().toInt();
-			tUD.column = ui.tableWidget_union->item(row, 1)->text().toInt();
-			tUD.str = ui.tableWidget_union->item(row, 2)->text();
-
-			mylist.push_back(tUD);
-
-		}
-	}
-	return mylist;
-}
+//
+//int AddPlotPair::textRowCount()
+//{
+//	//计算X格子和Y格子
+//	QString temText;
+//	int textCountSum;
+//	for (int row = 0; row < ui.tableWidget_union->rowCount(); row++)
+//	{
+//		
+//		if (ui.tableWidget_union->item(row, 2)->text().isEmpty()==true)
+//		{
+//			temText = ui.tableWidget_union->item(row, 0)->text();
+//			m_temSet1.insert(temText);
+//		}
+//		else
+//			continue;
+//	}
+//	textCountSum = m_temSet1.size();
+//	return textCountSum;
+//}
+//int AddPlotPair::textCloumnCount()
+//{
+//	QString temText;
+//	int textCountSum;
+//	for (int row = 0; row < ui.tableWidget_union->rowCount(); row++)
+//	{
+//		if (ui.tableWidget_union->item(row, 2)->text().isEmpty() == true)
+//		{
+//			temText = ui.tableWidget_union->item(row, 1)->text();
+//			m_temSet2.insert(temText);
+//		}
+//		else
+//			continue;
+//	}
+//	textCountSum = m_temSet2.size();
+//	return  textCountSum;
+//}
+//
+//QList<textUserData> AddPlotPair::getUserText()
+//{
+//	QList<textUserData> mylist;
+//	textUserData tUD1;
+//	tUD1.row = 0;
+//	tUD1.column = 0;
+//	tUD1.str = ' ';
+//	mylist.push_back(tUD1);
+//	for (int row = 0; row < ui.tableWidget_union->rowCount(); row++)
+//	{
+//		if (ui.tableWidget_union->item(row, 2)->text().isEmpty() == false)
+//		{
+//			textUserData tUD;
+//			tUD.row = ui.tableWidget_union->item(row, 0)->text().toInt();
+//			tUD.column = ui.tableWidget_union->item(row, 1)->text().toInt();
+//			tUD.str = ui.tableWidget_union->item(row, 2)->text();
+//
+//			mylist.push_back(tUD);
+//
+//		}
+//	}
+//	return mylist;
+//}
 
 void AddPlotPair::onAddPlot(const QString &tabName, PlotItemBase *plotItem)
 {
@@ -812,3 +892,5 @@ void AddPlotPair::onBtnCloseClicked()
 {
 	close();
 }
+
+

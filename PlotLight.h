@@ -1,36 +1,37 @@
 #pragma once
-/* * @filename: PlotText.h
-* @brief: PlotText控件类
+/* * @filename: PlotLight.h
+* @brief: PlotLight控件类
 * @author: zhangdingwen
-* @create time: 2022-10-10
+* @create time: 2022-11-1
 *  */
 
-#ifndef  _PLOT_TEXT_H_
-#define  _PLOT_TEXT_H_ 
+#ifndef  _PLOT_LIGHT_H_
+#define  _PLOT_LIGHT_H_ 
 
 #include "PlotItemBase.h"
 #include "BaseData.h"
 #include <QTimer>
 #include <QColor>
 #include <QMap>
-#include <QDebug>
+#include <QPaintEvent>
 
-class PlotText :public PlotItemBase
+class PlotLight :public PlotItemBase
 {
 	Q_OBJECT
 public:
-	PlotText(QWidget* parent = Q_NULLPTR);
-	~PlotText();
+	PlotLight(QWidget* parent = Q_NULLPTR);
+	~PlotLight();
 	void onTimeout();
 
-	
+
 
 	void onSwitch(bool bOn);
-	
+	//void updateItems();
+	void drawRect(double itemIndex, bool bHorizontal, double itemLength, double leftBoundary, double rightBoundary, QColor color);
 public:
 	static int m_instanceCount;			//实体个数
 public slots:
-
+	
 
 private:
 
@@ -68,4 +69,4 @@ protected:
 
 
 };
-#endif // _PLOT_TEXT_H_ 
+#endif // _PLOT_LIGHT_H_ 
