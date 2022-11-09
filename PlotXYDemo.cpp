@@ -21,33 +21,41 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
 {
     ui.setupUi(this);
 
+	initTime();
+
     //m_plotItem = nullptr;
     //m_freeWidgetWraper = nullptr;
-	m_AdvancedDataManager = new AdvancedDataManager();
+	m_AdvancedDataManager = new AdvancedDataManager(this);
     m_plotManager = new PlotManager();
 	m_addPlotPair = AddPlotPair::m_getInstance();
-	m_timeCtrl = new TimeControls();
+	
 	connect(m_addPlotPair, SIGNAL(sigAddPlotPair(QString, QString)),m_plotManager, SLOT(onAddPlotPair(QString, QString)));
 	connect(m_addPlotPair, SIGNAL(sigAddPlotPair(QString, QString)),m_AdvancedDataManager, SLOT(onAdvancedDataManagerAddPair(QString, QString)));
 	connect(this, SIGNAL(sgn_loadDataReady()), m_addPlotPair, SLOT(onUpdateData()));
+	connect(this, SIGNAL(sgn_loadDataReady()), m_timeCtrl, SLOT(onUpdateData()));
+	connect(m_timeCtrl, &TimeControls::sgn_setSliderRange, m_timeCtrl, &TimeControls::onSetSliderRange);
+	connect(m_timeCtrl, &TimeControls::sgn_setSliderRange, this, &PlotXYDemo::onSetSliderRange);
+
+	connect(this, &PlotXYDemo::sgn_sliderValueChanged, m_timeCtrl, &TimeControls::onRemoteSliderValueChanged);
+	connect(m_timeCtrl, &TimeControls::sgn_sliderValueChanged, this, &PlotXYDemo::onRemoteSliderValueChanged);
 
 	m_curBaseInfo.Base_TabName = nullptr;
 	m_curBaseInfo.Base_PlotName = nullptr;
 	qRegisterMetaType<BaseInfo>("BaseInfo");
 
-    setMinimumSize(1600, 1200);
+    setMinimumSize(1600, 900);
     showMaximized();
 
     //statusbar设置左侧信息提示
-    QLabel* info = new QLabel;
-    info->setText(QString::fromLocal8Bit("已选择的图层："));
-    ui.statusBar->addWidget(info);
+	/*QLabel* info = new QLabel;
+	info->setText(QString::fromLocal8Bit("已选择的图层："));
+	ui.statusBar->addWidget(info);*/
+	initStatusBar();
 
     connect(ui.actionAdvanced_Data_Manager, &QAction::triggered, this, &PlotXYDemo::onAdvancedData);
     connect(ui.actionPlot_Manager_Ctrl_M, &QAction::triggered, this, &PlotXYDemo::onPlotManager);
     connect(ui.actionAdd_Plot_Pair_Ctrl_A, &QAction::triggered, this, &PlotXYDemo::onAddPlotPair);
     connect(ui.actionopen, &QAction::triggered, this, &PlotXYDemo::onOpenFile);
-	connect(ui.actionTime_Controls, &QAction::triggered, this, &PlotXYDemo::onTimeControl);
 
 	connect(m_plotManager, SIGNAL(sigAddPlotPair()), this, SLOT(onAddPlotPair()));
     
@@ -107,12 +115,13 @@ void PlotXYDemo::onAddPlotPair()
 void PlotXYDemo::onOpenFile()
 {
     QString path = QFileDialog::getOpenFileName(this, "open File", "/home", tr("Microsoft CSV(*.csv)"));
-    DataManager::getInstance()->loadCSV(path);
+//    DataManager::getInstance()->loadCSV(path);
+	DataManager::getInstance()->loadCSV_stringTime(path);
 
 	sgn_loadDataReady();
 }
 
-void PlotXYDemo::onTimeControl()
+void PlotXYDemo::onActionTimeControl()
 {
 	m_timeCtrl->show();
 }
@@ -361,6 +370,159 @@ void PlotXYDemo::onFocusChanged(QWidget * oldWidget, QWidget * newWidget)
 	m_nowFocusWidget = newWidget;
 }
 
+void PlotXYDemo::onSetSliderRange(int min, int max, int singleStep)
+{
+	ui.timeSlider->setPageStep(singleStep);
+	ui.timeSlider->setMinimum(min);
+	ui.timeSlider->setMaximum(max);
+}
+
+void PlotXYDemo::onSliderValueChanged(int value)
+{
+	emit sgn_sliderValueChanged(value);
+
+	double secs = (double)value / m_timeCtrl->getMultiplizer();
+	int refYear = m_timeCtrl->getRefYear();
+	//show data time
+	OrdinalTimeFormatter timeFormat;
+	QString dataTime = timeFormat.toString(secs, refYear);
+	m_statusBar_dataTime->setText(dataTime);
+
+	//发送数据时间
+	emit sgn_sendCurrentSeconds(secs);
+}
+
+void PlotXYDemo::onRemoteSliderValueChanged(int value)
+{
+	ui.timeSlider->setValue(value);
+}
+
+void PlotXYDemo::onTimeOut()
+{
+	int curValue = ui.timeSlider->value();
+	int step = m_timeCtrl->getStepFactor() * m_timeCtrl->getMultiplizer();
+
+	if (m_bIsPlayForward)
+	{
+		if (curValue == ui.timeSlider->maximum())
+		{
+			if (m_timeCtrl->getLoopTime())
+			{
+				ui.timeSlider->setValue(ui.timeSlider->minimum());
+			}
+			else
+				m_timer->stop();
+		}
+		else
+			ui.timeSlider->setValue(curValue + step);
+	}
+	else
+	{
+		if (curValue == ui.timeSlider->minimum())
+		{
+			if (m_timeCtrl->getLoopTime())
+			{
+				ui.timeSlider->setValue(ui.timeSlider->maximum());
+			}
+			else
+				m_timer->stop();
+		}
+		else
+			ui.timeSlider->setValue(curValue - step);
+	}
+}
+
+void PlotXYDemo::onUpdateLocalTime()
+{
+	QDateTime current_time = QDateTime::currentDateTime();
+	QString timestr = current_time.toString("yyyy/MM/dd hh:mm:ss");
+	m_statusBar_localTime->setText(timestr);
+}
+
+void PlotXYDemo::onActionPlay()
+{
+	m_bIsPlayForward = true;
+	if (m_timer->isActive())
+		m_timer->stop();
+	m_timer->start(m_timerInterval);
+	ui.actionStop->setEnabled(true);
+}
+
+void PlotXYDemo::onActionStop()
+{
+	m_timer->stop();
+	ui.actionStop->setEnabled(false);
+}
+
+void PlotXYDemo::onActionReverse()
+{
+	m_bIsPlayForward = false;
+	if (m_timer->isActive())
+		m_timer->stop();
+	m_timer->start(m_timerInterval);
+	ui.actionStop->setEnabled(true);
+}
+
+void PlotXYDemo::onActionFrameReverse()
+{
+	if (m_timer->isActive())
+		m_timer->stop();
+
+	int curValue = ui.timeSlider->value();
+	int step = m_timeCtrl->getStepFactor() * m_timeCtrl->getMultiplizer();
+	ui.timeSlider->setValue(curValue - step);
+	ui.actionStop->setEnabled(false);
+}
+
+void PlotXYDemo::onActionFrameForward()
+{
+	if (m_timer->isActive())
+		m_timer->stop();
+
+	int curValue = ui.timeSlider->value();
+	int step = m_timeCtrl->getStepFactor() * m_timeCtrl->getMultiplizer();
+	ui.timeSlider->setValue(curValue + step);
+	ui.actionStop->setEnabled(false);
+}
+
+void PlotXYDemo::onActionDecreseStep()
+{
+	if (m_timerInterval >= 8000)
+		return;
+
+	if (m_timer->isActive())
+		m_timer->stop();
+
+	m_timerInterval *= 2;
+	m_timer->start(m_timerInterval);
+	ui.actionStop->setEnabled(true);
+}
+
+void PlotXYDemo::onActionIncreaseStep()
+{
+	if (m_timerInterval <= 125)
+		return;
+
+	if (m_timer->isActive())
+		m_timer->stop();
+
+	m_timerInterval /= 2;
+	m_timer->start(m_timerInterval);
+	ui.actionStop->setEnabled(true);
+}
+
+void PlotXYDemo::onActionTimeServer()
+{
+}
+
+void PlotXYDemo::onActionTimeClient()
+{
+}
+
+void PlotXYDemo::onActionRealTime()
+{
+}
+
 void PlotXYDemo::onAddAttitudePlot()
 {
 	int currTabIndex = ui.tabWidget->currentIndex();
@@ -389,6 +551,85 @@ void PlotXYDemo::onAddAttitudePlot()
 void PlotXYDemo::init()
 {
 
+}
+
+void PlotXYDemo::initTime()
+{
+	m_timer = new QTimer(this);
+	m_timerInterval = 1000;
+	m_bIsPlayForward = true;
+
+	m_timeCtrl = new TimeControls();
+
+	connect(m_timer, &QTimer::timeout, this, &PlotXYDemo::onTimeOut);
+	connect(ui.timeSlider, &QSlider::valueChanged, this, &PlotXYDemo::onSliderValueChanged);
+
+	connect(ui.actionTime_Controls, &QAction::triggered, this, &PlotXYDemo::onActionTimeControl);
+	connect(ui.actionPlay, &QAction::triggered, this, &PlotXYDemo::onActionPlay);
+	connect(ui.actionStop, &QAction::triggered, this, &PlotXYDemo::onActionStop);
+	connect(ui.actionReverse, &QAction::triggered, this, &PlotXYDemo::onActionReverse);
+	connect(ui.actionFrame_Forward, &QAction::triggered, this, &PlotXYDemo::onActionFrameForward);
+	connect(ui.actionFrame_Rverse, &QAction::triggered, this, &PlotXYDemo::onActionFrameReverse);
+	connect(ui.actionIncrease_Step, &QAction::triggered, this, &PlotXYDemo::onActionIncreaseStep);
+	connect(ui.actionDecrease_Step, &QAction::triggered, this, &PlotXYDemo::onActionDecreseStep);
+	connect(ui.actionTime_Client, &QAction::triggered, this, &PlotXYDemo::onActionTimeClient);
+	connect(ui.actionTime_Server, &QAction::triggered, this, &PlotXYDemo::onActionTimeServer);
+	connect(ui.actionReal_Time, &QAction::triggered, this, &PlotXYDemo::onActionRealTime);
+
+	//TimeControl
+	connect(m_timeCtrl, &TimeControls::sgn_actionPlay, this, &PlotXYDemo::onActionPlay);
+	connect(m_timeCtrl, &TimeControls::sgn_actionStop, this, &PlotXYDemo::onActionStop);
+	connect(m_timeCtrl, &TimeControls::sgn_actionReverse, this, &PlotXYDemo::onActionReverse);
+	connect(m_timeCtrl, &TimeControls::sgn_actionFrameForward, this, &PlotXYDemo::onActionFrameForward);
+	connect(m_timeCtrl, &TimeControls::sgn_actionFrameReverse, this, &PlotXYDemo::onActionFrameReverse);
+	connect(m_timeCtrl, &TimeControls::sgn_actionIncreaseStep, this, &PlotXYDemo::onActionIncreaseStep);
+	connect(m_timeCtrl, &TimeControls::sgn_actionDecreseStep, this, &PlotXYDemo::onActionDecreseStep);
+	connect(m_timeCtrl, &TimeControls::sgn_actionTimeClient, this, &PlotXYDemo::onActionTimeClient);
+	connect(m_timeCtrl, &TimeControls::sgn_actionTimeServer, this, &PlotXYDemo::onActionTimeServer);
+	connect(m_timeCtrl, &TimeControls::sgn_actionRealTime, this, &PlotXYDemo::onActionRealTime);
+}
+
+void PlotXYDemo::initStatusBar()
+{
+	m_statusBar_info = new QLabel(this);
+	m_statusBar_EditLock = new QToolButton(this);
+	m_statusBar_layoutLock = new QToolButton(this);
+	m_statusBar_dataTime = new QLabel("<Data Time>", this);
+	m_statusBar_localTime = new QLabel("<Local Time>", this);
+	m_statusBar_selectPlot = new QToolButton(this);
+	m_statusBar_pan = new QToolButton(this);
+	m_statusBar_centerPlot = new QToolButton(this);
+	m_statusBar_zoom = new QToolButton(this);
+	m_statusBar_boxZoom = new QToolButton(this);
+	m_statusBar_measure = new QToolButton(this);
+	m_statusBar_createPlot = new QToolButton(this);
+	m_statusBar_movePlot = new QToolButton(this);
+	m_statusBar_null = new QLabel(this);
+
+	m_statusBar_info->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+	m_statusBar_dataTime->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+	m_statusBar_localTime->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+	m_statusBar_null->setMinimumSize(QSize(50, 10));
+	m_statusBar_null->setEnabled(false);
+
+	ui.statusBar->addWidget(m_statusBar_info, 1);
+	ui.statusBar->addWidget(m_statusBar_EditLock);
+	ui.statusBar->addWidget(m_statusBar_layoutLock);
+	ui.statusBar->addWidget(m_statusBar_dataTime);
+	ui.statusBar->addWidget(m_statusBar_localTime);
+	ui.statusBar->addWidget(m_statusBar_selectPlot);
+	ui.statusBar->addWidget(m_statusBar_pan);
+	ui.statusBar->addWidget(m_statusBar_centerPlot);
+	ui.statusBar->addWidget(m_statusBar_zoom);
+	ui.statusBar->addWidget(m_statusBar_boxZoom);
+	ui.statusBar->addWidget(m_statusBar_measure);
+	ui.statusBar->addWidget(m_statusBar_createPlot);
+	ui.statusBar->addWidget(m_statusBar_movePlot);
+	ui.statusBar->addWidget(m_statusBar_null);
+
+	m_localTimer = new QTimer(this);
+	connect(m_localTimer, &QTimer::timeout, this, &PlotXYDemo::onUpdateLocalTime);
+	m_localTimer->start(1000);
 }
 
 void PlotXYDemo::initWidget(QWidget* w)

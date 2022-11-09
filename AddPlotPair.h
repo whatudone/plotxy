@@ -2,9 +2,7 @@
 #define _ADD_PLOT_PAIR_H_
 
 #include <QWidget>
-
 #include <QString>
-
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QTreeWidget>
@@ -41,8 +39,6 @@ public:
 	int m_textUserX;
 	int m_textUserY;
 	QString m_textUser;
-
-
 
 	QSet<QString> m_temSet1;
 	QSet<QString> m_temSet2;
