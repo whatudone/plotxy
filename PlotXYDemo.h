@@ -22,6 +22,8 @@ public:
     ~PlotXYDemo();
 
     void init();            //初始化函数，连接信号槽
+	void initTime();
+	void initStatusBar();
     void initWidget(QWidget* w);
 	PlotType getCurrentFocusPlot();
 
@@ -30,7 +32,6 @@ public slots:
     void onPlotManager();
     void onAddPlotPair();
     void onOpenFile();
-	void onTimeControl();
 
     void onCustomContextMenuRequested(const QPoint&);
 	void onContextMenu(const QPoint& point);
@@ -46,9 +47,30 @@ public slots:
 	void onAddLightPlot();
 
 	void onFocusChanged(QWidget* oldWidget, QWidget* newWidget);
+
+	void onSetSliderRange(int min, int max, int singleStep);
+	void onSliderValueChanged(int);
+	void onRemoteSliderValueChanged(int);
+
+	void onActionPlay();
+	void onActionStop();
+	void onActionReverse();
+	void onActionFrameReverse();
+	void onActionFrameForward();
+	void onActionDecreseStep();
+	void onActionIncreaseStep();
+	void onActionTimeServer();
+	void onActionTimeClient();
+	void onActionRealTime();
+	void onActionTimeControl();
+
+	void onTimeOut();
+	void onUpdateLocalTime();
 	
 signals:
 	void sgn_loadDataReady();
+	void sgn_sliderValueChanged(int);
+	void sgn_sendCurrentSeconds(double);
 private:
     Ui::PlotXYDemo ui;
 	QWidget* m_nowFocusWidget;
@@ -59,6 +81,28 @@ private:
 	BaseInfo m_curBaseInfo;
 	PlotType m_lastSelectedType;
 	TimeControls* m_timeCtrl;
+
+	QTimer* m_timer;
+	int m_timerInterval;
+	bool m_bIsPlayForward;
+
+	QTimer *m_localTimer;
+
+	//statusBar widget
+	QLabel		*m_statusBar_info;
+	QToolButton *m_statusBar_EditLock;
+	QToolButton *m_statusBar_layoutLock;
+	QLabel		*m_statusBar_dataTime;
+	QLabel		*m_statusBar_localTime;
+	QToolButton *m_statusBar_selectPlot;
+	QToolButton *m_statusBar_pan;
+	QToolButton *m_statusBar_centerPlot;
+	QToolButton *m_statusBar_zoom;
+	QToolButton *m_statusBar_boxZoom;
+	QToolButton *m_statusBar_measure;
+	QToolButton *m_statusBar_createPlot;
+	QToolButton *m_statusBar_movePlot;
+	QLabel		*m_statusBar_null;
 };
 
 #endif // ! 

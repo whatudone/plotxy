@@ -12,7 +12,7 @@
 #include <QMap>
 #include <memory>
 
-
+class OrdinalTimeFormatter;
 class DataManager;
 class DataManagerSafeDeletor
 {
@@ -39,6 +39,9 @@ private:
 
     QMap<QString,QMap<QString,QList<double>>> m_entityDataMap;
 
+	double m_minTime, m_maxTime;
+	int	   m_refYear = -1;
+
 public:
     static std::shared_ptr<DataManager> getInstance()
     {
@@ -60,7 +63,10 @@ public:
     }
 
     void loadCSV(const QString&);
+	void loadCSV_stringTime(const QString&);
     QMap<QString, QMap<QString, QList<double>>>& getDataMap();
+	void getMinMaxTime(double &minTime, double &maxTime);
+	int getRefYear();
 };
 
 

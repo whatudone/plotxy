@@ -2,9 +2,7 @@
 #define _ADD_PLOT_PAIR_H_
 
 #include <QWidget>
-
 #include <QString>
-
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QTreeWidget>
