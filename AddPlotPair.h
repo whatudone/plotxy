@@ -33,15 +33,12 @@ public:
     ~AddPlotPair();
 
     void init(PlotType index = PlotType::Type_PlotScatter);
-	int textRowCount();
-	int textCloumnCount();
-	QList<textUserData> getUserText();
+	//int textRowCount();
+	//int textCloumnCount();
+	//QList<textUserData> getUserText();
 	int m_textUserX;
 	int m_textUserY;
 	QString m_textUser;
-
-
-	bool m_isUserDefine();
 
 	QSet<QString> m_temSet1;
 	QSet<QString> m_temSet2;
@@ -54,6 +51,7 @@ private:
 	void initStackedWidget_page2();
 	void initStackedWidget_page3();
 	void initStackedWidget_page4();
+	void initStackedWidget_page5();
 
 	void initTreePlot();
 	void updatePlotTrees();
@@ -73,6 +71,7 @@ public slots:
 	void onTableWidgetItemClicked_2(QTableWidgetItem*);
 	void onTableWidgetItemClicked_3(QTableWidgetItem*);
 	void onTableWidgetItemClicked_4(QTableWidgetItem*);
+	void onTableWidgetLightEntityClicked(QTableWidgetItem * );
 	void onTableWidgetItemClicked_Attitude1(QTableWidgetItem*);
 	void onTableWidgetItemClicked_Attitude2(QTableWidgetItem*);
 	void onUpdateData();
@@ -85,12 +84,8 @@ private:
 	static AddPlotPair* thispoint;
 	explicit AddPlotPair(QWidget *parent = 0);
 
-
 	BaseInfo m_curPlotInfo;
 	QMap<QString, QList<PlotItemBase*>> m_plotManager; //tabName
-
-
-
 
 	QTreeWidget* m_treePlot;
 	QMenu* m_menuPlot;
