@@ -17,6 +17,7 @@
 #include "PlotLight.h"
 
 
+
 PlotXYDemo::PlotXYDemo(QWidget* parent)
     : QMainWindow(parent)
 {
