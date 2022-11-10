@@ -224,7 +224,6 @@ void PlotXYDemo::onContextMenu(const QPoint& point)
 	connect(DataManager_Action, SIGNAL(triggered()), this, SLOT(onAdvancedData()));
 	connect(PlotPair_Action, SIGNAL(triggered()), this, SLOT(onAddPlotPair()));
 	
-
 	QAction* GOG_Action = new QAction(QString::fromLocal8Bit("导出GOG"), this);
 	QAction* HDF5_Action = new QAction(QString::fromLocal8Bit("导出HDF5"), this);
 
@@ -444,7 +443,10 @@ void PlotXYDemo::onTimeOut()
 				ui.timeSlider->setValue(ui.timeSlider->minimum());
 			}
 			else
+			{
 				m_timer->stop();
+				ui.actionStop->setEnabled(false);
+			}
 		}
 		else
 			ui.timeSlider->setValue(curValue + step);
@@ -458,7 +460,10 @@ void PlotXYDemo::onTimeOut()
 				ui.timeSlider->setValue(ui.timeSlider->maximum());
 			}
 			else
+			{
 				m_timer->stop();
+				ui.actionStop->setEnabled(false);
+			}
 		}
 		else
 			ui.timeSlider->setValue(curValue - step);
@@ -563,7 +568,8 @@ void PlotXYDemo::onAddAttitudePlot()
 
 	PlotAttitude* plotItem = new PlotAttitude(ui.tabWidget->currentWidget());
 	plotItem->setTabName(currTabText);
-	connect(ui.actionStop, &QAction::triggered, plotItem, &PlotAttitude::onSwitch);
+//	connect(ui.actionStop, &QAction::triggered, plotItem, &PlotAttitude::onSwitch);
+	connect(this, &PlotXYDemo::sgn_sendCurrentSeconds, plotItem, &PlotAttitude::slot_getCurrentSeconds);
 	initWidget(plotItem);
 
 	// 控制其自由移动和缩放
@@ -588,6 +594,7 @@ void PlotXYDemo::init()
 
 void PlotXYDemo::initTime()
 {
+	ui.actionStop->setEnabled(false);
 	m_timer = new QTimer(this);
 	m_timerInterval = 1000;
 	m_bIsPlayForward = true;
@@ -639,10 +646,46 @@ void PlotXYDemo::initStatusBar()
 	m_statusBar_movePlot = new QToolButton(this);
 	m_statusBar_null = new QLabel(this);
 
+	m_statusBar_EditLock->setToolTip("Editing Lock");
+	m_statusBar_layoutLock->setToolTip("Stacking Lock");
+	m_statusBar_selectPlot->setToolTip("Select Plot");
+	m_statusBar_pan->setToolTip("Pan");
+	m_statusBar_centerPlot->setToolTip("Center Plot");
+	m_statusBar_zoom->setToolTip("Zoom");
+	m_statusBar_boxZoom->setToolTip("Box Zoom");
+	m_statusBar_measure->setToolTip("Measure");
+	m_statusBar_createPlot->setToolTip("Create Plot");
+	m_statusBar_movePlot->setToolTip("Move Plot");
+
+	m_statusBar_EditLock->setIcon(QIcon(":/statusbar/editingLock.bmp"));
+	m_statusBar_layoutLock->setIcon(QIcon(":/statusbar/stackingLock.bmp"));
+	m_statusBar_selectPlot->setIcon(QIcon(":/statusbar/selectPlot.bmp"));
+	m_statusBar_pan->setIcon(QIcon(":/statusbar/pan.bmp"));
+	m_statusBar_centerPlot->setIcon(QIcon(":/statusbar/centerPlot.bmp"));
+	m_statusBar_zoom->setIcon(QIcon(":/statusbar/zoom.bmp"));
+	m_statusBar_boxZoom->setIcon(QIcon(":/statusbar/boxZoom.bmp"));
+	m_statusBar_measure->setIcon(QIcon(":/statusbar/measureDistance.bmp"));
+	m_statusBar_createPlot->setIcon(QIcon(":/statusbar/createPlot.bmp"));
+	m_statusBar_movePlot->setIcon(QIcon(":/statusbar/movePlot.bmp"));
+
+	m_statusBar_EditLock->setIconSize(QSize(25, 25));
+	m_statusBar_layoutLock->setIconSize(QSize(25, 25));
+	m_statusBar_selectPlot->setIconSize(QSize(25, 25));
+	m_statusBar_pan->setIconSize(QSize(25, 25));
+	m_statusBar_centerPlot->setIconSize(QSize(25, 25));
+	m_statusBar_zoom->setIconSize(QSize(25, 25));
+	m_statusBar_boxZoom->setIconSize(QSize(25, 25));
+	m_statusBar_measure->setIconSize(QSize(25, 25));
+	m_statusBar_createPlot->setIconSize(QSize(25, 25));
+	m_statusBar_movePlot->setIconSize(QSize(25, 25));
+
 	m_statusBar_info->setFrameStyle(QFrame::Panel | QFrame::Sunken);
 	m_statusBar_dataTime->setFrameStyle(QFrame::Panel | QFrame::Sunken);
 	m_statusBar_localTime->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-	m_statusBar_null->setMinimumSize(QSize(50, 10));
+
+//	m_statusBar_dataTime->setMinimumSize(QSize(170, 10));
+	m_statusBar_dataTime->setAlignment(Qt::AlignCenter | Qt::AlignHCenter);
+	m_statusBar_null->setMinimumSize(QSize(40, 10));
 	m_statusBar_null->setEnabled(false);
 
 	ui.statusBar->addWidget(m_statusBar_info, 1);

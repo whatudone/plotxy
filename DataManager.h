@@ -67,6 +67,10 @@ public:
     QMap<QString, QMap<QString, QList<double>>>& getDataMap();
 	void getMinMaxTime(double &minTime, double &maxTime);
 	int getRefYear();
+	int getEntityAttr_MaxIndex_List(QString entity, QString attr, double secs);	//获取secs时间内的实体-属性的最大index
+	QList<double> getEntityAttr_Value_List(QString entity, QString attr = "Time");	//获取实体-属性的全数据，属性默认为Time
+	QList<double> getEntityAttr_MaxPartValue_List(QString entity, QString attr, double secs);	//获取最小时间到secs时间内的实体-属性数据list
+	QList<double> getEntityAttr_PartValue_List(QString entity, QString attr, int minIndex, int maxIndex);	//获取minIndex到maxIndex内的实体-属性数据list
 };
 
 

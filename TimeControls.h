@@ -60,6 +60,8 @@ public slots:
 	void onActionTimeClient();
 	void onActionRealTime();
 
+	void onLineEdit_stepFactor_EditingFinished();
+
 signals:
 	void sgn_setSliderRange(int min, int max, int singleStep);
 	void sgn_sliderValueChanged(int);

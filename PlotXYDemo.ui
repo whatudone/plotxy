@@ -300,7 +300,14 @@
    <addaction name="actionReal_Time"/>
    <addaction name="actionTime_Controls"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QStatusBar" name="statusBar">
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+  </widget>
   <action name="actionopen">
    <property name="icon">
     <iconset resource="resources/toolbar.qrc">
@@ -970,6 +977,7 @@
  <layoutdefault spacing="6" margin="11"/>
  <resources>
   <include location="resources/toolbar.qrc"/>
+  <include location="resources/statusbar.qrc"/>
  </resources>
  <connections/>
 </ui>

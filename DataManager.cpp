@@ -241,3 +241,69 @@ int DataManager::getRefYear()
 {
 	return m_refYear;
 }
+
+QList<double> DataManager::getEntityAttr_Value_List(QString entity, QString attr)
+{
+	QList<double> valueList;
+	if (!m_entityDataMap.isEmpty())
+	{
+		if (m_entityDataMap.contains(entity))
+		{
+			if (m_entityDataMap.value(entity).contains(attr))
+			{
+				valueList = m_entityDataMap.value(entity).value(attr);
+			}
+		}
+	}
+	return valueList;
+}
+
+QList<double> DataManager::getEntityAttr_MaxPartValue_List(QString entity, QString attr, double secs)
+{
+	int index = getEntityAttr_MaxIndex_List(entity, attr, secs);
+	QList<double> valueList;
+	if (index >= 0)
+	{
+		index++;
+		valueList = getEntityAttr_Value_List(entity, attr);
+		if (!valueList.isEmpty())
+		{
+			if (index < valueList.size())
+			{
+				valueList = valueList.mid(0, index);
+			}
+		}
+	}
+	return valueList;
+}
+
+QList<double> DataManager::getEntityAttr_PartValue_List(QString entity, QString attr, int minIndex, int maxIndex)
+{
+	QList<double> valueList;
+	if (minIndex < 0 || maxIndex < 0)
+		return valueList;
+
+	valueList = getEntityAttr_Value_List(entity, attr);
+	if (minIndex >= valueList.size() || maxIndex >= valueList.size())
+		return valueList;
+
+	valueList = valueList.mid(minIndex, (maxIndex - minIndex + 1));
+	return valueList;
+}
+
+int DataManager::getEntityAttr_MaxIndex_List(QString entity, QString attr, double secs)
+{
+	int index = 0;
+	QList<double> timeList = getEntityAttr_Value_List(entity);
+	if (!timeList.isEmpty())
+	{
+		for (index = 0; index < timeList.size(); ++index)
+		{
+			if (timeList.at(index) > secs)
+			{
+				break;
+			}
+		}
+	}
+	return (index-1);
+}

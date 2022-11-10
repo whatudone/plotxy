@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>statusbar/boxZoom.bmp</file>
+        <file>statusbar/centerPlot.bmp</file>
+        <file>statusbar/createPlot.bmp</file>
+        <file>statusbar/editingLock.bmp</file>
+        <file>statusbar/measureDistance.bmp</file>
+        <file>statusbar/movePlot.bmp</file>
+        <file>statusbar/pan.bmp</file>
+        <file>statusbar/selectPlot.bmp</file>
+        <file>statusbar/stackingLock.bmp</file>
+        <file>statusbar/zoom.bmp</file>
+    </qresource>
+</RCC>
