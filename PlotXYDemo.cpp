@@ -377,17 +377,12 @@ void PlotXYDemo::onAddPolarPlot()
 
 	PlotPolar* plotItem = new PlotPolar(ui.tabWidget->currentWidget());
 	plotItem->setTabName(currTabText);
-	//bool res = connect(ui.actionStop,SIGNAL(triggered(bool)), plotItem, SLOT(onSwitch(bool)));
-	bool res = connect(ui.actionStop, &QAction::triggered, plotItem, &PlotPolar::onSwitch);
-	res = connect(m_AdvancedDataManager, &AdvancedDataManager::updateColorThresholdMap,
-		plotItem, &PlotPolar::onUpdateColorThresholdMap);
+	connect(this, &PlotXYDemo::sgn_sendCurrentSeconds, plotItem, &PlotPolar::slot_getCurrentSeconds);
 
 	initWidget(plotItem);
 	// 控制其自由移动和缩放
 	FreeWidgetWraper* m_freeWidgetWraper = new FreeWidgetWraper();
 	m_freeWidgetWraper->setWidget(plotItem);
-
-	m_freeWidgetWraper->setMoveEnable(true);
 	m_freeWidgetWraper->setMoveEnable(true);
 
 	plotItem->show();
@@ -395,7 +390,6 @@ void PlotXYDemo::onAddPolarPlot()
 	m_lastSelectedType = PlotType::Type_PlotPolar;
 	m_plotManager->addPlot(currTabText, plotItem); 
 	m_addPlotPair->onAddPlot(currTabText, plotItem);
-
 }
 
 void PlotXYDemo::onFocusChanged(QWidget * oldWidget, QWidget * newWidget)
@@ -578,14 +572,13 @@ void PlotXYDemo::onAddAttitudePlot()
 	m_freeWidgetWraper->setWidget(plotItem);
 
 	m_freeWidgetWraper->setMoveEnable(true);
-	m_freeWidgetWraper->setMoveEnable(true);
 
 	plotItem->show();
 	plotItem->update();
 
 	m_lastSelectedType = PlotType::Type_PlotAttitude;
 	m_plotManager->addPlot(currTabText, plotItem);
-	m_addPlotPair->onAddPlot(currTabText, plotItem);	
+	m_addPlotPair->onAddPlot(currTabText, plotItem);
 }
 
 void PlotXYDemo::init()

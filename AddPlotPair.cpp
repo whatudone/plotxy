@@ -382,13 +382,6 @@ bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 			strEntity1 = ui.tableWidget_Entity_2->currentItem()->text();
 			strNameUnit1 = ui.tableWidget_nameUnits_2->item(ui.tableWidget_nameUnits_2->currentRow(), 0)->text();
 			strSum1 = strEntity1 + "+" + strNameUnit1;
-			strEntity2 = ui.tableWidget_Entity_3->currentItem()->text();
-			strNameUnit2 = ui.tableWidget_nameUnits_3->item(ui.tableWidget_nameUnits_3->currentRow(), 0)->text();
-			strSum2 = strEntity2 + "+" + strNameUnit2;
-
-			strEntity1 = ui.tableWidget_Entity_2->currentItem()->text();
-			strNameUnit1 = ui.tableWidget_nameUnits_2->item(ui.tableWidget_nameUnits_2->currentRow(), 0)->text();
-			strSum1 = strEntity1 + "+" + strNameUnit1;
 		}
 		else if (ui.radioButton_6->isChecked())
 		{

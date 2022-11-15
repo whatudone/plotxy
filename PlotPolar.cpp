@@ -1,6 +1,6 @@
 #include "PlotPolar.h"
 #include <qlabel.h>
-#include "QResizeEvent"
+#include "DataManager.h"
 
 int PlotPolar::m_instanceCount = 1;
 PlotPolar::PlotPolar(QWidget * parent)
@@ -9,104 +9,200 @@ PlotPolar::PlotPolar(QWidget * parent)
 	QString name = QString("Polar%1").arg(m_instanceCount);
 	this->setName(name);
 	m_instanceCount += 1;
+	m_title = "Polar";
+	m_titleColor = Qt::white;
+	m_titleFont.setFamily("Microsoft YaHei");
+	m_titleFont.setPointSizeF(16.0);
 
-	m_started = false;
-	m_timer = new QTimer(this);
-	connect(m_timer, &QTimer::timeout, this, &PlotPolar::onTimeout);
+	m_angularUnit = QString::fromLocal8Bit("бу");
+	m_radialUnit = QString::fromLocal8Bit("бу");
+
+	m_angularRange_lower = 0.0;
+	m_angularRange_upper = 360.0;
+	m_radialRange_lower = 0.0;
+	m_radialRange_upper = 90.0;
+
 	initPlot();
-//	m_layout = new QHBoxLayout(this);
-//	m_layout->addWidget(customPlot);
-
-
+	//m_layout = new QVBoxLayout(this);
+	//m_layout->addWidget(m_titleLabel);
+	//m_layout->addWidget(m_customPlot, 1);
 }
-//void PlotPolar::resizeEvent(QResizeEvent *event)
-//{
-//	customPlot->resize(event->size());
-//}
+
 PlotPolar::~PlotPolar()
 {
 }
 
 void PlotPolar::initPlot()
 {
-	//QLabel* lb = new QLabel(this);
-	//lb->setGeometry(0, 0, width(),height());
-	//lb->setObjectName("lb1");
-	//lb->setStyleSheet("QLabel#lb1{border-width:3px;border-style:solid;border-color:rgb(125,125,125);}");
+	m_titleLabel = new QLabel(this);
+	m_titleLabel->setText(m_title);
+	m_titleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+	m_titleLabel->setFont(m_titleFont);
+	m_titleLabel->setStyleSheet(QString("color:%1;").arg(m_titleColor.name()));
+//	m_titleLabel->setGeometry(0, 0, width(), 20);
 	//for (auto i:this->children())
 	//{
 	//	QString classname = i->metaObject()->className();
 	//	if (classname == "QPushButton" && i->isWidgetType())
 	//	{
-	//		((QWidget*)i)->setParent(lb);
+	//		((QWidget*)i)->setParent(m_titleLabel);
 	//		break;
 	//	}
 	//}
-#if 1
 
+	m_customPlot = new QCustomPlot(this);
+	m_customPlot->installEventFilter(this);
 
-	customPlot = new QCustomPlot(this);
-	customPlot->setBackground(QBrush(QColor(0, 0, 0)));
-	//customPlot->setGeometry(width()/2 - (height() - 20)/2, 10, height() - 20, height() - 20);
-	customPlot->setGeometry(0,0,width(),height());
-	customPlot->plotLayout()->clear();
-	QCPPolarAxisAngular *angularAxis = new QCPPolarAxisAngular(customPlot);
-	angularAxis->setBasePen(QPen(QColor(255, 255, 255), 2));
-	customPlot->plotLayout()->addElement(0, 0, angularAxis);
-	//customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-	angularAxis->setRangeDrag(false);
-	angularAxis->setTickLabelMode(QCPPolarAxisAngular::lmUpright);
-	angularAxis->setFormat(QString::fromLocal8Bit("бу"));
-	angularAxis->setTickLabelColor(QColor(255, 255, 255));
-	angularAxis->setTickPen(QPen(QColor(255, 255, 255),2));
+	m_customPlot->setBackground(QBrush(QColor(0, 0, 0)));
+//	m_customPlot->setGeometry(0,20,qMin(width(),height()), qMin(width(), height()));
+	m_customPlot->plotLayout()->clear();
 
-	//angularAxis->radialAxis()->setTickPen(QPen(QColor(255, 255, 255),2));
-	angularAxis->radialAxis()->setTickLabelColor(QColor(255, 255, 255));
-	angularAxis->radialAxis()->setFormat(QString::fromLocal8Bit("бу"));
-	angularAxis->radialAxis()->setTickLabelMode(QCPPolarAxisRadial::lmUpright);
-	angularAxis->radialAxis()->setTickLabelRotation(0);
-	angularAxis->radialAxis()->setBasePen(QPen(QColor(255, 255, 255), 2));
-	angularAxis->radialAxis()->setAngle(0);
+	m_angularAxis = new QCPPolarAxisAngular(m_customPlot);
+	m_angularAxis->setBasePen(QPen(QColor(255, 255, 255), 2));
+	m_customPlot->plotLayout()->addElement(0, 0, m_angularAxis);
+	
+	m_customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+	m_angularAxis->setRangeDrag(false);
+	m_angularAxis->setTickLabelMode(QCPPolarAxisAngular::lmUpright);
+	m_angularAxis->setFormat(m_angularUnit);
+	m_angularAxis->setTickLabelColor(QColor(255, 255, 255));
+	m_angularAxis->setTickPen(QPen(QColor(255, 255, 255),2));
+
+	m_angularAxis->radialAxis()->setTickLabelColor(QColor(255, 255, 255));
+	m_angularAxis->radialAxis()->setFormat(m_radialUnit);
+	m_angularAxis->radialAxis()->setTickLabelMode(QCPPolarAxisRadial::lmUpright);
+	m_angularAxis->radialAxis()->setTickLabelRotation(0);
+	m_angularAxis->radialAxis()->setBasePen(QPen(QColor(255, 255, 255), 2));
+	m_angularAxis->radialAxis()->setAngle(0);
 
 	//angularAxis->radialAxis()->setNumberFormat("e");
-	angularAxis->grid()->setAngularPen(QPen(QColor(255, 255, 255), 0, Qt::SolidLine));
-	angularAxis->grid()->setSubGridType(QCPPolarGrid::gtNone);
-	/*QCPPolarGraph *g1 = new QCPPolarGraph(angularAxis, angularAxis->radialAxis());
-	QCPPolarGraph *g2 = new QCPPolarGraph(angularAxis, angularAxis->radialAxis());
-	g2->setPen(QPen(QColor(255, 150, 20)));
-	g2->setBrush(QColor(255, 150, 20, 50));
-	g1->setScatterStyle(QCPScatterStyle::ssDisc);
-	for (int i = 0; i<100; ++i)
-	{
-		g1->addData(i / 100.0*360.0, qSin(i / 100.0*M_PI * 8) * 8 + 1);
-		g2->addData(i / 100.0*360.0, qSin(i / 100.0*M_PI * 6) * 2);
-	}*/
-	angularAxis->setRange(0, 360);
-	angularAxis->radialAxis()->setRange(0, 90);
-#endif
+	m_angularAxis->grid()->setAngularPen(QPen(QColor(255, 255, 255), 0, Qt::SolidLine));
+	m_angularAxis->grid()->setSubGridType(QCPPolarGrid::gtNone);
 
-	//customPlot->replot();
+	m_angularAxis->setRange(m_angularRange_lower, m_angularRange_upper);
+	m_angularAxis->radialAxis()->setRange(m_radialRange_lower, m_radialRange_upper);
+	m_angularAxis->radialAxis()->setRangeReversed(false);
+
+//	m_customPlot->replot();
+}
+
+
+void PlotPolar::paintEvent(QPaintEvent * event)
+{
+	int width = this->width();
+	int height = this->height();
+	//╗н▒╩
+	QPainter painter(this);
+	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+
+	QFontMetricsF fm(m_titleFont);
+	double w = fm.size(Qt::TextSingleLine, m_title).width();
+	double h = fm.size(Qt::TextSingleLine, m_title).height();
+
+	int radius = qMin(width, int(height - h));
+	if (width > (height - h))
+	{
+		m_customPlot->setGeometry((width - radius)/2, h, radius, radius);
+		m_titleLabel->setGeometry(0, 0, width, h);
+	} 
+	else
+	{
+		m_customPlot->setGeometry(0, (height + h - radius)/2, radius, radius);
+		m_titleLabel->setGeometry(0, (height - h - radius) / 2, width, h);
+	}
+}
+
+bool PlotPolar::eventFilter(QObject * watched, QEvent * event)
+{
+	/*if (watched == m_customPlot)
+	{
+	if (event->type() == QEvent::MouseButtonPress)
+	{
+	parent()->event(event);
+	qDebug() << parent()->objectName();
+	return true;
+	}
+	}*/
+	return false;
+}
+
+void PlotPolar::slot_setTitle(QString title)
+{
+	m_titleLabel->setText(title);
+}
+
+void PlotPolar::slot_setTitleColor(const QColor & color)
+{
+	m_titleLabel->setStyleSheet(QString("color:%1;").arg(color.name()));
+}
+
+void PlotPolar::slot_setTitleFont(const QFont & font)
+{
+	m_titleLabel->setFont(font);
+}
+
+void PlotPolar::slot_setAngularUnit(QString unit)
+{
+	m_angularAxis->setFormat(unit);
+}
+
+void PlotPolar::slot_setRadialUnit(QString unit)
+{
+	m_angularAxis->radialAxis()->setFormat(unit);
+}
+
+void PlotPolar::slot_setAngularRange(double lower, double upper)
+{
+	m_angularAxis->setRange(lower, upper);
+}
+
+void PlotPolar::slot_setRadialRange(double lower, double upper)
+{
+	m_angularAxis->radialAxis()->setRange(lower, upper);
+}
+
+void PlotPolar::slot_setRangeDrag(bool enabled)
+{
+	m_customPlot->setInteraction(QCP::iRangeDrag, enabled);
+}
+
+void PlotPolar::slot_setRangeZoom(bool enabled)
+{
+	m_customPlot->setInteraction(QCP::iRangeZoom, enabled);
+}
+
+void PlotPolar::slot_getCurrentSeconds(double secs)
+{
+	if (getPlotPairData().isEmpty())
+		return;
+
+	int isize = getPlotPairData().size();
+	QVector<QCPPolarGraph*> graph;
+
+	for (int i = 0; i < isize; ++i)
+	{
+		QString xcolumn = getPlotPairData().at(i).first;
+		QString ycolumn = getPlotPairData().at(i).second;
+		QStringList xlist = xcolumn.split("+");
+		QStringList ylist = ycolumn.split("+");
+
+		QVector<double> x = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs).toVector();
+		QVector<double> y = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(ylist.at(0), ylist.at(1), secs).toVector();
+		
+		QCPPolarGraph* g = new QCPPolarGraph(m_angularAxis, m_angularAxis->radialAxis());
+		g->setScatterStyle(QCPScatterStyle::ssDisc);
+		g->setLineStyle(QCPPolarGraph::lsNone);
+		graph.append(g);
+		graph[i]->setPen(QPen(QColor(255, 0, 0), 2));
+		graph[i]->addData(x, y);
+	}
+	m_customPlot->replot();
+
+	qDeleteAll(graph);
+	graph.clear();
 }
 
 void PlotPolar::onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>> targetMap)
 {
 	m_thresholdColorMap = targetMap;
-}
-
-void PlotPolar::onTimeout()
-{
-}
-
-void PlotPolar::onSwitch(bool b)
-{
-	if (!m_started)
-	{
-		m_timer->start(500);
-		m_started = true;
-	}
-	else
-	{
-		m_timer->stop();
-		m_started = false;
-	}
 }

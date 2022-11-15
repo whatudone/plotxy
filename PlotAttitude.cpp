@@ -460,8 +460,8 @@ void PlotAttitude::slot_getCurrentSeconds(double secs)
 		return;
 
 	int isize = getPlotPairData().size();
-	QString xcolumn = getPlotPairData().at(0).first;
-	QString ycolumn = getPlotPairData().at(0).second;
+	QString xcolumn = getPlotPairData().at(isize - 1).first;
+	QString ycolumn = getPlotPairData().at(isize - 1).second;
 	QStringList xlist = xcolumn.split("+");
 	QStringList ylist = ycolumn.split("+");
 
