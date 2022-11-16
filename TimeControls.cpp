@@ -2,6 +2,7 @@
 #include <windows.h>
 #include "DataManager.h"
 #include <QDebug>
+#include <QDoubleValidator>
 
 TimeControls::TimeControls(QWidget *parent)
 	: QWidget(parent)
@@ -12,8 +13,12 @@ TimeControls::TimeControls(QWidget *parent)
 	m_minTime = 0;
 	m_maxTime = 0;
 	m_refYear = 1970;
-	m_stepFactor = 1.0;
+	m_stepFactor = 0.1;
 	m_bLoopTime = false;
+
+	QDoubleValidator* doubleValid = new QDoubleValidator(0, 100, 3);
+	ui.lineEdit_stepFactor->setValidator(doubleValid);
+	connect(ui.lineEdit_stepFactor, &QLineEdit::editingFinished, this, &TimeControls::onLineEdit_stepFactor_EditingFinished);
 
 	connect(ui.pushButton_2, &QPushButton::clicked, this, &TimeControls::onClose);
 	connect(ui.horizontalSlider, &QSlider::valueChanged, this, &TimeControls::onSliderValueChanged);
@@ -175,7 +180,6 @@ void TimeControls::onUpdateData()
 	setEndTime(m_maxTime, m_refYear);
 	setRefTime(m_refYear);
 
-	m_stepFactor = ui.lineEdit_stepFactor->text().toDouble();
 	emit sgn_setSliderRange(m_minTime * m_Multiplier, m_maxTime *m_Multiplier, m_stepFactor * m_Multiplier);
 }
 
@@ -208,16 +212,14 @@ void TimeControls::onBeginNowClicked()
 	double curSecs = getCurTime(m_refYear);
 	setBeginTime(curSecs, m_refYear);
 
-	double stepFactor = ui.lineEdit_stepFactor->text().toDouble();
-	emit sgn_setSliderRange(curSecs * m_Multiplier, getEndTime(m_refYear) *m_Multiplier, stepFactor * m_Multiplier);
+	emit sgn_setSliderRange(curSecs * m_Multiplier, getEndTime(m_refYear) *m_Multiplier, m_stepFactor * m_Multiplier);
 }
 
 void TimeControls::onBeginResetClicked()
 {
 	setBeginTime(m_minTime, m_refYear);
 
-	double stepFactor = ui.lineEdit_stepFactor->text().toDouble();
-	emit sgn_setSliderRange(m_minTime * m_Multiplier, getEndTime(m_refYear) *m_Multiplier, stepFactor * m_Multiplier);
+	emit sgn_setSliderRange(m_minTime * m_Multiplier, getEndTime(m_refYear) *m_Multiplier, m_stepFactor * m_Multiplier);
 }
 
 void TimeControls::onEndNowClicked()
@@ -225,16 +227,14 @@ void TimeControls::onEndNowClicked()
 	double curSecs = getCurTime(m_refYear);
 	setEndTime(curSecs, m_refYear);
 
-	double stepFactor = ui.lineEdit_stepFactor->text().toDouble();
-	emit sgn_setSliderRange(getBeginTime(m_refYear) * m_Multiplier, curSecs *m_Multiplier, stepFactor * m_Multiplier);
+	emit sgn_setSliderRange(getBeginTime(m_refYear) * m_Multiplier, curSecs *m_Multiplier, m_stepFactor * m_Multiplier);
 }
 
 void TimeControls::onEndResetClicked()
 {
 	setEndTime(m_maxTime, m_refYear);
 
-	double stepFactor = ui.lineEdit_stepFactor->text().toDouble();
-	emit sgn_setSliderRange(getBeginTime(m_refYear) * m_Multiplier, m_maxTime *m_Multiplier, stepFactor * m_Multiplier);
+	emit sgn_setSliderRange(getBeginTime(m_refYear) * m_Multiplier, m_maxTime *m_Multiplier, m_stepFactor * m_Multiplier);
 }
 
 void TimeControls::onCheckBox_LoopTimeClicked()
@@ -290,5 +290,10 @@ void TimeControls::onActionTimeClient()
 void TimeControls::onActionRealTime()
 {
 	emit sgn_actionRealTime();
+}
+
+void TimeControls::onLineEdit_stepFactor_EditingFinished()
+{
+	m_stepFactor = ui.lineEdit_stepFactor->text().toDouble();
 }
 

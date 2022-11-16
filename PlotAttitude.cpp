@@ -53,10 +53,6 @@ PlotAttitude::PlotAttitude(QWidget* parent)
 	QString name = QString("Attitude%1").arg(m_instanceCount);
 	this->setName(name);
 	m_instanceCount += 1;
-
-	m_currTimeIndex = 0;
-	m_timer = new QTimer(this);
-	connect(m_timer, &QTimer::timeout, this, &PlotAttitude::onTimerout);
 }
 
 PlotAttitude::~PlotAttitude()
@@ -93,10 +89,7 @@ void PlotAttitude::paintEvent(QPaintEvent* event)
 	drawText_roll(&painter, side / 2);
 	drawText_pitch(&painter, side / 2);
 
-	if (m_started)
-	{
-		updateItems();
-	}
+	updateItems();
 }
 
 void PlotAttitude::drawTitle(QPainter * painter, int radius)
@@ -336,50 +329,32 @@ QSize PlotAttitude::minimumSizeHint() const
 
 void PlotAttitude::updateItems()
 {
-	if (getPlotPairData().isEmpty())
-		return;
-	
-	int isize = getPlotPairData().size();
-	QString xcolumn = getPlotPairData().at(0).first;
-	QString ycolumn = getPlotPairData().at(0).second;
-	QStringList xlist = xcolumn.split("+");
-	QStringList ylist = ycolumn.split("+");
+	int xSize = m_xValueList.size();
+	int ySize = m_yValueList.size();
 
-	auto dataMap = DataManager::getInstance()->getDataMap();
-	if (xlist.size() == 2)
+	if (xSize <= ySize)
 	{
-		if (dataMap.contains(xlist.at(0)))
+		for (int i = 0; i < xSize; ++i)
 		{
-			if (dataMap.value(xlist.at(0)).contains(xlist.at(1)))
-			{
-				if (m_currTimeIndex < dataMap.value(xlist.at(0)).value(xlist.at(1)).size())
-				{
-					slot_setRollValue(dataMap.value(xlist.at(0)).value(xlist.at(1)).at(m_currTimeIndex));
-				}
-			}
+			slot_setRollValue(m_xValueList.at(i));
+			slot_setPitchValue(m_yValueList.at(i));
+		}
+		for (int i = xSize; i < ySize; i++)
+		{
+			slot_setPitchValue(m_yValueList.at(i));
 		}
 	}
-	else if (xlist.size() == 1)
+	else
 	{
-
-	}
-
-	if (ylist.size() == 2)
-	{
-		if (dataMap.contains(ylist.at(0)))
+		for (int i = 0; i < ySize; ++i)
 		{
-			if (dataMap.value(ylist.at(0)).contains(ylist.at(1)))
-			{
-				if (m_currTimeIndex < dataMap.value(ylist.at(0)).value(ylist.at(1)).size())
-				{
-					slot_setPitchValue(dataMap.value(ylist.at(0)).value(ylist.at(1)).at(m_currTimeIndex));
-				}
-			}
+			slot_setRollValue(m_xValueList.at(i));
+			slot_setPitchValue(m_yValueList.at(i));
 		}
-	}
-	else if (ylist.size() == 1)
-	{
-
+		for (int i = ySize; i < xSize; i++)
+		{
+			slot_setRollValue(m_xValueList.at(i));
+		}
 	}
 }
 
@@ -479,22 +454,19 @@ void PlotAttitude::slot_setRollValue(double rollValue)
 	update();
 }
 
-void PlotAttitude::onTimerout()
+void PlotAttitude::slot_getCurrentSeconds(double secs)
 {
-	m_currTimeIndex++;
-	update();
-}
+	if (getPlotPairData().isEmpty())
+		return;
 
-void PlotAttitude::onSwitch(bool bOn)
-{
-	if (!m_started)
-	{
-		m_timer->start(500);
-		m_started = true;
-	}
-	else
-	{
-		m_timer->stop();
-		m_started = false;
-	}
+	int isize = getPlotPairData().size();
+	QString xcolumn = getPlotPairData().at(isize - 1).first;
+	QString ycolumn = getPlotPairData().at(isize - 1).second;
+	QStringList xlist = xcolumn.split("+");
+	QStringList ylist = ycolumn.split("+");
+
+	m_xValueList = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs);
+	m_yValueList = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(ylist.at(0), ylist.at(1), secs);
+
+	update();
 }
