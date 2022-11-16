@@ -445,7 +445,11 @@ void PlotXYDemo::onTimeOut()
 				ui.timeSlider->setValue(ui.timeSlider->minimum());
 			}
 			else
+			{
 				m_timer->stop();
+				ui.actionStop->setEnabled(false);
+			}
+				
 		}
 		else
 			ui.timeSlider->setValue(curValue + step);
@@ -459,7 +463,10 @@ void PlotXYDemo::onTimeOut()
 				ui.timeSlider->setValue(ui.timeSlider->maximum());
 			}
 			else
+			{
 				m_timer->stop();
+				ui.actionStop->setEnabled(false);
+			}		
 		}
 		else
 			ui.timeSlider->setValue(curValue - step);
@@ -589,6 +596,7 @@ void PlotXYDemo::init()
 
 void PlotXYDemo::initTime()
 {
+	ui.actionStop->setEnabled(false);
 	m_timer = new QTimer(this);
 	m_timerInterval = 1000;
 	m_bIsPlayForward = true;
