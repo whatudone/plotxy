@@ -16,6 +16,8 @@ TimeControls::TimeControls(QWidget *parent)
 	m_stepFactor = 0.1;
 	m_bLoopTime = false;
 
+	ui.toolButton_stop->setEnabled(false);
+
 	QDoubleValidator* doubleValid = new QDoubleValidator(0, 100, 3);
 	ui.lineEdit_stepFactor->setValidator(doubleValid);
 	connect(ui.lineEdit_stepFactor, &QLineEdit::editingFinished, this, &TimeControls::onLineEdit_stepFactor_EditingFinished);
@@ -235,6 +237,11 @@ void TimeControls::onEndResetClicked()
 	setEndTime(m_maxTime, m_refYear);
 
 	emit sgn_setSliderRange(getBeginTime(m_refYear) * m_Multiplier, m_maxTime *m_Multiplier, m_stepFactor * m_Multiplier);
+}
+
+void TimeControls::onEnableActionStop(bool enabled)
+{
+	ui.toolButton_stop->setEnabled(enabled);
 }
 
 void TimeControls::onCheckBox_LoopTimeClicked()

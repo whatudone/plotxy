@@ -52,17 +52,21 @@ private:
 	void initStackedWidget_page3();
 	void initStackedWidget_page4();
 	void initStackedWidget_page5();
-
-	void initTreePlot();
-	void updatePlotTrees();
+	void initStackedWidget_pageAScope();	
+	void initStackedWidget_pageLight();
+	void initTreePlot();	
 	PlotType getPlotType(PlotItemBase*);
-	bool getCurrentSelectParam(QString&, QString&);
-	
+	bool getCurrentSelectParam(QString&, QString&);	
+
 signals:
-    void sigAddPlotPair(QString,QString);
 	void sgn_addPlotPair(QString, QString, QString, QString);
+	void sgn_updatePlotPair(QString, QString);	//tabName, plotName
+	void sgn_getLightData(QList<QList<QString>>);
+	void sgn_onTextLightBtnClicked();
+
 
 public slots:
+	void updatePlotTrees();
     void onBtnAddClicked();
 	void onBtnUpdateClicked();
 	void onBtnRemoveClicked();
@@ -77,7 +81,11 @@ public slots:
 	void onUpdateData();
 	void onAddPlot(const QString&, PlotItemBase*);
 	void onDoubleClickedTreeWidgetItem(QTreeWidgetItem *item, int column);
-	
+	void onBtnLightAddClicked();
+	void onBtnLightDeleteClicked();
+	void onBtnLightUpdateClicked();
+	void onUpdatePlotPair(QString, QString);
+
 private:
     Ui::AddPlotPair ui;
 

@@ -46,6 +46,7 @@ public slots:
 	void onBeginResetClicked();
 	void onEndNowClicked();
 	void onEndResetClicked();
+	void onEnableActionStop(bool);
 
 	void onCheckBox_LoopTimeClicked();
 

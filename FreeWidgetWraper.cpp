@@ -19,7 +19,6 @@ FreeWidgetWraper::FreeWidgetWraper(QObject *parent) : QObject(parent)
         pressedArea << false;
         pressedRect << QRect(0, 0, 0, 0);
     }
-
     ////如果父类是窗体则直接设置
     //if (parent->isWidgetType()) {
     //    setWidget((QWidget *)parent);
@@ -185,6 +184,9 @@ bool FreeWidgetWraper::eventFilter(QObject *watched, QEvent *event)
         for (int i = 0; i < 8; ++i) {
             pressedArea[i] = false;
         }
+
+		if (widget->objectName() == "PlotItemBase")
+			emit sgnMouseEventDone(widget);
     }
     
     return QObject::eventFilter(watched, event);

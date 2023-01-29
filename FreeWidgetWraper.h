@@ -58,6 +58,9 @@ public Q_SLOTS:
 
     //设置要无边框的窗体
     void setWidget(QWidget*widget);
+
+signals:
+	void sgnMouseEventDone(QWidget*);
 };
 
 #endif // _FREE_WIDGET_WRAPER_H_

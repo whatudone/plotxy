@@ -52,9 +52,7 @@ General::General(QWidget* parent) :
 	QWidget(parent)
 {
 	ui.setupUi(this);
-	ui.pushButton_12->setStyleSheet("background-color: rgb(0,255,0);");
 	connect(ui.pushButton_more, &QPushButton::clicked, this, &General::onPushbuttonMoreClicked);
-	connect(ui.pushButton_12, &QPushButton::clicked, this, &General::onBtnColorClicked);
 }
 
 General::~General()
@@ -64,19 +62,6 @@ General::~General()
 void General::onPushbuttonMoreClicked()
 {
 	emit sigBtnGenneralMoreclicked();
-}
-
-void General::onBtnColorClicked()
-{
-	QColor selectedcolor;
-	selectedcolor = QColorDialog::getColor(Qt::green, this);
-	if (!selectedcolor.isValid())
-	{
-	}
-	else
-	{
-		ui.pushButton_12->setStyleSheet("background-color: " + selectedcolor.name() + ";");
-	}
 }
 
 
@@ -114,9 +99,7 @@ ColorRanges::ColorRanges(QWidget* parent) :
 	QWidget(parent)
 {
 	ui.setupUi(this);
-	ui.pushButton->setStyleSheet("background-color: rgb(0,255,0);");
 	connect(ui.pushButton_more, &QPushButton::clicked, this, &ColorRanges::onBtnCRMoreclicked);
-	connect(ui.pushButton, &QPushButton::clicked, this, &ColorRanges::onBtnColorClicked);
 }
 
 ColorRanges::~ColorRanges()
@@ -126,18 +109,5 @@ ColorRanges::~ColorRanges()
 void ColorRanges::onBtnCRMoreclicked()
 {
 	emit sigBtnColorRangesMoreclicked();
-}
-
-void ColorRanges::onBtnColorClicked()
-{
-	QColor selectedcolor;
-	selectedcolor = QColorDialog::getColor(Qt::green, this);
-	if (!selectedcolor.isValid())
-	{
-	}
-	else
-	{
-		ui.pushButton->setStyleSheet("background-color: " + selectedcolor.name() + ";");
-	}
 }
 

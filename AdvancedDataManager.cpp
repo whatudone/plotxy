@@ -1,72 +1,35 @@
 #include "AdvancedDataManager.h"
 #include "SubSettingWidgetContainer.h"
+#include "PlotManagerData.h"
 
 #include <QColorDialog>
 #include <QColor>
 
 AdvancedDataManager::AdvancedDataManager(QWidget *parent) :
-    QMainWindow(parent)
+    QWidget(parent)
 {
     ui.setupUi(this);
     this->setWindowTitle(QString::fromLocal8Bit("AdvancedDataManager"));
-    this->resize(1440,960);
+//    this->resize(1440,960);
 
 	SubSettingWidgetContainer* subSettingWidgetContainer = new SubSettingWidgetContainer(this);
 	ui.verticalLayout_8->addWidget(subSettingWidgetContainer);
 
 	ui.stackedWidget_aDMrpart->setCurrentIndex(0);
-
-    connect(ui.pushButton_choosecolor,&QPushButton::clicked,this,&AdvancedDataManager::onBtnColorChooseClicked);
-	
-	connect(ui.pushButton_color, SIGNAL(clicked()), this, SLOT(onBtnColorClicked()));
 	connect(ui.pushButton_add_2, SIGNAL(clicked()), this, SLOT(onBtnAdd()));
 
 	connect(subSettingWidgetContainer->m_general, SIGNAL(sigBtnGenneralMoreclicked()), this, SLOT(onBtnMore()));
 	connect(subSettingWidgetContainer->m_colorRanges, SIGNAL(sigBtnColorRangesMoreclicked()), this, SLOT(onBtnColorMore()));
 	connect(subSettingWidgetContainer->m_eventSetting, SIGNAL(sgn_BtnMoreClicked()), this, SLOT(onEventBtnMoreClicked()));
 
-	connect(ui.treeWidget_xy,SIGNAL(currentItemChanged(QTreeWidgetItem * , QTreeWidgetItem * )),
-			this,SLOT(onCurrentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
-
-	ui.pushButton_color->setStyleSheet("background-color: rgb(0,255,0);");
+	connect(PlotManagerData::getInstance(), SIGNAL(sgnUpdatePlotManager()), this, SLOT(onUpdatePlotPair()));
+	//connect(ui.treeWidget_xy,SIGNAL(currentItemChanged(QTreeWidgetItem * , QTreeWidgetItem * )),
+	//		this,SLOT(onCurrentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
 }
 
 AdvancedDataManager::~AdvancedDataManager()
 {
 
-}
-
-void AdvancedDataManager::onBtnColorChooseClicked()
-{
-	QColor selectedcolor;
-	selectedcolor = QColorDialog::getColor(Qt::white, this);
-	if(!selectedcolor.isValid())
-	{ }
-	else
-	{
-		ui.pushButton_choosecolor->setStyleSheet("background-color: " + selectedcolor.name() + ";");
-	}
-}
-
-void AdvancedDataManager::onBtnColorClicked()
-{
-	QColor selectedcolor;
-	selectedcolor = QColorDialog::getColor(Qt::green, this);
-	if (!selectedcolor.isValid())
-	{
-	}
-	else
-	{
-		ui.pushButton_color->setStyleSheet("background-color: " + selectedcolor.name() + ";");
-	}
-}
-
-void AdvancedDataManager::onAdvancedDataManagerAddPair(QString entityType, QString entityAttr)
-{
-	QTreeWidgetItem* currItem = new QTreeWidgetItem();
-	currItem->setText(0, entityType);
-	currItem->setText(1, entityAttr);
-	ui.treeWidget_xy->addTopLevelItem(currItem);
 }
 
 void AdvancedDataManager::onCurrentItemChanged(QTreeWidgetItem* currItem, QTreeWidgetItem* preItem)
@@ -87,19 +50,19 @@ void AdvancedDataManager::onCurrentItemChanged(QTreeWidgetItem* currItem, QTreeW
 
 		ui.treeWidget_union->addTopLevelItem(addUnion);
 	}
-
 }
 
 void AdvancedDataManager::onBtnAdd()
 {
 	QString x_y;
 	QString x, y;
-	QTreeWidgetItem* item;
-	item = ui.treeWidget_xy->currentItem();
-	x = item->text(0);
-	y = item->text(1);
+	//QTreeWidgetItem* item;
+	//item = ui.treeWidget_xy->currentItem();
+	QList<QTableWidgetItem*> item;
+	item = ui.tableWidget_plotpair->selectedItems();
+	x = item.at(0)->text();
+	y = item.at(1)->text();
 	x_y = x + "_" + y;
-
 
 	QString key = ui.lineEdit_value->text();
 	int intKey = key.toInt();
@@ -132,4 +95,43 @@ void AdvancedDataManager::onBtnColorMore()
 void AdvancedDataManager::onEventBtnMoreClicked()
 {
 	ui.stackedWidget_aDMrpart->setCurrentIndex(3);
+}
+
+void AdvancedDataManager::onAddPlot(const QString &tabName, PlotItemBase *plotItem)
+{
+	//数据层更新
+	m_plotManager[tabName].append(plotItem);
+}
+
+void AdvancedDataManager::onUpdatePlotPair()
+{
+	m_plotManager = PlotManagerData::getInstance()->getPlotManagerData();
+
+	if (m_plotManager.isEmpty())
+		return;
+
+	ui.tableWidget_plotpair->setRowCount(0);
+	for (int i = 0; i < m_plotManager.size(); ++i)
+	{
+		QString tabString = m_plotManager.keys().at(i);
+		for (int j = 0; j < m_plotManager[tabString].size(); ++j)
+		{
+			PlotItemBase *tempPlot = m_plotManager[tabString].at(j);
+			QVector<DataPair*> dataPair = tempPlot->getDataPair();
+			for (int k = 0; k < dataPair.size(); ++k)
+			{
+				//界面更新
+				QTableWidgetItem* data1 = new QTableWidgetItem(dataPair[k]->getDataPair().first);
+				QTableWidgetItem* data2 = new QTableWidgetItem(dataPair[k]->getDataPair().second);
+				QTableWidgetItem* data3 = new QTableWidgetItem(tempPlot->currName());
+				QTableWidgetItem* data4 = new QTableWidgetItem(tempPlot->currTabName());
+				int row = ui.tableWidget_plotpair->rowCount();
+				ui.tableWidget_plotpair->insertRow(row);
+				ui.tableWidget_plotpair->setItem(row, 0, data1);
+				ui.tableWidget_plotpair->setItem(row, 1, data2);
+				ui.tableWidget_plotpair->setItem(row, 2, data3);
+				ui.tableWidget_plotpair->setItem(row, 3, data4);
+			}
+		}
+	}
 }

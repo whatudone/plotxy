@@ -38,6 +38,7 @@ private:
     friend class DataManagerSafeDeletor;
 
     QMap<QString,QMap<QString,QList<double>>> m_entityDataMap;
+	QVector<double> m_timeDataVector;
 
 	double m_minTime, m_maxTime;
 	int	   m_refYear = -1;
@@ -71,6 +72,7 @@ public:
 	QList<double> getEntityAttr_Value_List(QString entity, QString attr = "Time");	//获取实体-属性的全数据，属性默认为Time
 	QList<double> getEntityAttr_MaxPartValue_List(QString entity, QString attr, double secs);	//获取最小时间到secs时间内的实体-属性数据list
 	QList<double> getEntityAttr_PartValue_List(QString entity, QString attr, int minIndex, int maxIndex);	//获取minIndex到maxIndex内的实体-属性数据list
+	QVector<double> getTimeData_vector();
 };
 
 

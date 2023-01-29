@@ -10,6 +10,8 @@
 #include <QMessageBox>
 #include <QStyleFactory>
 #include "DataManager.h"
+#include "PlotLight.h"
+#include "PlotManagerData.h"
 AddPlotPair* AddPlotPair::thispoint = nullptr;
 AddPlotPair* AddPlotPair::m_getInstance()
 {
@@ -19,44 +21,33 @@ AddPlotPair* AddPlotPair::m_getInstance()
 }
 
 AddPlotPair::AddPlotPair(QWidget *parent) :
-    QWidget(parent)
+	QWidget(parent)
 {
-    ui.setupUi(this);
-	//update();
-	//m_textUserX = ui.spinBox_textX->value();
-	//m_textUserY = ui.spinBox_textY->value();
-	//m_textUser = ui.lineEdit_textEdit->text();
+	ui.setupUi(this);
+	this->setWindowTitle("Add Plot Pair");
 
-    this->setWindowTitle("Add Plot Pair");
-
-	ui.tableWidget_Entity->setStyleSheet("QHeaderView::section{background:lightgray;}");
-	ui.tableWidget_Entity_2->setStyleSheet("QHeaderView::section{background:lightgray;}");
-	ui.tableWidget_Entity_3->setStyleSheet("QHeaderView::section{background:lightgray;}");
-	ui.tableWidget_Entity_4->setStyleSheet("QHeaderView::section{background:lightgray;}");
-	ui.tableWidget_Entity_5->setStyleSheet("QHeaderView::section{background:lightgray;}");
-	ui.tableWidget_Entity_Attitude1->setStyleSheet("QHeaderView::section{background:lightgray;}");
-	ui.tableWidget_Entity_Attitude2->setStyleSheet("QHeaderView::section{background:lightgray;}");
-
-	
 	initStackedWidget_page1();
 	initStackedWidget_page2();
 	initStackedWidget_page3();
 	initStackedWidget_page4();
 	initStackedWidget_page5();
-
+	initStackedWidget_pageAScope();
+	initStackedWidget_pageLight();
 
 	initTreePlot();
+
+	connect(PlotManagerData::getInstance(), SIGNAL(sgnUpdatePlotManager()), this, SLOT(updatePlotTrees()));
 
 	connect(ui.pushButton_add, SIGNAL(clicked()), this, SLOT(onBtnAddClicked()));
 	connect(ui.pushButton_close, SIGNAL(clicked()), this, SLOT(onBtnCloseClicked()));
 	connect(ui.pushButton_remove, SIGNAL(clicked()), this, SLOT(onBtnRemoveClicked()));
 	connect(ui.pushButton_update, SIGNAL(clicked()), this, SLOT(onBtnUpdateClicked()));
+
 }
 
 AddPlotPair::~AddPlotPair()
 {
 }
-
 
 void AddPlotPair::initStackedWidget_page1()
 {
@@ -80,7 +71,6 @@ void AddPlotPair::initStackedWidget_page1()
 	ui.radioButton->clicked();
 	ui.radioButton->setChecked(true);
 }
-
 
 void AddPlotPair::initStackedWidget_page2()
 {
@@ -134,7 +124,6 @@ void AddPlotPair::initStackedWidget_page2()
 	ui.radioButton_3->setChecked(true);
 }
 
-
 void AddPlotPair::initStackedWidget_page3()
 {
 	ui.tableWidget_Entity_Attitude1->setStyleSheet("QHeaderView::section{background:lightgray;}");
@@ -154,7 +143,6 @@ void AddPlotPair::initStackedWidget_page3()
 	connect(ui.tableWidget_Entity_Attitude1, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked_Attitude1(QTableWidgetItem*)));
 	connect(ui.tableWidget_Entity_Attitude2, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetItemClicked_Attitude2(QTableWidgetItem*)));
 }
-
 
 void AddPlotPair::initStackedWidget_page4()
 {
@@ -181,10 +169,43 @@ void AddPlotPair::initStackedWidget_page5()
 	ui.tableWidget_lightEntity->verticalHeader()->hide();
 	ui.tableWidget_lightNameUnits->setSelectionBehavior(QAbstractItemView::SelectRows);
 	ui.radioButton_lightParameter->setChecked(true);
+	ui.tableWidget_LightSet->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
 	connect(ui.tableWidget_lightEntity, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onTableWidgetLightEntityClicked(QTableWidgetItem*)));
+	connect(ui.pushButton_LightAdd, SIGNAL(clicked()), this, SLOT(onBtnLightAddClicked()));
+	connect(ui.pushButton_LightDelete, SIGNAL(clicked()), this, SLOT(onBtnLightDeleteClicked()));
+	connect(ui.pushButton_LightUpdate, SIGNAL(clicked()), this, SLOT(onBtnLightUpdateClicked()));
+
 }
 
+void AddPlotPair::initStackedWidget_pageAScope()
+{
+	ui.tableWidget_AScopeEntity->setStyleSheet("QHeaderView::section{background:lightgray;}");
+	ui.tableWidget_AScopeEntity->horizontalHeader()->setStretchLastSection(true);
+	ui.tableWidget_AScopeEntity->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	ui.tableWidget_AScopeEntity->verticalHeader()->hide();
+}
+
+void AddPlotPair::initStackedWidget_pageLight()
+{
+	QComboBox *comboBoxEntity = new QComboBox;
+	QComboBox *comboBoxAttr = new QComboBox;
+	QComboBox *comboBoxCompare = new QComboBox;
+	QComboBox *comboBoxColor = new QComboBox;
+	comboBoxEntity->addItem("Target");
+	comboBoxEntity->addItem("Target2");
+	ui.tableWidget_LightSet->setCellWidget(0, 0, comboBoxEntity);
+	comboBoxAttr->addItem("Altitude");
+	comboBoxAttr->addItem("Mach");
+	ui.tableWidget_LightSet->setCellWidget(0, 1, comboBoxAttr);
+	comboBoxCompare->addItem("≥");
+	comboBoxCompare->addItem("<");
+	ui.tableWidget_LightSet->setCellWidget(0, 2, comboBoxCompare);
+	comboBoxColor->addItem("Red");
+	comboBoxColor->addItem("Green");
+	comboBoxColor->addItem("Yellow");
+	ui.tableWidget_LightSet->setCellWidget(0, 4, comboBoxColor);
+}
 
 void AddPlotPair::initTreePlot()
 {
@@ -214,12 +235,24 @@ void AddPlotPair::onChangeStackIndex(PlotType index)
 	switch (index)
 	{
 	case Type_PlotScatter:
+		ui.groupBox_3->setTitle(QString::fromLocal8Bit("X轴数据源"));
+		ui.groupBox_2->setTitle(QString::fromLocal8Bit("Y轴数据源"));
+		ui.stackedWidget->setCurrentIndex(1);
+		break;
 	case Type_PlotPolar:
+		ui.groupBox_3->setTitle(QString::fromLocal8Bit("角度数据源"));
+		ui.groupBox_2->setTitle(QString::fromLocal8Bit("幅度数据源"));
 		ui.stackedWidget->setCurrentIndex(1);
 		break;
 	case Type_PlotAScope:
+		ui.label_XAxis->setText(QString::fromLocal8Bit("X轴：Range(m)"));
+		ui.label_YAxis->setText(QString::fromLocal8Bit("Y轴：Voltage(v)"));
+		ui.stackedWidget->setCurrentIndex(5);
 		break;
 	case Type_PlotRTI:
+		ui.label_XAxis->setText(QString::fromLocal8Bit("X轴：Range(m)"));
+		ui.label_YAxis->setText(QString::fromLocal8Bit("Y轴：Time(s)"));
+		ui.stackedWidget->setCurrentIndex(5);
 		break;
 	case Type_PlotText:
 		ui.stackedWidget->setCurrentIndex(3);
@@ -229,14 +262,16 @@ void AddPlotPair::onChangeStackIndex(PlotType index)
 		break;
 	case Type_PlotBar:
 	case Type_PlotDial:
+	case Type_PlotTrack:
 		ui.stackedWidget->setCurrentIndex(0);
 		break;
 	case Type_PlotAttitude:
 		ui.stackedWidget->setCurrentIndex(2);
 		break;
-	case Type_PlotTrack:
-		break;
 	case Type_PlotDoppler:
+		ui.label_XAxis->setText(QString::fromLocal8Bit("X轴：Range(m)"));
+		ui.label_YAxis->setText(QString::fromLocal8Bit("Y轴：Range(m)"));
+		ui.stackedWidget->setCurrentIndex(5);
 		break;
 	default:
 		ui.stackedWidget->setCurrentIndex(0);
@@ -248,7 +283,7 @@ void AddPlotPair::setPlotBaseInfo(BaseInfo info)
 {
 	memcpy(&m_curPlotInfo, &info, sizeof(BaseInfo));
 
-	QList<QTreeWidgetItem*> plotItems = m_treePlot->findItems(m_curPlotInfo.Base_PlotName, Qt::MatchCaseSensitive|Qt::MatchRecursive, 0);
+	QList<QTreeWidgetItem*> plotItems = m_treePlot->findItems(m_curPlotInfo.Base_PlotName, Qt::MatchCaseSensitive | Qt::MatchRecursive, 0);
 	if (plotItems.size() != 0)
 	{
 		m_treePlot->itemDoubleClicked(plotItems[0], 0);
@@ -257,6 +292,7 @@ void AddPlotPair::setPlotBaseInfo(BaseInfo info)
 
 void AddPlotPair::updatePlotTrees()
 {
+	m_plotManager = PlotManagerData::getInstance()->getPlotManagerData();
 	if (m_plotManager.isEmpty())
 		return;
 
@@ -274,7 +310,7 @@ void AddPlotPair::updatePlotTrees()
 			QString plotString = m_plotManager[tabString].at(j)->currName();
 			QTreeWidgetItem* itemselPlotI = new QTreeWidgetItem(QStringList() << plotString);
 			itemselPlotH->addChild(itemselPlotI);
-		}	
+		}
 	}
 }
 
@@ -349,7 +385,7 @@ bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 			strEntity1 = ui.tableWidget_Entity->currentItem()->text();
 			strNameUnit1 = ui.tableWidget_nameUnits->item(ui.tableWidget_nameUnits->currentRow(), 0)->text();
 
-			strSum1 = strEntity1 + "+" + strNameUnit1;
+			//			strSum1 = strEntity1 + "+" + strNameUnit1;
 		}
 		else if (ui.radioButton_2->isChecked())
 		{
@@ -358,15 +394,13 @@ bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 
 			strEntity1 = ui.tableWidget_Entity_9->currentItem()->text();
 			strNameUnit1 = ui.tableWidget_Entity_10->currentItem()->text();
-			strSum1 = strEntity1 + "+" + strNameUnit1;
+			//			strSum1 = strEntity1 + "+" + strNameUnit1;
 		}
 
-
 		strSum1 = strEntity1 + "+" + strNameUnit1;
-
 		strSum2 = "Time";
 
-		emit sigAddPlotPair(strEntity1, strNameUnit1);
+		//		emit sigAddPlotPair(strEntity1, strNameUnit1);
 		break;
 
 	case 1:
@@ -399,7 +433,7 @@ bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 		}
 		else if (ui.radioButton_3->isChecked())
 		{
-			if (ui.tableWidget_Entity_3->currentItem() == NULL || ui.tableWidget_nameUnits_3->item(ui.tableWidget_nameUnits_2->currentRow(), 0) == NULL)
+			if (ui.tableWidget_Entity_3->currentItem() == NULL || ui.tableWidget_nameUnits_3->item(ui.tableWidget_nameUnits_3->currentRow(), 0) == NULL)
 				return false;
 
 			strEntity2 = ui.tableWidget_Entity_3->currentItem()->text();
@@ -443,9 +477,8 @@ bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 			strNameUnit1 = ui.tableWidget_nameUnits_4->item(ui.tableWidget_nameUnits_4->currentRow(), 0)->text();
 
 			strSum1 = strEntity1 + "+" + strNameUnit1;
-
 			strSum2 = "Time";
-			
+			emit sgn_onTextLightBtnClicked();
 		}
 		else if (ui.radioButton_10->isChecked())
 		{
@@ -468,9 +501,10 @@ bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 			strSum1 = strEntity1 + "+" + strNameUnit1;
 			strSum2 = "Time";
 		}
-			break;
+		break;
 	}
-
+	default:
+		break;
 	}
 }
 
@@ -495,15 +529,15 @@ void AddPlotPair::onBtnAddClicked()
 				break;
 			}
 		}
+//		emit sgn_updatePlotPair(m_curPlotInfo.Base_TabName, m_curPlotInfo.Base_PlotName);
 	}
 
-	QTableWidgetItem* addplot1 = new QTableWidgetItem(strSum1);
-	QTableWidgetItem* addplot2 = new QTableWidgetItem(strSum2);
-	int row = ui.tableWidget_union->rowCount();
-	ui.tableWidget_union->insertRow(row);
-	ui.tableWidget_union->setItem(row, 0, addplot1);
-	ui.tableWidget_union->setItem(row, 1, addplot2);
-//	ui.tableWidget_union->setItem(row, 2, addplot3);
+// 	QTableWidgetItem* addplot1 = new QTableWidgetItem(strSum1);
+// 	QTableWidgetItem* addplot2 = new QTableWidgetItem(strSum2);
+// 	int row = ui.tableWidget_union->rowCount();
+// 	ui.tableWidget_union->insertRow(row);
+// 	ui.tableWidget_union->setItem(row, 0, addplot1);
+// 	ui.tableWidget_union->setItem(row, 1, addplot2);
 }
 
 void AddPlotPair::onTableWidgetItemClicked(QTableWidgetItem * curItem)
@@ -693,8 +727,8 @@ void AddPlotPair::onUpdateData()
 		ui.tableWidget_Entity_2->setItem(index, 0, new QTableWidgetItem(*item));
 		ui.tableWidget_Entity_3->setItem(index, 0, new QTableWidgetItem(*item));
 		ui.tableWidget_Entity_4->setItem(index, 0, new QTableWidgetItem(*item));
-		ui.tableWidget_Entity_5->setItem(index, 0, item);
-		ui.tableWidget_lightEntity->setItem(index, 0, new QTableWidgetItem (*item));
+		ui.tableWidget_Entity_5->setItem(index, 0, new QTableWidgetItem(*item));
+		ui.tableWidget_lightEntity->setItem(index, 0, new QTableWidgetItem(*item));
 		ui.tableWidget_Entity_6->setItem(index, 0, new QTableWidgetItem(*item));
 		ui.tableWidget_Entity_7->setItem(index, 0, new QTableWidgetItem(*item));
 		ui.tableWidget_Entity_8->setItem(index, 0, new QTableWidgetItem(*item));
@@ -703,7 +737,7 @@ void AddPlotPair::onUpdateData()
 		ui.tableWidget_Entity_Attitude1->setItem(index, 0, new QTableWidgetItem(*item));
 		ui.tableWidget_Entity_Attitude2->setItem(index, 0, new QTableWidgetItem(*item));
 
-		index ++;
+		index++;
 	}
 }
 //
@@ -799,12 +833,12 @@ void AddPlotPair::onDoubleClickedTreeWidgetItem(QTreeWidgetItem * item, int colu
 
 				ui.tableWidget_union->setRowCount(0);
 
-				QList<QPair<QString, QString>> plotPairData = tempPlot->getPlotPairData();
-				for (int k = 0; k < plotPairData.size(); ++k)
+				QVector<DataPair*> dataPair = tempPlot->getDataPair();
+				for (int k = 0; k < dataPair.size(); ++k)
 				{
 					//界面更新
-					QTableWidgetItem* addplot1 = new QTableWidgetItem(plotPairData[k].first);
-					QTableWidgetItem* addplot2 = new QTableWidgetItem(plotPairData[k].second);
+					QTableWidgetItem* addplot1 = new QTableWidgetItem(dataPair[k]->getDataPair().first);
+					QTableWidgetItem* addplot2 = new QTableWidgetItem(dataPair[k]->getDataPair().second);
 					int row = ui.tableWidget_union->rowCount();
 					ui.tableWidget_union->insertRow(row);
 					ui.tableWidget_union->setItem(row, 0, addplot1);
@@ -812,7 +846,7 @@ void AddPlotPair::onDoubleClickedTreeWidgetItem(QTreeWidgetItem * item, int colu
 				}
 				break;
 			}
-		}	
+		}
 	}
 }
 
@@ -833,8 +867,8 @@ void AddPlotPair::onBtnUpdateClicked()
 
 		pNew = qMakePair(strSum1, strSum2);
 
-		ui.tableWidget_union->item(row, 0)->setText(strSum1);
-		ui.tableWidget_union->item(row, 1)->setText(strSum2);
+// 		ui.tableWidget_union->item(row, 0)->setText(strSum1);
+// 		ui.tableWidget_union->item(row, 1)->setText(strSum2);
 
 		if (m_plotManager.contains(m_curPlotInfo.Base_TabName))
 		{
@@ -847,8 +881,8 @@ void AddPlotPair::onBtnUpdateClicked()
 					break;
 				}
 			}
+		//	emit sgn_updatePlotPair(m_curPlotInfo.Base_TabName, m_curPlotInfo.Base_PlotName);
 		}
-
 	}
 }
 
@@ -873,13 +907,72 @@ void AddPlotPair::onBtnRemoveClicked()
 					break;
 				}
 			}
+		//	emit sgn_updatePlotPair(m_curPlotInfo.Base_TabName, m_curPlotInfo.Base_PlotName);
 		}
 
-		ui.tableWidget_union->removeRow(row);
+	//	ui.tableWidget_union->removeRow(row);
 	}
 }
 
+void AddPlotPair::onBtnLightUpdateClicked()
+{
+	QList<QList<QString>> lightData;
+	QList<QString> rowLightData;
+	for (int j = 0; j < ui.tableWidget_LightSet->rowCount(); j++)
+	{
+		for (int i = 0; i < ui.tableWidget_LightSet->columnCount(); i++)
+		{
+			if (ui.tableWidget_LightSet->item(j, i) == nullptr)
+			{
+				QMessageBox::critical(NULL, QString::fromLocal8Bit("提示信息"), QString::fromLocal8Bit("请将数据填写完整"));
+				return;
+			}
+			else
+				rowLightData.push_back(ui.tableWidget_LightSet->item(j, i)->text());
+		}
+		lightData.push_back(rowLightData);
+	}
+	if (lightData.size() > 1)
+		emit sgn_getLightData(lightData);
+}
 
+void AddPlotPair::onUpdatePlotPair(QString tabName, QString plotName)
+{
+	if (tabName == nullptr || plotName == nullptr)
+		return;
+
+	QList<QTreeWidgetItem*> items = m_treePlot->findItems(plotName, Qt::MatchExactly | Qt::MatchRecursive);
+	if (items.size() != 0)
+	{
+		for each (QTreeWidgetItem* item in items)
+		{
+			if (item->parent() != NULL && item->parent()->text(0) == tabName)
+			{
+				m_treePlot->itemDoubleClicked(item, 0);
+
+				break;
+			}
+		}
+	}
+}
+
+void AddPlotPair::onBtnLightAddClicked()
+{
+	int iRow = ui.tableWidget_LightSet->rowCount();
+	ui.tableWidget_LightSet->setRowCount(iRow + 1);
+}
+
+void AddPlotPair::onBtnLightDeleteClicked()
+{
+	int rowIdx = ui.tableWidget_LightSet->currentRow();
+	if (rowIdx != -1)
+	{
+		if (rowIdx == 0)
+			return;
+		else
+			ui.tableWidget_LightSet->removeRow(rowIdx);
+	}
+}
 
 void AddPlotPair::onBtnCloseClicked()
 {

@@ -14,12 +14,14 @@
    <string/>
   </property>
   <property name="styleSheet">
-   <string notr="true">alternate-background-color: rgb(0, 85, 127);</string>
+   <string notr="true">alternate-background-color: rgb(0, 85, 127);
+
+</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <property name="spacing">
-     <number>5</number>
+     <number>3</number>
     </property>
     <property name="leftMargin">
      <number>0</number>
@@ -35,22 +37,20 @@
     </property>
     <item>
      <widget class="QTabWidget" name="tabWidget">
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QTabWidget#tabWidget QStackedWidget{
+background-color: rgb(3, 57, 122);
+}</string>
+      </property>
       <property name="currentIndex">
        <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
         <string>Tab 1</string>
-       </attribute>
-      </widget>
-      <widget class="QWidget" name="tab_2">
-       <attribute name="title">
-        <string>Tab 2</string>
-       </attribute>
-      </widget>
-      <widget class="QWidget" name="tab_3">
-       <attribute name="title">
-        <string>Tab 3</string>
        </attribute>
       </widget>
      </widget>

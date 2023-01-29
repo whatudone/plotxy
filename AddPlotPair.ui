@@ -1245,6 +1245,9 @@
        <property name="leftMargin">
         <number>0</number>
        </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
        <property name="rightMargin">
         <number>0</number>
        </property>
@@ -1433,6 +1436,18 @@
      </widget>
      <widget class="QWidget" name="page_4">
       <layout class="QVBoxLayout" name="verticalLayout_34">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QGroupBox" name="groupBox_6">
          <property name="title">
@@ -1544,7 +1559,7 @@
        <item>
         <widget class="QStackedWidget" name="stackedWidget_5">
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="page_13">
           <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -1729,8 +1744,20 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page_7">
-      <layout class="QVBoxLayout" name="verticalLayout_16">
+     <widget class="QWidget" name="page_Light">
+      <layout class="QVBoxLayout" name="verticalLayout_36">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_35">
          <item>
@@ -1890,38 +1917,236 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_39">
+        <widget class="QGroupBox" name="groupBox_8">
+         <property name="title">
+          <string/>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_35">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QTableWidget" name="tableWidget_LightSet">
+            <row>
+             <property name="text">
+              <string>举例</string>
+             </property>
+            </row>
+            <column>
+             <property name="text">
+              <string>实体</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>属性</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>判断</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>阈值</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>颜色</string>
+             </property>
+            </column>
+            <item row="0" column="0">
+             <property name="text">
+              <string/>
+             </property>
+            </item>
+            <item row="0" column="1">
+             <property name="text">
+              <string/>
+             </property>
+            </item>
+            <item row="0" column="2">
+             <property name="text">
+              <string/>
+             </property>
+            </item>
+            <item row="0" column="3">
+             <property name="text">
+              <string/>
+             </property>
+            </item>
+            <item row="0" column="4">
+             <property name="text">
+              <string/>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_39">
+            <item>
+             <spacer name="horizontalSpacer_25">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_LightAdd">
+              <property name="text">
+               <string>添加行</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_LightUpdate">
+              <property name="text">
+               <string>更新</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_LightDelete">
+              <property name="text">
+               <string>删除行</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="page_scope">
+      <layout class="QHBoxLayout" name="horizontalLayout_41" stretch="2,1">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_39">
          <item>
-          <widget class="QPushButton" name="pushButton_6">
-           <property name="text">
-            <string>清理代码</string>
-           </property>
-          </widget>
+          <layout class="QVBoxLayout" name="verticalLayout_37">
+           <item>
+            <widget class="QTableWidget" name="tableWidget_AScopeEntity">
+             <column>
+              <property name="text">
+               <string>实体</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_40" stretch="1,3,1,1,1,1">
+             <item>
+              <widget class="QLabel" name="label_34">
+               <property name="text">
+                <string>筛选器</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_15"/>
+             </item>
+             <item>
+              <widget class="QToolButton" name="toolButton_11">
+               <property name="text">
+                <string>...</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_6">
+               <property name="text">
+                <string>筛选</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="checkBox_2">
+               <property name="text">
+                <string>限制</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_16"/>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </item>
          <item>
-          <spacer name="horizontalSpacer_22">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
+          <widget class="QTableWidget" name="tableWidget_AScopeData"/>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_9">
-           <property name="text">
-            <string>插入代码</string>
+          <widget class="QGroupBox" name="groupBox_9">
+           <property name="title">
+            <string>Graph Axis Labels</string>
            </property>
+           <layout class="QVBoxLayout" name="verticalLayout_38">
+            <item>
+             <widget class="QLabel" name="label_XAxis">
+              <property name="text">
+               <string>X轴：Range(m)</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_YAxis">
+              <property name="text">
+               <string>Y轴：Voltage(v)</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </item>
         </layout>
        </item>
        <item>
-        <widget class="QTextEdit" name="textEdit_lightCode"/>
+        <widget class="QLabel" name="label_info">
+         <property name="text">
+          <string>A-Scope graphs can plot two-dimensional array data over time.Typically,the X-Axis is a range,and the Y-Axis is an intensity.
+
+Array data is graphed in time slices;each time slice includes a seperate graph.New time slices are displayed in sequence according to the time value of the slice.
+
+Each set of array data may have vertical gates associated with it.</string>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

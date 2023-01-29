@@ -188,6 +188,8 @@ void DataManager::loadCSV_stringTime(const QString& filePath)
 								}
 								else
 									currEntityAttrValue = 0.0;
+
+								m_timeDataVector.append(currEntityAttrValue);
 							}
 							else
 							{
@@ -221,6 +223,12 @@ void DataManager::loadCSV_stringTime(const QString& filePath)
 			currEntityAttrStringVec.push_back(currEntityAttrValues);
 		}
 	}
+
+	//排序
+	std::sort(m_timeDataVector.begin(), m_timeDataVector.end());
+	//去重
+	auto it = std::unique(m_timeDataVector.begin(), m_timeDataVector.end());
+	m_timeDataVector.erase(it, m_timeDataVector.end());
 
 	file.close();
 	QMessageBox::information(NULL, QString::fromLocal8Bit("提示信息"), QString::fromLocal8Bit("已成功加载数据"));
@@ -289,6 +297,11 @@ QList<double> DataManager::getEntityAttr_PartValue_List(QString entity, QString 
 
 	valueList = valueList.mid(minIndex, (maxIndex - minIndex + 1));
 	return valueList;
+}
+
+QVector<double> DataManager::getTimeData_vector()
+{
+	return m_timeDataVector;
 }
 
 int DataManager::getEntityAttr_MaxIndex_List(QString entity, QString attr, double secs)

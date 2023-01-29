@@ -3,268 +3,245 @@
 #include <QPainter>
 #include "DataManager.h"
 int PlotBar::m_instanceCount = 1;
-PlotBar::PlotBar(QWidget* parent)
-	:PlotItemBase(parent)
+PlotBar::PlotBar(QWidget *parent)
+    : PlotItemBase(parent)
 {
-	m_bHorizontal = true;
+    m_bHorizontal = true;
+	m_titleShow = true;
 
-	m_leftPadding = 50;
-	m_rightPadding = 50;
-	m_interPadding = 20;
+    m_leftPadding = 50;
+    m_rightPadding = 50;
+	m_topPadding = 0;
+	m_bottomPadding = 50;
+    m_interPadding = 20;
 
-	m_currTimeIndex = 0;
+    m_currTimeIndex = 0;
 
-	m_horiGridNum = 4;
-	m_verGridNum = 5;
+    m_horiGridNum = 4;
+    m_verGridNum = 5;
 
-	m_started = false;
+    QString name = QString("Bar%1").arg(m_instanceCount);
+    this->setName(name);
+    m_instanceCount += 1;
 
-	QString name = QString("Bar%1").arg(m_instanceCount);
-	this->setName(name);
-	m_instanceCount += 1;
-
-	m_defaultColor = Qt::gray;
-	m_timer = new QTimer(this);
-	bool res = connect(m_timer,&QTimer::timeout,this, &PlotBar::onTimeout);
+    m_defaultColor = Qt::gray;
+    m_gridColor = Qt::darkGray;
+	m_axisColor = Qt::white;
+	m_titleColor = Qt::white;
+	m_title = "Bar";
+	m_titleFont.setFamily("Microsoft YaHei");
+	m_titleFont.setPointSizeF(16.0);
 }
 
 PlotBar::~PlotBar()
 {
 
-}     
-
-void PlotBar::onSwitch(bool bOn)
-{
-	if (!m_started)
-	{
-		m_timer->start(500);
-		m_started = true;
-	}
-	else
-	{
-		m_timer->stop();
-		m_started = false;
-	}
-}
-
-void PlotBar::onTimeout()
-{
-	m_currTimeIndex++; 
-	update();
 }
 
 void PlotBar::onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>> targetMap)
 {
-	m_thresholdColorMap = targetMap;
+    m_thresholdColorMap = targetMap;
 }
 
+void PlotBar::onGetCurrentSecond(double secs)
+{
+    if (getDataPair().isEmpty())
+        return;
+
+    m_seconds = secs;
+}
+
+void PlotBar::getDataInfo(double secs)
+{
+	if (getDataPair().isEmpty())
+		return;
+
+    int isize = getDataPair().size();
+
+    for (int i = 0; i < isize; i++) {
+        QString xColumn = getDataPair().at(i)->getDataPair().first;
+        QString yColumn = getDataPair().at(i)->getDataPair().first;
+        updateData(i, xColumn, yColumn, secs);
+    }
+}
 
 void PlotBar::setPlotItemExtentionDirec(bool horizontal)
 {
-	m_bHorizontal = horizontal;
+    m_bHorizontal = horizontal;
 }
 
 void PlotBar::setLeftPadding(int leftPadding)
 {
-	m_leftPadding = leftPadding;
+    m_leftPadding = leftPadding;
 }
 
 void PlotBar::setRightPadding(int rightPadding)
 {
-	m_rightPadding = rightPadding;
+    m_rightPadding = rightPadding;
 }
 
 void PlotBar::setInterPadding(int interPadding)
 {
-	m_interPadding = interPadding;
+    m_interPadding = interPadding;
 }
-
-void PlotBar::addPlotDataPair(const QString& entityType, const QString& entityAttr)
-{
-	if (entityType.isEmpty() || entityAttr.isEmpty())
-		return;
-	
-	m_entityTypeList.append(entityType);
-	m_entityAttrList.append(entityAttr);
-}
-
 
 void PlotBar::drawRect(int itemIndex, bool bHorizontal, int itemLength, int leftBoundary, int rightBoundary, QColor color)
 {
-	QPainter painter(this);
-	QPen pen;
-	pen.setColor(color);
-	QBrush brush;
-	brush.setColor(color);
-	brush.setStyle(Qt::SolidPattern);
+    QPainter painter(this);
+    QPen pen;
+    pen.setColor(color);
+    QBrush brush;
+    brush.setColor(color);
+    brush.setStyle(Qt::SolidPattern);
 
-	painter.setPen(pen);
-	painter.setBrush(brush);
+    painter.setPen(pen);
+    painter.setBrush(brush);
 
-	int height = this->height();
-	int width = this->width();
+    int height = this->height();
+    int width = this->width();
 
-	QRect rect;
-	if (bHorizontal)
-	{
-		rect.setRect(leftBoundary, height - (m_leftPadding + itemIndex * (itemLength + m_interPadding) + itemLength), rightBoundary - leftBoundary, itemLength);
-	}
-	else
-	{
-		rect.setRect(m_leftPadding + itemIndex * (itemLength + m_interPadding), height - rightBoundary, itemLength, rightBoundary - leftBoundary);
-	}
-	painter.drawRect(rect);
+    QRect rect;
+    if (bHorizontal) {
+        rect.setRect(leftBoundary, height - (m_leftPadding + itemIndex * (itemLength + m_interPadding) + itemLength), rightBoundary - leftBoundary, itemLength);
+    } else {
+        rect.setRect(m_leftPadding + itemIndex * (itemLength + m_interPadding), height - rightBoundary, itemLength, rightBoundary - leftBoundary);
+    }
+    painter.drawRect(rect);
 }
 
-//实现核心绘制逻辑
-void PlotBar::updateItems()
+void PlotBar::paintEvent(QPaintEvent *event)
 {
-	if (m_entityTypeList.isEmpty() || m_entityAttrList.isEmpty())
-	{
-		qDebug() << "PlotBar::updateItems either m_entityTypeList or m_entityAttrList is empty." << endl;
-		return;
-	}
-
-	if (m_entityTypeList.size() != m_entityAttrList.size())
-	{
-		qDebug() << "PlotBar::updateItems  m_entityTypeList and m_entityAttrList don't match." << endl;
-		return;
-	}
-
-	//首先计算每个item的宽度/高度
-	int perItemLength = 0;
 	int width = this->width();
 	int height = this->height();
-	if (m_bHorizontal)		//item水平方向延展
+    
+    QPainter painter(this);
+	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+    QPen pen;
+	//绘制标题
+	QFontMetricsF fm(m_titleFont);
+	double w = fm.size(Qt::TextSingleLine, m_title).width();
+	double h = fm.size(Qt::TextSingleLine, m_title).height();
+	double as = fm.ascent();
+	if (m_titleShow)
 	{
-		perItemLength = (height - m_leftPadding - m_rightPadding - (m_entityTypeList.size() - 1) * m_interPadding) / m_entityTypeList.size();
-	}
-	else					//item垂直方向延展
-	{
-		perItemLength = (width - m_leftPadding - m_rightPadding - (m_entityTypeList.size() - 1) * m_interPadding) / m_entityTypeList.size();
+		painter.setFont(m_titleFont);
+		painter.setPen(m_titleColor);
+		painter.drawText(QPoint((width + m_leftPadding - m_rightPadding - w) / 2, as + m_topPadding), m_title);
 	}
 
-	//逐item遍历
-	for (int itemIndex = 0; itemIndex < m_entityTypeList.size(); itemIndex++)
-	{
-		QString currEntityType = m_entityTypeList.at(itemIndex);
-		QString currEntityAttr = m_entityAttrList.at(itemIndex);
-
-		auto dataMap = DataManager::getInstance()->getDataMap();
-		if (!dataMap.contains(currEntityType))
-		{
-			continue;
-		}
-		if (!dataMap.value(currEntityType).contains(currEntityAttr))
-		{
-			continue;
-		}
-
-		if (m_currTimeIndex >= dataMap.value(currEntityType).value(currEntityAttr).size())
-		{
-			continue;
-		}
-
-		//*获取当前Attr值
-		double currValue = dataMap.value(currEntityType).value(currEntityAttr).at(m_currTimeIndex);
-
-		QString currKey = currEntityType + '_' + currEntityAttr;
-		if (!m_thresholdColorMap.contains(currKey) || m_thresholdColorMap.value(currKey).keys().isEmpty())
-		{
-			//没有设置阈值，则无需分开绘制多个矩形，以默认颜色绘制一个即可
-			drawRect(itemIndex,m_bHorizontal, perItemLength, 0,currValue, m_defaultColor);
-			continue;
-		}
-
-		//根据颜色阈值来分开绘制
-		auto colorMap = m_thresholdColorMap.value(currKey);
-		QList<int> thresholdList = colorMap.keys();
-		if (currValue < thresholdList.first())
-		{
-			drawRect(itemIndex, m_bHorizontal, perItemLength, 0,currValue, m_defaultColor);
-			continue;
-		}
-
-		//以默认颜色绘制第一个矩形
-		drawRect(itemIndex, m_bHorizontal, perItemLength, 0,thresholdList.first(), m_defaultColor);
-
-		if (thresholdList.size() == 1)
-		{
-			drawRect(itemIndex, m_bHorizontal, perItemLength, thresholdList.first(), currValue, colorMap.value(thresholdList.first()));
-			continue;
-		}
-
-		for (int i = 0;i < thresholdList.size() -1;i++)
-		{
-			QColor currColor = colorMap.value(thresholdList.at(i));
-
-			if (currValue < thresholdList.at(i + 1))
-			{
-				drawRect(itemIndex, m_bHorizontal, perItemLength, thresholdList.at(i), currValue, colorMap.value(thresholdList.at(i)));
-				break;
-			}
-			else
-			{
-				drawRect(itemIndex, m_bHorizontal, perItemLength, thresholdList.at(i), thresholdList.at(i+1), colorMap.value(thresholdList.at(i)));
-			}
-		}
-
-		if (currValue > thresholdList.last())
-		{
-			drawRect(itemIndex, m_bHorizontal, perItemLength, thresholdList.last(), currValue, colorMap.value(thresholdList.last()));
-			continue;
-		}
-	}
-	update();
-}
-
-//
-void PlotBar::paintEvent(QPaintEvent* event)
-{
 	//绘制x轴和y轴
-	QPainter painter(this);
-	QPen pen; 
-	pen.setColor(m_axisColor);
-	pen.setWidth(2);
-	painter.setPen(pen);
-	painter.drawLine(QPoint(0, height()), QPoint(width(), height()));	//x轴
-	painter.drawLine(QPoint(0, height()), QPoint(0,0));		//y轴
+    pen.setColor(m_axisColor);
+    pen.setWidth(2);
+    painter.setPen(pen);
+    painter.drawLine(QPoint(m_leftPadding, height - m_bottomPadding), QPoint(width - m_rightPadding, height - m_bottomPadding));   //x轴
+    painter.drawLine(QPoint(m_leftPadding, height - m_bottomPadding), QPoint(m_leftPadding, m_topPadding + h));    //y轴
 
-	//绘制网格
-	pen.setColor(m_gridColor);
-	painter.setPen(pen);
+    //绘制网格
+    pen.setColor(m_gridColor);
+    painter.setPen(pen);
 
-	QBrush brush;   //画刷。填充几何图形的调色板，由颜色和填充风格组成
-	brush.setColor(m_gridFillColor);
-	brush.setStyle(Qt::SolidPattern);
-	//painter.setBrush(brush);
+    QBrush brush;   //画刷。填充几何图形的调色板，由颜色和填充风格组成
+    brush.setColor(m_gridFillColor);
+    brush.setStyle(Qt::SolidPattern);
+    //painter.setBrush(brush);
 
-	int horiGridWidth = 0;
-	if (m_horiGridNum)		//item水平方向延展
-	{
-		horiGridWidth = width() / m_horiGridNum;
-	}
+    int horiGridWidth = 0;
+    if (m_horiGridNum) {    //item水平方向延展
+        horiGridWidth = (width - m_leftPadding - m_rightPadding) / m_horiGridNum;
+    }
 
-	for (int i=0;i < m_horiGridNum;i++)
-	{
-		QRect gridRect;
-		gridRect.setRect(i* horiGridWidth, 0, horiGridWidth, height());
-		painter.drawRect(gridRect);
-	}
+    for (int i = 0; i < m_horiGridNum; i++) {
+        QRect gridRect;
+        gridRect.setRect(i * horiGridWidth + m_leftPadding, m_topPadding + h, horiGridWidth, height - m_topPadding - m_bottomPadding - h);
+        painter.drawRect(gridRect);
+    }
 
-	int verGridWidth = 0;
-	if (m_verGridNum)		//item水平方向延展
-	{
-		verGridWidth = height() / m_verGridNum;
-	}
+    int verGridWidth = 0;
+    if (m_verGridNum) {     //item水平方向延展
+        verGridWidth = (height - m_topPadding - m_bottomPadding - h) / m_verGridNum;
+    }
 
-	for (int i = 0; i < m_verGridNum; i++)
-	{
-		QRect gridRect;
-		gridRect.setRect(0, (i+1) * verGridWidth, width(), verGridWidth);
-		painter.drawRect(gridRect);
-	}
+    for (int i = 0; i < m_verGridNum; i++) {
+        QRect gridRect;
+        gridRect.setRect(m_leftPadding, i * verGridWidth + m_topPadding + h, width - m_leftPadding - m_rightPadding, verGridWidth);
+        painter.drawRect(gridRect);
+    }
+    getDataInfo(m_seconds);
 
-	if(m_started)
-		updateItems();
+    return PlotItemBase::paintEvent(event);
+}
+
+void PlotBar::updateData(int itemIndex, QString x, QString y, double secs)
+{
+    QStringList xlist = x.split("+");
+//    QStringList ylist = y.split("+");
+    QList<double> xSecList = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs);
+//    QList<double> ySecList = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(ylist.at(0), ylist.at(1), secs);
+    int cnt = getDataPair().size();
+
+    if (xSecList.isEmpty())
+        return;
+
+    //首先计算每个item的宽度/高度
+	QFontMetricsF fm(m_titleFont);
+	double h = fm.size(Qt::TextSingleLine, m_title).height();
+    int perItemLength = 0;
+    int width = this->width() - m_leftPadding - m_rightPadding;
+    int height = this->height() - m_topPadding - m_bottomPadding - h;
+	
+    if (m_bHorizontal) 
+	{    
+		//item水平方向延展
+		m_horiGridNum = 5;
+		m_verGridNum = 0;
+        perItemLength = (height - (cnt - 1) * m_interPadding) / cnt;
+    } 
+	else 
+	{   
+		//item垂直方向延展
+		m_verGridNum = 5;
+		m_horiGridNum = 0;
+        perItemLength = (width - (cnt - 1) * m_interPadding) / cnt;
+    }
+
+    //*获取当前Attr值
+    double currValue = xSecList.last();
+
+    QString currKey = xlist.at(0) + '_' + xlist.at(1);
+    if (!m_thresholdColorMap.contains(currKey) || m_thresholdColorMap.value(currKey).keys().isEmpty()) {
+        //没有设置阈值，则无需分开绘制多个矩形，以默认颜色绘制一个即可
+        drawRect(itemIndex, m_bHorizontal, perItemLength, m_leftPadding, currValue, m_defaultColor);
+        update();
+        return;
+    }
+
+    //根据颜色阈值来分开绘制
+    auto colorMap = m_thresholdColorMap.value(currKey);
+    QList<int> thresholdList = colorMap.keys();
+    if (currValue < thresholdList.first()) {
+        drawRect(itemIndex, m_bHorizontal, perItemLength, m_leftPadding, currValue, m_defaultColor);
+    }
+
+    //以默认颜色绘制第一个矩形
+    drawRect(itemIndex, m_bHorizontal, perItemLength, m_leftPadding, thresholdList.first(), m_defaultColor);
+
+    if (thresholdList.size() == 1) {
+        drawRect(itemIndex, m_bHorizontal, perItemLength, thresholdList.first(), currValue, colorMap.value(thresholdList.first()));
+    }
+
+    for (int i = 0; i < thresholdList.size() - 1; i++) {
+        QColor currColor = colorMap.value(thresholdList.at(i));
+
+        if (currValue < thresholdList.at(i + 1)) {
+            drawRect(itemIndex, m_bHorizontal, perItemLength, thresholdList.at(i), currValue, colorMap.value(thresholdList.at(i)));
+            break;
+        } else {
+            drawRect(itemIndex, m_bHorizontal, perItemLength, thresholdList.at(i), thresholdList.at(i + 1), colorMap.value(thresholdList.at(i)));
+        }
+    }
+
+    if (currValue > thresholdList.last()) {
+        drawRect(itemIndex, m_bHorizontal, perItemLength, thresholdList.last(), currValue, colorMap.value(thresholdList.last()));
+    }
+    update();
 }

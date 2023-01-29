@@ -42,7 +42,6 @@ signals:
 
 public slots:
 	void onPushbuttonMoreClicked();
-	void onBtnColorClicked();
 
 private:
 	Ui::General ui;
@@ -92,7 +91,6 @@ signals:
 	void sigBtnColorRangesMoreclicked();
 public slots:
 	void onBtnCRMoreclicked();
-	void onBtnColorClicked();
 private:
 	Ui::ColorRanges ui;
 };

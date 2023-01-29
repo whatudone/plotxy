@@ -120,4 +120,20 @@ enum RealTimeMode
 	REALTIME = 1        ///< Real-time mode
 };
 
+//Grid Style
+enum GridStyle
+{
+	SOLIDLINE = 0,
+	DASHLINE,
+	DOTLINE,
+	DASHDOTLINE
+};
+
+//Grid Density
+enum GridDensity
+{
+	LESS = 4,
+	NORMAL = 8,
+	MORE = 10
+};
 #endif // _CONST_DEF_H_
