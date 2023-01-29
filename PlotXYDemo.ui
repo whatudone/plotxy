@@ -110,6 +110,7 @@ background-color: rgb(3, 57, 122);
      <addaction name="actionClear_recent_files_2"/>
     </widget>
     <addaction name="actionopen"/>
+    <addaction name="actionopenNetwork"/>
     <addaction name="actionexport"/>
     <addaction name="separator"/>
     <addaction name="actionclose"/>
@@ -155,15 +156,39 @@ background-color: rgb(3, 57, 122);
     <property name="title">
      <string>图层</string>
     </property>
+    <widget class="QMenu" name="menu_autofit">
+     <property name="title">
+      <string>自动适应大小</string>
+     </property>
+     <addaction name="actionAutofit_Full"/>
+     <addaction name="actionAutofit_X"/>
+     <addaction name="actionAutofit_Y"/>
+    </widget>
+    <widget class="QMenu" name="menu_addPlot">
+     <property name="title">
+      <string>创建绘图</string>
+     </property>
+     <addaction name="actionAddScatterPlot"/>
+     <addaction name="actionAddAScopePlot"/>
+     <addaction name="actionAddRTIPlot"/>
+     <addaction name="actionAddTextPlot"/>
+     <addaction name="actionAddLightPlot"/>
+     <addaction name="actionAddBarPlot"/>
+     <addaction name="actionAddDialPlot"/>
+     <addaction name="actionAddAttitudePlot"/>
+     <addaction name="actionAddPolarPlot"/>
+     <addaction name="actionAddTrackPlot"/>
+     <addaction name="actionAddDopplerPlot"/>
+    </widget>
     <addaction name="actionPlot_Wizard"/>
     <addaction name="separator"/>
     <addaction name="actionPlot_Manager_Ctrl_M"/>
     <addaction name="actionWidget_Editor"/>
     <addaction name="actionExport_to_GOG"/>
     <addaction name="separator"/>
-    <addaction name="actionCreate_Plot"/>
+    <addaction name="menu_addPlot"/>
     <addaction name="separator"/>
-    <addaction name="actionAutofit"/>
+    <addaction name="menu_autofit"/>
     <addaction name="actionOne_To_One"/>
     <addaction name="actionRound_Ranges"/>
     <addaction name="separator"/>
@@ -218,10 +243,13 @@ background-color: rgb(3, 57, 122);
     <addaction name="actionShow_Tabbar"/>
     <addaction name="actionShow_RTI_Controls"/>
     <addaction name="actionShow_All_Bars_Ctrl_B"/>
+    <addaction name="separator"/>
     <addaction name="actionShow_Plot_Time_Ctrl_Alt_P"/>
     <addaction name="actionShow_System_Time_Ctrl_Alt_Y"/>
+    <addaction name="separator"/>
     <addaction name="actionShow_Corner_Logo"/>
     <addaction name="actionShow_Frame_Rate_Alt_F"/>
+    <addaction name="separator"/>
     <addaction name="actionFullScreen_Shift_F"/>
    </widget>
    <widget class="QMenu" name="menuTools">
@@ -231,7 +259,7 @@ background-color: rgb(3, 57, 122);
     <addaction name="actionSave_Preferences"/>
     <addaction name="actionSave_Preferences_As"/>
     <addaction name="actionLoad_Preferences"/>
-    <addaction name="actionUseer_Functions"/>
+    <addaction name="actionUser_Functions"/>
     <addaction name="actionFunction_Console"/>
     <addaction name="actionHot_Keys_Ctrl_H"/>
     <addaction name="actionOptions_Ctrl_Alt_O"/>
@@ -282,7 +310,7 @@ background-color: rgb(3, 57, 122);
    <addaction name="actionPlot_Manager_Ctrl_M"/>
    <addaction name="actionAdvanced_Data_Manager"/>
    <addaction name="actionAdd_Plot_Pair_Ctrl_A"/>
-   <addaction name="actionAutofit"/>
+   <addaction name="actionAutofit_Full"/>
    <addaction name="actionBring_To_Front_Ctrl"/>
    <addaction name="actionSend_To_Back_Ctrl"/>
    <addaction name="separator"/>
@@ -324,7 +352,7 @@ background-color: rgb(3, 57, 122);
   </action>
   <action name="actionclose">
    <property name="text">
-    <string>清理数据</string>
+    <string>断开/关闭</string>
    </property>
   </action>
   <action name="actionLoad_PML">
@@ -349,27 +377,42 @@ background-color: rgb(3, 57, 122);
   </action>
   <action name="actionUndo_Ctrl_Z">
    <property name="text">
-    <string>撤销  Ctrl+Z</string>
+    <string>撤销</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
    </property>
   </action>
   <action name="actionRedo_Ctrl_Y">
    <property name="text">
-    <string>恢复  Ctrl+Y</string>
+    <string>恢复</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
    </property>
   </action>
   <action name="actionCut_Ctrl_X">
    <property name="text">
-    <string>剪切  Ctrl+X</string>
+    <string>剪切</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
    </property>
   </action>
   <action name="actionCopy_Ctrl_C">
    <property name="text">
-    <string>复制  Ctrl+C</string>
+    <string>复制</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
    </property>
   </action>
   <action name="actionPaste_Ctrl_V">
    <property name="text">
-    <string>粘贴  Ctrl+V</string>
+    <string>粘贴</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
    </property>
   </action>
   <action name="actionDelete">
@@ -402,7 +445,10 @@ background-color: rgb(3, 57, 122);
   </action>
   <action name="actionBring_Forward">
    <property name="text">
-    <string>Bring Forward       +</string>
+    <string>Bring Forward</string>
+   </property>
+   <property name="shortcut">
+    <string>+</string>
    </property>
   </action>
   <action name="actionSend_Backward">
@@ -560,6 +606,12 @@ background-color: rgb(3, 57, 122);
    <property name="toolTip">
     <string>绘图管理器</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::WindowShortcut</enum>
+   </property>
   </action>
   <action name="actionWidget_Editor">
    <property name="text">
@@ -571,12 +623,7 @@ background-color: rgb(3, 57, 122);
     <string>导出 GOG...</string>
    </property>
   </action>
-  <action name="actionCreate_Plot">
-   <property name="text">
-    <string>创建绘图</string>
-   </property>
-  </action>
-  <action name="actionAutofit">
+  <action name="actionAutofit_Full">
    <property name="icon">
     <iconset resource="resources/toolbar.qrc">
      <normaloff>:/toolbar/autoadjust.png</normaloff>:/toolbar/autoadjust.png</iconset>
@@ -596,11 +643,17 @@ background-color: rgb(3, 57, 122);
    </property>
   </action>
   <action name="actionLock_Data_Display">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>锁定展示</string>
+    <string>Lock Data Display</string>
    </property>
   </action>
   <action name="actionLock_Stacking_Order">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Lock Stacking Order</string>
    </property>
@@ -627,6 +680,9 @@ background-color: rgb(3, 57, 122);
    <property name="text">
     <string>添加数据对</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
   </action>
   <action name="actionDiscovery_Rules">
    <property name="text">
@@ -638,17 +694,26 @@ background-color: rgb(3, 57, 122);
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show Object Aliases Ctrl+Alt+A</string>
+    <string>Show Object Aliases</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+A</string>
    </property>
   </action>
   <action name="actionReference_Points_Ctrl_R">
    <property name="text">
-    <string>Reference Points...   Ctrl+R</string>
+    <string>Reference Points...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
   <action name="actionEntity_Status_Ctrl_Alt_S">
    <property name="text">
-    <string>Entity Status...   Ctrl+Alt+S</string>
+    <string>Entity Status...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+S</string>
    </property>
   </action>
   <action name="actionClassification">
@@ -657,30 +722,48 @@ background-color: rgb(3, 57, 122);
    </property>
   </action>
   <action name="actionPlay">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources/toolbar.qrc">
      <normaloff>:/toolbar/Play.png</normaloff>:/toolbar/Play.png</iconset>
    </property>
    <property name="text">
-    <string>播放        P</string>
+    <string>播放</string>
+   </property>
+   <property name="shortcut">
+    <string>P</string>
    </property>
   </action>
   <action name="actionReverse">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources/toolbar.qrc">
      <normaloff>:/toolbar/PlayBack.png</normaloff>:/toolbar/PlayBack.png</iconset>
    </property>
    <property name="text">
-    <string>倒放    Ctrl+D</string>
+    <string>倒放</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
    </property>
   </action>
   <action name="actionReal_Time">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources/toolbar.qrc">
      <normaloff>:/toolbar/RealTime.png</normaloff>:/toolbar/RealTime.png</iconset>
    </property>
    <property name="text">
-    <string>实时模式     Shift+R</string>
+    <string>实时模式</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+R</string>
    </property>
   </action>
   <action name="actionTime_Controls">
@@ -689,7 +772,10 @@ background-color: rgb(3, 57, 122);
      <normaloff>:/toolbar/TimeEditor.png</normaloff>:/toolbar/TimeEditor.png</iconset>
    </property>
    <property name="text">
-    <string>时间控制    Alt+T</string>
+    <string>时间控制</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+T</string>
    </property>
   </action>
   <action name="actionTime_Client">
@@ -698,7 +784,10 @@ background-color: rgb(3, 57, 122);
      <normaloff>:/toolbar/TimeClient.png</normaloff>:/toolbar/TimeClient.png</iconset>
    </property>
    <property name="text">
-    <string>Time Client    Alt+X</string>
+    <string>Time Client</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+X</string>
    </property>
   </action>
   <action name="actionTime_Server">
@@ -707,12 +796,18 @@ background-color: rgb(3, 57, 122);
      <normaloff>:/toolbar/TimeServer.png</normaloff>:/toolbar/TimeServer.png</iconset>
    </property>
    <property name="text">
-    <string>Time Server    Shift+X</string>
+    <string>Time Server</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+X</string>
    </property>
   </action>
   <action name="actionNew_Tab_Ctrl_T">
    <property name="text">
-    <string>新建标签            Ctrl+T</string>
+    <string>新建标签</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
    </property>
   </action>
   <action name="actionRename_Tab">
@@ -722,17 +817,26 @@ background-color: rgb(3, 57, 122);
   </action>
   <action name="actionClose_Tab">
    <property name="text">
-    <string>关闭标签    Ctrl+F4</string>
+    <string>关闭标签</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F4</string>
    </property>
   </action>
   <action name="actionNext_Tab_Ctrl_Tab">
    <property name="text">
-    <string>切换下一个标签页          Ctrl+Tab</string>
+    <string>切换下一个标签页</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Tab</string>
    </property>
   </action>
   <action name="actionPrevious_Tab_Ctrl_Shift_Tab">
    <property name="text">
-    <string>切换上一个 标签页     Ctrl+Shift+Tab</string>
+    <string>切换上一个 标签页</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+Tab</string>
    </property>
   </action>
   <action name="actionShow_Menubar_Ctrl_Alt_M">
@@ -740,10 +844,10 @@ background-color: rgb(3, 57, 122);
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
-    <string>显示菜单栏    Ctrl+Alt+M</string>
+    <string>显示菜单栏</string>
    </property>
   </action>
   <action name="actionShow_Toolbar_Ctrl_Alt_C">
@@ -751,22 +855,28 @@ background-color: rgb(3, 57, 122);
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
-    <string>显示工具栏     Ctrl+Alt+C</string>
+    <string>显示工具栏</string>
    </property>
   </action>
   <action name="actionShow_Statusbar_Ctrl_Alt_B">
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>显示状态栏   Ctrl+Alt+B</string>
+    <string>显示状态栏</string>
    </property>
   </action>
   <action name="actionShow_Time_Slider">
    <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
     <bool>true</bool>
    </property>
    <property name="text">
@@ -775,6 +885,9 @@ background-color: rgb(3, 57, 122);
   </action>
   <action name="actionShow_Tabbar">
    <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
     <bool>true</bool>
    </property>
    <property name="text">
@@ -790,33 +903,60 @@ background-color: rgb(3, 57, 122);
    </property>
   </action>
   <action name="actionShow_All_Bars_Ctrl_B">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>显示所有栏       Ctrl+B</string>
+    <string>显示所有栏</string>
    </property>
   </action>
   <action name="actionShow_Plot_Time_Ctrl_Alt_P">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>显示绘图中时间   Ctrl+Alt+P</string>
+    <string>显示绘图中时间</string>
    </property>
   </action>
   <action name="actionShow_System_Time_Ctrl_Alt_Y">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>显示系统时间  Ctrl+Alt+Y</string>
+    <string>显示系统时间</string>
    </property>
   </action>
   <action name="actionShow_Corner_Logo">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>显示Logo</string>
    </property>
   </action>
   <action name="actionShow_Frame_Rate_Alt_F">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>Show Frame Rate     Alt+F</string>
+    <string>Show Frame Rate</string>
    </property>
   </action>
   <action name="actionFullScreen_Shift_F">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>全屏显示    Shift+F</string>
+    <string>全屏显示</string>
    </property>
   </action>
   <action name="actionSave_Preferences">
@@ -834,9 +974,9 @@ background-color: rgb(3, 57, 122);
     <string>Load Preferences...</string>
    </property>
   </action>
-  <action name="actionUseer_Functions">
+  <action name="actionUser_Functions">
    <property name="text">
-    <string>Useer Functions...</string>
+    <string>User Functions...</string>
    </property>
   </action>
   <action name="actionFunction_Console">
@@ -846,12 +986,15 @@ background-color: rgb(3, 57, 122);
   </action>
   <action name="actionHot_Keys_Ctrl_H">
    <property name="text">
-    <string>Hot Keys...    Ctrl+H</string>
+    <string>Hot Keys...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
    </property>
   </action>
   <action name="actionOptions_Ctrl_Alt_O">
    <property name="text">
-    <string>Options...   Ctrl+Alt+O</string>
+    <string>Options...</string>
    </property>
   </action>
   <action name="actionPlug_in_Manager">
@@ -861,7 +1004,7 @@ background-color: rgb(3, 57, 122);
   </action>
   <action name="actionConsole_Ctrl_F1">
    <property name="text">
-    <string>Console...   Ctrl+F1</string>
+    <string>Console...</string>
    </property>
   </action>
   <action name="actionFind_DCS_Sever">
@@ -896,7 +1039,10 @@ background-color: rgb(3, 57, 122);
   </action>
   <action name="actionUser_Manual_F1">
    <property name="text">
-    <string>User Manual    F1</string>
+    <string>User Manual</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
    </property>
   </action>
   <action name="actionTraining">
@@ -920,7 +1066,7 @@ background-color: rgb(3, 57, 122);
   </action>
   <action name="actionRun_Python_Script_Ctrl_E">
    <property name="text">
-    <string>运行 Python Script          Ctrl+E</string>
+    <string>运行 Python Script</string>
    </property>
   </action>
   <action name="actionDecrease_Step">
@@ -971,6 +1117,76 @@ background-color: rgb(3, 57, 122);
   <action name="actionselect_plot">
    <property name="text">
     <string>select plot</string>
+   </property>
+  </action>
+  <action name="actionopenNetwork">
+   <property name="text">
+    <string>打开网络</string>
+   </property>
+  </action>
+  <action name="actionAutofit_X">
+   <property name="text">
+    <string>仅X轴自适应</string>
+   </property>
+  </action>
+  <action name="actionAutofit_Y">
+   <property name="text">
+    <string>仅Y轴自适应</string>
+   </property>
+  </action>
+  <action name="actionAddScatterPlot">
+   <property name="text">
+    <string>添加Scatter组件</string>
+   </property>
+  </action>
+  <action name="actionAddAScopePlot">
+   <property name="text">
+    <string>添加A-Scope组件</string>
+   </property>
+  </action>
+  <action name="actionAddRTIPlot">
+   <property name="text">
+    <string>添加RTI组件</string>
+   </property>
+  </action>
+  <action name="actionAddTextPlot">
+   <property name="text">
+    <string>添加Text组件</string>
+   </property>
+  </action>
+  <action name="actionAddLightPlot">
+   <property name="text">
+    <string>添加Light组件</string>
+   </property>
+  </action>
+  <action name="actionAddBarPlot">
+   <property name="text">
+    <string>添加Bar组件</string>
+   </property>
+  </action>
+  <action name="actionAddDialPlot">
+   <property name="text">
+    <string>添加Dial组件</string>
+   </property>
+  </action>
+  <action name="actionAddAttitudePlot">
+   <property name="text">
+    <string>添加Attitude组件</string>
+   </property>
+  </action>
+  <action name="actionAddPolarPlot">
+   <property name="text">
+    <string>添加Polar组件</string>
+   </property>
+  </action>
+  <action name="actionAddTrackPlot">
+   <property name="text">
+    <string>添加Track组件</string>
+   </property>
+  </action>
+  <action name="actionAddDopplerPlot">
+   <property name="text">
+    <string>添加Doppler组件</string>
    </property>
   </action>
  </widget>

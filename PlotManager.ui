@@ -4671,24 +4671,9 @@ background-color: rgb(127, 127, 127);</string>
                 <layout class="QVBoxLayout" name="verticalLayout_75">
                  <item>
                   <widget class="QTableWidget" name="tableWidget_TextDataSort">
-                   <attribute name="horizontalHeaderDefaultSectionSize">
-                    <number>300</number>
-                   </attribute>
-                   <attribute name="horizontalHeaderStretchLastSection">
-                    <bool>false</bool>
-                   </attribute>
-                   <attribute name="verticalHeaderShowSortIndicator" stdset="0">
-                    <bool>false</bool>
-                   </attribute>
-                   <attribute name="verticalHeaderStretchLastSection">
-                    <bool>false</bool>
-                   </attribute>
                    <column>
                     <property name="text">
                      <string>Entity</string>
-                    </property>
-                    <property name="textAlignment">
-                     <set>AlignCenter</set>
                     </property>
                    </column>
                    <column>

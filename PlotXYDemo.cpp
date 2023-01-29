@@ -32,17 +32,12 @@ PlotXYDemo::PlotXYDemo(QWidget *parent)
 	setMinimumSize(1600, 900);
 	showMaximized();
 
-    initTime();
+    init();
 
-    //m_plotItem = nullptr;
-    //m_freeWidgetWraper = nullptr;
-    //m_AdvancedDataManager = new AdvancedDataManager;
     m_AdvancedDataManager = new AdvancedDataManager();
     m_plotManager = new PlotManager();
     m_addPlotPair = AddPlotPair::m_getInstance();
 
-//  connect(m_addPlotPair, &AddPlotPair::sgn_updatePlotPair, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
-// 	connect(m_addPlotPair, &AddPlotPair::sgn_updatePlotPair, m_plotManager, &PlotManager::onSelectedPlot);
     connect(this, SIGNAL(sgn_loadDataReady()), m_addPlotPair, SLOT(onUpdateData()));
     connect(this, SIGNAL(sgn_loadDataReady()), m_timeCtrl, SLOT(onUpdateData()));
     connect(m_timeCtrl, &TimeControls::sgn_setSliderRange, m_timeCtrl, &TimeControls::onSetSliderRange);
@@ -57,17 +52,11 @@ PlotXYDemo::PlotXYDemo(QWidget *parent)
     m_curBaseInfo.Base_PlotName = nullptr;
     qRegisterMetaType<BaseInfo>("BaseInfo");
 
-    initStatusBar();
-
-    connect(ui.actionAdvanced_Data_Manager, &QAction::triggered, this, &PlotXYDemo::onAdvancedData);
-    connect(ui.actionPlot_Manager_Ctrl_M, &QAction::triggered, this, &PlotXYDemo::onPlotManager);
-    connect(ui.actionAdd_Plot_Pair_Ctrl_A, &QAction::triggered, this, &PlotXYDemo::onAddPlotPair);
-    connect(ui.actionopen, &QAction::triggered, this, &PlotXYDemo::onOpenFile);
-
-    connect(m_plotManager, SIGNAL(sigAddPlotPair()), this, SLOT(onAddPlotPair()));
+    connect(m_plotManager, SIGNAL(sigAddPlotPair(QString, QString)), this, SLOT(onAddPlotPair(QString, QString)));
 	connect(m_plotManager, SIGNAL(sigAdvancedDataManager()), this, SLOT(onAdvancedData()));
 	connect(this, &PlotXYDemo::sgn_sendTabWidgetRect, m_plotManager, &PlotManager::onGetTabWidgetRect);
 	connect(m_plotManager, &PlotManager::sigGetTabRect, this, &PlotXYDemo::onSendTabRect);
+	connect(m_AdvancedDataManager, SIGNAL(sgnAddPlotPair()), this, SLOT(onAddPlotPair()));
 	QRect tabRect = ui.tabWidget->rect();
 	emit sgn_sendTabWidgetRect(tabRect);
 
@@ -96,6 +85,10 @@ void PlotXYDemo::onAdvancedData()
 	m_AdvancedDataManager->activateWindow();
 }
 
+void PlotXYDemo::onPlotWizard()
+{
+}
+
 void PlotXYDemo::onPlotManager()
 {
     if (!m_plotManager) {
@@ -104,6 +97,14 @@ void PlotXYDemo::onPlotManager()
 	m_plotManager->onSelectedPlot(m_curBaseInfo.Base_TabName, m_curBaseInfo.Base_PlotName);
     m_plotManager->show();
 	m_plotManager->activateWindow();
+}
+
+void PlotXYDemo::onWidgetEditor()
+{
+}
+
+void PlotXYDemo::onExportToGOG()
+{
 }
 
 void PlotXYDemo::onAddPlotPair()
@@ -119,6 +120,41 @@ void PlotXYDemo::onAddPlotPair()
 	m_addPlotPair->activateWindow();
 }
 
+void PlotXYDemo::onAddPlotPair(QString tabName, QString plotName)
+{
+	if (!m_addPlotPair) {
+		m_addPlotPair = AddPlotPair::m_getInstance();
+		connect(this, SIGNAL(sgn_loadDataReady()), m_addPlotPair, SLOT(onUpdateData()));
+		m_addPlotPair->init(getCurrentFocusPlot());
+	}
+	m_curBaseInfo.Base_TabName = tabName;
+	m_curBaseInfo.Base_PlotName = plotName;
+	m_addPlotPair->onChangeStackIndex(m_lastSelectedType);
+	m_addPlotPair->setPlotBaseInfo(m_curBaseInfo);
+	m_addPlotPair->show();
+	m_addPlotPair->activateWindow();
+}
+
+void PlotXYDemo::onDiscoveryRules()
+{
+}
+
+void PlotXYDemo::onShowObjectAliases()
+{
+}
+
+void PlotXYDemo::onReferencePoints()
+{
+}
+
+void PlotXYDemo::onEntityStatus()
+{
+}
+
+void PlotXYDemo::onClassification()
+{
+}
+
 void PlotXYDemo::onOpenFile()
 {
     QString path = QFileDialog::getOpenFileName(this, "open File", "/home", tr("Microsoft CSV(*.csv)"));
@@ -128,6 +164,42 @@ void PlotXYDemo::onOpenFile()
     sgn_loadDataReady();
 }
 
+void PlotXYDemo::onUserManual()
+{
+}
+
+void PlotXYDemo::onSelectPlot()
+{
+}
+
+void PlotXYDemo::onPan()
+{
+}
+
+void PlotXYDemo::onCenterPlot()
+{
+}
+
+void PlotXYDemo::onZoom()
+{
+}
+
+void PlotXYDemo::onBoxZoom()
+{
+}
+
+void PlotXYDemo::onMeasureDistance()
+{
+}
+
+void PlotXYDemo::onCreatePlot()
+{
+}
+
+void PlotXYDemo::onMovePlot()
+{
+}
+
 void PlotXYDemo::onSelectedPlot(QWidget* widget)
 {
 	m_curBaseInfo.Base_TabName = dynamic_cast<PlotItemBase *>(widget)->currTabName();
@@ -135,7 +207,7 @@ void PlotXYDemo::onSelectedPlot(QWidget* widget)
 	updateStatusBar_info(m_curBaseInfo.Base_PlotName);
 }
 
-void PlotXYDemo::onActionTimeControl()
+void PlotXYDemo::onTimeControls()
 {
     m_timeCtrl->show();
 	m_timeCtrl->activateWindow();
@@ -156,9 +228,9 @@ void PlotXYDemo::onCustomContextMenuRequested(const QPoint &point)
     pMenu->addAction(renameTabPage);
 
     /* 连接槽函数 */
-    connect(addTabPage, SIGNAL(triggered()), this, SLOT(onAddTabPage()));
-    connect(removeTabPage, SIGNAL(triggered()), this, SLOT(onRemoveTabPage()));
-    connect(renameTabPage, SIGNAL(triggered()), this, SLOT(onRenameTabPage()));
+    connect(addTabPage, SIGNAL(triggered()), this, SLOT(onNewTab()));
+    connect(removeTabPage, SIGNAL(triggered()), this, SLOT(onCloseTab()));
+    connect(renameTabPage, SIGNAL(triggered()), this, SLOT(onRenameTab()));
 
     /* 在鼠标右键处显示菜单 */
     pMenu->exec(QCursor::pos());
@@ -194,71 +266,22 @@ void PlotXYDemo::onContextMenu(const QPoint &point)
 
     //createPlot菜单
     QMenu *createPlotMenu = new QMenu(QString::fromLocal8Bit("创建绘图组件"));
-    QAction *addBarPlot = new QAction(QString::fromLocal8Bit("添加Bar组件"), this);
-    QAction *addAttitudePlot = new QAction(QString::fromLocal8Bit("添加Attitude组件"), this);
-    QAction *addTextPlot = new QAction(QString::fromLocal8Bit("添加Text组件"), this);
-    QAction *addPolarPlot = new QAction(QString::fromLocal8Bit("添加Polar组件"), this);
-    QAction *addLightPlot = new QAction(QString::fromLocal8Bit("添加Light组件"), this);
-    QAction *addTrackPlot = new QAction(QString::fromLocal8Bit("添加Track Status组件"), this);
-    QAction *addAScopePlot = new QAction(QString::fromLocal8Bit("添加A-Scope组件"), this);
-    QAction *addRTIPlot = new QAction(QString::fromLocal8Bit("添加Scrolling RTI组件"), this);
-    QAction *addDopplerPlot = new QAction(QString::fromLocal8Bit("添加Range Doppler组件"), this);
-    QAction *addScatterPlot = new QAction(QString::fromLocal8Bit("添加Scatter组件"), this);
-    QAction *addDialPlot = new QAction(QString::fromLocal8Bit("添加Dial组件"), this);
     /* 添加菜单项 */
-	createPlotMenu->addAction(addScatterPlot);
-	createPlotMenu->addAction(addAScopePlot);
-	createPlotMenu->addAction(addRTIPlot);
-	createPlotMenu->addAction(addTextPlot);
-	createPlotMenu->addAction(addLightPlot);
-    createPlotMenu->addAction(addBarPlot);
-	createPlotMenu->addAction(addDialPlot);
-    createPlotMenu->addAction(addAttitudePlot);
-    createPlotMenu->addAction(addPolarPlot);   
-    createPlotMenu->addAction(addTrackPlot);   
-    createPlotMenu->addAction(addDopplerPlot);
-       
-    /* 连接槽函数 */
-    connect(addBarPlot, SIGNAL(triggered()), this, SLOT(onAddBarPlot()));
-    connect(addAttitudePlot, SIGNAL(triggered()), this, SLOT(onAddAttitudePlot()));
-    connect(addTextPlot, SIGNAL(triggered()), this, SLOT(onAddTextPlot()));
-    connect(addPolarPlot, SIGNAL(triggered()), this, SLOT(onAddPolarPlot()));
-    connect(addLightPlot, SIGNAL(triggered()), this, SLOT(onAddLightPlot()));
-    connect(addTrackPlot, SIGNAL(triggered()), this, SLOT(onAddTrackPlot()));
-    connect(addAScopePlot, SIGNAL(triggered()), this, SLOT(onAddAScopePlot()));
-    connect(addRTIPlot, SIGNAL(triggered()), this, SLOT(onAddRTIPlot()));
-    connect(addDopplerPlot, SIGNAL(triggered()), this, SLOT(onAddDopplerPolt()));
-    connect(addScatterPlot, SIGNAL(triggered()), this, SLOT(onAddScatterPlot()));
-    connect(addDialPlot, SIGNAL(triggered()), this, SLOT(onAddDialPlot()));
-
-    //QAction
-    QAction *Undo_Action = new QAction(QString::fromLocal8Bit("撤销"), this);
-    QAction *Cut_Action = new QAction(QString::fromLocal8Bit("剪切"), this);
-    QAction *Copy_Action = new QAction(QString::fromLocal8Bit("复制"), this);
-    QAction *Paste_Action = new QAction(QString::fromLocal8Bit("粘贴"), this);
-    QAction *Delete_Action = new QAction(QString::fromLocal8Bit("删除"), this);
+	createPlotMenu->addAction(ui.actionAddScatterPlot);
+	createPlotMenu->addAction(ui.actionAddAScopePlot);
+	createPlotMenu->addAction(ui.actionAddRTIPlot);
+	createPlotMenu->addAction(ui.actionAddTextPlot);
+	createPlotMenu->addAction(ui.actionAddLightPlot);
+    createPlotMenu->addAction(ui.actionAddBarPlot);
+	createPlotMenu->addAction(ui.actionAddDialPlot);
+    createPlotMenu->addAction(ui.actionAddAttitudePlot);
+    createPlotMenu->addAction(ui.actionAddPolarPlot);   
+    createPlotMenu->addAction(ui.actionAddTrackPlot);   
+    createPlotMenu->addAction(ui.actionAddDopplerPlot);
 
     QMenu *autofitMenu = new QMenu(QString::fromLocal8Bit("自动适应大小"));
-    QAction *autofit_x = new QAction(QString::fromLocal8Bit("X轴"), this);
-    QAction *autofit_y = new QAction(QString::fromLocal8Bit("Y轴"), this);
-    autofitMenu->addAction(autofit_x);
-    autofitMenu->addAction(autofit_y);
-
-    QAction *One2One_Action = new QAction(QString::fromLocal8Bit("One-To-One"), this);
-    QAction *RoundRanges_Action = new QAction(QString::fromLocal8Bit("Round Ranges"), this);
-
-    QAction *PlotManager_Action = new QAction(QString::fromLocal8Bit("绘图管理器"), this);
-    QAction *WidgetEditor_Action = new QAction(QString::fromLocal8Bit("控件编辑"), this);
-    QAction *DataManager_Action = new QAction(QString::fromLocal8Bit("高级数据管理器"), this);
-    QAction *PlotPair_Action = new QAction(QString::fromLocal8Bit("添加数据对"), this);
-    QAction *Screenshot_Action = new QAction(QString::fromLocal8Bit("保存截图"), this);
-
-    connect(PlotManager_Action, SIGNAL(triggered()), this, SLOT(onPlotManager()));
-    connect(DataManager_Action, SIGNAL(triggered()), this, SLOT(onAdvancedData()));
-    connect(PlotPair_Action, SIGNAL(triggered()), this, SLOT(onAddPlotPair()));
-
-    QAction *GOG_Action = new QAction(QString::fromLocal8Bit("导出GOG"), this);
-    QAction *HDF5_Action = new QAction(QString::fromLocal8Bit("导出HDF5"), this);
+    autofitMenu->addAction(ui.actionAutofit_X);
+    autofitMenu->addAction(ui.actionAutofit_Y);
 
     QMenu *OrderMenu = new QMenu(QString::fromLocal8Bit("Order"));
     QMenu *ViewMenu = new QMenu(QString::fromLocal8Bit("View"));
@@ -268,25 +291,24 @@ void PlotXYDemo::onContextMenu(const QPoint &point)
     pMenu->addSeparator();
     pMenu->addMenu(createPlotMenu);
     pMenu->addSeparator();
-    pMenu->addAction(Undo_Action);
+    pMenu->addAction(ui.actionUndo_Ctrl_Z);
     pMenu->addSeparator();
-    pMenu->addAction(Cut_Action);
-    pMenu->addAction(Copy_Action);
-    pMenu->addAction(Paste_Action);
-    pMenu->addAction(Delete_Action);
+    pMenu->addAction(ui.actionCut_Ctrl_X);
+    pMenu->addAction(ui.actionCopy_Ctrl_C);
+    pMenu->addAction(ui.actionPaste_Ctrl_V);
+    pMenu->addAction(ui.actionDelete);
     pMenu->addSeparator();
     pMenu->addMenu(autofitMenu);
-    pMenu->addAction(One2One_Action);
-    pMenu->addAction(RoundRanges_Action);
+    pMenu->addAction(ui.actionOne_To_One);
+    pMenu->addAction(ui.actionRound_Ranges);
     pMenu->addSeparator();
-    pMenu->addAction(PlotManager_Action);
-    pMenu->addAction(WidgetEditor_Action);
-    pMenu->addAction(DataManager_Action);
-    pMenu->addAction(PlotPair_Action);
-    pMenu->addAction(Screenshot_Action);
+    pMenu->addAction(ui.actionPlot_Manager_Ctrl_M);
+    pMenu->addAction(ui.actionWidget_Editor);
+    pMenu->addAction(ui.actionAdvanced_Data_Manager);
+    pMenu->addAction(ui.actionAdd_Plot_Pair_Ctrl_A);
+    pMenu->addAction(ui.actionSave_Screenshot);
     pMenu->addSeparator();
-    pMenu->addAction(GOG_Action);
-    pMenu->addAction(HDF5_Action);
+    pMenu->addAction(ui.actionExport_to_GOG);
     pMenu->addSeparator();
     pMenu->addMenu(OrderMenu);
     pMenu->addMenu(ViewMenu);
@@ -296,21 +318,115 @@ void PlotXYDemo::onContextMenu(const QPoint &point)
     pMenu->exec(QCursor::pos());
 }
 
-void PlotXYDemo::onAddTabPage()
+void PlotXYDemo::onNewTab()
 {
     QWidget *tabWidgetItem = new QWidget();
     int currCount = ui.tabWidget->count();
     QString genTabName = QString("Tab ") + QString::number(currCount + 1);
     ui.tabWidget->addTab(tabWidgetItem, genTabName);
+	ui.tabWidget->setCurrentIndex(currCount);
 }
 
-void PlotXYDemo::onRemoveTabPage()
+void PlotXYDemo::onCloseTab()
 {
+	if (ui.tabWidget->count() <= 1)
+		return;
+
     int currTabIndex = ui.tabWidget->currentIndex();
     ui.tabWidget->removeTab(currTabIndex);
 }
 
-void PlotXYDemo::onRenameTabPage()
+void PlotXYDemo::onNextTab()
+{
+	int currTabIndex = ui.tabWidget->currentIndex();
+	ui.tabWidget->setCurrentIndex(currTabIndex + 1);
+}
+
+void PlotXYDemo::onPreviousTab()
+{
+	int currTabIndex = ui.tabWidget->currentIndex();
+	ui.tabWidget->setCurrentIndex(currTabIndex - 1);
+}
+
+void PlotXYDemo::onShowMenubar()
+{
+//	menuBar()->setVisible(false);
+}
+
+void PlotXYDemo::onShowToolbar()
+{
+
+}
+
+void PlotXYDemo::onShowStatusbar()
+{
+}
+
+void PlotXYDemo::onShowTimeSlider()
+{
+}
+
+void PlotXYDemo::onShowTabbar()
+{
+}
+
+void PlotXYDemo::onShowRTIControls()
+{
+}
+
+void PlotXYDemo::onShowAllBars()
+{
+}
+
+void PlotXYDemo::onShowPlotTime()
+{
+}
+
+void PlotXYDemo::onShowSystemTime()
+{
+}
+
+void PlotXYDemo::onShowLogo()
+{
+}
+
+void PlotXYDemo::onShowFrameRate()
+{
+}
+
+void PlotXYDemo::onShowFullScreen()
+{
+}
+
+void PlotXYDemo::onSavePreferences()
+{
+}
+
+void PlotXYDemo::onSavePreferencesAs()
+{
+}
+
+void PlotXYDemo::onLoadPreferences()
+{
+}
+
+void PlotXYDemo::onUserFunctions()
+{
+}
+
+void PlotXYDemo::onFunctionConsole()
+{
+}
+
+void PlotXYDemo::onHotKeys()
+{
+}
+
+void PlotXYDemo::onOptions()
+{
+}
+
+void PlotXYDemo::onRenameTab()
 {
 	renameTab* renameDlg = new renameTab(this);
 	int ret = renameDlg->exec();
@@ -371,6 +487,7 @@ void PlotXYDemo::onAddTextPlot()
 	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
 	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
 	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
+
 
     initWidget(plotItem);
 
@@ -582,6 +699,46 @@ void PlotXYDemo::onAddDialPlot()
 	PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
 }
 
+void PlotXYDemo::onAutofit_Full()
+{
+}
+
+void PlotXYDemo::onAutofit_X()
+{
+}
+
+void PlotXYDemo::onAutofit_Y()
+{
+}
+
+void PlotXYDemo::onOneToOne()
+{
+}
+
+void PlotXYDemo::onRoundRanges()
+{
+}
+
+void PlotXYDemo::onLockDataDisplay()
+{
+}
+
+void PlotXYDemo::onLockStackingOrder()
+{
+}
+
+void PlotXYDemo::onInvertColors()
+{
+}
+
+void PlotXYDemo::onBringToFront()
+{
+}
+
+void PlotXYDemo::onSendToBack()
+{
+}
+
 void PlotXYDemo::onAddPolarPlot()
 {
     int currTabIndex = ui.tabWidget->currentIndex();
@@ -647,6 +804,8 @@ void PlotXYDemo::onTimeOut()
             } else {
                 m_timer->stop();
                 ui.actionStop->setEnabled(false);
+				ui.actionPlay->setChecked(false);
+				ui.actionReverse->setChecked(false);
                 emit sgn_enableActionStop(false);
             }
 
@@ -659,13 +818,14 @@ void PlotXYDemo::onTimeOut()
             } else {
                 m_timer->stop();
                 ui.actionStop->setEnabled(false);
+				ui.actionPlay->setChecked(false);
+				ui.actionReverse->setChecked(false);
                 emit sgn_enableActionStop(false);
             }
         } else
             ui.timeSlider->setValue(curValue - step);
     }
 }
-
 
 void PlotXYDemo::onUpdateLocalTime()
 {
@@ -674,9 +834,11 @@ void PlotXYDemo::onUpdateLocalTime()
     m_statusBar_localTime->setText(timestr);
 }
 
-void PlotXYDemo::onActionPlay()
+void PlotXYDemo::onPlay()
 {
     m_bIsPlayForward = true;
+	ui.actionPlay->setChecked(true);
+	ui.actionReverse->setChecked(false);
     if (m_timer->isActive())
         m_timer->stop();
     m_timer->start(m_timerInterval);
@@ -684,16 +846,20 @@ void PlotXYDemo::onActionPlay()
     emit sgn_enableActionStop(true);
 }
 
-void PlotXYDemo::onActionStop()
+void PlotXYDemo::onStop()
 {
     m_timer->stop();
     ui.actionStop->setEnabled(false);
+	ui.actionPlay->setChecked(false);
+	ui.actionReverse->setChecked(false);
     emit sgn_enableActionStop(false);
 }
 
-void PlotXYDemo::onActionReverse()
+void PlotXYDemo::onReverse()
 {
     m_bIsPlayForward = false;
+	ui.actionPlay->setChecked(false);
+	ui.actionReverse->setChecked(true);
     if (m_timer->isActive())
         m_timer->stop();
     m_timer->start(m_timerInterval);
@@ -701,7 +867,7 @@ void PlotXYDemo::onActionReverse()
     emit sgn_enableActionStop(true);
 }
 
-void PlotXYDemo::onActionFrameReverse()
+void PlotXYDemo::onFrameReverse()
 {
     if (m_timer->isActive())
         m_timer->stop();
@@ -710,10 +876,12 @@ void PlotXYDemo::onActionFrameReverse()
     int step = m_timeCtrl->getStepFactor() * m_timeCtrl->getMultiplizer();
     ui.timeSlider->setValue(curValue - step);
     ui.actionStop->setEnabled(false);
+	ui.actionPlay->setChecked(false);
+	ui.actionReverse->setChecked(false);
     emit sgn_enableActionStop(false);
 }
 
-void PlotXYDemo::onActionFrameForward()
+void PlotXYDemo::onFrameForward()
 {
     if (m_timer->isActive())
         m_timer->stop();
@@ -722,10 +890,12 @@ void PlotXYDemo::onActionFrameForward()
     int step = m_timeCtrl->getStepFactor() * m_timeCtrl->getMultiplizer();
     ui.timeSlider->setValue(curValue + step);
     ui.actionStop->setEnabled(false);
+	ui.actionPlay->setChecked(false);
+	ui.actionReverse->setChecked(false);
     emit sgn_enableActionStop(false);
 }
 
-void PlotXYDemo::onActionDecreseStep()
+void PlotXYDemo::onDecreseStep()
 {
     if (m_timerInterval >= 8000)
         return;
@@ -739,7 +909,7 @@ void PlotXYDemo::onActionDecreseStep()
     emit sgn_enableActionStop(true);
 }
 
-void PlotXYDemo::onActionIncreaseStep()
+void PlotXYDemo::onIncreaseStep()
 {
     if (m_timerInterval <= 125)
         return;
@@ -753,15 +923,15 @@ void PlotXYDemo::onActionIncreaseStep()
     emit sgn_enableActionStop(true);
 }
 
-void PlotXYDemo::onActionTimeServer()
+void PlotXYDemo::onTimeServer()
 {
 }
 
-void PlotXYDemo::onActionTimeClient()
+void PlotXYDemo::onTimeClient()
 {
 }
 
-void PlotXYDemo::onActionRealTime()
+void PlotXYDemo::onRealTime()
 {
 }
 
@@ -794,10 +964,84 @@ void PlotXYDemo::onAddAttitudePlot()
 
 void PlotXYDemo::init()
 {
+	initMenuFile();
+	initMenuEdit();
+	initMenuGraph();
+	initMenuData();
+	initMenuTime();
+	initMenuTabs();
+	initMenuView();
+	initMenuTools();
+	initMenuHelp();
 
+	initStatusBar();
 }
 
-void PlotXYDemo::initTime()
+void PlotXYDemo::initMenuFile()
+{
+	connect(ui.actionopen, &QAction::triggered, this, &PlotXYDemo::onOpenFile);
+	connect(ui.actionopenNetwork, &QAction::triggered, this, &PlotXYDemo::onOpenNetwork);
+	connect(ui.actionexport, &QAction::triggered, this, &PlotXYDemo::onExportDataStore);
+	connect(ui.actionclose, &QAction::triggered, this, &PlotXYDemo::onClose_Disconnect);
+	connect(ui.actionRun_Python_Script_Ctrl_E, &QAction::triggered, this, &PlotXYDemo::onRunPythonScript);
+	connect(ui.actionLoad_PML, &QAction::triggered, this, &PlotXYDemo::onLoadPML);
+	connect(ui.actionSave_to_PML, &QAction::triggered, this, &PlotXYDemo::onSaveToPML);
+	connect(ui.actionSave_Screenshot, &QAction::triggered, this, &PlotXYDemo::onSaveScreenshot);
+	connect(ui.actionQuit, &QAction::triggered, this, &PlotXYDemo::onQuit);
+}
+
+void PlotXYDemo::initMenuEdit()
+{
+	connect(ui.actionUndo_Ctrl_Z, &QAction::triggered, this, &PlotXYDemo::onUndo);
+	connect(ui.actionRedo_Ctrl_Y, &QAction::triggered, this, &PlotXYDemo::onRedo);
+	connect(ui.actionCut_Ctrl_X, &QAction::triggered, this, &PlotXYDemo::onCut);
+	connect(ui.actionCopy_Ctrl_C, &QAction::triggered, this, &PlotXYDemo::onCopy);
+	connect(ui.actionPaste_Ctrl_V, &QAction::triggered, this, &PlotXYDemo::onPaste);
+	connect(ui.actionDelete, &QAction::triggered, this, &PlotXYDemo::onDelete);
+}
+
+void PlotXYDemo::initMenuGraph()
+{
+	connect(ui.actionPlot_Wizard, &QAction::triggered, this, &PlotXYDemo::onPlotWizard);
+	connect(ui.actionPlot_Manager_Ctrl_M, &QAction::triggered, this, &PlotXYDemo::onPlotManager);
+	connect(ui.actionWidget_Editor, &QAction::triggered, this, &PlotXYDemo::onWidgetEditor);
+	connect(ui.actionExport_to_GOG, &QAction::triggered, this, &PlotXYDemo::onExportToGOG);
+	connect(ui.actionAutofit_Full, &QAction::triggered, this, &PlotXYDemo::onAutofit_Full);
+	connect(ui.actionAutofit_X, &QAction::triggered, this, &PlotXYDemo::onAutofit_X);
+	connect(ui.actionAutofit_Y, &QAction::triggered, this, &PlotXYDemo::onAutofit_Y);
+	connect(ui.actionOne_To_One, &QAction::triggered, this, &PlotXYDemo::onOneToOne);
+	connect(ui.actionRound_Ranges, &QAction::triggered, this, &PlotXYDemo::onRoundRanges);
+	connect(ui.actionLock_Data_Display, &QAction::triggered, this, &PlotXYDemo::onLockDataDisplay);
+	connect(ui.actionLock_Stacking_Order, &QAction::triggered, this, &PlotXYDemo::onLockStackingOrder);
+	connect(ui.actionInvert_Colores, &QAction::triggered, this, &PlotXYDemo::onInvertColors);
+	connect(ui.actionBring_To_Front_Ctrl, &QAction::triggered, this, &PlotXYDemo::onBringToFront);
+	connect(ui.actionSend_To_Back_Ctrl, &QAction::triggered, this, &PlotXYDemo::onSendToBack);
+
+	connect(ui.actionAddBarPlot, SIGNAL(triggered()), this, SLOT(onAddBarPlot()));
+	connect(ui.actionAddAttitudePlot, SIGNAL(triggered()), this, SLOT(onAddAttitudePlot()));
+	connect(ui.actionAddTextPlot, SIGNAL(triggered()), this, SLOT(onAddTextPlot()));
+	connect(ui.actionAddPolarPlot, SIGNAL(triggered()), this, SLOT(onAddPolarPlot()));
+	connect(ui.actionAddLightPlot, SIGNAL(triggered()), this, SLOT(onAddLightPlot()));
+	connect(ui.actionAddTrackPlot, SIGNAL(triggered()), this, SLOT(onAddTrackPlot()));
+	connect(ui.actionAddAScopePlot, SIGNAL(triggered()), this, SLOT(onAddAScopePlot()));
+	connect(ui.actionAddRTIPlot, SIGNAL(triggered()), this, SLOT(onAddRTIPlot()));
+	connect(ui.actionAddDopplerPlot, SIGNAL(triggered()), this, SLOT(onAddDopplerPolt()));
+	connect(ui.actionAddScatterPlot, SIGNAL(triggered()), this, SLOT(onAddScatterPlot()));
+	connect(ui.actionAddDialPlot, SIGNAL(triggered()), this, SLOT(onAddDialPlot()));
+}
+
+void PlotXYDemo::initMenuData()
+{
+	connect(ui.actionAdvanced_Data_Manager, &QAction::triggered, this, &PlotXYDemo::onAdvancedData);
+	connect(ui.actionAdd_Plot_Pair_Ctrl_A, SIGNAL(triggered()), this, SLOT(onAddPlotPair()));
+	connect(ui.actionDiscovery_Rules, &QAction::triggered, this, &PlotXYDemo::onDiscoveryRules);
+	connect(ui.actionShow_Object_Aliases_Ctrl_Alt_A, SIGNAL(triggered()), this, SLOT(onShowObjectAliases()));
+	connect(ui.actionReference_Points_Ctrl_R, &QAction::triggered, this, &PlotXYDemo::onReferencePoints);
+	connect(ui.actionEntity_Status_Ctrl_Alt_S, SIGNAL(triggered()), this, SLOT(onEntityStatus()));
+	connect(ui.actionClassification, &QAction::triggered, this, &PlotXYDemo::onClassification);
+}
+
+void PlotXYDemo::initMenuTime()
 {
     ui.actionStop->setEnabled(false);
     m_timer = new QTimer(this);
@@ -809,29 +1053,70 @@ void PlotXYDemo::initTime()
     connect(m_timer, &QTimer::timeout, this, &PlotXYDemo::onTimeOut);
     connect(ui.timeSlider, &QSlider::valueChanged, this, &PlotXYDemo::onSliderValueChanged);
 
-    connect(ui.actionTime_Controls, &QAction::triggered, this, &PlotXYDemo::onActionTimeControl);
-    connect(ui.actionPlay, &QAction::triggered, this, &PlotXYDemo::onActionPlay);
-    connect(ui.actionStop, &QAction::triggered, this, &PlotXYDemo::onActionStop);
-    connect(ui.actionReverse, &QAction::triggered, this, &PlotXYDemo::onActionReverse);
-    connect(ui.actionFrame_Forward, &QAction::triggered, this, &PlotXYDemo::onActionFrameForward);
-    connect(ui.actionFrame_Rverse, &QAction::triggered, this, &PlotXYDemo::onActionFrameReverse);
-    connect(ui.actionIncrease_Step, &QAction::triggered, this, &PlotXYDemo::onActionIncreaseStep);
-    connect(ui.actionDecrease_Step, &QAction::triggered, this, &PlotXYDemo::onActionDecreseStep);
-    connect(ui.actionTime_Client, &QAction::triggered, this, &PlotXYDemo::onActionTimeClient);
-    connect(ui.actionTime_Server, &QAction::triggered, this, &PlotXYDemo::onActionTimeServer);
-    connect(ui.actionReal_Time, &QAction::triggered, this, &PlotXYDemo::onActionRealTime);
+    connect(ui.actionTime_Controls, &QAction::triggered, this, &PlotXYDemo::onTimeControls);
+    connect(ui.actionPlay, &QAction::triggered, this, &PlotXYDemo::onPlay);
+    connect(ui.actionStop, &QAction::triggered, this, &PlotXYDemo::onStop);
+    connect(ui.actionReverse, &QAction::triggered, this, &PlotXYDemo::onReverse);
+    connect(ui.actionFrame_Forward, &QAction::triggered, this, &PlotXYDemo::onFrameForward);
+    connect(ui.actionFrame_Rverse, &QAction::triggered, this, &PlotXYDemo::onFrameReverse);
+    connect(ui.actionIncrease_Step, &QAction::triggered, this, &PlotXYDemo::onIncreaseStep);
+    connect(ui.actionDecrease_Step, &QAction::triggered, this, &PlotXYDemo::onDecreseStep);
+    connect(ui.actionTime_Client, &QAction::triggered, this, &PlotXYDemo::onTimeClient);
+    connect(ui.actionTime_Server, &QAction::triggered, this, &PlotXYDemo::onTimeServer);
+    connect(ui.actionReal_Time, &QAction::triggered, this, &PlotXYDemo::onRealTime);
 
     //TimeControl
-    connect(m_timeCtrl, &TimeControls::sgn_actionPlay, this, &PlotXYDemo::onActionPlay);
-    connect(m_timeCtrl, &TimeControls::sgn_actionStop, this, &PlotXYDemo::onActionStop);
-    connect(m_timeCtrl, &TimeControls::sgn_actionReverse, this, &PlotXYDemo::onActionReverse);
-    connect(m_timeCtrl, &TimeControls::sgn_actionFrameForward, this, &PlotXYDemo::onActionFrameForward);
-    connect(m_timeCtrl, &TimeControls::sgn_actionFrameReverse, this, &PlotXYDemo::onActionFrameReverse);
-    connect(m_timeCtrl, &TimeControls::sgn_actionIncreaseStep, this, &PlotXYDemo::onActionIncreaseStep);
-    connect(m_timeCtrl, &TimeControls::sgn_actionDecreseStep, this, &PlotXYDemo::onActionDecreseStep);
-    connect(m_timeCtrl, &TimeControls::sgn_actionTimeClient, this, &PlotXYDemo::onActionTimeClient);
-    connect(m_timeCtrl, &TimeControls::sgn_actionTimeServer, this, &PlotXYDemo::onActionTimeServer);
-    connect(m_timeCtrl, &TimeControls::sgn_actionRealTime, this, &PlotXYDemo::onActionRealTime);
+    connect(m_timeCtrl, &TimeControls::sgn_actionPlay, this, &PlotXYDemo::onPlay);
+    connect(m_timeCtrl, &TimeControls::sgn_actionStop, this, &PlotXYDemo::onStop);
+    connect(m_timeCtrl, &TimeControls::sgn_actionReverse, this, &PlotXYDemo::onReverse);
+    connect(m_timeCtrl, &TimeControls::sgn_actionFrameForward, this, &PlotXYDemo::onFrameForward);
+    connect(m_timeCtrl, &TimeControls::sgn_actionFrameReverse, this, &PlotXYDemo::onFrameReverse);
+    connect(m_timeCtrl, &TimeControls::sgn_actionIncreaseStep, this, &PlotXYDemo::onIncreaseStep);
+    connect(m_timeCtrl, &TimeControls::sgn_actionDecreseStep, this, &PlotXYDemo::onDecreseStep);
+    connect(m_timeCtrl, &TimeControls::sgn_actionTimeClient, this, &PlotXYDemo::onTimeClient);
+    connect(m_timeCtrl, &TimeControls::sgn_actionTimeServer, this, &PlotXYDemo::onTimeServer);
+    connect(m_timeCtrl, &TimeControls::sgn_actionRealTime, this, &PlotXYDemo::onRealTime);
+}
+
+void PlotXYDemo::initMenuTabs()
+{
+	connect(ui.actionNew_Tab_Ctrl_T, &QAction::triggered, this, &PlotXYDemo::onNewTab);
+	connect(ui.actionRename_Tab, &QAction::triggered, this, &PlotXYDemo::onRenameTab);
+	connect(ui.actionClose_Tab, &QAction::triggered, this, &PlotXYDemo::onCloseTab);
+	connect(ui.actionNext_Tab_Ctrl_Tab, &QAction::triggered, this, &PlotXYDemo::onNextTab);
+	connect(ui.actionPrevious_Tab_Ctrl_Shift_Tab, &QAction::triggered, this, &PlotXYDemo::onPreviousTab);
+}
+
+void PlotXYDemo::initMenuView()
+{
+	connect(ui.actionShow_Menubar_Ctrl_Alt_M, &QAction::triggered, this, &PlotXYDemo::onShowMenubar);
+	connect(ui.actionShow_Toolbar_Ctrl_Alt_C, &QAction::triggered, this, &PlotXYDemo::onShowToolbar);
+	connect(ui.actionShow_Statusbar_Ctrl_Alt_B, &QAction::triggered, this, &PlotXYDemo::onShowStatusbar);
+	connect(ui.actionShow_Time_Slider, &QAction::triggered, this, &PlotXYDemo::onShowTimeSlider);
+	connect(ui.actionShow_Tabbar, &QAction::triggered, this, &PlotXYDemo::onShowTabbar);
+	connect(ui.actionShow_RTI_Controls, &QAction::triggered, this, &PlotXYDemo::onShowRTIControls);
+	connect(ui.actionShow_All_Bars_Ctrl_B, &QAction::triggered, this, &PlotXYDemo::onShowAllBars);
+	connect(ui.actionShow_Plot_Time_Ctrl_Alt_P, &QAction::triggered, this, &PlotXYDemo::onShowPlotTime);
+	connect(ui.actionShow_System_Time_Ctrl_Alt_Y, &QAction::triggered, this, &PlotXYDemo::onShowSystemTime);
+	connect(ui.actionShow_Corner_Logo, &QAction::triggered, this, &PlotXYDemo::onShowLogo);
+	connect(ui.actionShow_Frame_Rate_Alt_F, &QAction::triggered, this, &PlotXYDemo::onShowFrameRate);
+	connect(ui.actionFullScreen_Shift_F, &QAction::triggered, this, &PlotXYDemo::onShowFullScreen);
+}
+
+void PlotXYDemo::initMenuTools()
+{
+	connect(ui.actionSave_Preferences, &QAction::triggered, this, &PlotXYDemo::onSavePreferences);
+	connect(ui.actionSave_Preferences_As, &QAction::triggered, this, &PlotXYDemo::onSavePreferencesAs);
+	connect(ui.actionLoad_Preferences, &QAction::triggered, this, &PlotXYDemo::onShowPlotTime);
+	connect(ui.actionUser_Functions, &QAction::triggered, this, &PlotXYDemo::onShowSystemTime);
+	connect(ui.actionFunction_Console, &QAction::triggered, this, &PlotXYDemo::onFunctionConsole);
+	connect(ui.actionHot_Keys_Ctrl_H, &QAction::triggered, this, &PlotXYDemo::onHotKeys);
+	connect(ui.actionOptions_Ctrl_Alt_O, &QAction::triggered, this, &PlotXYDemo::onOptions);
+}
+
+void PlotXYDemo::initMenuHelp()
+{
+	connect(ui.actionUser_Manual_F1, &QAction::triggered, this, &PlotXYDemo::onUserManual);
 }
 
 void PlotXYDemo::initStatusBar()
@@ -907,6 +1192,17 @@ void PlotXYDemo::initStatusBar()
     ui.statusBar->addWidget(m_statusBar_createPlot);
     ui.statusBar->addWidget(m_statusBar_movePlot);
     ui.statusBar->addWidget(m_statusBar_null);
+
+	connect(m_statusBar_EditLock, &QToolButton::triggered, this, &PlotXYDemo::onLockDataDisplay);
+	connect(m_statusBar_layoutLock, &QToolButton::triggered, this, &PlotXYDemo::onLockStackingOrder);
+	connect(m_statusBar_selectPlot, &QToolButton::triggered, this, &PlotXYDemo::onSelectPlot);
+	connect(m_statusBar_pan, &QToolButton::triggered, this, &PlotXYDemo::onPan);
+	connect(m_statusBar_centerPlot, &QToolButton::triggered, this, &PlotXYDemo::onCenterPlot);
+	connect(m_statusBar_zoom, &QToolButton::triggered, this, &PlotXYDemo::onZoom);
+	connect(m_statusBar_boxZoom, &QToolButton::triggered, this, &PlotXYDemo::onBoxZoom);
+	connect(m_statusBar_measure, &QToolButton::triggered, this, &PlotXYDemo::onMeasureDistance);
+	connect(m_statusBar_movePlot, &QToolButton::triggered, this, &PlotXYDemo::onMovePlot);
+	connect(m_statusBar_createPlot, &QToolButton::triggered, this, &PlotXYDemo::onCreatePlot);
 
     m_localTimer = new QTimer(this);
     connect(m_localTimer, &QTimer::timeout, this, &PlotXYDemo::onUpdateLocalTime);
@@ -985,6 +1281,62 @@ PlotType PlotXYDemo::getCurrentFocusPlot()
         m_lastSelectedType = PlotType::Type_PlotScatter;
 
     return m_lastSelectedType;
+}
+
+void PlotXYDemo::onOpenNetwork()
+{
+}
+
+void PlotXYDemo::onExportDataStore()
+{
+}
+
+void PlotXYDemo::onClose_Disconnect()
+{
+}
+
+void PlotXYDemo::onRunPythonScript()
+{
+}
+
+void PlotXYDemo::onLoadPML()
+{
+}
+
+void PlotXYDemo::onSaveToPML()
+{
+}
+
+void PlotXYDemo::onSaveScreenshot()
+{
+}
+
+void PlotXYDemo::onQuit()
+{
+}
+
+void PlotXYDemo::onUndo()
+{
+}
+
+void PlotXYDemo::onRedo()
+{
+}
+
+void PlotXYDemo::onCut()
+{
+}
+
+void PlotXYDemo::onCopy()
+{
+}
+
+void PlotXYDemo::onPaste()
+{
+}
+
+void PlotXYDemo::onDelete()
+{
 }
 
 

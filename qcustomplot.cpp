@@ -21635,9 +21635,26 @@ void QCPGraph::drawFill(QCPPainter *painter, QVector<QPointF> *lines) const
 void QCPGraph::drawScatterPlot(QCPPainter *painter, const QVector<QPointF> &scatters, const QCPScatterStyle &style) const
 {
   applyScattersAntialiasingHint(painter);
-  style.applyTo(painter, mPen);
-  foreach (const QPointF &scatter, scatters)
-    style.drawShape(painter, scatter.x(), scatter.y());
+  
+  //add by wzhen @20230117: 仅在最后一个点显示pixmap
+  if (style.shape() == QCPScatterStyle::ssPixmap)
+  {
+	  QCPScatterStyle style0(QCPScatterStyle::ssDisc, mPen.width());
+	  if (mLineStyle != lsNone)
+		  style0.setShape(QCPScatterStyle::ssNone);
+	  style0.applyTo(painter, mPen);
+	  for (int i = 0; i < scatters.size() - 1; ++i)
+		  style0.drawShape(painter, scatters.at(i).x(), scatters.at(i).y());
+
+	  style.applyTo(painter, mPen);
+	  style.drawShape(painter, scatters.at(scatters.size() - 1).x(), scatters.at(scatters.size() - 1).y());
+  }
+  else
+  {
+	  style.applyTo(painter, mPen);
+	  foreach(const QPointF &scatter, scatters)
+		  style.drawShape(painter, scatter.x(), scatter.y());
+  }
 }
 
 /*!  \internal

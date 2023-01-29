@@ -7,7 +7,7 @@
 #include <QVBoxLayout>
 #include "ui_AdvancedDataManager.h"
 #include "PlotItemBase.h"
-
+#include "DataPair.h"
 
 class AdvancedDataManager : public QWidget
 {
@@ -21,20 +21,26 @@ public:
 
 signals:
     void updateColorThresholdMap(QMap<QString, QMap<int, QColor>>);
+	void sgnAddPlotPair();
 
 public slots:
     void onBtnMore();
     void onBtnColorMore();
     void onBtnAdd();
 	void onEventBtnMoreClicked();
-	void onAddPlot(const QString&, PlotItemBase*);
 	void onUpdatePlotPair();
-    void onCurrentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*);
+
+	void onTableWidget_plotpairItemSelectionChanged();
+	void onPushButton_addClicked();
+	void onPushButton_copyClicked();
+	void onPushButton_autofitClicked();
+	void onPushButton_deleteClicked();
 
 private:
     Ui::AdvancedDataManager ui;
 	QMap<QString, QList<PlotItemBase*>> m_plotManager; //tabName
-
+	PlotItemBase* m_curSelectPlot = nullptr;
+	DataPair* m_curSelectDatapair = nullptr;
 };
 
 #endif // _ADVANCED_DATA_MANAGER_H_

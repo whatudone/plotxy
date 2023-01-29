@@ -53,7 +53,6 @@ private:
 	void initStackedWidget_page4();
 	void initStackedWidget_page5();
 	void initStackedWidget_pageAScope();	
-	void initStackedWidget_pageLight();
 	void initTreePlot();	
 	PlotType getPlotType(PlotItemBase*);
 	bool getCurrentSelectParam(QString&, QString&);	
@@ -79,7 +78,6 @@ public slots:
 	void onTableWidgetItemClicked_Attitude1(QTableWidgetItem*);
 	void onTableWidgetItemClicked_Attitude2(QTableWidgetItem*);
 	void onUpdateData();
-	void onAddPlot(const QString&, PlotItemBase*);
 	void onDoubleClickedTreeWidgetItem(QTreeWidgetItem *item, int column);
 	void onBtnLightAddClicked();
 	void onBtnLightDeleteClicked();
