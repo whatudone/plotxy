@@ -10,8 +10,9 @@
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
     <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>qrc;rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
     </Filter>
     <Filter Include="Form Files">
       <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
@@ -59,6 +60,69 @@
     <ClCompile Include="SubSettingWidgetContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PlotAttitude.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlotPolar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlotText.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qcustomplot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlotLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EventSetting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IconSetting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StippleSetting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeControls.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="colorbutton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlotDoppler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlotTrack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlotRTI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlotAScope.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlotDial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlotScatter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renameTab.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataPair.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlotManagerData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="PlotXYDemo.h">
@@ -86,6 +150,66 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="AdvancedDataManager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PlotPolar.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PlotText.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="qcustomplot.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PlotAttitude.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PlotBar.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PlotLight.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="EventSetting.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="IconSetting.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="StippleSetting.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="TimeControls.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="colorbutton.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PlotDoppler.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PlotRTI.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PlotTrack.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PlotAScope.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PlotDial.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PlotScatter.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="renameTab.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="DataPair.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PlotManagerData.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
@@ -126,6 +250,21 @@
     <QtUic Include="PlotManager.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="IconSetting.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="StippleSetting.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="TimeControls.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="EventSetting.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="renameTab.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseData.h">
@@ -134,7 +273,16 @@
     <ClInclude Include="DataManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlotBar.h">
+    <ClInclude Include="constdef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -142,5 +290,40 @@
     <QtRcc Include="resources\toolbar.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
+    <QtRcc Include="resources\statusbar.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\statusbar\boxZoom.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\statusbar\centerPlot.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\statusbar\createPlot.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\statusbar\editingLock.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\statusbar\measureDistance.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\statusbar\movePlot.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\statusbar\pan.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\statusbar\selectPlot.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\statusbar\stackingLock.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\statusbar\zoom.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
