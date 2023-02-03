@@ -66,7 +66,6 @@ PlotScatter::PlotScatter(QWidget *parent)
 
 PlotScatter::~PlotScatter()
 {
-	
 }
 
 void PlotScatter::initPlot()
@@ -108,14 +107,89 @@ void PlotScatter::initPlot()
 	m_customPlot->replot();
 }
 
+void PlotScatter::addPlotPairData(QPair<QString, QString> pair)
+{
+	DataPair* data = new DataPair(pair);
+	m_dataPair.append(data);
+
+	emit sgn_dataPairChanged(currTabName(), currName());
+
+	//scatter
+	ScatterInfo info;
+	info.graph = m_customPlot->addGraph();
+	info.tracer = new QCPItemTracer(m_customPlot);
+	info.tracerText = new QCPItemText(m_customPlot);
+	info.tracer->setGraph(info.graph);
+	info.tracer->setInterpolating(true);
+	info.tracer->setStyle(QCPItemTracer::tsNone);
+	info.tracerText->position->setType(QCPItemPosition::ptPlotCoords);
+	info.tracerText->position->setParentAnchor(info.tracer->position);
+	m_mapScatter.insertMulti(pair, info);
+}
+
+void PlotScatter::delPlotPairData(QPair<QString, QString> pair)
+{
+	if (m_dataPair.isEmpty())
+		return;
+
+	for (int i = 0; i < m_dataPair.size(); ++i)
+	{
+		if (m_dataPair.at(i)->getDataPair() == pair)
+		{
+			m_dataPair.remove(i);
+
+			emit sgn_dataPairChanged(currTabName(), currName());
+			break;
+		}
+	}
+
+	//scatter
+	if (m_mapScatter.contains(pair))
+	{
+		m_mapScatter.remove(pair);
+	}
+}
+
+void PlotScatter::updatePlotPairData(QPair<QString, QString> oldPair, QPair<QString, QString> newPair)
+{
+	if (m_dataPair.isEmpty())
+		return;
+
+	for (int i = 0; i < m_dataPair.size(); ++i)
+	{
+		if (m_dataPair.at(i)->getDataPair() == oldPair)
+		{
+			m_dataPair.at(i)->setDataPair(newPair);
+
+			emit sgn_dataPairChanged(currTabName(), currName());
+			break;
+		}
+	}
+
+	//scatter
+	if (m_mapScatter.contains(oldPair))
+	{
+		m_mapScatter.remove(oldPair);
+		ScatterInfo info;
+		info.graph = m_customPlot->addGraph();
+		info.tracer = new QCPItemTracer(m_customPlot);
+		info.tracerText = new QCPItemText(m_customPlot);
+		info.tracer->setGraph(info.graph);
+		info.tracer->setInterpolating(true);
+		info.tracer->setStyle(QCPItemTracer::tsNone);
+		info.tracerText->position->setType(QCPItemPosition::ptPlotCoords);
+		info.tracerText->position->setParentAnchor(info.tracer->position);
+		m_mapScatter.insertMulti(newPair, info);
+	}
+}
+
 void PlotScatter::getDataInfo(double secs)
 {
 	if (getDataPair().isEmpty())
 		return;
 
-	m_customPlot->clearGraphs();
-
 	int itemCnt = m_dataPair.size();
+	
 	for (int i = 0; i < itemCnt; ++i)
 	{
 		updateData(secs, i, m_dataPair.at(i));
@@ -155,23 +229,24 @@ void PlotScatter::updateData(double secs, int index, DataPair * data)
 	if (x.isEmpty() || y.isEmpty())
 		return;
 
-	m_customPlot->addGraph();
+	QPair<QString, QString> dataPair = data->getDataPair();
+
 	if (data->isDraw())
 	{
-		m_customPlot->graph(index)->setPen(QPen(data->dataColor(), data->lineWidth()));
+		m_mapScatter[dataPair].graph->setPen(QPen(data->dataColor(), data->lineWidth()));
 		//line mode
 		if (data->isLineMode())
 		{ 
-			m_customPlot->graph(index)->setLineStyle(QCPGraph::lsLine);
-			m_customPlot->graph(index)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssNone));
+			m_mapScatter[dataPair].graph->setLineStyle(QCPGraph::lsLine);
+			m_mapScatter[dataPair].graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssNone));
 		}
 		else
 		{ 
-			m_customPlot->graph(index)->setLineStyle(QCPGraph::lsNone);
-			m_customPlot->graph(index)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, data->lineWidth()));
+			m_mapScatter[dataPair].graph->setLineStyle(QCPGraph::lsNone);
+			m_mapScatter[dataPair].graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, data->lineWidth()));
 		}
 		//icon
-		if (data->hasIcon())
+		if (data->isIconDraw())
 		{
 			//test
 			QPixmap pix(":/statusbar/centerPlot.bmp");
@@ -180,11 +255,145 @@ void PlotScatter::updateData(double secs, int index, DataPair * data)
 			trans.rotate(45);
 			pix = pix.transformed(trans);
 			QCPScatterStyle style(pix);
-			m_customPlot->graph(index)->setScatterStyle(style);
+			m_mapScatter[dataPair].graph->setScatterStyle(style);
 			//test end
 		}
 
-		m_customPlot->graph(index)->addData(x, y);
+		m_mapScatter[dataPair].graph->setData(x, y);
+
+		//Label Text
+		if (data->isLabelTextShow())
+		{
+			//设置锚点
+			m_mapScatter[dataPair].tracer->setGraphKey(x.last());
+// 			m_mapScatter[dataPair].tracer->setInterpolating(true);
+// 			m_mapScatter[dataPair].tracer->setStyle(QCPItemTracer::tsNone);
+			
+			// add label
+			//m_mapScatter[dataPair].tracerText->position->setType(QCPItemPosition::ptPlotCoords);
+			//m_mapScatter[dataPair].tracerText->position->setParentAnchor(m_mapScatter[dataPair].tracer->position);
+			
+			if (0 == data->getTextFormat())		//default
+			{
+				QString labelText = nullptr, prefix_x = nullptr, prefix_y = nullptr;
+				QString object_x = nullptr, object_y = nullptr, attr_x = nullptr, attr_y = nullptr;
+				QString data_x = nullptr, data_y = nullptr, unit_x = nullptr, unit_y = nullptr, Left_bracket = nullptr, right_bracket = nullptr;
+				
+				//考虑仅显示实体名时的操作
+				if (data->isObjectShow() && !data->isPrefixShow() && !data->isAttrShow() && !data->isDataShow() && !data->isUnitShow())
+				{
+					object_x = data->getObjectName_x();
+					object_y = data->getObjectName_y();
+					//实体名相同时，仅显示一个实体名
+					if (0 == object_x.compare(object_y) && object_x != nullptr && object_y != nullptr)
+					{
+						labelText = object_x;
+					}
+					else if(object_x == nullptr && object_y == nullptr)
+					{
+						labelText = "Time";
+					}
+					else
+					{
+						labelText = QString("%1\n%2").arg(object_x).arg(object_y);
+					}
+				} 
+				else
+				{
+					if (data->isPrefixShow())
+					{
+						prefix_x = "X:";
+						prefix_y = "Y:";
+					}
+				
+					if (data->isObjectShow())
+					{
+						object_x = data->getObjectName_x();
+						object_y = data->getObjectName_y();
+					}
+
+					if (data->isAttrShow())
+					{
+						attr_x = data->getAttrName_x();
+						attr_y = data->getAttrName_y();
+					}
+
+					if (data->isDataShow())
+					{
+						data_x = QString::number(x.last(), 10, data->getLabelPrecision_x());
+						data_y = QString::number(y.last(), 10, data->getLabelPrecision_y());
+						Left_bracket = "(";
+						right_bracket = ")";
+					}
+
+					if (data->isUnitShow())
+					{
+						unit_x = data->getUnit_x();
+						unit_y = data->getUnit_y();
+						Left_bracket = "(";
+						right_bracket = ")";
+					}
+					labelText = QString("%1%2 %3%4%5 %6%7\n%8%9 %10%11%12 %13%14")
+						.arg(prefix_x).arg(object_x).arg(attr_x).arg(Left_bracket).arg(data_x).arg(unit_x).arg(right_bracket)
+						.arg(prefix_y).arg(object_y).arg(attr_y).arg(Left_bracket).arg(data_y).arg(unit_y).arg(right_bracket);
+				}
+				data->setLabelText(labelText);
+			} 
+			else if (1 == data->getTextFormat())	//custom
+			{
+				data->setLabelText(data->getCustomText());
+			}
+			else if (2 == data->getTextFormat())	//script
+			{
+
+			}
+			m_mapScatter[dataPair].tracerText->setText(data->getLabelText());
+
+			QFontMetricsF fm(data->getLabelFont());
+			double wd = (fm.size(Qt::TextSingleLine, data->getLabelText()).width()) / 3.0;
+			double ht = fm.size(Qt::TextSingleLine, data->getLabelText()).height() / 1.0;
+			switch (data->getLabelPosition())
+			{
+			case 0:		//left-top
+				m_mapScatter[dataPair].tracerText->position->setCoords(-wd, -ht);
+				break;
+			case 1:		//top
+				m_mapScatter[dataPair].tracerText->position->setCoords(0, -ht);
+				break;
+			case 2:		//right-top
+				m_mapScatter[dataPair].tracerText->position->setCoords(wd, -ht);
+				break;
+			case 3:		//left
+				m_mapScatter[dataPair].tracerText->position->setCoords(-wd, 0);
+				break;
+			case 4:		//center
+				m_mapScatter[dataPair].tracerText->position->setCoords(0, 0);
+				break;
+			case 5:		//right
+				m_mapScatter[dataPair].tracerText->position->setCoords(wd, 0);
+				break;
+			case 6:		//left-bottom
+				m_mapScatter[dataPair].tracerText->position->setCoords(-wd, ht);
+				break;
+			case 7:		//bottom
+				m_mapScatter[dataPair].tracerText->position->setCoords(0, ht);
+				break;
+			case 8:		//right-bottom
+				m_mapScatter[dataPair].tracerText->position->setCoords(wd, ht);
+				break;
+			default:	//right
+				m_mapScatter[dataPair].tracerText->position->setCoords(wd, 0);
+				break;
+			}
+			m_mapScatter[dataPair].tracerText->setPositionAlignment(Qt::AlignCenter);
+			m_mapScatter[dataPair].tracerText->setTextAlignment(Qt::AlignLeft);
+			m_mapScatter[dataPair].tracerText->setFont(data->getLabelFont());
+			m_mapScatter[dataPair].tracerText->setColor(data->getLabelColor());
+			if (data->getLabelBackTransparent())
+				m_mapScatter[dataPair].tracerText->setBrush(Qt::transparent);
+			else
+				m_mapScatter[dataPair].tracerText->setBrush(data->getLabelBackground());
+		}
 	}
 }
 

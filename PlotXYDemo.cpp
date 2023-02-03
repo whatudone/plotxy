@@ -264,32 +264,12 @@ void PlotXYDemo::onContextMenu(const QPoint &point)
     label->setStyleSheet("color:rgb(0,128,0);font:Bold");
     object_action->setDefaultWidget(label);
 
-    //createPlot菜单
-    QMenu *createPlotMenu = new QMenu(QString::fromLocal8Bit("创建绘图组件"));
-    /* 添加菜单项 */
-	createPlotMenu->addAction(ui.actionAddScatterPlot);
-	createPlotMenu->addAction(ui.actionAddAScopePlot);
-	createPlotMenu->addAction(ui.actionAddRTIPlot);
-	createPlotMenu->addAction(ui.actionAddTextPlot);
-	createPlotMenu->addAction(ui.actionAddLightPlot);
-    createPlotMenu->addAction(ui.actionAddBarPlot);
-	createPlotMenu->addAction(ui.actionAddDialPlot);
-    createPlotMenu->addAction(ui.actionAddAttitudePlot);
-    createPlotMenu->addAction(ui.actionAddPolarPlot);   
-    createPlotMenu->addAction(ui.actionAddTrackPlot);   
-    createPlotMenu->addAction(ui.actionAddDopplerPlot);
-
-    QMenu *autofitMenu = new QMenu(QString::fromLocal8Bit("自动适应大小"));
-    autofitMenu->addAction(ui.actionAutofit_X);
-    autofitMenu->addAction(ui.actionAutofit_Y);
-
-    QMenu *OrderMenu = new QMenu(QString::fromLocal8Bit("Order"));
     QMenu *ViewMenu = new QMenu(QString::fromLocal8Bit("View"));
-    QMenu *SelectPlotMenu = new QMenu(QString::fromLocal8Bit("Select Plot"));
+
     //主菜单
     pMenu->addAction(object_action);
     pMenu->addSeparator();
-    pMenu->addMenu(createPlotMenu);
+    pMenu->addMenu(ui.menu_addPlot);
     pMenu->addSeparator();
     pMenu->addAction(ui.actionUndo_Ctrl_Z);
     pMenu->addSeparator();
@@ -298,7 +278,7 @@ void PlotXYDemo::onContextMenu(const QPoint &point)
     pMenu->addAction(ui.actionPaste_Ctrl_V);
     pMenu->addAction(ui.actionDelete);
     pMenu->addSeparator();
-    pMenu->addMenu(autofitMenu);
+    pMenu->addMenu(ui.menu_autofit);
     pMenu->addAction(ui.actionOne_To_One);
     pMenu->addAction(ui.actionRound_Ranges);
     pMenu->addSeparator();
@@ -310,9 +290,9 @@ void PlotXYDemo::onContextMenu(const QPoint &point)
     pMenu->addSeparator();
     pMenu->addAction(ui.actionExport_to_GOG);
     pMenu->addSeparator();
-    pMenu->addMenu(OrderMenu);
+    pMenu->addMenu(ui.menuOrder);
     pMenu->addMenu(ViewMenu);
-    pMenu->addMenu(SelectPlotMenu);
+    pMenu->addMenu(ui.menuSelect_Plot);
 
     /* 在鼠标右键处显示菜单 */
     pMenu->exec(QCursor::pos());

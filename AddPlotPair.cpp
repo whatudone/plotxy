@@ -482,6 +482,8 @@ bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 	default:
 		break;
 	}
+
+	return true;
 }
 
 void AddPlotPair::onBtnAddClicked()

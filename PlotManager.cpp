@@ -690,17 +690,15 @@ void PlotManager::onTWSclicked(QTreeWidgetItem* item, int column)
 	}
 	else
 	{
-
 		if (compare == QString::fromLocal8Bit("通用设置"))
-
 		{
 			ui.stackedWidget->setCurrentIndex(0);
 		}
-		else if (compare == QString::fromLocal8Bit("坐标轴和网格"))
+		else if (compare == QString::fromLocal8Bit("坐标轴和网格设置"))
 		{
 			ui.stackedWidget->setCurrentIndex(1);
 		}
-		else if (compare == QString::fromLocal8Bit("绘图数据"))
+		else if (compare == QString::fromLocal8Bit("数据设置"))
 		{
 			ui.stackedWidget->setCurrentIndex(2);
 		}
