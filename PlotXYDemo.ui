@@ -125,7 +125,6 @@ background-color: rgb(3, 57, 122);
     <addaction name="menuRecent_PMLs"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
-    <addaction name="actionselect_plot"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -143,13 +142,19 @@ background-color: rgb(3, 57, 122);
      <addaction name="actionTile_Horizontally"/>
      <addaction name="actionTile_Vertically"/>
     </widget>
+    <widget class="QMenu" name="menuSelect_Plot">
+     <property name="title">
+      <string>Select Plot</string>
+     </property>
+     <addaction name="action1_3"/>
+    </widget>
     <addaction name="actionUndo_Ctrl_Z"/>
     <addaction name="actionRedo_Ctrl_Y"/>
     <addaction name="actionCut_Ctrl_X"/>
     <addaction name="actionCopy_Ctrl_C"/>
     <addaction name="actionPaste_Ctrl_V"/>
     <addaction name="actionDelete"/>
-    <addaction name="actionSelect_Plot"/>
+    <addaction name="menuSelect_Plot"/>
     <addaction name="menuOrder"/>
    </widget>
    <widget class="QMenu" name="menuGraph">
@@ -418,11 +423,6 @@ background-color: rgb(3, 57, 122);
   <action name="actionDelete">
    <property name="text">
     <string>删除...</string>
-   </property>
-  </action>
-  <action name="actionSelect_Plot">
-   <property name="text">
-    <string>Select Plot</string>
    </property>
   </action>
   <action name="actionBring_To_Front_Ctrl">
@@ -1187,6 +1187,11 @@ background-color: rgb(3, 57, 122);
   <action name="actionAddDopplerPlot">
    <property name="text">
     <string>添加Doppler组件</string>
+   </property>
+  </action>
+  <action name="action1_3">
+   <property name="text">
+    <string>1</string>
    </property>
   </action>
  </widget>

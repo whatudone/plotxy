@@ -42,6 +42,10 @@ public:
 	void rescale_yAxis(bool);
 	void rescaleAxis(bool);
 
+	virtual void addPlotPairData(QPair<QString, QString>);
+	virtual void delPlotPairData(QPair<QString, QString>);
+	virtual void updatePlotPairData(QPair<QString, QString> oldPair, QPair<QString, QString> newPair);
+
 	virtual void setOuterFillColor(QColor color);
 	virtual QColor getOuterFillColor() { return m_outerFillColor; }
 	virtual void setCoordRangeX(double lower, double upper);
@@ -73,7 +77,6 @@ public:
 	virtual Qt::PenStyle getGridStyle() { return m_gridStyle; }
 	virtual GridDensity getGridDensity() { return m_gridDensity; }
 
-
 	virtual void setUnitsShowX(bool on);
 	virtual void setUnitsShowY(bool on);
 	virtual void setUnitsX(const QString& units);
@@ -95,7 +98,6 @@ public:
 	virtual QFont getTitleFont() { return m_titleFont; }
 	virtual int getTitleFontSize() { return m_titleFontSize; }
 
-
 public slots:
     void onGetCurrentSeconds(double secs);
 
@@ -115,6 +117,16 @@ private:
 	double m_rightPadding;				//绘图间隔-right
 
 	QCustomPlot *m_customPlot;
+	struct ScatterInfo 
+	{
+		QPointer<QCPGraph> graph;
+		QPointer<QCPItemTracer> tracer;
+		QPointer<QCPItemText> tracerText;
+
+		ScatterInfo() { graph = nullptr; tracer = nullptr; tracerText = nullptr; }
+	};
+
+	QMap<QPair<QString, QString>, ScatterInfo> m_mapScatter;
 
 	QColor	m_axisLabelColor;			//坐标标题颜色
 	QFont	m_axisLabelFont;			//坐标标题字体

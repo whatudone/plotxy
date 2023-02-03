@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>511</width>
-    <height>299</height>
+    <width>420</width>
+    <height>277</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -254,6 +254,26 @@
          <height>30</height>
         </size>
        </property>
+       <item>
+        <property name="text">
+         <string>No Rotation</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>90°</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>180°</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>270°</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item row="5" column="1" colspan="2">

@@ -28,20 +28,15 @@ class AddPlotPair : public QWidget
     Q_OBJECT
 
 public:
-	static AddPlotPair* m_getInstance();
-	
+	static AddPlotPair* m_getInstance();	
     ~AddPlotPair();
-
     void init(PlotType index = PlotType::Type_PlotScatter);
 	//int textRowCount();
 	//int textCloumnCount();
 	//QList<textUserData> getUserText();
-	int m_textUserX;
-	int m_textUserY;
-	QString m_textUser;
-
-	QSet<QString> m_temSet1;
-	QSet<QString> m_temSet2;
+	//int m_textUserX;
+	//int m_textUserY;
+	//QString m_textUser;
 
 	void onChangeStackIndex(PlotType index);
 	void setPlotBaseInfo(BaseInfo);
@@ -51,8 +46,9 @@ private:
 	void initStackedWidget_page2();
 	void initStackedWidget_page3();
 	void initStackedWidget_page4();
-	void initStackedWidget_page5();
+	void initStackedWidget_pageLight();
 	void initStackedWidget_pageAScope();	
+
 	void initTreePlot();	
 	PlotType getPlotType(PlotItemBase*);
 	bool getCurrentSelectParam(QString&, QString&);	
@@ -78,6 +74,7 @@ public slots:
 	void onTableWidgetItemClicked_Attitude1(QTableWidgetItem*);
 	void onTableWidgetItemClicked_Attitude2(QTableWidgetItem*);
 	void onUpdateData();
+	void onAddPlot(const QString&, PlotItemBase*);
 	void onDoubleClickedTreeWidgetItem(QTreeWidgetItem *item, int column);
 	void onBtnLightAddClicked();
 	void onBtnLightDeleteClicked();

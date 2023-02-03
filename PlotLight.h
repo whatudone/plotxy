@@ -30,29 +30,19 @@ protected:
 	virtual void paintEvent(QPaintEvent* event);
 
 private:
-
 	bool m_bHorizontal;
 	bool m_started;
-
-	QTimer* m_timer;
-
 	QColor m_gridColor;
 	QColor m_gridFillColor;
 	QColor m_axisColor;
-
+	QColor m_defaultColor;
 	QStringList m_entityTypeList;
 	QStringList m_entityAttrList;
-
-
-	QColor m_defaultColor;
 	QMap<QString,QBrush> m_brushColor;
-
 	QList<QPair<QString, QPair<QString, double>>> m_thresholdData;
 	QPair<QString, QPair<QString, double>> m_innerThresholdData;
 	QPair<QString,double> m_innerInnerThresholdData;
-
 	QBrush m_temBrush;
-
 	QList<QString> m_entityAndAttr;
 	QList<QBrush> m_brush;
 	QList<double> m_valueList;
@@ -62,24 +52,27 @@ private:
 	QList<QString> m_lightValueList;
 	QMap<QString, QList<long double>> m_lightMap;
 	QList<QList<QString>> m_userLightData;
-
 	int m_horiGridNum;
 	int m_verGridNum;
 	int m_leftPadding;
 	int m_rightPadding;
 	int m_interPadding;
 	int m_currTimeIndex;
-
+	int m_circleRadius;
 	void judgeLight();
-	void drawLight(QPainter &,double &);
-
+	void setCircleRadius(double &);
+	void drawLight(QPainter &,double &,double &);
+	void drawTitle(QPainter &,QRect&);
+	//virtual void dataPairOrder();
+	//virtual void setGridColorWidth(QColor color, uint width);
+	virtual void setGridStyle(GridStyle);
+	virtual uint getGridWidth() { return m_gridWidth; }
+	virtual QColor getGridColor() { return m_gridColor; }
+	virtual Qt::PenStyle getGridStyle() { return m_gridStyle; }
 public slots:
 	void slot_getLightData(QList<QList<QString>>);
 	void slot_getCurrentSeconds(double secs);
 	//更新后的由base 的sgn_发出
 	void slot_onAddButtonClicked();
-
-
-
 };
 #endif // _PLOT_LIGHT_H_ 

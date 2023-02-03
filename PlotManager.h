@@ -16,6 +16,7 @@ public:
     ~PlotManager();
 
     void init();								//初始化函数，连接信号槽
+	void addPlot(const QString&, PlotItemBase*);			//添加Plot
 
 	QColor m_axisColor;
 	QColor m_gridColor;
@@ -31,18 +32,21 @@ private:
 	void initTreeWidgetSettings();
 	void initGeneralUI();
 	void initAxisGridUI();
-	void initTextLightUI();
 	void initPlotDataUI();
 	void initTextEditUI();
 	void initAttitudeUI();
+
+	void initTextLightUI();
 
 	void refreshTreeWidgetSettingEnabled(PlotItemBase* plot);
 	void refreshGeneralUI(PlotItemBase* plot);
 	void refreshAxisGridUI(PlotItemBase* plot);
 	void refreshPlotDataUI(PlotItemBase* plot);
 	void refreshLightTextUI(PlotItemBase* plot);
+
 	void refreshTextEditUI(PlotItemBase* plot);
 	void refreshAttitudeUI(PlotItemBase* plot);
+
 
 	void enableItem_Scatter();
 	void enableItem_AScope();
@@ -103,7 +107,9 @@ public slots:
 	void onSpinbox_10Changed();
 	void onPushButton_66Clicked();
 	void onPushButton_67Clicked();
-	void onTableWidget_textDataSortItemSelectionChanged();
+	void onPushButton_69Clicked();
+	void onTableWidget_textLightDataSortItemSelectionChanged();
+
 
 	//Plot Data
 	void onTableWidget_plotDataItemSelectionChanged();
@@ -137,13 +143,17 @@ public slots:
 	void onSpinBox_30ValueChanged(int);
 	void onSpinBox_31ValueChanged(int);
 
+
 signals:
-	void sigAddPlotPair(QString, QString);
+	void sigAddPlotPair();
 	void sigAdvancedDataManager();
 	void sigRectChanged(QRect);
 	void sigGetTabRect();
 	void sigSetPlotVisible(bool);
 	void sigChangePlotName();
+
+
+
 
 private:
     Ui::PlotManager ui;

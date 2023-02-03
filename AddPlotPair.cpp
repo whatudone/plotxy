@@ -10,7 +10,6 @@
 #include <QMessageBox>
 #include <QStyleFactory>
 #include "DataManager.h"
-#include "PlotLight.h"
 #include "PlotManagerData.h"
 AddPlotPair* AddPlotPair::thispoint = nullptr;
 AddPlotPair* AddPlotPair::m_getInstance()
@@ -30,8 +29,9 @@ AddPlotPair::AddPlotPair(QWidget *parent) :
 	initStackedWidget_page2();
 	initStackedWidget_page3();
 	initStackedWidget_page4();
-	initStackedWidget_page5();
+	initStackedWidget_pageLight();
 	initStackedWidget_pageAScope();
+
 
 	initTreePlot();
 
@@ -160,8 +160,23 @@ void AddPlotPair::initStackedWidget_page4()
 	ui.radioButton_9->setChecked(true);
 }
 
-void AddPlotPair::initStackedWidget_page5()
+void AddPlotPair::initStackedWidget_pageLight()
 {
+	QComboBox *comboBoxEntity = new QComboBox;
+	QComboBox *comboBoxAttr = new QComboBox;
+	QComboBox *comboBoxCompare = new QComboBox;
+	QComboBox *comboBoxColor = new QComboBox;
+	comboBoxEntity->addItem("Target+Altitude");
+	comboBoxEntity->addItem("Target2+Mach");
+	ui.tableWidget_LightSet->setCellWidget(0, 0, comboBoxEntity);
+	comboBoxAttr->addItem("Time");
+	ui.tableWidget_LightSet->setCellWidget(0, 1, comboBoxAttr);
+	comboBoxCompare->addItem(QString::fromLocal8Bit("≥"));
+	comboBoxCompare->addItem("<");
+	ui.tableWidget_LightSet->setCellWidget(0, 2, comboBoxCompare);
+	comboBoxColor->addItem("G/R/Y");
+	ui.tableWidget_LightSet->setCellWidget(0, 4, comboBoxColor);
+
 	ui.tableWidget_lightEntity->setStyleSheet("QHeaderView::section{background:lightgray;}");
 	ui.tableWidget_lightEntity->horizontalHeader()->setStretchLastSection(true);
 	ui.tableWidget_lightEntity->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
@@ -174,7 +189,6 @@ void AddPlotPair::initStackedWidget_page5()
 	connect(ui.pushButton_LightAdd, SIGNAL(clicked()), this, SLOT(onBtnLightAddClicked()));
 	connect(ui.pushButton_LightDelete, SIGNAL(clicked()), this, SLOT(onBtnLightDeleteClicked()));
 	connect(ui.pushButton_LightUpdate, SIGNAL(clicked()), this, SLOT(onBtnLightUpdateClicked()));
-
 }
 
 void AddPlotPair::initStackedWidget_pageAScope()
@@ -377,6 +391,8 @@ bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 
 		strSum1 = strEntity1 + "+" + strNameUnit1;
 		strSum2 = "Time";
+
+		//		emit sigAddPlotPair(strEntity1, strNameUnit1);
 		break;
 
 	case 1:
@@ -482,6 +498,7 @@ bool AddPlotPair::getCurrentSelectParam(QString &strSum1, QString &strSum2)
 	default:
 		break;
 	}
+	return true;
 }
 
 void AddPlotPair::onBtnAddClicked()
@@ -717,6 +734,15 @@ void AddPlotPair::onUpdateData()
 	}
 }
 
+
+void AddPlotPair::onAddPlot(const QString &tabName, PlotItemBase *plotItem)
+{
+	//数据层更新
+	m_plotManager[tabName].append(plotItem);
+
+	updatePlotTrees();
+}
+
 void AddPlotPair::onDoubleClickedTreeWidgetItem(QTreeWidgetItem * item, int column)
 {
 	QTreeWidgetItem *parent = item->parent();
@@ -829,13 +855,34 @@ void AddPlotPair::onBtnLightUpdateClicked()
 	{
 		for (int i = 0; i < ui.tableWidget_LightSet->columnCount(); i++)
 		{
-			if (ui.tableWidget_LightSet->item(j, i) == nullptr)
-			{
-				QMessageBox::critical(NULL, QString::fromLocal8Bit("提示信息"), QString::fromLocal8Bit("请将数据填写完整"));
-				return;
+			QString temData;
+			if (i == 3)
+			{		
+				if (ui.tableWidget_LightSet->item(j,3) == nullptr)
+				{
+					QString changeLine = "\n";
+					QString text1 = QString::fromLocal8Bit("请将数据填写完整");
+					QString text3 = QString::fromLocal8Bit("第4列存在空白");
+					QString warningInfo = text1 + changeLine + text3 ;
+					QMessageBox::critical(NULL, QString::fromLocal8Bit("提示信息"), warningInfo);
+					return;
+				}
+				temData = ui.tableWidget_LightSet->item(j, 3)->text();
+				rowLightData.push_back(temData);
 			}
+			else if (i == 1)
+				continue;
 			else
-				rowLightData.push_back(ui.tableWidget_LightSet->item(j, i)->text());
+			{
+				temData = dynamic_cast<QComboBox *>(ui.tableWidget_LightSet->cellWidget(j, i))->currentText();
+				if (temData == "")
+				{
+					QMessageBox::critical(NULL, QString::fromLocal8Bit("提示信息"), QString::fromLocal8Bit("请将数据填写完整"));
+					return;
+				}
+				else
+					rowLightData.push_back(temData);
+			}
 		}
 		lightData.push_back(rowLightData);
 	}
@@ -865,8 +912,40 @@ void AddPlotPair::onUpdatePlotPair(QString tabName, QString plotName)
 
 void AddPlotPair::onBtnLightAddClicked()
 {
+	QList<QString> redYellowGreen;
+	redYellowGreen.push_back("Red");
+	redYellowGreen.push_back("Yellow");
+	redYellowGreen.push_back("Green");
 	int iRow = ui.tableWidget_LightSet->rowCount();
 	ui.tableWidget_LightSet->setRowCount(iRow + 1);
+	QComboBox *newCount0 = new QComboBox;
+	QComboBox *newCount1 = new QComboBox;
+	QComboBox *newCount2 = new QComboBox;
+	QComboBox *newCount4 = new QComboBox;
+	QPair<QString, QString> temPair;
+	QString temEntity;
+	QString temAttr;
+	QString parent_text = m_curPlotInfo.Base_TabName;
+	QString child_text = m_curPlotInfo.Base_PlotName;
+	for (int i = 0; i < m_plotManager[parent_text].size(); ++i)
+	{
+		PlotItemBase *tempPlot = m_plotManager[parent_text].at(i);
+		QVector<DataPair*> temDataPair = tempPlot->getDataPair();
+		for (int i = 0; i < temDataPair.size(); i++)
+		{
+			temPair = temDataPair.at(i)->getDataPair();
+			temEntity = temPair.first;
+			newCount0->addItem(temEntity);
+		}
+		ui.tableWidget_LightSet->setCellWidget(iRow, 0, newCount0);
+	}
+	newCount1->addItem("Time");
+	newCount2->addItem(QString::fromLocal8Bit("≥"));
+	newCount2->addItem("<");
+	newCount4->addItems(redYellowGreen);
+	ui.tableWidget_LightSet->setCellWidget(iRow, 1, newCount1);
+	ui.tableWidget_LightSet->setCellWidget(iRow , 2, newCount2);
+	ui.tableWidget_LightSet->setCellWidget(iRow , 4, newCount4);
 }
 
 void AddPlotPair::onBtnLightDeleteClicked()
@@ -875,10 +954,21 @@ void AddPlotPair::onBtnLightDeleteClicked()
 	if (rowIdx != -1)
 	{
 		if (rowIdx == 0)
-			return;
+		{
+			QMessageBox *temMessage = new QMessageBox(nullptr);
+			temMessage->setText(QString::fromLocal8Bit("示例行请勿删除"));
+			temMessage->show();
+		}
 		else
 			ui.tableWidget_LightSet->removeRow(rowIdx);
 	}
+	else
+	{
+		QMessageBox *temMessage = new QMessageBox(nullptr);
+		temMessage->setText(QString::fromLocal8Bit("请先点选要删除的行"));
+		temMessage->show();
+	}
+	ui.tableWidget_LightSet->setCurrentCell(0, 0);
 }
 
 void AddPlotPair::onBtnCloseClicked()
