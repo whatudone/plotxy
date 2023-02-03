@@ -200,39 +200,40 @@ void PlotScatter::getDataInfo(double secs)
 
 void PlotScatter::updateData(double secs, int index, DataPair * data)
 {
-	QVector<double> x, y;
-	QString xEntityType = data->getDataPair().first;
-	QString yEntityType = data->getDataPair().second;
-	QStringList xlist = xEntityType.split("+");
-	QStringList ylist = yEntityType.split("+");
-	if (xlist.size() == 1 && ylist.size() == 1)
-	{
-		x = DataManager::getInstance()->getTimeData_vector();
-		y = DataManager::getInstance()->getTimeData_vector();
-	}
-	else if (xlist.size() == 1 && ylist.size() == 2)
-	{
-		x = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(ylist.at(0), xlist.at(0), secs).toVector();
-		y = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(ylist.at(0), ylist.at(1), secs).toVector();
-	}
-	else if (xlist.size() == 2 && ylist.size() == 1)
-	{
-		x = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs).toVector();
-		y = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(xlist.at(0), ylist.at(0), secs).toVector();
-	}
-	else
-	{
-		x = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs).toVector();
-		y = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(ylist.at(0), ylist.at(1), secs).toVector();
-	}
-
-	if (x.isEmpty() || y.isEmpty())
-		return;
-
 	QPair<QString, QString> dataPair = data->getDataPair();
 
 	if (data->isDraw())
 	{
+		QVector<double> x, y;
+		QString xEntityType = dataPair.first;
+		QString yEntityType = dataPair.second;
+		QStringList xlist = xEntityType.split("+");
+		QStringList ylist = yEntityType.split("+");
+		if (xlist.size() == 1 && ylist.size() == 1)
+		{
+			x = DataManager::getInstance()->getTimeData_vector();
+			y = DataManager::getInstance()->getTimeData_vector();
+		}
+		else if (xlist.size() == 1 && ylist.size() == 2)
+		{
+			x = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(ylist.at(0), xlist.at(0), secs).toVector();
+			y = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(ylist.at(0), ylist.at(1), secs).toVector();
+		}
+		else if (xlist.size() == 2 && ylist.size() == 1)
+		{
+			x = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs).toVector();
+			y = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(xlist.at(0), ylist.at(0), secs).toVector();
+		}
+		else
+		{
+			x = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs).toVector();
+			y = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(ylist.at(0), ylist.at(1), secs).toVector();
+		}
+
+		if (x.isEmpty() || y.isEmpty())
+			return;
+
+		m_mapScatter[dataPair].graph->setVisible(true);
 		m_mapScatter[dataPair].graph->setPen(QPen(data->dataColor(), data->lineWidth()));
 		//line mode
 		if (data->isLineMode())
@@ -264,6 +265,7 @@ void PlotScatter::updateData(double secs, int index, DataPair * data)
 		//Label Text
 		if (data->isLabelTextShow())
 		{
+			m_mapScatter[dataPair].tracer->setVisible(true);
 			m_mapScatter[dataPair].tracerText->setVisible(true);
 			//设置锚点
 			m_mapScatter[dataPair].tracer->setGraphKey(x.last());
@@ -391,8 +393,15 @@ void PlotScatter::updateData(double secs, int index, DataPair * data)
 		}
 		else
 		{
+			m_mapScatter[dataPair].tracer->setVisible(false);
 			m_mapScatter[dataPair].tracerText->setVisible(false);
 		}
+	}
+	else
+	{
+		m_mapScatter[dataPair].graph->setVisible(false);
+		m_mapScatter[dataPair].tracer->setVisible(false);
+		m_mapScatter[dataPair].tracerText->setVisible(false);
 	}
 }
 
