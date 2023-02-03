@@ -8,6 +8,7 @@
 #include "ui_AdvancedDataManager.h"
 #include "PlotItemBase.h"
 #include "DataPair.h"
+#include "SubSettingWidgetContainer.h"
 
 class AdvancedDataManager : public QWidget
 {
@@ -26,6 +27,7 @@ signals:
 	//General
 	void sgnGeneral_draw(bool);
 	void sgnGeneral_color(QColor);
+	void sgnGeneral_matchColor(bool);
 
 	//Label Settings
 	void sgnLabelSettings_draw(bool);
@@ -75,6 +77,7 @@ public slots:
 	//General
 	void onGeneral_draw(bool);
 	void onGeneral_color(QColor);
+	void onGeneral_matchColor(bool);
 
 	//Label Settings
 	void onLabelSettings_draw(bool);
@@ -124,6 +127,7 @@ private:
 	QMap<QString, QList<PlotItemBase*>> m_plotManager; //tabName
 	PlotItemBase* m_curSelectPlot = nullptr;
 	DataPair* m_curSelectDatapair = nullptr;
+	SubSettingWidgetContainer* subSettingWidgetContainer;
 };
 
 #endif // _ADVANCED_DATA_MANAGER_H_

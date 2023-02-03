@@ -45,14 +45,18 @@ public:
 
 signals:
 	void sigBtnGenneralMoreclicked();
+	void sigCheckBox_14StateChanged(bool);
+	void sigCheckBox_14Color(QColor);	//当选中状态时，发送pushButton_12的颜色
 	void sigCheckBox_16StateChanged(bool);
 	void sigPushButton_12Clicked(QColor);
 
 public slots:
 	void onPushbuttonMoreClicked();
+	void onCheckBox_14StateChanged();
 	void onCheckBox_16StateChanged();
 	void onPushButton_12Clicked();
 
+	void setCheckBox_14CheckState(bool);
 	void setCheckBox_16CheckState(bool);
 	void setPushButton_12Color(QColor);
 

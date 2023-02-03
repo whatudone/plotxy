@@ -31,6 +31,9 @@ public:
 	bool isLineMode() { return m_isLineMode; }
 	void setLineMode(bool on);
 
+	bool matchColor() { return m_matchColor; }
+	void setMatchColor(bool);
+
 	//Icon
 	bool isIconDraw() { return m_iconDraw; }
 	void setIconDraw(bool on);
@@ -154,6 +157,7 @@ private:
 	bool	m_isDraw;			//是否绘制
 	QColor	m_color;			//数据颜色
 	bool	m_isLineMode;		//是否为线模式
+	bool	m_matchColor;		//颜色匹配
 
 	bool	m_iconDraw;			//是否显示图标
 	QString m_iconName;			//图标所在完整路径

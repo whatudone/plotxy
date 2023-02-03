@@ -264,14 +264,9 @@ void PlotScatter::updateData(double secs, int index, DataPair * data)
 		//Label Text
 		if (data->isLabelTextShow())
 		{
+			m_mapScatter[dataPair].tracerText->setVisible(true);
 			//设置锚点
 			m_mapScatter[dataPair].tracer->setGraphKey(x.last());
-// 			m_mapScatter[dataPair].tracer->setInterpolating(true);
-// 			m_mapScatter[dataPair].tracer->setStyle(QCPItemTracer::tsNone);
-			
-			// add label
-			//m_mapScatter[dataPair].tracerText->position->setType(QCPItemPosition::ptPlotCoords);
-			//m_mapScatter[dataPair].tracerText->position->setParentAnchor(m_mapScatter[dataPair].tracer->position);
 			
 			if (0 == data->getTextFormat())		//default
 			{
@@ -393,6 +388,10 @@ void PlotScatter::updateData(double secs, int index, DataPair * data)
 				m_mapScatter[dataPair].tracerText->setBrush(Qt::transparent);
 			else
 				m_mapScatter[dataPair].tracerText->setBrush(data->getLabelBackground());
+		}
+		else
+		{
+			m_mapScatter[dataPair].tracerText->setVisible(false);
 		}
 	}
 }
