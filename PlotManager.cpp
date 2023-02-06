@@ -722,7 +722,6 @@ void PlotManager::onTWSclicked(QTreeWidgetItem* item, int column)
 		return;	
 	else
 	{
-
 		if (compare == QString::fromLocal8Bit("Í¨ÓÃÉèÖÃ"))
 		{
 			ui.stackedWidget->setCurrentIndex(0);

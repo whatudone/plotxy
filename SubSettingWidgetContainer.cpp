@@ -58,10 +58,18 @@ General::General(QWidget* parent) :
 	connect(ui.pushButton_more, &QPushButton::clicked, this, &General::onPushbuttonMoreClicked);
 	connect(ui.pushButton_12, &QPushButton::clicked, this, &General::onPushButton_12Clicked);
 	connect(ui.checkBox_16, &QCheckBox::stateChanged, this, &General::onCheckBox_16StateChanged);
+	connect(ui.checkBox_14, &QCheckBox::stateChanged, this, &General::onCheckBox_14StateChanged);
 }
 
 General::~General()
 {
+}
+
+void General::onCheckBox_14StateChanged()
+{
+	emit sigCheckBox_14StateChanged(ui.checkBox_14->checkState());
+	if (ui.checkBox_14->isChecked())
+		emit sigCheckBox_14Color(ui.pushButton_12->color());
 }
 
 void General::onCheckBox_16StateChanged()
@@ -72,6 +80,13 @@ void General::onCheckBox_16StateChanged()
 void General::onPushButton_12Clicked()
 {
 	emit sigPushButton_12Clicked(ui.pushButton_12->color());
+	if (ui.checkBox_14->isChecked())
+		emit sigCheckBox_14Color(ui.pushButton_12->color());
+}
+
+void General::setCheckBox_14CheckState(bool on)
+{
+	ui.checkBox_14->setChecked(on);
 }
 
 void General::setCheckBox_16CheckState(bool on)

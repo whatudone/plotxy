@@ -9,6 +9,7 @@ DataPair::DataPair(QObject *parent)
 	m_isDraw = true;
 	m_color = Qt::white;
 	m_isLineMode = false;
+	m_matchColor = false;
 
 	m_iconDraw = false;
 	m_iconName = nullptr;
@@ -51,6 +52,7 @@ DataPair::DataPair(QPair<QString, QString> pair)
 	m_isDraw = true;
 	m_color = Qt::white;
 	m_isLineMode = false;
+	m_matchColor = false;
 
 	m_iconDraw = false;
 	m_iconName = nullptr;
@@ -142,6 +144,11 @@ void DataPair::setDraw(bool on)
 void DataPair::setColor(QColor color)
 {
 	m_color = color;
+	if (m_matchColor)
+	{
+		m_iconColor = m_color;
+		m_labelColor = m_color;
+	}
 	emit dataUpdate();
 }
 
@@ -149,6 +156,16 @@ void DataPair::setLineMode(bool on)
 {
 	m_isLineMode = on;
 	emit dataUpdate();
+}
+
+void DataPair::setMatchColor(bool on)
+{
+	m_matchColor = on;
+	if (m_matchColor)
+	{
+		m_iconColor = m_color;
+		m_labelColor = m_color;
+	}
 }
 
 void DataPair::setIconDraw(bool on)
@@ -201,7 +218,8 @@ void DataPair::setIconFlipVert(bool on)
 
 void DataPair::setIconColor(QColor color)
 {
-	m_iconColor = color;
+	if(!m_matchColor)
+		m_iconColor = color;
 	emit dataUpdate();
 }
 
@@ -238,7 +256,8 @@ void DataPair::setLabelTextShow(bool show)
 
 void DataPair::setLabelColor(QColor color)
 {
-	m_labelColor = color;
+	if (!m_matchColor)
+		m_labelColor = color;
 	emit dataUpdate();
 }
 

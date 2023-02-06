@@ -1,5 +1,4 @@
 #include "AdvancedDataManager.h"
-#include "SubSettingWidgetContainer.h"
 #include "PlotManagerData.h"
 #include <QTableWidgetSelectionRange>
 #include <QColorDialog>
@@ -15,8 +14,9 @@ AdvancedDataManager::AdvancedDataManager(QWidget *parent) :
 	ui.pushButton_autofit->setEnabled(false);
 	ui.pushButton_delete->setEnabled(false);
 
-	SubSettingWidgetContainer* subSettingWidgetContainer = new SubSettingWidgetContainer(this);
+	subSettingWidgetContainer = new SubSettingWidgetContainer(this);
 	ui.verticalLayout_8->addWidget(subSettingWidgetContainer);
+	subSettingWidgetContainer->setEnabled(false);
 
 	ui.stackedWidget_aDMrpart->setCurrentIndex(0);
 	connect(ui.pushButton_add_2, SIGNAL(clicked()), this, SLOT(onBtnAdd()));
@@ -30,8 +30,11 @@ AdvancedDataManager::AdvancedDataManager(QWidget *parent) :
 	connect(subSettingWidgetContainer->m_general, SIGNAL(sigBtnGenneralMoreclicked()), this, SLOT(onBtnMore()));
 	connect(subSettingWidgetContainer->m_general, SIGNAL(sigCheckBox_16StateChanged(bool)), this, SLOT(onGeneral_draw(bool)));
 	connect(subSettingWidgetContainer->m_general, SIGNAL(sigPushButton_12Clicked(QColor)), this, SLOT(onGeneral_color(QColor)));
+	connect(subSettingWidgetContainer->m_general, SIGNAL(sigCheckBox_14StateChanged(bool)), this, SLOT(onGeneral_matchColor(bool)));
 	connect(this, SIGNAL(sgnGeneral_draw(bool)), subSettingWidgetContainer->m_general, SLOT(setCheckBox_16CheckState(bool)));
 	connect(this, SIGNAL(sgnGeneral_color(QColor)), subSettingWidgetContainer->m_general, SLOT(setPushButton_12Color(QColor)));
+	connect(this, SIGNAL(sgnGeneral_matchColor(bool)), subSettingWidgetContainer->m_general, SLOT(setCheckBox_14CheckState(bool)));
+
 
 	//Icon
 	connect(subSettingWidgetContainer->m_iconSetting, &IconSetting::sigCheckBoxStateChanged, this, &AdvancedDataManager::onIconSetting_draw);
@@ -49,6 +52,8 @@ AdvancedDataManager::AdvancedDataManager(QWidget *parent) :
 	connect(this, &AdvancedDataManager::sgnIconSetting_width, subSettingWidgetContainer->m_iconSetting, &IconSetting::setSpinBoxValue);
 	connect(this, &AdvancedDataManager::sgnIconSetting_height, subSettingWidgetContainer->m_iconSetting, &IconSetting::setSpinBox_2Value);
 	connect(this, &AdvancedDataManager::sgnIconSetting_color, subSettingWidgetContainer->m_iconSetting, &IconSetting::setPushButton_2Color);
+	connect(subSettingWidgetContainer->m_general, &General::sigCheckBox_14Color, subSettingWidgetContainer->m_iconSetting, &IconSetting::setPushButton_2Color);
+
 
 	//Label Settings
 	connect(subSettingWidgetContainer->m_labelSettings, &LabelSettings::sigCheckBox_5StateChanged, this, &AdvancedDataManager::onLabelSettings_draw);
@@ -64,6 +69,7 @@ AdvancedDataManager::AdvancedDataManager(QWidget *parent) :
 	connect(subSettingWidgetContainer->m_labelSettings, &LabelSettings::sigSpinBox_3ValueChanged, this, &AdvancedDataManager::onLabelSettings_precision_y);
 	connect(this, &AdvancedDataManager::sgnLabelSettings_draw, subSettingWidgetContainer->m_labelSettings, &LabelSettings::setCheckBox_5CheckState);
 	connect(this, &AdvancedDataManager::sgnLabelSettings_color, subSettingWidgetContainer->m_labelSettings, &LabelSettings::setPushButton_5Color);
+	connect(subSettingWidgetContainer->m_general, &General::sigCheckBox_14Color, subSettingWidgetContainer->m_labelSettings, &LabelSettings::setPushButton_5Color);
 	connect(this, &AdvancedDataManager::sgnLabelSettings_background, subSettingWidgetContainer->m_labelSettings, &LabelSettings::setPushButton_6Color);
 	connect(this, &AdvancedDataManager::sgnLabelSettings_transparent, subSettingWidgetContainer->m_labelSettings, &LabelSettings::setCheckBoxStateChanged);
 	connect(this, &AdvancedDataManager::sgnLabelSettings_font, subSettingWidgetContainer->m_labelSettings, &LabelSettings::setFontComboBoxFont);
@@ -117,6 +123,8 @@ void AdvancedDataManager::onTableWidget_plotpairItemSelectionChanged()
 	ui.pushButton_copy->setEnabled(false);
 	ui.pushButton_autofit->setEnabled(false);
 	ui.pushButton_delete->setEnabled(false);
+	subSettingWidgetContainer->setEnabled(false);
+
 
 	if (row < 0)
 		return;
@@ -124,6 +132,7 @@ void AdvancedDataManager::onTableWidget_plotpairItemSelectionChanged()
 	ui.pushButton_copy->setEnabled(true);
 	ui.pushButton_autofit->setEnabled(true);
 	ui.pushButton_delete->setEnabled(true);
+	subSettingWidgetContainer->setEnabled(true);
 
 	QString xText = ui.tableWidget_plotpair->item(row, 0)->text();
 	QString yText = ui.tableWidget_plotpair->item(row, 1)->text();
@@ -204,6 +213,15 @@ void AdvancedDataManager::onGeneral_color(QColor color)
 		return;
 
 	m_curSelectDatapair->setColor(color);
+}
+
+
+void AdvancedDataManager::onGeneral_matchColor(bool on)
+{
+	if (m_curSelectDatapair == nullptr)
+		return;
+
+	m_curSelectDatapair->setMatchColor(on);
 }
 
 void AdvancedDataManager::onLabelSettings_draw(bool on)
@@ -408,7 +426,6 @@ void AdvancedDataManager::onIconSetting_color(QColor color)
 
 void AdvancedDataManager::refreshUI()
 {
-	refreshAdvancedDataManagerUI();
 	refreshGeneral();
 	refreshIcon();
 	refreshExtrapolation();
@@ -423,6 +440,7 @@ void AdvancedDataManager::refreshGeneral()
 {
 	sgnGeneral_draw(m_curSelectDatapair->isDraw());
 	sgnGeneral_color(m_curSelectDatapair->dataColor());
+	sgnGeneral_matchColor(m_curSelectDatapair->matchColor());
 }
 
 void AdvancedDataManager::refreshIcon()
