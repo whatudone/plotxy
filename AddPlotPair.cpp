@@ -899,7 +899,7 @@ void AddPlotPair::onUpdatePlotPair(QString tabName, QString plotName)
 	QList<QTreeWidgetItem*> items = m_treePlot->findItems(plotName, Qt::MatchExactly | Qt::MatchRecursive);
 	if (items.size() != 0)
 	{
-		for each (QTreeWidgetItem* item in items)
+        foreach (QTreeWidgetItem* item , items)
 		{
 			if (item->parent() != NULL && item->parent()->text(0) == tabName)
 			{

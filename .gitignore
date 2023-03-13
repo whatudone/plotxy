@@ -54,6 +54,7 @@ GeneratedFiles/Debug/moc_PlotDial.cpp
 GeneratedFiles/Debug/moc_PlotDoppler.cpp
 GeneratedFiles/Debug/moc_PlotManagerData.cpp
 GeneratedFiles/Debug/moc_PlotRTI.cpp
+GeneratedFiles
 *.cpp
 *.h
 *.txt
@@ -65,3 +66,8 @@ PlotXYDemo.sln
 PlotXYDemo.vcxproj
 PlotXYDemo.vcxproj.filters
 PlotXYDemo.vcxproj.user
+*.pro.user
+*.opendb
+*.vcxproj.user
+*VC.db
+
