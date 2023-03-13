@@ -7,8 +7,7 @@ int main(int argc, char* argv[])
     QApplication a(argc, argv);
 
     PlotXYDemo w;
-    //w.init();
-    w.show();
+    w.showMaximized();
 
     return a.exec();
 }

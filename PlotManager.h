@@ -145,7 +145,7 @@ public slots:
 
 
 signals:
-	void sigAddPlotPair();
+    void sigAddPlotPair();
 	void sigAdvancedDataManager();
 	void sigRectChanged(QRect);
 	void sigGetTabRect();

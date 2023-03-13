@@ -4,19 +4,18 @@
 #include <QTreeWidgetItem>
 #include <QDebug>
 #include <QSet>
-#include <qradiobutton>
+#include <QRadioButton>
 #include <QPoint>
 #include <QSpinBox>
 #include <QMessageBox>
 #include <QStyleFactory>
 #include "DataManager.h"
 #include "PlotManagerData.h"
-AddPlotPair* AddPlotPair::thispoint = nullptr;
+
 AddPlotPair* AddPlotPair::m_getInstance()
 {
-	if (thispoint == nullptr)
-		thispoint = new AddPlotPair;
-	return thispoint;
+    static AddPlotPair plot;
+    return &plot;
 }
 
 AddPlotPair::AddPlotPair(QWidget *parent) :

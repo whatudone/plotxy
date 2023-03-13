@@ -30,7 +30,8 @@ PlotXYDemo::PlotXYDemo(QWidget *parent)
 {
     ui.setupUi(this);
 	setMinimumSize(1600, 900);
-	showMaximized();
+    setWindowTitle("»æÍ¼");
+
 
     init();
 
@@ -52,7 +53,7 @@ PlotXYDemo::PlotXYDemo(QWidget *parent)
     m_curBaseInfo.Base_PlotName = nullptr;
     qRegisterMetaType<BaseInfo>("BaseInfo");
 
-    connect(m_plotManager, SIGNAL(sigAddPlotPair(QString, QString)), this, SLOT(onAddPlotPair(QString, QString)));
+    connect(m_plotManager, &PlotManager::sigAddPlotPair, this, QOverload<>::of(&PlotXYDemo::onAddPlotPair));
 	connect(m_plotManager, SIGNAL(sigAdvancedDataManager()), this, SLOT(onAdvancedData()));
 	connect(this, &PlotXYDemo::sgn_sendTabWidgetRect, m_plotManager, &PlotManager::onGetTabWidgetRect);
 	connect(m_plotManager, &PlotManager::sigGetTabRect, this, &PlotXYDemo::onSendTabRect);
@@ -120,9 +121,9 @@ void PlotXYDemo::onAddPlotPair()
 	m_addPlotPair->activateWindow();
 }
 
-void PlotXYDemo::onAddPlotPair(QString tabName, QString plotName)
+void PlotXYDemo::onAddPlotPair(const QString &tabName, const QString &plotName)
 {
-	if (!m_addPlotPair) {
+    if (!m_addPlotPair) {
 		m_addPlotPair = AddPlotPair::m_getInstance();
 		connect(this, SIGNAL(sgn_loadDataReady()), m_addPlotPair, SLOT(onUpdateData()));
 		m_addPlotPair->init(getCurrentFocusPlot());

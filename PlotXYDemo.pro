@@ -4,7 +4,8 @@
 
 TEMPLATE = app
 TARGET = PlotXYDemo
-QT += core gui widgets
+QT += core gui widgets printsupport
+LIBS += -luser32
 #DESTDIR = ./Debug
 #CONFIG += debug
 #DEFINES += WIN64 QT_WIDGETS_LIB

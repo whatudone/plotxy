@@ -1,8 +1,8 @@
-#ifndef  _PLOTXY_DEMO_H_
-#define  _PLOTXY_DEMO_H_
+#ifndef PLOTXY_DEMO_H_
+#define PLOTXY_DEMO_H_
 
 #include <QtWidgets/QMainWindow>
-#include "QContextMenuEvent"
+#include <QContextMenuEvent>
 #include "ui_PlotXYDemo.h"
 #include "constdef.h"
 #include "TimeControls.h"
@@ -84,7 +84,7 @@ public slots:
 	//menu-data
 	void onAdvancedData();
 	void onAddPlotPair();
-	void onAddPlotPair(QString, QString);
+    void onAddPlotPair(const QString&, const QString&);
 	void onDiscoveryRules();
 	void onShowObjectAliases();
 	void onReferencePoints();

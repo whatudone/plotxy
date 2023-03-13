@@ -657,7 +657,7 @@ void PlotManager::onAddNewClicked()
 	/*AddPlotPair* addPlotPair = new AddPlotPair();
 	addPlotPair->show();*/
 
-	emit sigAddPlotPair();
+    emit sigAddPlotPair();
 }
 
 void PlotManager::onSelectedPlot(QString tabName, QString plotName)
