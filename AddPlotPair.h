@@ -82,7 +82,7 @@ public slots:
 
 private:
     Ui::AddPlotPair ui;
-
+    static AddPlotPair* m_ptr;
 	explicit AddPlotPair(QWidget *parent = 0);
 
 	BaseInfo m_curPlotInfo;

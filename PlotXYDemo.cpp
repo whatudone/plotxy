@@ -74,8 +74,9 @@ PlotXYDemo::~PlotXYDemo()
 {
     if (m_plotManager)
         m_plotManager->deleteLater();
-    if (m_addPlotPair)
+    if(m_addPlotPair){
         m_addPlotPair->deleteLater();
+    }
     if (m_AdvancedDataManager)
         m_AdvancedDataManager->deleteLater();
 }

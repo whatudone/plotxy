@@ -107,7 +107,7 @@ void PlotDoppler::initPlot()
 //	m_customPlot->rescaleAxes();
 
 	m_horizon_AScope = new PlotAScope(this);
-	m_horizon_AScope->setTitle(QString(""));
+    m_horizon_AScope->setTitle(QString(""));
 	m_horizon_AScope->setTitleFont(QFont("Microsoft YaHei", 1));
 	m_horizon_AScope->setPaddings(0, 0, 0, 0);
 	m_horizon_AScope->setTitleVisible(false);

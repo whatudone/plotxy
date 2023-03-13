@@ -25,8 +25,8 @@ public:
 	QFont getAxisLabelFont() const { return m_axisLabelFont; }
 
 	void setPaddings(double top, double bottom, double left, double right);
-	void setxAxisLabel(QString& str);
-	void setyAxisLabel(QString& str);
+    void setxAxisLabel(const QString& str);
+    void setyAxisLabel(const QString &str);
 	void setAxisLabelColor(QColor& color);
 	void setAxisLabelFont(QFont& font);
 
@@ -71,9 +71,9 @@ public:
 	virtual void setUnitsShowY(bool on);
 	virtual void setUnitsX(const QString& units);
 	virtual void setUnitsY(const QString& units);
-	void setTitle(QString& str);
-	void setTitleColor(QColor& color);
-	void setTitleFont(QFont& font);
+    void setTitle(const QString &str);
+    void setTitleColor(const QColor& color);
+    void setTitleFont(const QFont& font);
 	void setTitleVisible(bool show);
 	virtual void setTitleFontSize(int size);
 	virtual void setTitleFillColor(QColor& color);

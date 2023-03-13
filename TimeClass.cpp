@@ -5,6 +5,7 @@
 #include <limits>
 #include <locale>
 #include <time.h>
+#include <cmath>
 #include <QStringList>
 
 #include "TimeClass.h"

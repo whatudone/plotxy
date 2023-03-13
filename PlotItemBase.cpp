@@ -205,12 +205,12 @@ void PlotItemBase::setGridVisible(bool enable)
 	m_gridVisible = enable;
 }
 
-void PlotItemBase::setTickLabelColor(QColor & color)
+void PlotItemBase::setTickLabelColor(const QColor & color)
 {
 	m_tickLabelColor = color;
 }
 
-void PlotItemBase::setTickLabelFont(QFont & font)
+void PlotItemBase::setTickLabelFont(const QFont & font)
 {
 	m_tickLabelFont = font;
 }
@@ -278,22 +278,22 @@ void PlotItemBase::setTitleVisible(bool on)
 	m_titleVisible = on;
 }
 
-void PlotItemBase::setTitle(QString & title)
+void PlotItemBase::setTitle(const QString & title)
 {
 	m_title = title;
 }
 
-void PlotItemBase::setTitleColor(QColor& color)
+void PlotItemBase::setTitleColor(const QColor& color)
 {
 	m_titleColor = color;
 }
 
-void PlotItemBase::setTitleFillColor(QColor& color)
+void PlotItemBase::setTitleFillColor(const QColor& color)
 {
 	m_titleFillColor = color;
 }
 
-void PlotItemBase::setTitleFont(QFont& font)
+void PlotItemBase::setTitleFont(const QFont& font)
 {
 	m_titleFont = font;
 }
@@ -304,22 +304,22 @@ void PlotItemBase::setTitleFontSize(int size)
 	m_titleFont.setPointSize(size);
 }
 
-void PlotItemBase::setxAxisLabel(int label)
+void PlotItemBase::setxAxisLabel(const QString &label)
 {
 	m_xAxisLabel = label;
 }
 
-void PlotItemBase::setyAxisLabel(int label)
+void PlotItemBase::setyAxisLabel(const QString & label)
 {
 	m_yAxisLabel = label;
 }
 
-void PlotItemBase::setAxisLabelColor(QColor & color)
+void PlotItemBase::setAxisLabelColor(const QColor & color)
 {
 	m_axisLabelColor = color;
 }
 
-void PlotItemBase::setAxisLabelFont(QFont & font)
+void PlotItemBase::setAxisLabelFont(const QFont &font)
 {
 	m_axisLabelFont = font;
 }

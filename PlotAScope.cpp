@@ -188,19 +188,19 @@ void PlotAScope::setUnitsY(const QString & units)
 	m_customPlot->replot();
 }
 
-void PlotAScope::setTitle(QString & str)
+void PlotAScope::setTitle(const QString & str)
 {
 	m_title = str;
 	update();
 }
 
-void PlotAScope::setTitleColor(QColor & color)
+void PlotAScope::setTitleColor(const QColor & color)
 {
 	m_titleColor = color;
 	update();
 }
 
-void PlotAScope::setTitleFont(QFont & font)
+void PlotAScope::setTitleFont(const QFont &font)
 {
 	m_titleFont = font;
 	update();
@@ -225,14 +225,14 @@ void PlotAScope::setTitleFillColor(QColor & color)
 	update();
 }
 
-void PlotAScope::setxAxisLabel(QString & str)
+void PlotAScope::setxAxisLabel(const QString &str)
 {
 	m_xAxisLabel = str;
 	m_customPlot->xAxis->setLabel(m_xAxisLabel);
 	m_customPlot->replot();
 }
 
-void PlotAScope::setyAxisLabel(QString & str)
+void PlotAScope::setyAxisLabel(const QString & str)
 {
 	m_yAxisLabel = str;
 	m_customPlot->yAxis->setLabel(m_yAxisLabel);

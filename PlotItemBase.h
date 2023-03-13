@@ -47,8 +47,8 @@ public:
 	virtual void setAxisColorWidth(QColor color, uint width);
 	virtual void setGridColorWidth(QColor color, uint width);
 	virtual void setGridVisible(bool enable);
-	virtual void setTickLabelColor(QColor& color);
-	virtual void setTickLabelFont(QFont& font);
+    virtual void setTickLabelColor(const QColor &color);
+    virtual void setTickLabelFont(const QFont& font);
 	virtual void setTickLabelFontSize(int size);
 	virtual void setGridStyle(GridStyle style);
 	virtual void setGridDensity(GridDensity density);
@@ -58,15 +58,15 @@ public:
 	virtual void setUnitsX(const QString& units);
 	virtual void setUnitsY(const QString& units);
 	virtual void setTitleVisible(bool on);
-	virtual void setTitle(QString& title);
-	virtual void setTitleColor(QColor& color);
-	virtual void setTitleFillColor(QColor& color);
-	virtual void setTitleFont(QFont& font);
+    virtual void setTitle(const QString &title);
+    virtual void setTitleColor(const QColor& color);
+    virtual void setTitleFillColor(const QColor &color);
+    virtual void setTitleFont(const QFont& font);
 	virtual void setTitleFontSize(int size);
-	virtual void setxAxisLabel(int label);
-	virtual void setyAxisLabel(int label);
-	virtual void setAxisLabelColor(QColor& color);
-	virtual void setAxisLabelFont(QFont& font);
+    virtual void setxAxisLabel(const QString& label);
+    virtual void setyAxisLabel(const QString &label);
+    virtual void setAxisLabelColor(const QColor& color);
+    virtual void setAxisLabelFont(const QFont& font);
 	virtual void setAxisLabelFontSize(int size);
 
 	//getters:
