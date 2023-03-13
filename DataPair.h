@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <QObject>
 #include <QColor>
@@ -152,45 +152,45 @@ public:
 		rotation_270
 	};
 private:
-	QPair<QString, QString> m_dataPair;		//Êı¾İ¶Ô
-	int		m_lineWidth;		//Ïß¿í
-	bool	m_isDraw;			//ÊÇ·ñ»æÖÆ
-	QColor	m_color;			//Êı¾İÑÕÉ«
-	bool	m_isLineMode;		//ÊÇ·ñÎªÏßÄ£Ê½
-	bool	m_matchColor;		//ÑÕÉ«Æ¥Åä
+	QPair<QString, QString> m_dataPair;		//æ•°æ®å¯¹
+	int		m_lineWidth;		//çº¿å®½
+	bool	m_isDraw;			//æ˜¯å¦ç»˜åˆ¶
+	QColor	m_color;			//æ•°æ®é¢œè‰²
+	bool	m_isLineMode;		//æ˜¯å¦ä¸ºçº¿æ¨¡å¼
+	bool	m_matchColor;		//é¢œè‰²åŒ¹é…
 
-	bool	m_iconDraw;			//ÊÇ·ñÏÔÊ¾Í¼±ê
-	QString m_iconName;			//Í¼±êËùÔÚÍêÕûÂ·¾¶
-	ICON_ROTATION m_iconRotation;	//Í¼±êĞı×ª
+	bool	m_iconDraw;			//æ˜¯å¦æ˜¾ç¤ºå›¾æ ‡
+	QString m_iconName;			//å›¾æ ‡æ‰€åœ¨å®Œæ•´è·¯å¾„
+	ICON_ROTATION m_iconRotation;	//å›¾æ ‡æ—‹è½¬
 	bool	m_iconFlipHorz;
 	bool	m_iconFlipVert;
 	QColor	m_iconColor;
-	QSize	m_iconSize;			//Í¼±ê´óĞ¡
-	QPixmap m_icon;				//Í¼±ê
+	QSize	m_iconSize;			//å›¾æ ‡å¤§å°
+	QPixmap m_icon;				//å›¾æ ‡
 
-	TEXT_FROMAT m_format;		//ÎÄ±¾¸ñÊ½
-	QString m_labelText;		//ÏÔÊ¾ÎÄ±¾
-	QString m_customText;		//×Ô¶¨ÒåÎÄ±¾
-	QColor	m_labelColor;		//ÎÄ±¾ÑÕÉ«
-	QColor	m_labelBackground;	//ÎÄ±¾±³¾°É«
-	bool	m_backTransparent;	//Í¸Ã÷±³¾°
-	QFont	m_labelFont;		//ÎÄ±¾×ÖÌå
-	int		m_labelFontSize;	//ÎÄ±¾×ÖÌå´óĞ¡
-	int		m_labelPrec_x;		//xÖáÏÔÊ¾¾«¶È
-	int		m_labelPrec_y;		//yÖáÏÔÊ¾¾«¶È
-	QString m_unit_x;			//xÖáµ¥Î»
-	QString m_unit_y;			//yÖáµ¥Î»
-	TEXT_POSITION m_position;		//ÎÄ±¾Î»ÖÃ
-	bool	m_labelText_show;	//ÎÄ±¾ÊÇ·ñÏÔÊ¾
-	bool	m_prefix_show;		//Ç°×ºÊÇ·ñÏÔÊ¾
-	QString m_object_x;			//xÖáÊµÌåÃû
-	QString m_object_y;			//yÖáÊµÌåÃû
-	bool	m_object_show;		//ÊµÌåÃûÊÇ·ñÏÔÊ¾
-	QString m_attr_x;			//xÖáÊôĞÔ
-	QString m_attr_y;			//yÖáÊôĞÔ
-	bool	m_attr_show;		//ÊôĞÔÊÇ·ñÏÔÊ¾
-	bool	m_data_show;		//Êı¾İÊÇ·ñÏÔÊ¾
-	bool	m_unit_show;		//µ¥Î»ÊÇ·ñÏÔÊ¾
+	TEXT_FROMAT m_format;		//æ–‡æœ¬æ ¼å¼
+	QString m_labelText;		//æ˜¾ç¤ºæ–‡æœ¬
+	QString m_customText;		//è‡ªå®šä¹‰æ–‡æœ¬
+	QColor	m_labelColor;		//æ–‡æœ¬é¢œè‰²
+	QColor	m_labelBackground;	//æ–‡æœ¬èƒŒæ™¯è‰²
+	bool	m_backTransparent;	//é€æ˜èƒŒæ™¯
+	QFont	m_labelFont;		//æ–‡æœ¬å­—ä½“
+	int		m_labelFontSize;	//æ–‡æœ¬å­—ä½“å¤§å°
+	int		m_labelPrec_x;		//xè½´æ˜¾ç¤ºç²¾åº¦
+	int		m_labelPrec_y;		//yè½´æ˜¾ç¤ºç²¾åº¦
+	QString m_unit_x;			//xè½´å•ä½
+	QString m_unit_y;			//yè½´å•ä½
+	TEXT_POSITION m_position;		//æ–‡æœ¬ä½ç½®
+	bool	m_labelText_show;	//æ–‡æœ¬æ˜¯å¦æ˜¾ç¤º
+	bool	m_prefix_show;		//å‰ç¼€æ˜¯å¦æ˜¾ç¤º
+	QString m_object_x;			//xè½´å®ä½“å
+	QString m_object_y;			//yè½´å®ä½“å
+	bool	m_object_show;		//å®ä½“åæ˜¯å¦æ˜¾ç¤º
+	QString m_attr_x;			//xè½´å±æ€§
+	QString m_attr_y;			//yè½´å±æ€§
+	bool	m_attr_show;		//å±æ€§æ˜¯å¦æ˜¾ç¤º
+	bool	m_data_show;		//æ•°æ®æ˜¯å¦æ˜¾ç¤º
+	bool	m_unit_show;		//å•ä½æ˜¯å¦æ˜¾ç¤º
 
 signals:
 	void dataUpdate();

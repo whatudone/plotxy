@@ -1,4 +1,4 @@
-#include "AdvancedDataManager.h"
+﻿#include "AdvancedDataManager.h"
 #include "PlotManagerData.h"
 #include <QTableWidgetSelectionRange>
 #include <QColorDialog>

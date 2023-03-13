@@ -1,4 +1,4 @@
-#include "PlotManager.h"
+ï»¿#include "PlotManager.h"
 #include "addplotpair.h"
 #include <QColorDialog>
 #include <QTreeWidget>
@@ -21,7 +21,7 @@ PlotManager::PlotManager(QWidget* parent)
 	ui.setupUi(this);
 
 	connect(ui.pushButton_close, &QPushButton::clicked, this, &PlotManager::onBtnCloseClicked);
-	this->setWindowTitle(QString::fromLocal8Bit("Í¼±í¹ÜÀíÆ÷"));
+	this->setWindowTitle(QString::fromLocal8Bit("å›¾è¡¨ç®¡ç†å™¨"));
 	init();
 
 	connect(PlotManagerData::getInstance(), SIGNAL(sgnUpdatePlotManager()), this, SLOT(onUpdatePlotManager()));
@@ -57,7 +57,7 @@ void PlotManager::addPlot(const QString& tabName, PlotItemBase* plotItem)
 {
 	m_plotManager = PlotManagerData::getInstance()->getPlotManagerData();
 
-	//ÏÔÊ¾²ã¸üĞÂ
+	//æ˜¾ç¤ºå±‚æ›´æ–°
 	if (m_plotManager.contains(tabName))
 	{
 		QList<QTreeWidgetItem*> topWidget = ui.treeWidget_selectedPlots->findItems(tabName, Qt::MatchCaseSensitive, 0);
@@ -80,36 +80,36 @@ void PlotManager::addPlot(const QString& tabName, PlotItemBase* plotItem)
 		ui.comboBox_tabName->addItem(tabName);
 	}
 
-	//Êı¾İ²ã¸üĞÂ
+	//æ•°æ®å±‚æ›´æ–°
 //	m_plotManager[tabName].append(plotItem);
 }
 
 void PlotManager::initTreeWidgetSettings()
 {
 	ui.treeWidget_settings->setHeaderHidden(false);
-	ui.treeWidget_settings->setHeaderLabel(QString::fromLocal8Bit("ÉèÖÃ"));
+	ui.treeWidget_settings->setHeaderLabel(QString::fromLocal8Bit("è®¾ç½®"));
 	ui.treeWidget_settings->setIndentation(15);
 
 	connect(ui.treeWidget_settings, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(onTWSclicked(QTreeWidgetItem*, int)));
 
-	m_itemGeneral = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("Í¨ÓÃÉèÖÃ")));
-	m_itemAxis = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("×ø±êÖáºÍÍø¸ñÉèÖÃ")));
-	m_itemLinkedAxis = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("Á´½ÓÖá")));
-	m_itemPlotData = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("Êı¾İÉèÖÃ")));
-	m_itemText = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("ÎÄ±¾ĞÅÏ¢")));
-	m_itemScatterPlot = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("ScatterÉèÖÃ")));
-	m_itemAScope = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("A-ScopeÉèÖÃ")));
-	m_itemRTI = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("RTIÉèÖÃ")));
-	m_itemTextLight = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("Text/LightÉèÖÃ")));
-	m_itemBar = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("BarÉèÖÃ")));
-	m_itemDial = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("DialsÉèÖÃ")));
-	m_itemAttitude = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("AttitudeÉèÖÃ")));
-	m_itemTrackStatus = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("Track StatusÉèÖÃ")));
-	m_itemRangeDoppler = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("Range DopplerÉèÖÃ")));
+	m_itemGeneral = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("é€šç”¨è®¾ç½®")));
+	m_itemAxis = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("åæ ‡è½´å’Œç½‘æ ¼è®¾ç½®")));
+	m_itemLinkedAxis = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("é“¾æ¥è½´")));
+	m_itemPlotData = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("æ•°æ®è®¾ç½®")));
+	m_itemText = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("æ–‡æœ¬ä¿¡æ¯")));
+	m_itemScatterPlot = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("Scatterè®¾ç½®")));
+	m_itemAScope = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("A-Scopeè®¾ç½®")));
+	m_itemRTI = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("RTIè®¾ç½®")));
+	m_itemTextLight = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("Text/Lightè®¾ç½®")));
+	m_itemBar = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("Barè®¾ç½®")));
+	m_itemDial = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("Dialsè®¾ç½®")));
+	m_itemAttitude = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("Attitudeè®¾ç½®")));
+	m_itemTrackStatus = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("Track Statusè®¾ç½®")));
+	m_itemRangeDoppler = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("Range Dopplerè®¾ç½®")));
 
-	m_itemGOG = new QTreeWidgetItem(m_itemScatterPlot, QStringList(QString::fromLocal8Bit("GOGÇúÏß")));
-	m_itemLimits = new QTreeWidgetItem(m_itemScatterPlot, QStringList(QString::fromLocal8Bit("ÏŞÖÆ")));
-	m_itemPlotMarkers = new QTreeWidgetItem(m_itemScatterPlot, QStringList(QString::fromLocal8Bit("±ê¼Ç")));
+	m_itemGOG = new QTreeWidgetItem(m_itemScatterPlot, QStringList(QString::fromLocal8Bit("GOGæ›²çº¿")));
+	m_itemLimits = new QTreeWidgetItem(m_itemScatterPlot, QStringList(QString::fromLocal8Bit("é™åˆ¶")));
+	m_itemPlotMarkers = new QTreeWidgetItem(m_itemScatterPlot, QStringList(QString::fromLocal8Bit("æ ‡è®°")));
 	m_itemTimeLine = new QTreeWidgetItem(m_itemScatterPlot, QStringList("Time Line"));
 	m_itemHandsOff = new QTreeWidgetItem(m_itemScatterPlot, QStringList("Hands-Off"));
 
@@ -196,7 +196,7 @@ void PlotManager::initTextLightUI()
 	connect(ui.pushButton_gridFill, &QPushButton::clicked, this, [=]() {
 		ui.pushButton_73->setColor(ui.pushButton_gridFill->color());
 	});
-	connect(ui.pushButton_68, SIGNAL(clicked()), this, SLOT(onAddNewClicked()));//Õâ¸öÊÇÕÙ»½addplotpairµÄ°´Å¥£¬ÀÁµÃ×Ô¼ºĞÂ½¨ÁË£¬¾ÍÖ±½ÓÓÃÁË
+	connect(ui.pushButton_68, SIGNAL(clicked()), this, SLOT(onAddNewClicked()));//è¿™ä¸ªæ˜¯å¬å”¤addplotpairçš„æŒ‰é’®ï¼Œæ‡’å¾—è‡ªå·±æ–°å»ºäº†ï¼Œå°±ç›´æ¥ç”¨äº†
 	connect(ui.pushButton_69, &QPushButton::clicked, this, &PlotManager::onPushButton_69Clicked);
 	connect(ui.pushButton_66,&QPushButton::clicked,this,&PlotManager::onPushButton_66Clicked);
 	connect(ui.pushButton_67, &QPushButton::clicked, this, &PlotManager::onPushButton_67Clicked);
@@ -262,7 +262,7 @@ void PlotManager::refreshTreeWidgetSettingEnabled(PlotItemBase * plot)
 	if (name.compare("PlotScatter") == 0)
 	{
 		enableItem_Scatter();
-		//plotPair½çÃæ
+		//plotPairç•Œé¢
 		refreshPlotDataUI(m_curSelectPlot);
 	}
 	else if (name.compare("PlotAScope") == 0)
@@ -276,13 +276,13 @@ void PlotManager::refreshTreeWidgetSettingEnabled(PlotItemBase * plot)
 	else if (name.compare("PlotText") == 0)
 	{
 		enableItem_Text_Light();
-		//Text&Light½çÃæ
+		//Text&Lightç•Œé¢
 		refreshLightTextUI(m_curSelectPlot);
 	}
 	else if (name.compare("PlotLight") == 0)
 	{
 		enableItem_Text_Light();
-		//Text&Light½çÃæ
+		//Text&Lightç•Œé¢
 		refreshLightTextUI(m_curSelectPlot);
 	}
 	else if (name.compare("PlotBar") == 0)
@@ -379,7 +379,7 @@ void PlotManager::refreshPlotDataUI(PlotItemBase * plot)
 //	QList<QPair<QString, QString>> plotPairData = plot->getPlotPairData();
 	for (int k = 0; k < dataPair.size(); ++k)
 	{
-		//½çÃæ¸üĞÂ
+		//ç•Œé¢æ›´æ–°
 		QTableWidgetItem* addplot1 = new QTableWidgetItem(dataPair[k]->getDataPair().first);
 		QTableWidgetItem* addplot2 = new QTableWidgetItem(dataPair[k]->getDataPair().second);
 		int row = ui.tableWidget_plotData->rowCount();
@@ -628,11 +628,11 @@ void PlotManager::onTWSPclicked(QTreeWidgetItem* item, int column)
 			if (child_text == tempPlot->currName())
 			{
 				m_curSelectPlot = tempPlot;
-				//Ë¢ĞÂtreeWidgetSettingµÄÊ¹ÄÜ×´Ì¬
+				//åˆ·æ–°treeWidgetSettingçš„ä½¿èƒ½çŠ¶æ€
 				refreshTreeWidgetSettingEnabled(m_curSelectPlot);
-				//general½çÃæ
+				//generalç•Œé¢
 				refreshGeneralUI(m_curSelectPlot);
-				//Axis&Grid½çÃæ
+				//Axis&Gridç•Œé¢
 				refreshAxisGridUI(m_curSelectPlot);
 				//Text Edit
 				refreshTextEditUI(m_curSelectPlot);
@@ -719,39 +719,39 @@ void PlotManager::onTWSclicked(QTreeWidgetItem* item, int column)
 		return;	
 	else
 	{
-		if (compare == QString::fromLocal8Bit("Í¨ÓÃÉèÖÃ"))
+		if (compare == QString::fromLocal8Bit("é€šç”¨è®¾ç½®"))
 		{
 			ui.stackedWidget->setCurrentIndex(0);
 		}
-		else if (compare == QString::fromLocal8Bit("×ø±êÖáºÍÍø¸ñÉèÖÃ"))
+		else if (compare == QString::fromLocal8Bit("åæ ‡è½´å’Œç½‘æ ¼è®¾ç½®"))
 		{
 			ui.stackedWidget->setCurrentIndex(1);
 		}
-		else if (compare == QString::fromLocal8Bit("Êı¾İÉèÖÃ"))
+		else if (compare == QString::fromLocal8Bit("æ•°æ®è®¾ç½®"))
 		{
 			ui.stackedWidget->setCurrentIndex(2);
 		}
-		else if (compare == QString::fromLocal8Bit("ÎÄ±¾ĞÅÏ¢"))
+		else if (compare == QString::fromLocal8Bit("æ–‡æœ¬ä¿¡æ¯"))
 		{
 			ui.stackedWidget->setCurrentIndex(3);
 		}
-		else if (compare == QString::fromLocal8Bit("Á´½ÓÖá"))
+		else if (compare == QString::fromLocal8Bit("é“¾æ¥è½´"))
 		{
 			ui.stackedWidget->setCurrentIndex(5);
 		}
-		else if (compare == QString::fromLocal8Bit("ScatterÉèÖÃ"))
+		else if (compare == QString::fromLocal8Bit("Scatterè®¾ç½®"))
 		{
 			ui.stackedWidget->setCurrentIndex(4);
 		}
-		else if (compare == QString::fromLocal8Bit("GOGÇúÏß"))
+		else if (compare == QString::fromLocal8Bit("GOGæ›²çº¿"))
 		{
 			ui.stackedWidget->setCurrentIndex(4);
 		}
-		else if (compare == QString::fromLocal8Bit("ÏŞÖÆ"))
+		else if (compare == QString::fromLocal8Bit("é™åˆ¶"))
 		{
 			ui.stackedWidget->setCurrentIndex(6);
 		}
-		else if (compare == QString::fromLocal8Bit("±ê¼Ç"))
+		else if (compare == QString::fromLocal8Bit("æ ‡è®°"))
 		{
 			ui.stackedWidget->setCurrentIndex(7);
 		}
@@ -763,35 +763,35 @@ void PlotManager::onTWSclicked(QTreeWidgetItem* item, int column)
 		{
 			ui.stackedWidget->setCurrentIndex(9);
 		}
-		else if (compare == QString::fromLocal8Bit("A-ScopeÉèÖÃ"))
+		else if (compare == QString::fromLocal8Bit("A-Scopeè®¾ç½®"))
 		{
 			ui.stackedWidget->setCurrentIndex(10);
 		}
-		else if (compare == QString::fromLocal8Bit("RTIÉèÖÃ"))
+		else if (compare == QString::fromLocal8Bit("RTIè®¾ç½®"))
 		{
 			ui.stackedWidget->setCurrentIndex(11);
 		}
-		else if (compare == QString::fromLocal8Bit("Text/LightÉèÖÃ"))
+		else if (compare == QString::fromLocal8Bit("Text/Lightè®¾ç½®"))
 		{
 			ui.stackedWidget->setCurrentIndex(12);
 		}
-		else if (compare == QString::fromLocal8Bit("BarÉèÖÃ"))
+		else if (compare == QString::fromLocal8Bit("Barè®¾ç½®"))
 		{
 			ui.stackedWidget->setCurrentIndex(13);
 		}
-		else if (compare == QString::fromLocal8Bit("DialsÉèÖÃ"))
+		else if (compare == QString::fromLocal8Bit("Dialsè®¾ç½®"))
 		{
 			ui.stackedWidget->setCurrentIndex(14);
 		}
-		else if (compare == QString::fromLocal8Bit("AttitudeÉèÖÃ"))
+		else if (compare == QString::fromLocal8Bit("Attitudeè®¾ç½®"))
 		{
 			ui.stackedWidget->setCurrentIndex(15);
 		}
-		else if (compare == QString::fromLocal8Bit("Track StatusÉèÖÃ"))
+		else if (compare == QString::fromLocal8Bit("Track Statusè®¾ç½®"))
 		{
 			ui.stackedWidget->setCurrentIndex(16);
 		}
-		else if (compare == QString::fromLocal8Bit("Range DopplerÉèÖÃ"))
+		else if (compare == QString::fromLocal8Bit("Range Dopplerè®¾ç½®"))
 		{
 			ui.stackedWidget->setCurrentIndex(17);
 		}
@@ -1234,7 +1234,7 @@ void PlotManager::onTableWidget_textLightDataSortItemSelectionChanged()
 {
 	if (m_curSelectPlot->currName().startsWith("Text"))
 	{
-		//ÉèÖÃMove Up/Move DownµÄenable
+		//è®¾ç½®Move Up/Move Downçš„enable
 		if (ui.tableWidget_TextDataSort->currentRow() < 0)
 			return;
 		int row = ui.tableWidget_TextDataSort->rowCount();
@@ -1302,7 +1302,7 @@ void PlotManager::onTableWidget_plotDataItemSelectionChanged()
 	ui.pushButton_18->setEnabled(true);
 	ui.pushButton_19->setEnabled(true);
 
-	//ÅĞ¶ÏÑ¡ÖĞĞĞÊı£¬Ê¹ÄÜmove°´Å¥
+	//åˆ¤æ–­é€‰ä¸­è¡Œæ•°ï¼Œä½¿èƒ½moveæŒ‰é’®
 	int rowCount = ui.tableWidget_plotData->rowCount();
 	if (rowCount <= 1)
 	{
@@ -1506,7 +1506,7 @@ void PlotManager::onPushButton_66Clicked()
 			return;
 	}
 	
-	//Light¸Ä±äµÄÊ±ºò¿ÉÄÜ»áÓÃµ½
+	//Lightæ”¹å˜çš„æ—¶å€™å¯èƒ½ä¼šç”¨åˆ°
 	//QVector<DataPair*> vec = m_curSelectPlot->getDataPair();
 	//vec.move(row, row - 1);
 	//m_curSelectPlot->setDataPair(vec);

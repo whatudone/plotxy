@@ -1,5 +1,5 @@
-/* * @filename: PlotAttitude.h
-* @brief: PlotAttitude¿Ø¼şÀà
+ï»¿/* * @filename: PlotAttitude.h
+* @brief: PlotAttitudeæ§ä»¶ç±»
 * @author: wangzhen
 * @create time: 2022-10-10
 *  */
@@ -28,40 +28,40 @@ public:
 	void drawText_roll(QPainter *painter, int radius);
 	void drawText_pitch(QPainter *painter, int radius);
 private:
-	QColor m_border_ColorStart;			//±ß¿ò½¥±ä¿ªÊ¼ÑÕÉ«
-	QColor m_border_ColorEnd;			//±ß¿ò½¥±ä½áÊøÑÕÉ«
-	QColor m_rollColor;					//rollÖ÷ÌâÑÕÉ«
-	QColor m_pitchColor;				//pitchÖ÷ÌâÑÕÉ«
+	QColor m_border_ColorStart;			//è¾¹æ¡†æ¸å˜å¼€å§‹é¢œè‰²
+	QColor m_border_ColorEnd;			//è¾¹æ¡†æ¸å˜ç»“æŸé¢œè‰²
+	QColor m_rollColor;					//rollä¸»é¢˜é¢œè‰²
+	QColor m_pitchColor;				//pitchä¸»é¢˜é¢œè‰²
 
-	QFont m_tickLabelFont;				//¿Ì¶È×ÖÌå
-	QFont m_axisLabelFont;					//ÎÄ±¾×ÖÌå
+	QFont m_tickLabelFont;				//åˆ»åº¦å­—ä½“
+	QFont m_axisLabelFont;					//æ–‡æœ¬å­—ä½“
 
-	double m_pitchValue;				//Ğı×ª½Ç¶È
-	double m_rollValue;					//¹ö¶¯Öµ
-	int    m_horzGrids;					//roll×ø±ê¸öÊı
-	double m_coordBgn_x;				//rollÆğÊ¼½Ç¶È
-	double m_coordEnd_x;				//roll½áÊø½Ç¶È
-	int	   m_decision_roll;				//rollĞ¡Êıµã¾«¶È
+	double m_pitchValue;				//æ—‹è½¬è§’åº¦
+	double m_rollValue;					//æ»šåŠ¨å€¼
+	int    m_horzGrids;					//rollåæ ‡ä¸ªæ•°
+	double m_coordBgn_x;				//rollèµ·å§‹è§’åº¦
+	double m_coordEnd_x;				//rollç»“æŸè§’åº¦
+	int	   m_decision_roll;				//rollå°æ•°ç‚¹ç²¾åº¦
 
-	int    m_vertGrids;					//pitch×ø±ê¸öÊı
-	double m_coordBgn_y;				//pitchÆğÊ¼½Ç¶È
-	double m_coordEnd_y;				//pitch½áÊø½Ç¶È
-	int	   m_decision_pitch;			//pitchĞ¡Êıµã¾«¶È
+	int    m_vertGrids;					//pitchåæ ‡ä¸ªæ•°
+	double m_coordBgn_y;				//pitchèµ·å§‹è§’åº¦
+	double m_coordEnd_y;				//pitchç»“æŸè§’åº¦
+	int	   m_decision_pitch;			//pitchå°æ•°ç‚¹ç²¾åº¦
 
-	double m_topPadding;				//»æÍ¼¼ä¸ô-top
-	double m_bottomPadding;				//»æÍ¼¼ä¸ô-bottom
-	double m_leftPadding;				//»æÍ¼¼ä¸ô-left
-	double m_rightPadding;				//»æÍ¼¼ä¸ô-right
+	double m_topPadding;				//ç»˜å›¾é—´éš”-top
+	double m_bottomPadding;				//ç»˜å›¾é—´éš”-bottom
+	double m_leftPadding;				//ç»˜å›¾é—´éš”-left
+	double m_rightPadding;				//ç»˜å›¾é—´éš”-right
 
-	int	   m_tickRadiusPercentage;		//¿Ì¶È°ë¾¶°Ù·Ö±È
-	int    m_textPercentage;			//ÎÄ±¾°ë¾¶°Ù·Ö±È
-	int    m_dialPercentage;			//±íÅÌ°ë¾¶°Ù·Ö±È
+	int	   m_tickRadiusPercentage;		//åˆ»åº¦åŠå¾„ç™¾åˆ†æ¯”
+	int    m_textPercentage;			//æ–‡æœ¬åŠå¾„ç™¾åˆ†æ¯”
+	int    m_dialPercentage;			//è¡¨ç›˜åŠå¾„ç™¾åˆ†æ¯”
 
 	QList<double> m_xValueList;
 	QList<double> m_yValueList;
 
 public:
-	static int m_instanceCount;			//ÊµÌå¸öÊı
+	static int m_instanceCount;			//å®ä½“ä¸ªæ•°
 public:
 	QColor getBorderOutColorStart() const;
 	QColor getBorderOutColorEnd()   const;
@@ -125,32 +125,32 @@ public slots:
 	void setTextPercentage(int);
 	void setDialPercentage(int);
 	
-	//ÉèÖÃ±ß¿ò½¥±äÑÕÉ«
+	//è®¾ç½®è¾¹æ¡†æ¸å˜é¢œè‰²
 	void slot_setBorderColorStart(const QColor &borderOutColorStart);
 	void slot_setBorderColorEnd(const QColor &borderOutColorEnd);
 
-	//ÉèÖÃ±³¾°É«
+	//è®¾ç½®èƒŒæ™¯è‰²
 	void setGridFillColor(QColor bgColor);
 
-	//ÉèÖÃ¿Ì¶È³ßÑÕÉ«
+	//è®¾ç½®åˆ»åº¦å°ºé¢œè‰²
 	void setRollColor(const QColor &color);
 	void setPitchColor(const QColor &color);
 
-	//ÉèÖÃ¿Ì¶È×ÖÌå
+	//è®¾ç½®åˆ»åº¦å­—ä½“
 	void setTickLabelFont(QFont &font);
 	void setTickLabelFontSize(int size);
 
-	//ÉèÖÃÎÄ±¾×ÖÌå
+	//è®¾ç½®æ–‡æœ¬å­—ä½“
 	void setAxisLabelFont(QFont &font);
 	void setAxisLabelFontSize(int size);
 
-	//ÉèÖÃĞı×ª½Ç¶ÈÖµ
+	//è®¾ç½®æ—‹è½¬è§’åº¦å€¼
 	void slot_setPitchValue(double pitchValue);
 
-	//ÉèÖÃÇ°½øĞı×ªÖµ
+	//è®¾ç½®å‰è¿›æ—‹è½¬å€¼
 	void slot_setRollValue(double rollValue);
 
-	//½ÓÊÕµ±Ç°Ê±¼ä
+	//æ¥æ”¶å½“å‰æ—¶é—´
 	void slot_getCurrentSeconds(double);
 };
 

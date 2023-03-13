@@ -1,4 +1,4 @@
-
+﻿
 #ifndef SIMCORE_TIME_UTILS_H
 #define SIMCORE_TIME_UTILS_H
 

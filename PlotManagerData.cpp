@@ -1,4 +1,4 @@
-#include "PlotManagerData.h"
+﻿#include "PlotManagerData.h"
 
 PlotManagerData* PlotManagerData::m_pInstance = new PlotManagerData();
 PlotManagerData::PlotManagerDataRelease PlotManagerData::m_release;

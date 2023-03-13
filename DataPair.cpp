@@ -1,4 +1,4 @@
-#include "DataPair.h"
+﻿#include "DataPair.h"
 #include <QPainter>
 #include <QTransform>
 

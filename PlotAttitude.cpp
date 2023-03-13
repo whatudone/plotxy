@@ -1,4 +1,4 @@
-#include "PlotAttitude.h"
+ï»¿#include "PlotAttitude.h"
 #include <QDebug>
 #include <QPainter>
 #include <QtMath>
@@ -32,8 +32,8 @@ PlotAttitude::PlotAttitude(QWidget* parent)
 	m_horzGrids = 4;
 	m_vertGrids = 5;
 
-	m_units_x = QString::fromLocal8Bit("¡ã");
-	m_units_y = QString::fromLocal8Bit("¡ã");
+	m_units_x = QString::fromLocal8Bit("Â°");
+	m_units_y = QString::fromLocal8Bit("Â°");
 	m_showUnits_x = true;
 	m_showUnits_y = true;
 	m_decision_roll = 0;
@@ -80,24 +80,24 @@ void PlotAttitude::paintEvent(QPaintEvent* event)
 	int radius = qMin(width - m_leftPadding - m_rightPadding, height - topPadding - m_bottomPadding) / 2;
 	radius = radius * m_dialPercentage / 100;
 
-	//»­±Ê
+	//ç”»ç¬”
 	QPainter painter(this);
 	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
 	painter.translate(width / 2, height / 2);
 
-	//»æÖÆ±êÌâ
+	//ç»˜åˆ¶æ ‡é¢˜
 	drawTitle(&painter, radius);
-	//»æÖÆ±³¾°
+	//ç»˜åˆ¶èƒŒæ™¯
 	drawBg(&painter, radius);
-	//»æÖÆ¿Ì¶È³ß
+	//ç»˜åˆ¶åˆ»åº¦å°º
 	drawScale_roll(&painter, radius);
 	drawScale_pitch(&painter, radius);
-	//»æÖÆÍâ±ß¿ò
+	//ç»˜åˆ¶å¤–è¾¹æ¡†
 	drawBorder(&painter, radius);
-	//»æÖÆÏßÌõ
+	//ç»˜åˆ¶çº¿æ¡
 	drawLine_roll(&painter, radius);
 	drawLine_pitch(&painter, radius);
-	//»æÖÆÎÄ±¾
+	//ç»˜åˆ¶æ–‡æœ¬
 	drawText_roll(&painter, radius);
 	drawText_pitch(&painter, radius);
 

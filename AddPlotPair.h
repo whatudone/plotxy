@@ -1,4 +1,4 @@
-#ifndef _ADD_PLOT_PAIR_H_
+﻿#ifndef _ADD_PLOT_PAIR_H_
 #define _ADD_PLOT_PAIR_H_
 
 #include <QWidget>

@@ -1,4 +1,4 @@
-#include "PlotBar.h"
+ï»¿#include "PlotBar.h"
 #include <QDebug>
 #include <QPainter>
 #include "DataManager.h"
@@ -117,7 +117,7 @@ void PlotBar::paintEvent(QPaintEvent *event)
     QPainter painter(this);
 	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
     QPen pen;
-	//»æÖÆ±êÌâ
+	//ç»˜åˆ¶æ ‡é¢˜
 	QFontMetricsF fm(m_titleFont);
 	double w = fm.size(Qt::TextSingleLine, m_title).width();
 	double h = fm.size(Qt::TextSingleLine, m_title).height();
@@ -129,24 +129,24 @@ void PlotBar::paintEvent(QPaintEvent *event)
 		painter.drawText(QPoint((width + m_leftPadding - m_rightPadding - w) / 2, as + m_topPadding), m_title);
 	}
 
-	//»æÖÆxÖáºÍyÖá
+	//ç»˜åˆ¶xè½´å’Œyè½´
     pen.setColor(m_axisColor);
     pen.setWidth(2);
     painter.setPen(pen);
-    painter.drawLine(QPoint(m_leftPadding, height - m_bottomPadding), QPoint(width - m_rightPadding, height - m_bottomPadding));   //xÖá
-    painter.drawLine(QPoint(m_leftPadding, height - m_bottomPadding), QPoint(m_leftPadding, m_topPadding + h));    //yÖá
+    painter.drawLine(QPoint(m_leftPadding, height - m_bottomPadding), QPoint(width - m_rightPadding, height - m_bottomPadding));   //xè½´
+    painter.drawLine(QPoint(m_leftPadding, height - m_bottomPadding), QPoint(m_leftPadding, m_topPadding + h));    //yè½´
 
-    //»æÖÆÍø¸ñ
+    //ç»˜åˆ¶ç½‘æ ¼
     pen.setColor(m_gridColor);
     painter.setPen(pen);
 
-    QBrush brush;   //»­Ë¢¡£Ìî³ä¼¸ºÎÍ¼ĞÎµÄµ÷É«°å£¬ÓÉÑÕÉ«ºÍÌî³ä·ç¸ñ×é³É
+    QBrush brush;   //ç”»åˆ·ã€‚å¡«å……å‡ ä½•å›¾å½¢çš„è°ƒè‰²æ¿ï¼Œç”±é¢œè‰²å’Œå¡«å……é£æ ¼ç»„æˆ
     brush.setColor(m_gridFillColor);
     brush.setStyle(Qt::SolidPattern);
     //painter.setBrush(brush);
 
     int horiGridWidth = 0;
-    if (m_horiGridNum) {    //itemË®Æ½·½ÏòÑÓÕ¹
+    if (m_horiGridNum) {    //itemæ°´å¹³æ–¹å‘å»¶å±•
         horiGridWidth = (width - m_leftPadding - m_rightPadding) / m_horiGridNum;
     }
 
@@ -157,7 +157,7 @@ void PlotBar::paintEvent(QPaintEvent *event)
     }
 
     int verGridWidth = 0;
-    if (m_verGridNum) {     //itemË®Æ½·½ÏòÑÓÕ¹
+    if (m_verGridNum) {     //itemæ°´å¹³æ–¹å‘å»¶å±•
         verGridWidth = (height - m_topPadding - m_bottomPadding - h) / m_verGridNum;
     }
 
@@ -182,7 +182,7 @@ void PlotBar::updateData(int itemIndex, QString x, QString y, double secs)
     if (xSecList.isEmpty())
         return;
 
-    //Ê×ÏÈ¼ÆËãÃ¿¸öitemµÄ¿í¶È/¸ß¶È
+    //é¦–å…ˆè®¡ç®—æ¯ä¸ªitemçš„å®½åº¦/é«˜åº¦
 	QFontMetricsF fm(m_titleFont);
 	double h = fm.size(Qt::TextSingleLine, m_title).height();
     int perItemLength = 0;
@@ -191,38 +191,38 @@ void PlotBar::updateData(int itemIndex, QString x, QString y, double secs)
 	
     if (m_bHorizontal) 
 	{    
-		//itemË®Æ½·½ÏòÑÓÕ¹
+		//itemæ°´å¹³æ–¹å‘å»¶å±•
 		m_horiGridNum = 5;
 		m_verGridNum = 0;
         perItemLength = (height - (cnt - 1) * m_interPadding) / cnt;
     } 
 	else 
 	{   
-		//item´¹Ö±·½ÏòÑÓÕ¹
+		//itemå‚ç›´æ–¹å‘å»¶å±•
 		m_verGridNum = 5;
 		m_horiGridNum = 0;
         perItemLength = (width - (cnt - 1) * m_interPadding) / cnt;
     }
 
-    //*»ñÈ¡µ±Ç°AttrÖµ
+    //*è·å–å½“å‰Attrå€¼
     double currValue = xSecList.last();
 
     QString currKey = xlist.at(0) + '_' + xlist.at(1);
     if (!m_thresholdColorMap.contains(currKey) || m_thresholdColorMap.value(currKey).keys().isEmpty()) {
-        //Ã»ÓĞÉèÖÃãĞÖµ£¬ÔòÎŞĞè·Ö¿ª»æÖÆ¶à¸ö¾ØĞÎ£¬ÒÔÄ¬ÈÏÑÕÉ«»æÖÆÒ»¸ö¼´¿É
+        //æ²¡æœ‰è®¾ç½®é˜ˆå€¼ï¼Œåˆ™æ— éœ€åˆ†å¼€ç»˜åˆ¶å¤šä¸ªçŸ©å½¢ï¼Œä»¥é»˜è®¤é¢œè‰²ç»˜åˆ¶ä¸€ä¸ªå³å¯
         drawRect(itemIndex, m_bHorizontal, perItemLength, m_leftPadding, currValue, m_defaultColor);
         update();
         return;
     }
 
-    //¸ù¾İÑÕÉ«ãĞÖµÀ´·Ö¿ª»æÖÆ
+    //æ ¹æ®é¢œè‰²é˜ˆå€¼æ¥åˆ†å¼€ç»˜åˆ¶
     auto colorMap = m_thresholdColorMap.value(currKey);
     QList<int> thresholdList = colorMap.keys();
     if (currValue < thresholdList.first()) {
         drawRect(itemIndex, m_bHorizontal, perItemLength, m_leftPadding, currValue, m_defaultColor);
     }
 
-    //ÒÔÄ¬ÈÏÑÕÉ«»æÖÆµÚÒ»¸ö¾ØĞÎ
+    //ä»¥é»˜è®¤é¢œè‰²ç»˜åˆ¶ç¬¬ä¸€ä¸ªçŸ©å½¢
     drawRect(itemIndex, m_bHorizontal, perItemLength, m_leftPadding, thresholdList.first(), m_defaultColor);
 
     if (thresholdList.size() == 1) {

@@ -1,4 +1,4 @@
-#include "IconSetting.h"
+﻿#include "IconSetting.h"
 #include <QFileDialog>
 
 IconSetting::IconSetting(QWidget *parent)

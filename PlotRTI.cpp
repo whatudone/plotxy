@@ -1,4 +1,4 @@
-#include "PlotRTI.h"
+ï»¿#include "PlotRTI.h"
 
 int PlotRTI::m_instanceCount = 1;
 PlotRTI::PlotRTI(QWidget* parent)
@@ -117,7 +117,7 @@ void PlotRTI::paintEvent(QPaintEvent * event)
 {
 	int width = this->width();
 	int height = this->height();
-	//»­±Ê
+	//Â»Â­Â±ÃŠ
 	QPainter painter(this);
 	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
 

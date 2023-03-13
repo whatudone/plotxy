@@ -1,4 +1,4 @@
-#include "AddPlotPair.h"
+ï»¿#include "AddPlotPair.h"
 #include "ui_addplotpair.h"
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
@@ -170,7 +170,7 @@ void AddPlotPair::initStackedWidget_pageLight()
 	ui.tableWidget_LightSet->setCellWidget(0, 0, comboBoxEntity);
 	comboBoxAttr->addItem("Time");
 	ui.tableWidget_LightSet->setCellWidget(0, 1, comboBoxAttr);
-	comboBoxCompare->addItem(QString::fromLocal8Bit("¡Ý"));
+	comboBoxCompare->addItem(QString::fromLocal8Bit("â‰¥"));
 	comboBoxCompare->addItem("<");
 	ui.tableWidget_LightSet->setCellWidget(0, 2, comboBoxCompare);
 	comboBoxColor->addItem("G/R/Y");
@@ -226,23 +226,23 @@ void AddPlotPair::onChangeStackIndex(PlotType index)
 	switch (index)
 	{
 	case Type_PlotScatter:
-		ui.groupBox_3->setTitle(QString::fromLocal8Bit("XÖáÊý¾ÝÔ´"));
-		ui.groupBox_2->setTitle(QString::fromLocal8Bit("YÖáÊý¾ÝÔ´"));
+		ui.groupBox_3->setTitle(QString::fromLocal8Bit("Xè½´æ•°æ®æº"));
+		ui.groupBox_2->setTitle(QString::fromLocal8Bit("Yè½´æ•°æ®æº"));
 		ui.stackedWidget->setCurrentIndex(1);
 		break;
 	case Type_PlotPolar:
-		ui.groupBox_3->setTitle(QString::fromLocal8Bit("½Ç¶ÈÊý¾ÝÔ´"));
-		ui.groupBox_2->setTitle(QString::fromLocal8Bit("·ù¶ÈÊý¾ÝÔ´"));
+		ui.groupBox_3->setTitle(QString::fromLocal8Bit("è§’åº¦æ•°æ®æº"));
+		ui.groupBox_2->setTitle(QString::fromLocal8Bit("å¹…åº¦æ•°æ®æº"));
 		ui.stackedWidget->setCurrentIndex(1);
 		break;
 	case Type_PlotAScope:
-		ui.label_XAxis->setText(QString::fromLocal8Bit("XÖá£ºRange(m)"));
-		ui.label_YAxis->setText(QString::fromLocal8Bit("YÖá£ºVoltage(v)"));
+		ui.label_XAxis->setText(QString::fromLocal8Bit("Xè½´ï¼šRange(m)"));
+		ui.label_YAxis->setText(QString::fromLocal8Bit("Yè½´ï¼šVoltage(v)"));
 		ui.stackedWidget->setCurrentIndex(5);
 		break;
 	case Type_PlotRTI:
-		ui.label_XAxis->setText(QString::fromLocal8Bit("XÖá£ºRange(m)"));
-		ui.label_YAxis->setText(QString::fromLocal8Bit("YÖá£ºTime(s)"));
+		ui.label_XAxis->setText(QString::fromLocal8Bit("Xè½´ï¼šRange(m)"));
+		ui.label_YAxis->setText(QString::fromLocal8Bit("Yè½´ï¼šTime(s)"));
 		ui.stackedWidget->setCurrentIndex(5);
 		break;
 	case Type_PlotText:
@@ -260,8 +260,8 @@ void AddPlotPair::onChangeStackIndex(PlotType index)
 		ui.stackedWidget->setCurrentIndex(2);
 		break;
 	case Type_PlotDoppler:
-		ui.label_XAxis->setText(QString::fromLocal8Bit("XÖá£ºRange(m)"));
-		ui.label_YAxis->setText(QString::fromLocal8Bit("YÖá£ºRange(m)"));
+		ui.label_XAxis->setText(QString::fromLocal8Bit("Xè½´ï¼šRange(m)"));
+		ui.label_YAxis->setText(QString::fromLocal8Bit("Yè½´ï¼šRange(m)"));
 		ui.stackedWidget->setCurrentIndex(5);
 		break;
 	default:
@@ -302,7 +302,7 @@ void AddPlotPair::updatePlotTrees()
 			QTreeWidgetItem* itemselPlotI = new QTreeWidgetItem(QStringList() << plotString);
 			itemselPlotH->addChild(itemselPlotI);
 		}
-		//m_curPlotInfo.Base_TabName = tabString; Õâ¸öÍæÒâÐèÒª¸üÐÂÏÂ
+		//m_curPlotInfo.Base_TabName = tabString; è¿™ä¸ªçŽ©æ„éœ€è¦æ›´æ–°ä¸‹
 	}
 }
 
@@ -692,8 +692,8 @@ void AddPlotPair::onUpdateData()
 	auto dataMap = DataManager::getInstance()->getDataMap();
 	if (dataMap.isEmpty())
 	{
-		qDebug() << QString::fromLocal8Bit("ÉÐÎ´¼ÓÔØÊý¾Ý,µ±Ç°Êý¾ÝÎª¿Õ") << endl;
-		QMessageBox::information(NULL, QString::fromLocal8Bit("ÌáÊ¾ÐÅÏ¢"), QString::fromLocal8Bit("ÉÐÎ´¼ÓÔØÊý¾Ý,µ±Ç°Êý¾ÝÎª¿Õ"));
+		qDebug() << QString::fromLocal8Bit("å°šæœªåŠ è½½æ•°æ®,å½“å‰æ•°æ®ä¸ºç©º") << endl;
+		QMessageBox::information(NULL, QString::fromLocal8Bit("æç¤ºä¿¡æ¯"), QString::fromLocal8Bit("å°šæœªåŠ è½½æ•°æ®,å½“å‰æ•°æ®ä¸ºç©º"));
 		return;
 	}
 	int index = 0;
@@ -737,7 +737,7 @@ void AddPlotPair::onUpdateData()
 
 void AddPlotPair::onAddPlot(const QString &tabName, PlotItemBase *plotItem)
 {
-	//Êý¾Ý²ã¸üÐÂ
+	//æ•°æ®å±‚æ›´æ–°
 	m_plotManager[tabName].append(plotItem);
 
 	updatePlotTrees();
@@ -769,7 +769,7 @@ void AddPlotPair::onDoubleClickedTreeWidgetItem(QTreeWidgetItem * item, int colu
 				QVector<DataPair*> dataPair = tempPlot->getDataPair();
 				for (int k = 0; k < dataPair.size(); ++k)
 				{
-					//½çÃæ¸üÐÂ
+					//ç•Œé¢æ›´æ–°
 					QTableWidgetItem* addplot1 = new QTableWidgetItem(dataPair[k]->getDataPair().first);
 					QTableWidgetItem* addplot2 = new QTableWidgetItem(dataPair[k]->getDataPair().second);
 					int row = ui.tableWidget_union->rowCount();
@@ -861,10 +861,10 @@ void AddPlotPair::onBtnLightUpdateClicked()
 				if (ui.tableWidget_LightSet->item(j,3) == nullptr)
 				{
 					QString changeLine = "\n";
-					QString text1 = QString::fromLocal8Bit("Çë½«Êý¾ÝÌîÐ´ÍêÕû");
-					QString text3 = QString::fromLocal8Bit("µÚ4ÁÐ´æÔÚ¿Õ°×");
+					QString text1 = QString::fromLocal8Bit("è¯·å°†æ•°æ®å¡«å†™å®Œæ•´");
+					QString text3 = QString::fromLocal8Bit("ç¬¬4åˆ—å­˜åœ¨ç©ºç™½");
 					QString warningInfo = text1 + changeLine + text3 ;
-					QMessageBox::critical(NULL, QString::fromLocal8Bit("ÌáÊ¾ÐÅÏ¢"), warningInfo);
+					QMessageBox::critical(NULL, QString::fromLocal8Bit("æç¤ºä¿¡æ¯"), warningInfo);
 					return;
 				}
 				temData = ui.tableWidget_LightSet->item(j, 3)->text();
@@ -877,7 +877,7 @@ void AddPlotPair::onBtnLightUpdateClicked()
 				temData = dynamic_cast<QComboBox *>(ui.tableWidget_LightSet->cellWidget(j, i))->currentText();
 				if (temData == "")
 				{
-					QMessageBox::critical(NULL, QString::fromLocal8Bit("ÌáÊ¾ÐÅÏ¢"), QString::fromLocal8Bit("Çë½«Êý¾ÝÌîÐ´ÍêÕû"));
+					QMessageBox::critical(NULL, QString::fromLocal8Bit("æç¤ºä¿¡æ¯"), QString::fromLocal8Bit("è¯·å°†æ•°æ®å¡«å†™å®Œæ•´"));
 					return;
 				}
 				else
@@ -940,7 +940,7 @@ void AddPlotPair::onBtnLightAddClicked()
 		ui.tableWidget_LightSet->setCellWidget(iRow, 0, newCount0);
 	}
 	newCount1->addItem("Time");
-	newCount2->addItem(QString::fromLocal8Bit("¡Ý"));
+	newCount2->addItem(QString::fromLocal8Bit("â‰¥"));
 	newCount2->addItem("<");
 	newCount4->addItems(redYellowGreen);
 	ui.tableWidget_LightSet->setCellWidget(iRow, 1, newCount1);
@@ -956,7 +956,7 @@ void AddPlotPair::onBtnLightDeleteClicked()
 		if (rowIdx == 0)
 		{
 			QMessageBox *temMessage = new QMessageBox(nullptr);
-			temMessage->setText(QString::fromLocal8Bit("Ê¾ÀýÐÐÇëÎðÉ¾³ý"));
+			temMessage->setText(QString::fromLocal8Bit("ç¤ºä¾‹è¡Œè¯·å‹¿åˆ é™¤"));
 			temMessage->show();
 		}
 		else
@@ -965,7 +965,7 @@ void AddPlotPair::onBtnLightDeleteClicked()
 	else
 	{
 		QMessageBox *temMessage = new QMessageBox(nullptr);
-		temMessage->setText(QString::fromLocal8Bit("ÇëÏÈµãÑ¡ÒªÉ¾³ýµÄÐÐ"));
+		temMessage->setText(QString::fromLocal8Bit("è¯·å…ˆç‚¹é€‰è¦åˆ é™¤çš„è¡Œ"));
 		temMessage->show();
 	}
 	ui.tableWidget_LightSet->setCurrentCell(0, 0);

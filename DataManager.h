@@ -1,5 +1,5 @@
-/* * @filename: DataManager.h
-* @brief: DataManagerÊµÏÖÊı¾İ¼ÓÔØ¹¦ÄÜ
+ï»¿/* * @filename: DataManager.h
+* @brief: DataManagerå®ç°æ•°æ®åŠ è½½åŠŸèƒ½
 * @author: zhameng
 * @create time: 2022-09-27
 *  */
@@ -68,10 +68,10 @@ public:
     QMap<QString, QMap<QString, QList<double>>>& getDataMap();
 	void getMinMaxTime(double &minTime, double &maxTime);
 	int getRefYear();
-	int getEntityAttr_MaxIndex_List(QString entity, QString attr, double secs);	//»ñÈ¡secsÊ±¼äÄÚµÄÊµÌå-ÊôĞÔµÄ×î´óindex
-	QList<double> getEntityAttr_Value_List(QString entity, QString attr = "Time");	//»ñÈ¡ÊµÌå-ÊôĞÔµÄÈ«Êı¾İ£¬ÊôĞÔÄ¬ÈÏÎªTime
-	QList<double> getEntityAttr_MaxPartValue_List(QString entity, QString attr, double secs);	//»ñÈ¡×îĞ¡Ê±¼äµ½secsÊ±¼äÄÚµÄÊµÌå-ÊôĞÔÊı¾İlist
-	QList<double> getEntityAttr_PartValue_List(QString entity, QString attr, int minIndex, int maxIndex);	//»ñÈ¡minIndexµ½maxIndexÄÚµÄÊµÌå-ÊôĞÔÊı¾İlist
+	int getEntityAttr_MaxIndex_List(QString entity, QString attr, double secs);	//è·å–secsæ—¶é—´å†…çš„å®ä½“-å±æ€§çš„æœ€å¤§index
+	QList<double> getEntityAttr_Value_List(QString entity, QString attr = "Time");	//è·å–å®ä½“-å±æ€§çš„å…¨æ•°æ®ï¼Œå±æ€§é»˜è®¤ä¸ºTime
+	QList<double> getEntityAttr_MaxPartValue_List(QString entity, QString attr, double secs);	//è·å–æœ€å°æ—¶é—´åˆ°secsæ—¶é—´å†…çš„å®ä½“-å±æ€§æ•°æ®list
+	QList<double> getEntityAttr_PartValue_List(QString entity, QString attr, int minIndex, int maxIndex);	//è·å–minIndexåˆ°maxIndexå†…çš„å®ä½“-å±æ€§æ•°æ®list
 	QVector<double> getTimeData_vector();
 };
 

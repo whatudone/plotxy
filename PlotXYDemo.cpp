@@ -1,4 +1,4 @@
-#include <QtWidgets/QPushButton>
+ï»¿#include <QtWidgets/QPushButton>
 #include <QtWidgets/QCheckBox>
 #include <QFileDialog>
 #include <QMetaType>
@@ -30,7 +30,7 @@ PlotXYDemo::PlotXYDemo(QWidget *parent)
 {
     ui.setupUi(this);
 	setMinimumSize(1600, 900);
-    setWindowTitle("»æÍ¼");
+    setWindowTitle("ç»˜å›¾");
 
 
     init();
@@ -61,7 +61,7 @@ PlotXYDemo::PlotXYDemo(QWidget *parent)
 	QRect tabRect = ui.tabWidget->rect();
 	emit sgn_sendTabWidgetRect(tabRect);
 
-    //ÓÒ¼ü²Ëµ¥À¸
+    //å³é”®èœå•æ 
     ui.tabWidget->tabBar()->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui.tabWidget->tabBar(), SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(onCustomContextMenuRequested(const QPoint &)));
     ui.tabWidget->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -219,24 +219,24 @@ void PlotXYDemo::onCustomContextMenuRequested(const QPoint &point)
     qDebug() << sender();
     QMenu *pMenu = new QMenu(this);
 
-    QAction *addTabPage = new QAction(QString::fromLocal8Bit("Ìí¼ÓtabÒ³Ãæ"), this);
-    QAction *removeTabPage = new QAction(QString::fromLocal8Bit("É¾³ıtabÒ³Ãæ"), this);
-    QAction *renameTabPage = new QAction(QString::fromLocal8Bit("ÖØÃüÃûtabÒ³Ãæ"), this);
+    QAction *addTabPage = new QAction(QString::fromLocal8Bit("æ·»åŠ tabé¡µé¢"), this);
+    QAction *removeTabPage = new QAction(QString::fromLocal8Bit("åˆ é™¤tabé¡µé¢"), this);
+    QAction *renameTabPage = new QAction(QString::fromLocal8Bit("é‡å‘½åtabé¡µé¢"), this);
 
-    /* Ìí¼Ó²Ëµ¥Ïî */
+    /* æ·»åŠ èœå•é¡¹ */
     pMenu->addAction(addTabPage);
     pMenu->addAction(removeTabPage);
     pMenu->addAction(renameTabPage);
 
-    /* Á¬½Ó²Ûº¯Êı */
+    /* è¿æ¥æ§½å‡½æ•° */
     connect(addTabPage, SIGNAL(triggered()), this, SLOT(onNewTab()));
     connect(removeTabPage, SIGNAL(triggered()), this, SLOT(onCloseTab()));
     connect(renameTabPage, SIGNAL(triggered()), this, SLOT(onRenameTab()));
 
-    /* ÔÚÊó±êÓÒ¼ü´¦ÏÔÊ¾²Ëµ¥ */
+    /* åœ¨é¼ æ ‡å³é”®å¤„æ˜¾ç¤ºèœå• */
     pMenu->exec(QCursor::pos());
 
-    /* ÊÍ·ÅÄÚ´æ */
+    /* é‡Šæ”¾å†…å­˜ */
     QList<QAction *> list = pMenu->actions();
     foreach(QAction * pAction, list) delete pAction;
     delete pMenu;
@@ -267,7 +267,7 @@ void PlotXYDemo::onContextMenu(const QPoint &point)
 
     QMenu *ViewMenu = new QMenu(QString::fromLocal8Bit("View"));
 
-    //Ö÷²Ëµ¥
+    //ä¸»èœå•
     pMenu->addAction(object_action);
     pMenu->addSeparator();
     pMenu->addMenu(ui.menu_addPlot);
@@ -295,7 +295,7 @@ void PlotXYDemo::onContextMenu(const QPoint &point)
     pMenu->addMenu(ViewMenu);
     pMenu->addMenu(ui.menuSelect_Plot);
 
-    /* ÔÚÊó±êÓÒ¼ü´¦ÏÔÊ¾²Ëµ¥ */
+    /* åœ¨é¼ æ ‡å³é”®å¤„æ˜¾ç¤ºèœå• */
     pMenu->exec(QCursor::pos());
 }
 
@@ -445,7 +445,7 @@ void PlotXYDemo::onAddBarPlot()
 
     initWidget(plotItem);
 
-    // ¿ØÖÆÆä×ÔÓÉÒÆ¶¯ºÍËõ·Å
+    // æ§åˆ¶å…¶è‡ªç”±ç§»åŠ¨å’Œç¼©æ”¾
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
@@ -472,7 +472,7 @@ void PlotXYDemo::onAddTextPlot()
 
     initWidget(plotItem);
 
-    // ¿ØÖÆÆä×ÔÓÉÒÆ¶¯ºÍËõ·Å
+    // æ§åˆ¶å…¶è‡ªç”±ç§»åŠ¨å’Œç¼©æ”¾
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
@@ -503,7 +503,7 @@ void PlotXYDemo::onAddLightPlot()
 
     initWidget(plotItem);
 
-    // ¿ØÖÆÆä×ÔÓÉÒÆ¶¯ºÍËõ·Å
+    // æ§åˆ¶å…¶è‡ªç”±ç§»åŠ¨å’Œç¼©æ”¾
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
@@ -532,7 +532,7 @@ void PlotXYDemo::onAddTrackPlot()
 
     initWidget(plotItem);
 
-    // ¿ØÖÆÆä×ÔÓÉÒÆ¶¯ºÍËõ·Å
+    // æ§åˆ¶å…¶è‡ªç”±ç§»åŠ¨å’Œç¼©æ”¾
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
@@ -559,7 +559,7 @@ void PlotXYDemo::onAddAScopePlot()
 	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
 
     initWidget(plotItem);
-    // ¿ØÖÆÆä×ÔÓÉÒÆ¶¯ºÍËõ·Å
+    // æ§åˆ¶å…¶è‡ªç”±ç§»åŠ¨å’Œç¼©æ”¾
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
@@ -585,7 +585,7 @@ void PlotXYDemo::onAddRTIPlot()
 	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
 
     initWidget(plotItem);
-    // ¿ØÖÆÆä×ÔÓÉÒÆ¶¯ºÍËõ·Å
+    // æ§åˆ¶å…¶è‡ªç”±ç§»åŠ¨å’Œç¼©æ”¾
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
@@ -611,7 +611,7 @@ void PlotXYDemo::onAddDopplerPolt()
 	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
 
     initWidget(plotItem);
-    // ¿ØÖÆÆä×ÔÓÉÒÆ¶¯ºÍËõ·Å
+    // æ§åˆ¶å…¶è‡ªç”±ç§»åŠ¨å’Œç¼©æ”¾
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
@@ -639,7 +639,7 @@ void PlotXYDemo::onAddScatterPlot()
 
     initWidget(plotItem);
 
-    // ¿ØÖÆÆä×ÔÓÉÒÆ¶¯ºÍËõ·Å
+    // æ§åˆ¶å…¶è‡ªç”±ç§»åŠ¨å’Œç¼©æ”¾
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
     m_freeWidgetWraper->setWidget(plotItem);
     m_freeWidgetWraper->setMoveEnable(true);
@@ -666,7 +666,7 @@ void PlotXYDemo::onAddDialPlot()
 
     initWidget(plotItem);
 
-    // ¿ØÖÆÆä×ÔÓÉÒÆ¶¯ºÍËõ·Å
+    // æ§åˆ¶å…¶è‡ªç”±ç§»åŠ¨å’Œç¼©æ”¾
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
@@ -733,7 +733,7 @@ void PlotXYDemo::onAddPolarPlot()
 	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
 
     initWidget(plotItem);
-    // ¿ØÖÆÆä×ÔÓÉÒÆ¶¯ºÍËõ·Å
+    // æ§åˆ¶å…¶è‡ªç”±ç§»åŠ¨å’Œç¼©æ”¾
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
@@ -764,7 +764,7 @@ void PlotXYDemo::onSliderValueChanged(int value)
     QString dataTime = timeFormat.toString(secs, refYear);
     m_statusBar_dataTime->setText(dataTime);
 
-    //·¢ËÍÊı¾İÊ±¼ä
+    //å‘é€æ•°æ®æ—¶é—´
     emit sgn_sendCurrentSeconds(secs);
 }
 
@@ -929,7 +929,7 @@ void PlotXYDemo::onAddAttitudePlot()
 	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
     initWidget(plotItem);
 
-    // ¿ØÖÆÆä×ÔÓÉÒÆ¶¯ºÍËõ·Å
+    // æ§åˆ¶å…¶è‡ªç”±ç§»åŠ¨å’Œç¼©æ”¾
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
@@ -1194,7 +1194,7 @@ void PlotXYDemo::initStatusBar()
 
 void PlotXYDemo::initWidget(PlotItemBase *w)
 {
-    //ÉèÖÃÎŞ±ß¿òÊôĞÔ
+    //è®¾ç½®æ— è¾¹æ¡†å±æ€§
     w->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Widget);
 //	w->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::Widget);
     //w->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint);
@@ -1203,20 +1203,20 @@ void PlotXYDemo::initWidget(PlotItemBase *w)
     w->setMinimumSize(200, 150);
     w->resize(1600, 800);
 
-    //ÉèÖÃÏÂ±³¾°ÑÕÉ«Çø±ğ¿´
+    //è®¾ç½®ä¸‹èƒŒæ™¯é¢œè‰²åŒºåˆ«çœ‹
     QPalette palette = w->palette();
     palette.setColor(QPalette::Window, w->getOuterFillColor());
     w->setPalette(palette);
 
     QPushButton *btn = new QPushButton(w);
-    btn->setText(QString::fromLocal8Bit("¹Ø±Õ"));
+    btn->setText(QString::fromLocal8Bit("å…³é—­"));
     btn->setGeometry(10, 10, 130, 25);
     connect(btn, SIGNAL(clicked(bool)), w, SLOT(close()));
 }
 
 void PlotXYDemo::updateStatusBar_info(QString info)
 {
-	m_statusBar_info->setText(QString::fromLocal8Bit("µ±Ç°Ñ¡ÔñµÄPlot£º%1").arg(info));
+	m_statusBar_info->setText(QString::fromLocal8Bit("å½“å‰é€‰æ‹©çš„Plotï¼š%1").arg(info));
 }
 
 PlotType PlotXYDemo::getCurrentFocusPlot()

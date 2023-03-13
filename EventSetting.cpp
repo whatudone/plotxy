@@ -1,4 +1,4 @@
-#include "EventSetting.h"
+﻿#include "EventSetting.h"
 
 EventSetting::EventSetting(QWidget *parent)
 	: QWidget(parent)

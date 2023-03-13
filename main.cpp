@@ -1,4 +1,4 @@
-#include <QtWidgets/QApplication>
+﻿#include <QtWidgets/QApplication>
 #include <QDebug>
 #include "PlotXYDemo.h"
 #pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup")

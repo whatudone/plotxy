@@ -1,4 +1,4 @@
-#ifndef  _PLOT_TRACK_H_
+ï»¿#ifndef  _PLOT_TRACK_H_
 #define  _PLOT_TRACK_H_
 
 #include "PlotItemBase.h"
@@ -11,9 +11,9 @@ class PlotTrack : public PlotItemBase
     Q_OBJECT
 public:
     enum TrackStatus {
-        Available,      // ÓĞĞ§ÇÒ¿ÉÓÃ
-        Invalid,        // ÎŞĞ§¿ÉÓÃ
-        Unavailable     // ÎŞĞ§²»¿ÉÓÃ
+        Available,      // æœ‰æ•ˆä¸”å¯ç”¨
+        Invalid,        // æ— æ•ˆå¯ç”¨
+        Unavailable     // æ— æ•ˆä¸å¯ç”¨
     };
 
     PlotTrack(QWidget *parent = Q_NULLPTR);
@@ -25,7 +25,7 @@ public:
 
     void drawRect(int itemIndex, QList<QColor> dataList);
 public:
-    static int m_instanceCount;         //ÊµÌå¸öÊı
+    static int m_instanceCount;         //å®ä½“ä¸ªæ•°
 
 public slots:
     void onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>>);
@@ -34,16 +34,16 @@ public slots:
 protected:
     virtual void paintEvent(QPaintEvent *event);
     void getDataInfo(double secs);
-    void updateData(int itemIndex, QString entityType, double secs); //ÊµÏÖºËĞÄ»æÖÆÂß¼­
+    void updateData(int itemIndex, QString entityType, double secs); //å®ç°æ ¸å¿ƒç»˜åˆ¶é€»è¾‘
 
 private:
     QLine   m_xAxis;
     QLine   m_yAxis;
 
-	double m_topPadding;				//»æÍ¼¼ä¸ô-top
-	double m_bottomPadding;				//»æÍ¼¼ä¸ô-bottom
-	double m_leftPadding;				//»æÍ¼¼ä¸ô-left
-	double m_rightPadding;				//»æÍ¼¼ä¸ô-right
+	double m_topPadding;				//ç»˜å›¾é—´éš”-top
+	double m_bottomPadding;				//ç»˜å›¾é—´éš”-bottom
+	double m_leftPadding;				//ç»˜å›¾é—´éš”-left
+	double m_rightPadding;				//ç»˜å›¾é—´éš”-right
     int m_interPadding;
 
     QMap<QString, QMap<int, QColor>> m_thresholdColorMap;    //key:entityType+entityAttr, threshold,QColor
@@ -52,7 +52,7 @@ private:
     QColor m_gridColor;
     QColor m_gridFillColor;
     QColor m_axisColor;
-	QFont  m_axisFont;					//×ø±ê±êÌâ×ÖÌå
+	QFont  m_axisFont;					//åæ ‡æ ‡é¢˜å­—ä½“
 
     int m_horiGridNum;
     int m_verGridNum;
@@ -60,9 +60,9 @@ private:
     int m_itemCnt;
 
 	QString m_title;
-	QColor	m_titleColor;				//±êÌâÑÕÉ«
-	QFont	m_titleFont;				//±êÌâ×ÖÌå
-	bool	m_titleShow;				//±êÌâÊÇ·ñÏÔÊ¾
+	QColor	m_titleColor;				//æ ‡é¢˜é¢œè‰²
+	QFont	m_titleFont;				//æ ‡é¢˜å­—ä½“
+	bool	m_titleShow;				//æ ‡é¢˜æ˜¯å¦æ˜¾ç¤º
 };
 
 #endif // _PLOT_TRACK_H_

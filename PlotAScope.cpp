@@ -1,4 +1,4 @@
-#include "PlotAScope.h"
+ï»¿#include "PlotAScope.h"
 
 int PlotAScope::m_instanceCount = 1;
 PlotAScope::PlotAScope(QWidget* parent)
@@ -116,7 +116,7 @@ void PlotAScope::paintEvent(QPaintEvent * event)
 {
 	int width = this->width();
 	int height = this->height();
-	//»­±Ê
+	//Â»Â­Â±ÃŠ
 	QPainter painter(this);
 	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
 

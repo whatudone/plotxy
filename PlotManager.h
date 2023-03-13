@@ -1,4 +1,4 @@
-#ifndef  _PLOT_MANAGER_H_
+ï»¿#ifndef  _PLOT_MANAGER_H_
 #define  _PLOT_MANAGER_H_
 
 #include <QtWidgets/QMainWindow>
@@ -15,8 +15,8 @@ public:
     explicit PlotManager(QWidget* parent = Q_NULLPTR);
     ~PlotManager();
 
-    void init();								//³õÊ¼»¯º¯Êı£¬Á¬½ÓĞÅºÅ²Û
-	void addPlot(const QString&, PlotItemBase*);			//Ìí¼ÓPlot
+    void init();								//åˆå§‹åŒ–å‡½æ•°ï¼Œè¿æ¥ä¿¡å·æ§½
+	void addPlot(const QString&, PlotItemBase*);			//æ·»åŠ Plot
 
 	QColor m_axisColor;
 	QColor m_gridColor;
@@ -62,7 +62,7 @@ private:
 public slots:
     void onTWSclicked(QTreeWidgetItem* item, int i);
     void onTWSPclicked(QTreeWidgetItem* item, int i);
-	void onSelectedPlot(QString tabName, QString plotName);	//ÓÃÓÚÄ¬ÈÏµã»÷µÄItem
+	void onSelectedPlot(QString tabName, QString plotName);	//ç”¨äºé»˜è®¤ç‚¹å‡»çš„Item
 
 	void onUpdatePlotManager();
 	void onBtnCloseClicked();

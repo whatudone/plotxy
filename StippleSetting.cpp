@@ -1,4 +1,4 @@
-#include "StippleSetting.h"
+﻿#include "StippleSetting.h"
 
 StippleSetting::StippleSetting(QWidget *parent)
 	: QWidget(parent)

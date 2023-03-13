@@ -1,5 +1,5 @@
-/* * 
-* @brief: ÓÃÓÚ¹ÜÀíÈí¼þÌí¼ÓµÄËùÓÐplotItemBase£¬·½±ãÔÚ¸ü¸ÄplotItemBaseºó¿ÉÒÔÍ¬²½Ë¢ÐÂ
+ï»¿/* * 
+* @brief: ç”¨äºŽç®¡ç†è½¯ä»¶æ·»åŠ çš„æ‰€æœ‰plotItemBaseï¼Œæ–¹ä¾¿åœ¨æ›´æ”¹plotItemBaseåŽå¯ä»¥åŒæ­¥åˆ·æ–°
 *  */
 #pragma once
 

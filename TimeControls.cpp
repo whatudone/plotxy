@@ -1,4 +1,4 @@
-#include "TimeControls.h"
+﻿#include "TimeControls.h"
 #include <windows.h>
 #include "DataManager.h"
 #include <QDebug>

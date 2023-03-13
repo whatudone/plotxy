@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "PlotItemBase.h"
 #include "qcustomplot.h"
 class PlotRTI :
@@ -87,7 +87,7 @@ public:
 
 
 public:
-	static int m_instanceCount;			//ÊµÌå¸öÊı
+	static int m_instanceCount;			//å®ä½“ä¸ªæ•°
 
 private:
 	QCustomPlot *m_customPlot;
@@ -95,13 +95,13 @@ private:
 	QCPColorScale *m_colorScale;
 	QCPMarginGroup *m_marginGroup;
 
-	double m_topPadding;				//»æÍ¼¼ä¸ô-top
-	double m_bottomPadding;				//»æÍ¼¼ä¸ô-bottom
-	double m_leftPadding;				//»æÍ¼¼ä¸ô-left
-	double m_rightPadding;				//»æÍ¼¼ä¸ô-right
+	double m_topPadding;				//ç»˜å›¾é—´éš”-top
+	double m_bottomPadding;				//ç»˜å›¾é—´éš”-bottom
+	double m_leftPadding;				//ç»˜å›¾é—´éš”-left
+	double m_rightPadding;				//ç»˜å›¾é—´éš”-right
 
-	QColor	m_axisLabelColor;			//×ø±ê±êÌâÑÕÉ«
-	QFont	m_axisLabelFont;			//×ø±ê±êÌâ×ÖÌå
+	QColor	m_axisLabelColor;			//åæ ‡æ ‡é¢˜é¢œè‰²
+	QFont	m_axisLabelFont;			//åæ ‡æ ‡é¢˜å­—ä½“
 	QString m_xAxisLabel;
 	QString m_yAxisLabel;
 

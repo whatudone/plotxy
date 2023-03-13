@@ -1,4 +1,4 @@
-#include "PlotText.h"
+ï»¿#include "PlotText.h"
 #include "DataManager.h"
 #include "AddPlotPair.h"
 #include "PlotItemBase.h"
@@ -63,20 +63,20 @@ void PlotText::paintEvent(QPaintEvent* event)
 	double as = fm.ascent();
 	rect.setRect(0, 0, width(), as);
 	int horiGridWidth = 0;
-	if (m_horiGridNum)		//itemË®Æ½·½ÏòÑÓÕ¹
+	if (m_horiGridNum)		//itemæ°´å¹³æ–¹å‘å»¶å±•
 	{
 		horiGridWidth = 0.9*width() / m_horiGridNum;
 	}
 	int verGridWidth = 0;
-	if (m_verGridNum)		//itemË®Æ½·½ÏòÑÓÕ¹
+	if (m_verGridNum)		//itemæ°´å¹³æ–¹å‘å»¶å±•
 	{
 		verGridWidth = (0.93*height() - as) / m_verGridNum;
 	}
-	//ÒÔÏÂÎª»æÖÆ±í¸ñtitleÃû×Ö
+	//ä»¥ä¸‹ä¸ºç»˜åˆ¶è¡¨æ ¼titleåå­—
 	setTitle(painter, rect);
-	//ÒÔÏÂ»æÖÆn¡ÁmµÄ¸ñ×Ó
+	//ä»¥ä¸‹ç»˜åˆ¶nÃ—mçš„æ ¼å­
 	drawNMCell(painter, xset, yset, dataVector, horiGridWidth, verGridWidth, as);
-	//ÒÔÏÂÎª»æÖÆX/YÖáitemÃû×Ö
+	//ä»¥ä¸‹ä¸ºç»˜åˆ¶X/Yè½´itemåå­—
 	pen.setColor(Qt::white);
 	pen.setWidth(3);
 	pen.setStyle(Qt::SolidLine);
@@ -84,12 +84,12 @@ void PlotText::paintEvent(QPaintEvent* event)
 	if (!getDataPair().isEmpty())
 	{
 		drawXYTitle(painter, horiGridWidth, verGridWidth, dataVector, as);
-		//ÒÔÏÂÎª»æÖÆ¶ÔÓ¦µÄÊı¾İ£¬Ã»ÓĞµ÷ÓÃdrawDataº¯Êı£¬ºóÆÚÈç¹ûĞèÒª¿ÉÒÔµ÷ÓÃÏÂ¡£
+		//ä»¥ä¸‹ä¸ºç»˜åˆ¶å¯¹åº”çš„æ•°æ®ï¼Œæ²¡æœ‰è°ƒç”¨drawDataå‡½æ•°ï¼ŒåæœŸå¦‚æœéœ€è¦å¯ä»¥è°ƒç”¨ä¸‹ã€‚
 		if (m_temValueList.isEmpty())
 			return;
 		else
 		{
-			painter.drawText(0.05*width(), as + 0.02*height(), horiGridWidth, verGridWidth, Qt::AlignCenter | Qt::TextWrapAnywhere, QString::fromLocal8Bit("0±íÊ¾0»òÎŞÊı¾İ"));
+			painter.drawText(0.05*width(), as + 0.02*height(), horiGridWidth, verGridWidth, Qt::AlignCenter | Qt::TextWrapAnywhere, QString::fromLocal8Bit("0è¡¨ç¤º0æˆ–æ— æ•°æ®"));
 			for (int i = m_entityName.size() - 1; i != -1; i--)
 			{
 				for (int j = m_attriName.size() - 1; j != -1; j--)
@@ -108,7 +108,7 @@ void PlotText::paintEvent(QPaintEvent* event)
 
 }
 
-//ÒÔÏÂÎªÓÃ»§×Ô¶¨ÒåÊı¾İ
+//ä»¥ä¸‹ä¸ºç”¨æˆ·è‡ªå®šä¹‰æ•°æ®
 //QList<textUserData> list1;
 //QRect rect, rectErase;
 //list1 = addPP->getUserText();
@@ -316,7 +316,7 @@ void PlotText::drawNMCell(QPainter& painter, QSet<QString>& xset, QSet<QString>&
 	}
 	if (!dataVector.empty())
 	{
-		//ÏÈ»­GridFill
+		//å…ˆç”»GridFill
 		for (int i = 0; i < m_verGridNum; i++)
 		{
 			QRect gridFillRect;
@@ -324,27 +324,27 @@ void PlotText::drawNMCell(QPainter& painter, QSet<QString>& xset, QSet<QString>&
 			painter.fillRect(gridFillRect, getGridFillColor());
 			//painter.drawRect(gridFillRect);
 		}
-		//¸Ä±äAxis»­±Ê
+		//æ”¹å˜Axisç”»ç¬”
 		QPen pen;
 		pen.setColor(getAxisColor());
 		pen.setWidth(getAxisWidth());
 		painter.setPen(pen);
-		//ÔÙ»­Axis
+		//å†ç”»Axis
 		QRect gridRect;
 		gridRect.setRect(0.05*width(), as + 0.02*height(), 0.9*width(), m_verGridNum*verGridWidth);
 		painter.drawRect(gridRect);
-		//¸Ä±äGrid»­±Ê
+		//æ”¹å˜Gridç”»ç¬”
 		pen.setColor(getGridColor());
 		pen.setWidth(getGridWidth());
 		pen.setStyle(getGridStyle());
 		painter.setPen(pen);
-		//ÔÙ»­HorizonGrid
+		//å†ç”»HorizonGrid
 		for (int i = 1; i < m_verGridNum; i++)
 		{
 			painter.drawLine(0.05*width() + 0.5* getGridWidth() + 0.5 *getAxisWidth(), as + 0.02*height() + i*verGridWidth,
 				0.05*width() + m_horiGridNum*horiGridWidth - 0.5*getGridWidth() - 0.5 *getAxisWidth(), as + 0.02*height() + i*verGridWidth);
 		}
-		//×îºó»­VerticalGrid
+		//æœ€åç”»VerticalGrid
 		for (int i = 1; i < m_horiGridNum; i++)
 		{
 			painter.drawLine(0.05*width() + i* horiGridWidth, 0.02*height() + as + 0.5*getGridWidth() + 0.5 *getAxisWidth(),

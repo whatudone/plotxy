@@ -1,4 +1,4 @@
-/***************************************************************************
+ï»¿/***************************************************************************
 **                                                                        **
 **  QCustomPlot, an easy to use, modern plotting widget for Qt            **
 **  Copyright (C) 2011-2021 Emanuel Eichhammer                            **
@@ -21636,7 +21636,7 @@ void QCPGraph::drawScatterPlot(QCPPainter *painter, const QVector<QPointF> &scat
 {
   applyScattersAntialiasingHint(painter);
   
-  //add by wzhen @20230117: ½öÔÚ×îºóÒ»¸öµãÏÔÊ¾pixmap
+  //add by wzhen @20230117: ä»…åœ¨æœ€åä¸€ä¸ªç‚¹æ˜¾ç¤ºpixmap
   if (style.shape() == QCPScatterStyle::ssPixmap)
   {
 	  QCPScatterStyle style0(QCPScatterStyle::ssDisc, mPen.width());

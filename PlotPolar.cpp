@@ -1,4 +1,4 @@
-#include "PlotPolar.h"
+ï»¿#include "PlotPolar.h"
 #include <qlabel.h>
 #include "DataManager.h"
 
@@ -20,8 +20,8 @@ PlotPolar::PlotPolar(QWidget * parent)
 	m_titleFont.setPointSizeF(m_titleFontSize);
 	m_titleVisible = true;
 
-	m_units_x = QString::fromLocal8Bit("¡ã");
-	m_units_y = QString::fromLocal8Bit("¡ã");
+	m_units_x = QString::fromLocal8Bit("Â¡Ã£");
+	m_units_y = QString::fromLocal8Bit("Â¡Ã£");
 	m_showUnits_x = true;
 	m_showUnits_y = true;
 
@@ -248,7 +248,7 @@ void PlotPolar::paintEvent(QPaintEvent * event)
 {
 	int width = this->width();
 	int height = this->height();
-	//»­±Ê
+	//Â»Â­Â±ÃŠ
 	QPainter painter(this);
 	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
 

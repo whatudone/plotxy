@@ -1,5 +1,5 @@
-/* * @filename: PlotItemBase.h
-* @brief: PlotBase Plot»ùÀà
+ï»¿/* * @filename: PlotItemBase.h
+* @brief: PlotBase PlotåŸºç±»
 * @author: zhameng
 * @create time: 2022-09-21
 *  */
@@ -21,11 +21,11 @@ public:
 	~PlotItemBase();
 
 public:
-	void init();                        //³õÊ¼»¯º¯Êı£¬Á¬½ÓĞÅºÅ²Û
+	void init();                        //åˆå§‹åŒ–å‡½æ•°ï¼Œè¿æ¥ä¿¡å·æ§½
 
-	void setPosition(int x, int y);      //ÉèÖÃ°üÎ§ºĞ×óÉÏ½ÇÎ»ÖÃ
-	void setWidth(int width);           //ÉèÖÃ¿í¶È
-	void setHeight(int height);         //ÉèÖÃ°üÎ§ºĞ¸ß¶È
+	void setPosition(int x, int y);      //è®¾ç½®åŒ…å›´ç›’å·¦ä¸Šè§’ä½ç½®
+	void setWidth(int width);           //è®¾ç½®å®½åº¦
+	void setHeight(int height);         //è®¾ç½®åŒ…å›´ç›’é«˜åº¦
 	void setRect(QRect rect);
 	void setName(const QString&);
 	void setTabName(const QString&);
@@ -116,49 +116,49 @@ protected:
 	QColor m_outlineColor;
 
 	//Axis and Grid
-	double  m_coordBgn_x;			//x×ø±êÆğÊ¼Öµ
-	double  m_coordEnd_x;			//x×ø±ê½áÊøÖµ
-	double  m_coordBgn_y;			//y×ø±êÆğÊ¼Öµ
-	double  m_coordEnd_y;			//y×ø±ê½áÊøÖµ
-	uint	m_horzGrids;			//ºáÏògrid¸öÊı
-	uint	m_vertGrids;			//×İÏògrid¸öÊı
-	uint	m_axisWidth;			//×ø±êÖá¿í¶È
-	uint	m_gridWidth;			//grid¿í¶È
-	QColor	m_axisColor;			//×ø±êÖáÑÕÉ«
-	QColor	m_gridColor;			//gridÑÕÉ«
-	bool	m_gridVisible;			//ÊÇ·ñÏÔÊ¾grid
-	QColor	m_tickLabelColor;		//×ø±ê¿Ì¶ÈÖµÑÕÉ«
-	QFont	m_tickLabelFont;		//×ø±ê¿Ì¶ÈÖµ×ÖÌå
-	int		m_tickLabelFontSize;	//×ø±ê¿Ì¶ÈÖµ×ÖÌå³ß´ç
-	Qt::PenStyle m_gridStyle;		//grid·ç¸ñ
-	GridDensity m_gridDensity;		//gridÃÜ¶È
-	QColor	m_gridFillColor;		//gridÌî³äÉ«£¬¼´±³¾°É«
+	double  m_coordBgn_x;			//xåæ ‡èµ·å§‹å€¼
+	double  m_coordEnd_x;			//xåæ ‡ç»“æŸå€¼
+	double  m_coordBgn_y;			//yåæ ‡èµ·å§‹å€¼
+	double  m_coordEnd_y;			//yåæ ‡ç»“æŸå€¼
+	uint	m_horzGrids;			//æ¨ªå‘gridä¸ªæ•°
+	uint	m_vertGrids;			//çºµå‘gridä¸ªæ•°
+	uint	m_axisWidth;			//åæ ‡è½´å®½åº¦
+	uint	m_gridWidth;			//gridå®½åº¦
+	QColor	m_axisColor;			//åæ ‡è½´é¢œè‰²
+	QColor	m_gridColor;			//gridé¢œè‰²
+	bool	m_gridVisible;			//æ˜¯å¦æ˜¾ç¤ºgrid
+	QColor	m_tickLabelColor;		//åæ ‡åˆ»åº¦å€¼é¢œè‰²
+	QFont	m_tickLabelFont;		//åæ ‡åˆ»åº¦å€¼å­—ä½“
+	int		m_tickLabelFontSize;	//åæ ‡åˆ»åº¦å€¼å­—ä½“å°ºå¯¸
+	Qt::PenStyle m_gridStyle;		//gridé£æ ¼
+	GridDensity m_gridDensity;		//gridå¯†åº¦
+	QColor	m_gridFillColor;		//gridå¡«å……è‰²ï¼Œå³èƒŒæ™¯è‰²
 
 	//Text
-	QString m_units_x;				//xÖáµ¥Î»
-	QString m_units_y;				//yÖáµ¥Î»
-	bool	m_showUnits_x;			//ÊÇ·ñÏÔÊ¾xÖáµ¥Î»
-	bool	m_showUnits_y;			//ÊÇ·ñÏÔÊ¾yÖáµ¥Î»
+	QString m_units_x;				//xè½´å•ä½
+	QString m_units_y;				//yè½´å•ä½
+	bool	m_showUnits_x;			//æ˜¯å¦æ˜¾ç¤ºxè½´å•ä½
+	bool	m_showUnits_y;			//æ˜¯å¦æ˜¾ç¤ºyè½´å•ä½
 
-	QString m_title;				//±êÌâ
-	bool	m_titleVisible;			//ÊÇ·ñÏÔÊ¾±êÌâ
-	QColor	m_titleColor;			//±êÌâÑÕÉ«
-	QFont	m_titleFont;			//±êÌâ×ÖÌå
-	int		m_titleFontSize;		//±êÌâ×ÖÌå³ß´ç
-	QColor	m_titleFillColor;		//±êÌâÌî³äÉ«
+	QString m_title;				//æ ‡é¢˜
+	bool	m_titleVisible;			//æ˜¯å¦æ˜¾ç¤ºæ ‡é¢˜
+	QColor	m_titleColor;			//æ ‡é¢˜é¢œè‰²
+	QFont	m_titleFont;			//æ ‡é¢˜å­—ä½“
+	int		m_titleFontSize;		//æ ‡é¢˜å­—ä½“å°ºå¯¸
+	QColor	m_titleFillColor;		//æ ‡é¢˜å¡«å……è‰²
 
-	QString m_xAxisLabel;			//xÖá±êÌâ
-	QString m_yAxisLabel;			//yÖá±êÌâ
-	QColor  m_axisLabelColor;		//×ø±êÖá±êÌâÑÕÉ«
-	QFont   m_axisLabelFont;		//×ø±êÖá±êÌâ×ÖÌå
-	int		m_axisLabelFontSize;	//×ø±êÖá±êÌâ×ÖÌå³ß´ç
+	QString m_xAxisLabel;			//xè½´æ ‡é¢˜
+	QString m_yAxisLabel;			//yè½´æ ‡é¢˜
+	QColor  m_axisLabelColor;		//åæ ‡è½´æ ‡é¢˜é¢œè‰²
+	QFont   m_axisLabelFont;		//åæ ‡è½´æ ‡é¢˜å­—ä½“
+	int		m_axisLabelFontSize;	//åæ ‡è½´æ ‡é¢˜å­—ä½“å°ºå¯¸
 
 public slots:
 	void slot_updateRect(QRect);
 	void slot_setVisible(bool);
 
 signals:
-	void sgn_dataPairChanged(QString, QString);		//Êı¾İ¶Ô¸Ä±äĞÅºÅ,tabName,plotName
+	void sgn_dataPairChanged(QString, QString);		//æ•°æ®å¯¹æ”¹å˜ä¿¡å·,tabName,plotName
 
 private:
     QPoint  m_position;

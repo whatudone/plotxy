@@ -1,4 +1,4 @@
-#ifndef PLOTXY_DEMO_H_
+ï»¿#ifndef PLOTXY_DEMO_H_
 #define PLOTXY_DEMO_H_
 
 #include <QtWidgets/QMainWindow>
@@ -21,7 +21,7 @@ public:
     PlotXYDemo(QWidget *parent = Q_NULLPTR);
     ~PlotXYDemo();
 
-    void init();            //³õÊ¼»¯º¯Êı£¬Á¬½ÓĞÅºÅ²Û
+    void init();            //åˆå§‹åŒ–å‡½æ•°ï¼Œè¿æ¥ä¿¡å·æ§½
 	void initMenuFile();
 	void initMenuEdit();
 	void initMenuGraph();

@@ -1,4 +1,4 @@
-#ifndef TOOLPAGE_H
+﻿#ifndef TOOLPAGE_H
 #define TOOLPAGE_H
 
 #include <QWidget>

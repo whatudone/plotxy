@@ -1,5 +1,5 @@
-/* * @filename: DataManager.cpp
-* @brief: DataManagerÊµÏÖÊı¾İ¼ÓÔØ¹¦ÄÜ
+ï»¿/* * @filename: DataManager.cpp
+* @brief: DataManagerå®ç°æ•°æ®åŠ è½½åŠŸèƒ½
 * @author: zhameng
 * @create time: 2022-09-27
 *  */
@@ -58,13 +58,13 @@ void DataManager::loadCSV(const QString& filePath)
 			continue;
 		QString firstItem = currLineItems.at(0);
 
-		if (firstItem.at(0) == '#')	//ÅĞ¶ÏÊ××Ö·ûÊÇ·ñÎª#	entityType entityAttr1 entityAttr2 entityAttr3 entityAttr4 
+		if (firstItem.at(0) == '#')	//åˆ¤æ–­é¦–å­—ç¬¦æ˜¯å¦ä¸º#	entityType entityAttr1 entityAttr2 entityAttr3 entityAttr4 
 		{
-			if (!currEntityType.isEmpty())	//±êÖ¾×ÅÉÏÒ»×éÊı¾İ´¦ÀíÍê±Ï£¬ĞèÒª½«ÉÏÒ»×éÊı¾İÌí¼Ó½ømap
+			if (!currEntityType.isEmpty())	//æ ‡å¿—ç€ä¸Šä¸€ç»„æ•°æ®å¤„ç†å®Œæ¯•ï¼Œéœ€è¦å°†ä¸Šä¸€ç»„æ•°æ®æ·»åŠ è¿›map
 			{
 				QMap<QString, QList<double>> lastGroupDataMap;
 
-				//±éÀúÊı¾İĞĞ£¬²¢°´ÁĞ×é×°Êı¾İ£¬Rows->Columns
+				//éå†æ•°æ®è¡Œï¼Œå¹¶æŒ‰åˆ—ç»„è£…æ•°æ®ï¼ŒRows->Columns
 				for (int k = 0; k < currEntityAttrValuesVec.size();k++)
 				{
 					for (int t = 0;t < currEntityAttrValuesVec[k].size();t++)
@@ -85,7 +85,7 @@ void DataManager::loadCSV(const QString& filePath)
 				m_entityDataMap.insert(currEntityType, lastGroupDataMap);
 			}
 
-			//¿ªÊ¼´¦ÀíĞÂÒ»×éÊı¾İ
+			//å¼€å§‹å¤„ç†æ–°ä¸€ç»„æ•°æ®
 			currEntityType = firstItem.remove('#');
 
 			currEntityAttrs.clear();
@@ -108,7 +108,7 @@ void DataManager::loadCSV(const QString& filePath)
 	}
 	
 	file.close();
-	QMessageBox::information(NULL, QString::fromLocal8Bit("ÌáÊ¾ĞÅÏ¢"), QString::fromLocal8Bit("ÒÑ³É¹¦¼ÓÔØÊı¾İ"));
+	QMessageBox::information(NULL, QString::fromLocal8Bit("æç¤ºä¿¡æ¯"), QString::fromLocal8Bit("å·²æˆåŠŸåŠ è½½æ•°æ®"));
 }
 
 void DataManager::loadCSV_stringTime(const QString& filePath)
@@ -150,13 +150,13 @@ void DataManager::loadCSV_stringTime(const QString& filePath)
 			continue;
 		QString firstItem = currLineItems.at(0);
 
-		if (firstItem.at(0) == '#')	//ÅĞ¶ÏÊ××Ö·ûÊÇ·ñÎª#	entityType entityAttr1 entityAttr2 entityAttr3 entityAttr4 
+		if (firstItem.at(0) == '#')	//åˆ¤æ–­é¦–å­—ç¬¦æ˜¯å¦ä¸º#	entityType entityAttr1 entityAttr2 entityAttr3 entityAttr4 
 		{
-			if (!currEntityType.isEmpty())	//±êÖ¾×ÅÉÏÒ»×éÊı¾İ´¦ÀíÍê±Ï£¬ĞèÒª½«ÉÏÒ»×éÊı¾İÌí¼Ó½ømap
+			if (!currEntityType.isEmpty())	//æ ‡å¿—ç€ä¸Šä¸€ç»„æ•°æ®å¤„ç†å®Œæ¯•ï¼Œéœ€è¦å°†ä¸Šä¸€ç»„æ•°æ®æ·»åŠ è¿›map
 			{
 				QMap<QString, QList<double>> lastGroupDataMap;
 
-				//±éÀúÊı¾İĞĞ£¬²¢°´ÁĞ×é×°Êı¾İ£¬Rows->Columns
+				//éå†æ•°æ®è¡Œï¼Œå¹¶æŒ‰åˆ—ç»„è£…æ•°æ®ï¼ŒRows->Columns
 				for (int k = 0; k < currEntityAttrStringVec.size(); k++)
 				{
 					for (int t = 0; t < currEntityAttrStringVec[k].size(); t++)
@@ -169,7 +169,7 @@ void DataManager::loadCSV_stringTime(const QString& filePath)
 
 						if (!currEntityAttr.isEmpty())
 						{
-							//TimeÊ±¼ä×ª³ÉdoubleÀàĞÍ
+							//Timeæ—¶é—´è½¬æˆdoubleç±»å‹
 							if (currEntityAttr.compare("Time") == 0)
 							{
 								QString timeString = currEntityAttrStringVec.at(k).at(t);
@@ -203,7 +203,7 @@ void DataManager::loadCSV_stringTime(const QString& filePath)
 				m_entityDataMap.insert(currEntityType, lastGroupDataMap);
 			}
 
-			//¿ªÊ¼´¦ÀíĞÂÒ»×éÊı¾İ
+			//å¼€å§‹å¤„ç†æ–°ä¸€ç»„æ•°æ®
 			currEntityType = firstItem.remove('#');
 
 			currEntityAttrs.clear();
@@ -224,14 +224,14 @@ void DataManager::loadCSV_stringTime(const QString& filePath)
 		}
 	}
 
-	//ÅÅĞò
+	//æ’åº
 	std::sort(m_timeDataVector.begin(), m_timeDataVector.end());
-	//È¥ÖØ
+	//å»é‡
 	auto it = std::unique(m_timeDataVector.begin(), m_timeDataVector.end());
 	m_timeDataVector.erase(it, m_timeDataVector.end());
 
 	file.close();
-	QMessageBox::information(NULL, QString::fromLocal8Bit("ÌáÊ¾ĞÅÏ¢"), QString::fromLocal8Bit("ÒÑ³É¹¦¼ÓÔØÊı¾İ"));
+	QMessageBox::information(NULL, QString::fromLocal8Bit("æç¤ºä¿¡æ¯"), QString::fromLocal8Bit("å·²æˆåŠŸåŠ è½½æ•°æ®"));
 }
 
 QMap<QString, QMap<QString, QList<double>>>& DataManager::getDataMap()

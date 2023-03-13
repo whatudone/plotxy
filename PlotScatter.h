@@ -1,4 +1,4 @@
-#ifndef PLOTSCATTER_H
+﻿#ifndef PLOTSCATTER_H
 #define PLOTSCATTER_H
 
 #include "PlotItemBase.h"

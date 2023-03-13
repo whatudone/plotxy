@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "PlotItemBase.h"
 #include "qcustomplot.h"
 #include "PlotAScope.h"
@@ -88,7 +88,7 @@ public:
 
 
 public:
-	static int m_instanceCount;			//ÊµÌå¸öÊı
+	static int m_instanceCount;			//å®ä½“ä¸ªæ•°
 
 private:
 	QCustomPlot *m_customPlot;
@@ -99,13 +99,13 @@ private:
 	PlotAScope* m_horizon_AScope;
 	PlotAScope* m_vertical_AScope;
 
-	double m_topPadding;				//»æÍ¼¼ä¸ô-top
-	double m_bottomPadding;				//»æÍ¼¼ä¸ô-bottom
-	double m_leftPadding;				//»æÍ¼¼ä¸ô-left
-	double m_rightPadding;				//»æÍ¼¼ä¸ô-right
+	double m_topPadding;				//ç»˜å›¾é—´éš”-top
+	double m_bottomPadding;				//ç»˜å›¾é—´éš”-bottom
+	double m_leftPadding;				//ç»˜å›¾é—´éš”-left
+	double m_rightPadding;				//ç»˜å›¾é—´éš”-right
 
 	QColor	m_axisLabelColor;			
-	QFont	m_axisLabelFont;			//×ø±ê±êÌâ×ÖÌå
+	QFont	m_axisLabelFont;			//åæ ‡æ ‡é¢˜å­—ä½“
 	QString m_xAxisLabel;
 	QString m_yAxisLabel;
 

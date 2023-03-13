@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "PlotItemBase.h"
 #include "qcustomplot.h"
 class PlotPolar :
@@ -76,14 +76,14 @@ public slots:
 	void slot_setRangeDrag(bool);
 	void slot_setRangeZoom(bool);
 
-	//½ÓÊÕµ±Ç°Ê±¼ä
+	//æ¥æ”¶å½“å‰æ—¶é—´
 	void slot_getCurrentSeconds(double);
 
 	//mouseEvent
 	void slot_setMouseEventEnable(bool);
 
 public:
-	static int m_instanceCount;			//ÊµÌå¸öÊı
+	static int m_instanceCount;			//å®ä½“ä¸ªæ•°
 private:
 	QCustomPlot *m_customPlot;
 	QCPPolarAxisAngular *m_angularAxis;

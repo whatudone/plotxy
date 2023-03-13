@@ -1,4 +1,4 @@
-#ifndef _CONST_DEF_H_
+﻿#ifndef _CONST_DEF_H_
 #define _CONST_DEF_H_
 #include <QString>
 

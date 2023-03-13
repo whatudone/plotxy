@@ -1,6 +1,6 @@
-#pragma once
+ï»¿#pragma once
 /* * @filename: PlotText.h
-* @brief: PlotText¿Ø¼þÀà
+* @brief: PlotTextæŽ§ä»¶ç±»
 * @author: zhangdingwen
 * @create time: 2022-10-10
 *  */
@@ -25,7 +25,7 @@ public:
 	//void onTimeout();
 
 	bool m_flag;
-	static int m_instanceCount;			//ÊµÌå¸öÊý
+	static int m_instanceCount;			//å®žä½“ä¸ªæ•°
 
 public slots:
 	void slot_getCurrentSeconds(double secs);

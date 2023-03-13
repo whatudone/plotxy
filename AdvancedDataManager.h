@@ -1,4 +1,4 @@
-#ifndef _ADVANCED_DATA_MANAGER_H_
+﻿#ifndef _ADVANCED_DATA_MANAGER_H_
 #define _ADVANCED_DATA_MANAGER_H_
 
 #include <QWidget>

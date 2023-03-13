@@ -1,4 +1,4 @@
-#ifndef _SUB_SETTING_WIDGET_CONTAINER_H
+ï»¿#ifndef _SUB_SETTING_WIDGET_CONTAINER_H
 #define _SUB_SETTING_WIDGET_CONTAINER_H
 
 #include <QMainWindow>
@@ -46,7 +46,7 @@ public:
 signals:
 	void sigBtnGenneralMoreclicked();
 	void sigCheckBox_14StateChanged(bool);
-	void sigCheckBox_14Color(QColor);	//µ±Ñ¡ÖĞ×´Ì¬Ê±£¬·¢ËÍpushButton_12µÄÑÕÉ«
+	void sigCheckBox_14Color(QColor);	//å½“é€‰ä¸­çŠ¶æ€æ—¶ï¼Œå‘é€pushButton_12çš„é¢œè‰²
 	void sigCheckBox_16StateChanged(bool);
 	void sigPushButton_12Clicked(QColor);
 

@@ -1,4 +1,4 @@
-#include "PlotScatter.h"
+﻿#include "PlotScatter.h"
 #include "DataManager.h"
 
 #include <QDebug>

@@ -1,4 +1,4 @@
-#include "renameTab.h"
+﻿#include "renameTab.h"
 
 renameTab::renameTab(QWidget *parent)
 	: QDialog(parent)

@@ -1,4 +1,4 @@
-#include "PlotDial.h"
+﻿#include "PlotDial.h"
 #include <QDebug>
 #include <QPainter>
 #include <QtMath>

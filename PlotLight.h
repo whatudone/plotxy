@@ -1,6 +1,6 @@
-#pragma once
+ï»¿#pragma once
 /* * @filename: PlotLight.h
-* @brief: PlotLight¿Ø¼şÀà
+* @brief: PlotLightæ§ä»¶ç±»
 * @author: zhangdingwen
 * @create time: 2022-11-1
 *  */
@@ -23,7 +23,7 @@ public:
 	~PlotLight();
 	void onTimeout();
 	void onSwitch(bool bOn);
-	static int m_instanceCount;			//ÊµÌå¸öÊı
+	static int m_instanceCount;			//å®ä½“ä¸ªæ•°
 	//void updateItems();
 
 protected:
@@ -72,7 +72,7 @@ private:
 public slots:
 	void slot_getLightData(QList<QList<QString>>);
 	void slot_getCurrentSeconds(double secs);
-	//¸üĞÂºóµÄÓÉbase µÄsgn_·¢³ö
+	//æ›´æ–°åçš„ç”±base çš„sgn_å‘å‡º
 	void slot_onAddButtonClicked();
 };
 #endif // _PLOT_LIGHT_H_ 

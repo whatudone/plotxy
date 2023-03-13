@@ -1,4 +1,4 @@
-#ifndef PLOTDIAL_H
+﻿#ifndef PLOTDIAL_H
 #define PLOTDIAL_H
 
 #include "PlotItemBase.h"

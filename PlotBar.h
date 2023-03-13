@@ -1,5 +1,5 @@
-/* * @filename: PlotBar.h
-* @brief: PlotBar¿Ø¼şÀà
+ï»¿/* * @filename: PlotBar.h
+* @brief: PlotBaræ§ä»¶ç±»
 * @author: zhameng
 * @create time: 2022-09-21
 *  */
@@ -28,7 +28,7 @@ public:
     void drawRect(int itemIndex, bool bHorizontal, int itemLength, int leftBoundary, int rightBoundary, QColor color);
 
 public:
-    static int m_instanceCount;         //ÊµÌå¸öÊı
+    static int m_instanceCount;         //å®ä½“ä¸ªæ•°
 
 public slots:
     void onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>>);
@@ -41,7 +41,7 @@ protected:
 
 private:
     bool m_bHorizontal;
-	bool m_titleShow;				//±êÌâÊÇ·ñÏÔÊ¾
+	bool m_titleShow;				//æ ‡é¢˜æ˜¯å¦æ˜¾ç¤º
 
     QLine m_xAxis;
     QLine m_yAxis;
@@ -54,15 +54,15 @@ private:
 
     int m_currTimeIndex;
 
-    //QMap<QString,QString> m_plotDataPair;   //×¢£ºÊµÌåÀàĞÍ£¬ÊµÌåÊôĞÔ   //ÕâÀï²»ÄÜÓÃmap
+    //QMap<QString,QString> m_plotDataPair;   //æ³¨ï¼šå®ä½“ç±»å‹ï¼Œå®ä½“å±æ€§   //è¿™é‡Œä¸èƒ½ç”¨map
 //     QStringList m_entityTypeList;
 //     QStringList m_entityAttrList;
 
     QMap<QString, QMap<int, QColor>> m_thresholdColorMap;   //key:entityType+entityAttr, threshold,QColor
     QColor m_defaultColor;
-	QColor m_titleColor;				//±êÌâÑÕÉ«
-	QFont m_titleFont;					//±êÌâ×ÖÌå
-	QString m_title;					//±êÌâ
+	QColor m_titleColor;				//æ ‡é¢˜é¢œè‰²
+	QFont m_titleFont;					//æ ‡é¢˜å­—ä½“
+	QString m_title;					//æ ‡é¢˜
     QColor m_gridColor;
     QColor m_gridFillColor;
     QColor m_axisColor;

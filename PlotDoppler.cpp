@@ -1,4 +1,4 @@
-#include "PlotDoppler.h"
+ï»¿#include "PlotDoppler.h"
 
 int PlotDoppler::m_instanceCount = 1;
 PlotDoppler::PlotDoppler(QWidget* parent)
@@ -154,7 +154,7 @@ void PlotDoppler::paintEvent(QPaintEvent * event)
 {
 	int width = this->width();
 	int height = this->height();
-	//»­±Ê
+	//Â»Â­Â±ÃŠ
 	QPainter painter(this);
 	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
 
