@@ -32,6 +32,7 @@ void PlotManagerData::slotChangeTabName(QString oldName, QString newName)
 		m_plotManager[newName].append(plots);
 		m_plotManager.remove(oldName);
 	}
+	
 	emit sgnUpdatePlotManager();
 }
 

@@ -65,7 +65,7 @@
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,2,8,1,1,1,1">
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,2,0,8,1,1,1,1">
        <item>
         <widget class="QLabel" name="label">
          <property name="text">
@@ -75,6 +75,30 @@
        </item>
        <item>
         <widget class="QLineEdit" name="lineEdit"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBox_Sort">
+         <item>
+          <property name="text">
+           <string>X轴</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Y轴</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>图表名称</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>所在Tab</string>
+          </property>
+         </item>
+        </widget>
        </item>
        <item>
         <spacer name="horizontalSpacer_2">

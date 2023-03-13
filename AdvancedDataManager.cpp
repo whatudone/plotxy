@@ -25,6 +25,8 @@ AdvancedDataManager::AdvancedDataManager(QWidget *parent) :
 	connect(ui.pushButton_autofit, &QPushButton::clicked, this, &AdvancedDataManager::onPushButton_autofitClicked);
 	connect(ui.pushButton_delete, &QPushButton::clicked, this, &AdvancedDataManager::onPushButton_deleteClicked);
 	connect(ui.tableWidget_plotpair, &QTableWidget::itemSelectionChanged, this, &AdvancedDataManager::onTableWidget_plotpairItemSelectionChanged);
+	connect(ui.pushButton_close,&QPushButton::clicked,this, &AdvancedDataManager::onPushButton_closeClicked);
+	connect(ui.lineEdit, &QLineEdit::textChanged, this, &AdvancedDataManager::onLineEditChanged);
 
 	//General
 	connect(subSettingWidgetContainer->m_general, SIGNAL(sigBtnGenneralMoreclicked()), this, SLOT(onBtnMore()));
@@ -34,7 +36,6 @@ AdvancedDataManager::AdvancedDataManager(QWidget *parent) :
 	connect(this, SIGNAL(sgnGeneral_draw(bool)), subSettingWidgetContainer->m_general, SLOT(setCheckBox_16CheckState(bool)));
 	connect(this, SIGNAL(sgnGeneral_color(QColor)), subSettingWidgetContainer->m_general, SLOT(setPushButton_12Color(QColor)));
 	connect(this, SIGNAL(sgnGeneral_matchColor(bool)), subSettingWidgetContainer->m_general, SLOT(setCheckBox_14CheckState(bool)));
-
 
 	//Icon
 	connect(subSettingWidgetContainer->m_iconSetting, &IconSetting::sigCheckBoxStateChanged, this, &AdvancedDataManager::onIconSetting_draw);
@@ -53,7 +54,6 @@ AdvancedDataManager::AdvancedDataManager(QWidget *parent) :
 	connect(this, &AdvancedDataManager::sgnIconSetting_height, subSettingWidgetContainer->m_iconSetting, &IconSetting::setSpinBox_2Value);
 	connect(this, &AdvancedDataManager::sgnIconSetting_color, subSettingWidgetContainer->m_iconSetting, &IconSetting::setPushButton_2Color);
 	connect(subSettingWidgetContainer->m_general, &General::sigCheckBox_14Color, subSettingWidgetContainer->m_iconSetting, &IconSetting::setPushButton_2Color);
-
 
 	//Label Settings
 	connect(subSettingWidgetContainer->m_labelSettings, &LabelSettings::sigCheckBox_5StateChanged, this, &AdvancedDataManager::onLabelSettings_draw);
@@ -101,18 +101,12 @@ AdvancedDataManager::AdvancedDataManager(QWidget *parent) :
 
 	//Event
 	connect(subSettingWidgetContainer->m_eventSetting, SIGNAL(sgn_BtnMoreClicked()), this, SLOT(onEventBtnMoreClicked()));
-
 	connect(PlotManagerData::getInstance(), SIGNAL(sgnUpdatePlotManager()), this, SLOT(onUpdatePlotPair()));
 }
 
 AdvancedDataManager::~AdvancedDataManager()
 {
 
-}
-
-void AdvancedDataManager::refreshAdvancedDataManagerUI()
-{
-	//原意是想要更新高级数据管理里面最上面的那个tablewidget
 }
 
 void AdvancedDataManager::onTableWidget_plotpairItemSelectionChanged()
@@ -124,7 +118,6 @@ void AdvancedDataManager::onTableWidget_plotpairItemSelectionChanged()
 	ui.pushButton_autofit->setEnabled(false);
 	ui.pushButton_delete->setEnabled(false);
 	subSettingWidgetContainer->setEnabled(false);
-
 
 	if (row < 0)
 		return;
@@ -155,14 +148,12 @@ void AdvancedDataManager::onTableWidget_plotpairItemSelectionChanged()
 						m_curSelectDatapair = m_curSelectPlot->getDataPair().at(k);
 						break;
 					}
-				}
-			
+				}		
 				if (m_curSelectDatapair != nullptr)
 				{
 					refreshUI();
 					break;
-				}
-					
+				}	
 			}
 		}
 	}
@@ -181,6 +172,47 @@ void AdvancedDataManager::onPushButton_autofitClicked()
 {
 }
 
+void AdvancedDataManager::onLineEditChanged()
+{
+	if (m_curSelectDatapair == nullptr)
+		return;
+
+	int sortIndex = ui.comboBox_Sort->currentIndex();
+	QString sortText = ui.lineEdit->text();
+	switch (sortIndex)
+	{
+	case 0:
+	{
+
+		break;
+	}
+	case 1:
+	{
+
+		break;
+	}
+	case 2:
+	{
+
+		break;
+	}
+	case 3:
+	{
+
+		break;
+	}
+	default:
+		break;
+	}
+	
+	emit sgnFilterSort(sortText);
+}
+
+void AdvancedDataManager::onPushButton_closeClicked()
+{
+	close();
+}
+
 void AdvancedDataManager::onPushButton_deleteClicked()
 {
 	if (m_curSelectPlot == nullptr || m_curSelectDatapair == nullptr)
@@ -193,7 +225,6 @@ void AdvancedDataManager::onPushButton_deleteClicked()
 			QVector<DataPair*> vec = m_curSelectPlot->getDataPair();
 			vec.remove(i);
 			m_curSelectPlot->setDataPair(vec);
-
 			break;
 		}
 	}

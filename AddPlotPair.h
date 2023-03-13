@@ -22,7 +22,6 @@ struct textUserData
 	QString str;
 };
 
-
 class AddPlotPair : public QWidget
 {
     Q_OBJECT

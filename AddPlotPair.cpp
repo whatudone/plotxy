@@ -72,7 +72,7 @@ void AddPlotPair::initStackedWidget_page1()
 }
 
 void AddPlotPair::initStackedWidget_page2()
-{
+{ 
 	ui.tableWidget_Entity_2->setStyleSheet("QHeaderView::section{background:lightgray;}");
 	ui.tableWidget_Entity_3->setStyleSheet("QHeaderView::section{background:lightgray;}");
 	ui.tableWidget_Entity_5->setStyleSheet("QHeaderView::section{background:lightgray;}");
@@ -303,6 +303,7 @@ void AddPlotPair::updatePlotTrees()
 			QTreeWidgetItem* itemselPlotI = new QTreeWidgetItem(QStringList() << plotString);
 			itemselPlotH->addChild(itemselPlotI);
 		}
+		//m_curPlotInfo.Base_TabName = tabString; 这个玩意需要更新下
 	}
 }
 

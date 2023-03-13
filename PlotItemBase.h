@@ -14,28 +14,28 @@
 
 class PlotItemBase : public QWidget
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    explicit PlotItemBase(QWidget* parent = 0);
-    ~PlotItemBase();
+	explicit PlotItemBase(QWidget* parent = 0);
+	~PlotItemBase();
 
 public:
-    void init();                        //初始化函数，连接信号槽
+	void init();                        //初始化函数，连接信号槽
 
-    void setPosition(int x,int y);      //设置包围盒左上角位置
-    void setWidth(int width);           //设置宽度
-    void setHeight(int height);         //设置包围盒高度
+	void setPosition(int x, int y);      //设置包围盒左上角位置
+	void setWidth(int width);           //设置宽度
+	void setHeight(int height);         //设置包围盒高度
 	void setRect(QRect rect);
 	void setName(const QString&);
 	void setTabName(const QString&);
 
-    QPoint currPosition();
-    int currWidth();
-    int currHeight();
+	QPoint currPosition();
+	int currWidth();
+	int currHeight();
 	QRect currRect();
-    QString currName();
-    QString currTabName();
+	QString currName();
+	QString currTabName();
 
 	//setters:
 	virtual void setOuterFillColor(QColor color);
@@ -51,7 +51,7 @@ public:
 	virtual void setTickLabelFont(QFont& font);
 	virtual void setTickLabelFontSize(int size);
 	virtual void setGridStyle(GridStyle style);
-	virtual void setGridDensity(GridDensity density);	
+	virtual void setGridDensity(GridDensity density);
 	virtual void setGridFillColor(QColor color);
 	virtual void setUnitsShowX(bool on);
 	virtual void setUnitsShowY(bool on);

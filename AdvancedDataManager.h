@@ -23,6 +23,7 @@ public:
 signals:
     void updateColorThresholdMap(QMap<QString, QMap<int, QColor>>);
 	void sgnAddPlotPair();
+	void sgnFilterSort(QString);
 
 	//General
 	void sgnGeneral_draw(bool);
@@ -68,10 +69,12 @@ public slots:
 	void onEventBtnMoreClicked();
 	void onUpdatePlotPair();
 	void onTableWidget_plotpairItemSelectionChanged();
+	void onLineEditChanged();
 	void onPushButton_addClicked();
 	void onPushButton_copyClicked();
 	void onPushButton_autofitClicked();
 	void onPushButton_deleteClicked();
+	void onPushButton_closeClicked();
 
 	//General
 	void onGeneral_draw(bool);

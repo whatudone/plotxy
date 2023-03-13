@@ -437,9 +437,6 @@ void PlotManager::refreshLightTextUI(PlotItemBase * plot)
 		return;
 }
 
-
-
-
 void PlotManager::refreshTextEditUI(PlotItemBase * plot)
 {
 	ui.checkBox_12->setChecked(plot->unitsShowX());
