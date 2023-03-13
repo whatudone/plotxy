@@ -170,7 +170,7 @@ void AddPlotPair::initStackedWidget_pageLight()
 	ui.tableWidget_LightSet->setCellWidget(0, 0, comboBoxEntity);
 	comboBoxAttr->addItem("Time");
 	ui.tableWidget_LightSet->setCellWidget(0, 1, comboBoxAttr);
-	comboBoxCompare->addItem(QString::fromLocal8Bit("≥"));
+    comboBoxCompare->addItem(QString("≥"));
 	comboBoxCompare->addItem("<");
 	ui.tableWidget_LightSet->setCellWidget(0, 2, comboBoxCompare);
 	comboBoxColor->addItem("G/R/Y");
@@ -226,23 +226,23 @@ void AddPlotPair::onChangeStackIndex(PlotType index)
 	switch (index)
 	{
 	case Type_PlotScatter:
-		ui.groupBox_3->setTitle(QString::fromLocal8Bit("X轴数据源"));
-		ui.groupBox_2->setTitle(QString::fromLocal8Bit("Y轴数据源"));
+        ui.groupBox_3->setTitle(QString("X轴数据源"));
+        ui.groupBox_2->setTitle(QString("Y轴数据源"));
 		ui.stackedWidget->setCurrentIndex(1);
 		break;
 	case Type_PlotPolar:
-		ui.groupBox_3->setTitle(QString::fromLocal8Bit("角度数据源"));
-		ui.groupBox_2->setTitle(QString::fromLocal8Bit("幅度数据源"));
+        ui.groupBox_3->setTitle(QString("角度数据源"));
+        ui.groupBox_2->setTitle(QString("幅度数据源"));
 		ui.stackedWidget->setCurrentIndex(1);
 		break;
 	case Type_PlotAScope:
-		ui.label_XAxis->setText(QString::fromLocal8Bit("X轴：Range(m)"));
-		ui.label_YAxis->setText(QString::fromLocal8Bit("Y轴：Voltage(v)"));
+        ui.label_XAxis->setText(QString("X轴：Range(m)"));
+        ui.label_YAxis->setText(QString("Y轴：Voltage(v)"));
 		ui.stackedWidget->setCurrentIndex(5);
 		break;
 	case Type_PlotRTI:
-		ui.label_XAxis->setText(QString::fromLocal8Bit("X轴：Range(m)"));
-		ui.label_YAxis->setText(QString::fromLocal8Bit("Y轴：Time(s)"));
+        ui.label_XAxis->setText(QString("X轴：Range(m)"));
+        ui.label_YAxis->setText(QString("Y轴：Time(s)"));
 		ui.stackedWidget->setCurrentIndex(5);
 		break;
 	case Type_PlotText:
@@ -260,8 +260,8 @@ void AddPlotPair::onChangeStackIndex(PlotType index)
 		ui.stackedWidget->setCurrentIndex(2);
 		break;
 	case Type_PlotDoppler:
-		ui.label_XAxis->setText(QString::fromLocal8Bit("X轴：Range(m)"));
-		ui.label_YAxis->setText(QString::fromLocal8Bit("Y轴：Range(m)"));
+        ui.label_XAxis->setText(QString("X轴：Range(m)"));
+        ui.label_YAxis->setText(QString("Y轴：Range(m)"));
 		ui.stackedWidget->setCurrentIndex(5);
 		break;
 	default:
@@ -692,8 +692,8 @@ void AddPlotPair::onUpdateData()
 	auto dataMap = DataManager::getInstance()->getDataMap();
 	if (dataMap.isEmpty())
 	{
-		qDebug() << QString::fromLocal8Bit("尚未加载数据,当前数据为空") << endl;
-		QMessageBox::information(NULL, QString::fromLocal8Bit("提示信息"), QString::fromLocal8Bit("尚未加载数据,当前数据为空"));
+        qDebug() << QString("尚未加载数据,当前数据为空") << endl;
+        QMessageBox::information(NULL, QString("提示信息"), QString("尚未加载数据,当前数据为空"));
 		return;
 	}
 	int index = 0;
@@ -861,10 +861,10 @@ void AddPlotPair::onBtnLightUpdateClicked()
 				if (ui.tableWidget_LightSet->item(j,3) == nullptr)
 				{
 					QString changeLine = "\n";
-					QString text1 = QString::fromLocal8Bit("请将数据填写完整");
-					QString text3 = QString::fromLocal8Bit("第4列存在空白");
+                    QString text1 = QString("请将数据填写完整");
+                    QString text3 = QString("第4列存在空白");
 					QString warningInfo = text1 + changeLine + text3 ;
-					QMessageBox::critical(NULL, QString::fromLocal8Bit("提示信息"), warningInfo);
+                    QMessageBox::critical(NULL, QString("提示信息"), warningInfo);
 					return;
 				}
 				temData = ui.tableWidget_LightSet->item(j, 3)->text();
@@ -877,7 +877,7 @@ void AddPlotPair::onBtnLightUpdateClicked()
 				temData = dynamic_cast<QComboBox *>(ui.tableWidget_LightSet->cellWidget(j, i))->currentText();
 				if (temData == "")
 				{
-					QMessageBox::critical(NULL, QString::fromLocal8Bit("提示信息"), QString::fromLocal8Bit("请将数据填写完整"));
+                    QMessageBox::critical(NULL, QString("提示信息"), QString("请将数据填写完整"));
 					return;
 				}
 				else
@@ -940,7 +940,7 @@ void AddPlotPair::onBtnLightAddClicked()
 		ui.tableWidget_LightSet->setCellWidget(iRow, 0, newCount0);
 	}
 	newCount1->addItem("Time");
-	newCount2->addItem(QString::fromLocal8Bit("≥"));
+    newCount2->addItem(QString("≥"));
 	newCount2->addItem("<");
 	newCount4->addItems(redYellowGreen);
 	ui.tableWidget_LightSet->setCellWidget(iRow, 1, newCount1);
@@ -956,7 +956,7 @@ void AddPlotPair::onBtnLightDeleteClicked()
 		if (rowIdx == 0)
 		{
 			QMessageBox *temMessage = new QMessageBox(nullptr);
-			temMessage->setText(QString::fromLocal8Bit("示例行请勿删除"));
+            temMessage->setText(QString("示例行请勿删除"));
 			temMessage->show();
 		}
 		else
@@ -965,7 +965,7 @@ void AddPlotPair::onBtnLightDeleteClicked()
 	else
 	{
 		QMessageBox *temMessage = new QMessageBox(nullptr);
-		temMessage->setText(QString::fromLocal8Bit("请先点选要删除的行"));
+        temMessage->setText(QString("请先点选要删除的行"));
 		temMessage->show();
 	}
 	ui.tableWidget_LightSet->setCurrentCell(0, 0);

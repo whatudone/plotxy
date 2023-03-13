@@ -219,9 +219,9 @@ void PlotXYDemo::onCustomContextMenuRequested(const QPoint &point)
     qDebug() << sender();
     QMenu *pMenu = new QMenu(this);
 
-    QAction *addTabPage = new QAction(QString::fromLocal8Bit("添加tab页面"), this);
-    QAction *removeTabPage = new QAction(QString::fromLocal8Bit("删除tab页面"), this);
-    QAction *renameTabPage = new QAction(QString::fromLocal8Bit("重命名tab页面"), this);
+    QAction *addTabPage = new QAction(QString("添加tab页面"), this);
+    QAction *removeTabPage = new QAction(QString("删除tab页面"), this);
+    QAction *renameTabPage = new QAction(QString("重命名tab页面"), this);
 
     /* 添加菜单项 */
     pMenu->addAction(addTabPage);
@@ -265,7 +265,7 @@ void PlotXYDemo::onContextMenu(const QPoint &point)
     label->setStyleSheet("color:rgb(0,128,0);font:Bold");
     object_action->setDefaultWidget(label);
 
-    QMenu *ViewMenu = new QMenu(QString::fromLocal8Bit("View"));
+    QMenu *ViewMenu = new QMenu(QString("View"));
 
     //主菜单
     pMenu->addAction(object_action);
@@ -1209,14 +1209,14 @@ void PlotXYDemo::initWidget(PlotItemBase *w)
     w->setPalette(palette);
 
     QPushButton *btn = new QPushButton(w);
-    btn->setText(QString::fromLocal8Bit("关闭"));
+    btn->setText(QString("关闭"));
     btn->setGeometry(10, 10, 130, 25);
     connect(btn, SIGNAL(clicked(bool)), w, SLOT(close()));
 }
 
 void PlotXYDemo::updateStatusBar_info(QString info)
 {
-	m_statusBar_info->setText(QString::fromLocal8Bit("当前选择的Plot：%1").arg(info));
+    m_statusBar_info->setText(QString("当前选择的Plot：%1").arg(info));
 }
 
 PlotType PlotXYDemo::getCurrentFocusPlot()

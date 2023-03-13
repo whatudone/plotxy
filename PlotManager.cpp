@@ -21,7 +21,7 @@ PlotManager::PlotManager(QWidget* parent)
 	ui.setupUi(this);
 
 	connect(ui.pushButton_close, &QPushButton::clicked, this, &PlotManager::onBtnCloseClicked);
-	this->setWindowTitle(QString::fromLocal8Bit("图表管理器"));
+	this->setWindowTitle(QString("图表管理器"));
 	init();
 
 	connect(PlotManagerData::getInstance(), SIGNAL(sgnUpdatePlotManager()), this, SLOT(onUpdatePlotManager()));
@@ -87,29 +87,29 @@ void PlotManager::addPlot(const QString& tabName, PlotItemBase* plotItem)
 void PlotManager::initTreeWidgetSettings()
 {
 	ui.treeWidget_settings->setHeaderHidden(false);
-	ui.treeWidget_settings->setHeaderLabel(QString::fromLocal8Bit("设置"));
+	ui.treeWidget_settings->setHeaderLabel(QString("设置"));
 	ui.treeWidget_settings->setIndentation(15);
 
 	connect(ui.treeWidget_settings, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(onTWSclicked(QTreeWidgetItem*, int)));
 
-	m_itemGeneral = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("通用设置")));
-	m_itemAxis = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("坐标轴和网格设置")));
-	m_itemLinkedAxis = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("链接轴")));
-	m_itemPlotData = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("数据设置")));
-	m_itemText = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("文本信息")));
-	m_itemScatterPlot = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("Scatter设置")));
-	m_itemAScope = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("A-Scope设置")));
-	m_itemRTI = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("RTI设置")));
-	m_itemTextLight = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("Text/Light设置")));
-	m_itemBar = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("Bar设置")));
-	m_itemDial = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("Dials设置")));
-	m_itemAttitude = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("Attitude设置")));
-	m_itemTrackStatus = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("Track Status设置")));
-	m_itemRangeDoppler = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString::fromLocal8Bit("Range Doppler设置")));
+	m_itemGeneral = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("通用设置")));
+	m_itemAxis = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("坐标轴和网格设置")));
+	m_itemLinkedAxis = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("链接轴")));
+	m_itemPlotData = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("数据设置")));
+	m_itemText = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("文本信息")));
+	m_itemScatterPlot = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("Scatter设置")));
+	m_itemAScope = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("A-Scope设置")));
+	m_itemRTI = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("RTI设置")));
+	m_itemTextLight = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("Text/Light设置")));
+	m_itemBar = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("Bar设置")));
+	m_itemDial = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("Dials设置")));
+	m_itemAttitude = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("Attitude设置")));
+	m_itemTrackStatus = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("Track Status设置")));
+	m_itemRangeDoppler = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("Range Doppler设置")));
 
-	m_itemGOG = new QTreeWidgetItem(m_itemScatterPlot, QStringList(QString::fromLocal8Bit("GOG曲线")));
-	m_itemLimits = new QTreeWidgetItem(m_itemScatterPlot, QStringList(QString::fromLocal8Bit("限制")));
-	m_itemPlotMarkers = new QTreeWidgetItem(m_itemScatterPlot, QStringList(QString::fromLocal8Bit("标记")));
+	m_itemGOG = new QTreeWidgetItem(m_itemScatterPlot, QStringList(QString("GOG曲线")));
+	m_itemLimits = new QTreeWidgetItem(m_itemScatterPlot, QStringList(QString("限制")));
+	m_itemPlotMarkers = new QTreeWidgetItem(m_itemScatterPlot, QStringList(QString("标记")));
 	m_itemTimeLine = new QTreeWidgetItem(m_itemScatterPlot, QStringList("Time Line"));
 	m_itemHandsOff = new QTreeWidgetItem(m_itemScatterPlot, QStringList("Hands-Off"));
 
@@ -719,79 +719,79 @@ void PlotManager::onTWSclicked(QTreeWidgetItem* item, int column)
 		return;	
 	else
 	{
-		if (compare == QString::fromLocal8Bit("通用设置"))
+		if (compare == QString("通用设置"))
 		{
 			ui.stackedWidget->setCurrentIndex(0);
 		}
-		else if (compare == QString::fromLocal8Bit("坐标轴和网格设置"))
+		else if (compare == QString("坐标轴和网格设置"))
 		{
 			ui.stackedWidget->setCurrentIndex(1);
 		}
-		else if (compare == QString::fromLocal8Bit("数据设置"))
+		else if (compare == QString("数据设置"))
 		{
 			ui.stackedWidget->setCurrentIndex(2);
 		}
-		else if (compare == QString::fromLocal8Bit("文本信息"))
+		else if (compare == QString("文本信息"))
 		{
 			ui.stackedWidget->setCurrentIndex(3);
 		}
-		else if (compare == QString::fromLocal8Bit("链接轴"))
+		else if (compare == QString("链接轴"))
 		{
 			ui.stackedWidget->setCurrentIndex(5);
 		}
-		else if (compare == QString::fromLocal8Bit("Scatter设置"))
+		else if (compare == QString("Scatter设置"))
 		{
 			ui.stackedWidget->setCurrentIndex(4);
 		}
-		else if (compare == QString::fromLocal8Bit("GOG曲线"))
+		else if (compare == QString("GOG曲线"))
 		{
 			ui.stackedWidget->setCurrentIndex(4);
 		}
-		else if (compare == QString::fromLocal8Bit("限制"))
+		else if (compare == QString("限制"))
 		{
 			ui.stackedWidget->setCurrentIndex(6);
 		}
-		else if (compare == QString::fromLocal8Bit("标记"))
+		else if (compare == QString("标记"))
 		{
 			ui.stackedWidget->setCurrentIndex(7);
 		}
-		else if (compare == QString::fromLocal8Bit("Time Line"))
+		else if (compare == QString("Time Line"))
 		{
 			ui.stackedWidget->setCurrentIndex(8);
 		}
-		else if (compare == QString::fromLocal8Bit("Hands-Off"))
+		else if (compare == QString("Hands-Off"))
 		{
 			ui.stackedWidget->setCurrentIndex(9);
 		}
-		else if (compare == QString::fromLocal8Bit("A-Scope设置"))
+		else if (compare == QString("A-Scope设置"))
 		{
 			ui.stackedWidget->setCurrentIndex(10);
 		}
-		else if (compare == QString::fromLocal8Bit("RTI设置"))
+		else if (compare == QString("RTI设置"))
 		{
 			ui.stackedWidget->setCurrentIndex(11);
 		}
-		else if (compare == QString::fromLocal8Bit("Text/Light设置"))
+		else if (compare == QString("Text/Light设置"))
 		{
 			ui.stackedWidget->setCurrentIndex(12);
 		}
-		else if (compare == QString::fromLocal8Bit("Bar设置"))
+		else if (compare == QString("Bar设置"))
 		{
 			ui.stackedWidget->setCurrentIndex(13);
 		}
-		else if (compare == QString::fromLocal8Bit("Dials设置"))
+		else if (compare == QString("Dials设置"))
 		{
 			ui.stackedWidget->setCurrentIndex(14);
 		}
-		else if (compare == QString::fromLocal8Bit("Attitude设置"))
+		else if (compare == QString("Attitude设置"))
 		{
 			ui.stackedWidget->setCurrentIndex(15);
 		}
-		else if (compare == QString::fromLocal8Bit("Track Status设置"))
+		else if (compare == QString("Track Status设置"))
 		{
 			ui.stackedWidget->setCurrentIndex(16);
 		}
-		else if (compare == QString::fromLocal8Bit("Range Doppler设置"))
+		else if (compare == QString("Range Doppler设置"))
 		{
 			ui.stackedWidget->setCurrentIndex(17);
 		}

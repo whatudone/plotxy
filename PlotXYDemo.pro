@@ -6,13 +6,8 @@ TEMPLATE = app
 TARGET = PlotXYDemo
 QT += core gui widgets printsupport
 LIBS += -luser32
-#DESTDIR = ./Debug
-#CONFIG += debug
-#DEFINES += WIN64 QT_WIDGETS_LIB
-#INCLUDEPATH += $(ProjectDir)GeneratedFiles/$(Configuration)
-#DEPENDPATH += .
-#MOC_DIR += $(ProjectDir)GeneratedFiles/$(Configuration)
-#OBJECTS_DIR += debug
-#UI_DIR += $(ProjectDir)GeneratedFiles/$(Configuration)
-#RCC_DIR += $(ProjectDir)GeneratedFiles/$(Configuration)
+msvc {
+    QMAKE_CFLAGS += /utf-8
+    QMAKE_CXXFLAGS += /utf-8
+}
 include(PlotXYDemo.pri)

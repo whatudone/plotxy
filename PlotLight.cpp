@@ -156,7 +156,7 @@ void PlotLight::judgeLight()
 				{
 					if (entityAndAtrr == docEntityAndAttr.at(j))
 					{
-						if (QString::compare(judge, QString::fromLocal8Bit("≥")) == 0)
+						if (QString::compare(judge, QString("≥")) == 0)
 						{
 							if (lightThreshold.back() >= threshold.toDouble())
 							{
@@ -243,11 +243,11 @@ void PlotLight::setGridStyle(GridStyle gridStyle)
 //					if (lightThreshold.back() > threshold.toDouble())
 //					{
 //						iBrush = m_brush.at(j);
-//						if (redOrGreen == QString::fromLocal8Bit("绿") || redOrGreen == QString::fromLocal8Bit("绿色"))
+//						if (redOrGreen == QString("绿") || redOrGreen == QString("绿色"))
 //							iBrush.setColor(Qt::green);
-//						else if (redOrGreen == QString::fromLocal8Bit("红") || redOrGreen == QString::fromLocal8Bit("红色"))
+//						else if (redOrGreen == QString("红") || redOrGreen == QString("红色"))
 //							iBrush.setColor(Qt::red);
-//						else if (redOrGreen == QString::fromLocal8Bit("黄") || redOrGreen == QString::fromLocal8Bit("黄色"))
+//						else if (redOrGreen == QString("黄") || redOrGreen == QString("黄色"))
 //							iBrush.setColor(Qt::yellow);
 //					}
 //				}
@@ -255,11 +255,11 @@ void PlotLight::setGridStyle(GridStyle gridStyle)
 //				{
 //					if (lightThreshold.back() < threshold.toDouble())
 //					{
-//						if (redOrGreen == QString::fromLocal8Bit("绿") || redOrGreen == QString::fromLocal8Bit("绿色"))
+//						if (redOrGreen == QString("绿") || redOrGreen == QString("绿色"))
 //							iBrush.setColor(Qt::green);
-//						else if (redOrGreen == QString::fromLocal8Bit("红") || redOrGreen == QString::fromLocal8Bit("红色"))
+//						else if (redOrGreen == QString("红") || redOrGreen == QString("红色"))
 //							iBrush.setColor(Qt::red);
-//						else if (redOrGreen == QString::fromLocal8Bit("黄") || redOrGreen == QString::fromLocal8Bit("黄色"))
+//						else if (redOrGreen == QString("黄") || redOrGreen == QString("黄色"))
 //							iBrush.setColor(Qt::yellow);
 //					}
 //				}
@@ -303,8 +303,8 @@ void PlotLight::slot_getCurrentSeconds(double secs)
 		else
 		{
 			QMessageBox *noDataMessageBox = new QMessageBox(nullptr);
-			noDataMessageBox->setWindowTitle(QString::fromLocal8Bit("空数据警告"));
-			noDataMessageBox->setText(QString::fromLocal8Bit("请检查所选项中是否存在空数据"));
+			noDataMessageBox->setWindowTitle(QString("空数据警告"));
+			noDataMessageBox->setText(QString("请检查所选项中是否存在空数据"));
 			noDataMessageBox->show();
 			return;
 		}

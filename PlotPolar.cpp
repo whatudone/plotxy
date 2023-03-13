@@ -20,8 +20,8 @@ PlotPolar::PlotPolar(QWidget * parent)
 	m_titleFont.setPointSizeF(m_titleFontSize);
 	m_titleVisible = true;
 
-	m_units_x = QString::fromLocal8Bit("¡ã");
-	m_units_y = QString::fromLocal8Bit("¡ã");
+    m_units_x = QString("¡ã");
+    m_units_y = QString("¡ã");
 	m_showUnits_x = true;
 	m_showUnits_y = true;
 

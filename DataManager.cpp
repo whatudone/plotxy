@@ -108,7 +108,7 @@ void DataManager::loadCSV(const QString& filePath)
 	}
 	
 	file.close();
-	QMessageBox::information(NULL, QString::fromLocal8Bit("提示信息"), QString::fromLocal8Bit("已成功加载数据"));
+	QMessageBox::information(NULL, QString("提示信息"), QString("已成功加载数据"));
 }
 
 void DataManager::loadCSV_stringTime(const QString& filePath)
@@ -231,7 +231,7 @@ void DataManager::loadCSV_stringTime(const QString& filePath)
 	m_timeDataVector.erase(it, m_timeDataVector.end());
 
 	file.close();
-	QMessageBox::information(NULL, QString::fromLocal8Bit("提示信息"), QString::fromLocal8Bit("已成功加载数据"));
+	QMessageBox::information(NULL, QString("提示信息"), QString("已成功加载数据"));
 }
 
 QMap<QString, QMap<QString, QList<double>>>& DataManager::getDataMap()

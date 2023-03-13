@@ -32,8 +32,8 @@ PlotAttitude::PlotAttitude(QWidget* parent)
 	m_horzGrids = 4;
 	m_vertGrids = 5;
 
-	m_units_x = QString::fromLocal8Bit("°");
-	m_units_y = QString::fromLocal8Bit("°");
+	m_units_x = QString("°");
+	m_units_y = QString("°");
 	m_showUnits_x = true;
 	m_showUnits_y = true;
 	m_decision_roll = 0;

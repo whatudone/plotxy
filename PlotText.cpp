@@ -89,7 +89,7 @@ void PlotText::paintEvent(QPaintEvent* event)
 			return;
 		else
 		{
-			painter.drawText(0.05*width(), as + 0.02*height(), horiGridWidth, verGridWidth, Qt::AlignCenter | Qt::TextWrapAnywhere, QString::fromLocal8Bit("0表示0或无数据"));
+			painter.drawText(0.05*width(), as + 0.02*height(), horiGridWidth, verGridWidth, Qt::AlignCenter | Qt::TextWrapAnywhere, QString("0表示0或无数据"));
 			for (int i = m_entityName.size() - 1; i != -1; i--)
 			{
 				for (int j = m_attriName.size() - 1; j != -1; j--)
