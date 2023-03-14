@@ -218,7 +218,7 @@ void PlotXYDemo::onTimeControls()
 void PlotXYDemo::onCustomContextMenuRequested(const QPoint &point)
 {
     qDebug() << sender();
-    QMenu *pMenu = new QMenu(this);
+    QMenu *pMenu = new QMenu();
 
     QAction *addTabPage = new QAction(QString("添加tab页面"), this);
     QAction *removeTabPage = new QAction(QString("删除tab页面"), this);
@@ -258,7 +258,7 @@ void PlotXYDemo::onContextMenu(const QPoint &point)
         name = ui.tabWidget->tabText(ui.tabWidget->currentIndex());
     }
 
-    QMenu *pMenu = new QMenu(this);
+    QMenu pMenu;
     //QWidgetAction
     QWidgetAction *object_action = new QWidgetAction(this);
     QLabel *label = new QLabel(name);
@@ -269,35 +269,35 @@ void PlotXYDemo::onContextMenu(const QPoint &point)
     QMenu *ViewMenu = new QMenu(QString("View"));
 
     //主菜单
-    pMenu->addAction(object_action);
-    pMenu->addSeparator();
-    pMenu->addMenu(ui.menu_addPlot);
-    pMenu->addSeparator();
-    pMenu->addAction(ui.actionUndo_Ctrl_Z);
-    pMenu->addSeparator();
-    pMenu->addAction(ui.actionCut_Ctrl_X);
-    pMenu->addAction(ui.actionCopy_Ctrl_C);
-    pMenu->addAction(ui.actionPaste_Ctrl_V);
-    pMenu->addAction(ui.actionDelete);
-    pMenu->addSeparator();
-    pMenu->addMenu(ui.menu_autofit);
-    pMenu->addAction(ui.actionOne_To_One);
-    pMenu->addAction(ui.actionRound_Ranges);
-    pMenu->addSeparator();
-    pMenu->addAction(ui.actionPlot_Manager_Ctrl_M);
-    pMenu->addAction(ui.actionWidget_Editor);
-    pMenu->addAction(ui.actionAdvanced_Data_Manager);
-    pMenu->addAction(ui.actionAdd_Plot_Pair_Ctrl_A);
-    pMenu->addAction(ui.actionSave_Screenshot);
-    pMenu->addSeparator();
-    pMenu->addAction(ui.actionExport_to_GOG);
-    pMenu->addSeparator();
-    pMenu->addMenu(ui.menuOrder);
-    pMenu->addMenu(ViewMenu);
-    pMenu->addMenu(ui.menuSelect_Plot);
+    pMenu.addAction(object_action);
+    pMenu.addSeparator();
+    pMenu.addMenu(ui.menu_addPlot);
+    pMenu.addSeparator();
+    pMenu.addAction(ui.actionUndo_Ctrl_Z);
+    pMenu.addSeparator();
+    pMenu.addAction(ui.actionCut_Ctrl_X);
+    pMenu.addAction(ui.actionCopy_Ctrl_C);
+    pMenu.addAction(ui.actionPaste_Ctrl_V);
+    pMenu.addAction(ui.actionDelete);
+    pMenu.addSeparator();
+    pMenu.addMenu(ui.menu_autofit);
+    pMenu.addAction(ui.actionOne_To_One);
+    pMenu.addAction(ui.actionRound_Ranges);
+    pMenu.addSeparator();
+    pMenu.addAction(ui.actionPlot_Manager_Ctrl_M);
+    pMenu.addAction(ui.actionWidget_Editor);
+    pMenu.addAction(ui.actionAdvanced_Data_Manager);
+    pMenu.addAction(ui.actionAdd_Plot_Pair_Ctrl_A);
+    pMenu.addAction(ui.actionSave_Screenshot);
+    pMenu.addSeparator();
+    pMenu.addAction(ui.actionExport_to_GOG);
+    pMenu.addSeparator();
+    pMenu.addMenu(ui.menuOrder);
+    pMenu.addMenu(ViewMenu);
+    pMenu.addMenu(ui.menuSelect_Plot);
 
     /* 在鼠标右键处显示菜单 */
-    pMenu->exec(QCursor::pos());
+    pMenu.exec(QCursor::pos());
 }
 
 void PlotXYDemo::onNewTab()
@@ -447,7 +447,7 @@ void PlotXYDemo::onAddBarPlot()
     initWidget(plotItem);
 
     // 控制其自由移动和缩放
-    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
+    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
     m_freeWidgetWraper->setWidget(plotItem);
@@ -474,7 +474,7 @@ void PlotXYDemo::onAddTextPlot()
     initWidget(plotItem);
 
     // 控制其自由移动和缩放
-    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
+    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
     m_freeWidgetWraper->setWidget(plotItem);
@@ -505,7 +505,7 @@ void PlotXYDemo::onAddLightPlot()
     initWidget(plotItem);
 
     // 控制其自由移动和缩放
-    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
+    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
     m_freeWidgetWraper->setWidget(plotItem);
@@ -534,7 +534,7 @@ void PlotXYDemo::onAddTrackPlot()
     initWidget(plotItem);
 
     // 控制其自由移动和缩放
-    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
+    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
     m_freeWidgetWraper->setWidget(plotItem);
@@ -561,7 +561,7 @@ void PlotXYDemo::onAddAScopePlot()
 
     initWidget(plotItem);
     // 控制其自由移动和缩放
-    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
+    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
     m_freeWidgetWraper->setWidget(plotItem);
@@ -587,7 +587,7 @@ void PlotXYDemo::onAddRTIPlot()
 
     initWidget(plotItem);
     // 控制其自由移动和缩放
-    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
+    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
     m_freeWidgetWraper->setWidget(plotItem);
@@ -613,7 +613,7 @@ void PlotXYDemo::onAddDopplerPolt()
 
     initWidget(plotItem);
     // 控制其自由移动和缩放
-    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
+    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
     m_freeWidgetWraper->setWidget(plotItem);
@@ -641,7 +641,7 @@ void PlotXYDemo::onAddScatterPlot()
     initWidget(plotItem);
 
     // 控制其自由移动和缩放
-    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
+    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
     m_freeWidgetWraper->setWidget(plotItem);
     m_freeWidgetWraper->setMoveEnable(true);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
@@ -668,7 +668,7 @@ void PlotXYDemo::onAddDialPlot()
     initWidget(plotItem);
 
     // 控制其自由移动和缩放
-    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
+    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
     m_freeWidgetWraper->setWidget(plotItem);
@@ -735,7 +735,7 @@ void PlotXYDemo::onAddPolarPlot()
 
     initWidget(plotItem);
     // 控制其自由移动和缩放
-    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
+    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
     m_freeWidgetWraper->setWidget(plotItem);
@@ -931,7 +931,7 @@ void PlotXYDemo::onAddAttitudePlot()
     initWidget(plotItem);
 
     // 控制其自由移动和缩放
-    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper();
+    FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
 	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
     m_freeWidgetWraper->setWidget(plotItem);

@@ -9,8 +9,6 @@ FreeWidgetWraper::FreeWidgetWraper(QObject *parent) : QObject(parent)
     moveEnable = true;
     resizeEnable = true;
 
-    widget = nullptr;
-
     mousePressed = false;
     mousePoint = QPoint(0, 0);
     mouseRect = QRect(0, 0, 0, 0);
@@ -19,10 +17,10 @@ FreeWidgetWraper::FreeWidgetWraper(QObject *parent) : QObject(parent)
         pressedArea << false;
         pressedRect << QRect(0, 0, 0, 0);
     }
-    ////如果父类是窗体则直接设置
-    //if (parent->isWidgetType()) {
-    //    setWidget((QWidget *)parent);
-    //}
+}
+
+FreeWidgetWraper::~FreeWidgetWraper()
+{
 }
 
 bool FreeWidgetWraper::eventFilter(QObject *watched, QEvent *event)
@@ -32,7 +30,7 @@ bool FreeWidgetWraper::eventFilter(QObject *watched, QEvent *event)
         return QObject::eventFilter(watched, event);
     }
     
-    if (event->type() == QEvent::Resize) 
+    if (event->type() == QEvent::Resize)
     {
         //重新计算八个描点的区域,描点区域的作用还有就是计算鼠标坐标是否在某一个区域内
         int width = widget->width();
@@ -55,8 +53,8 @@ bool FreeWidgetWraper::eventFilter(QObject *watched, QEvent *event)
         pressedRect[6] = QRect(0, height - padding, padding, padding);
         //右下角描点区域
         pressedRect[7] = QRect(width - padding, height - padding, padding, padding);
-    } 
-    else if (event->type() == QEvent::HoverMove) 
+    }
+    else if (event->type() == QEvent::HoverMove)
     {
         //设置对应鼠标形状,这个必须放在这里而不是下面,因为可以在鼠标没有按下的时候识别
         QHoverEvent *hoverEvent = (QHoverEvent *)event;
@@ -88,7 +86,7 @@ bool FreeWidgetWraper::eventFilter(QObject *watched, QEvent *event)
         int offsetY = point.y() - mousePoint.y();
 
         //根据按下处的位置判断是否是移动控件还是拉伸控件
-        if (moveEnable && mousePressed) 
+        if (moveEnable && mousePressed)
         {
             widget->move(widget->x() + offsetX, widget->y() + offsetY);
         }
@@ -143,8 +141,8 @@ bool FreeWidgetWraper::eventFilter(QObject *watched, QEvent *event)
                 widget->setGeometry(widget->x(), widget->y(), resizeW, resizeH);
             }
         }
-    } 
-    else if (event->type() == QEvent::MouseButtonPress) 
+    }
+    else if (event->type() == QEvent::MouseButtonPress)
     {
         //记住鼠标按下的坐标+窗体区域
         QMouseEvent *mouseEvent = (QMouseEvent *)event;
@@ -171,12 +169,12 @@ bool FreeWidgetWraper::eventFilter(QObject *watched, QEvent *event)
         } else {
             mousePressed = true;
         }
-    } 
-    else if (event->type() == QEvent::MouseMove) 
+    }
+    else if (event->type() == QEvent::MouseMove)
     {
         //改成用HoverMove识别
-    } 
-    else if (event->type() == QEvent::MouseButtonRelease) 
+    }
+    else if (event->type() == QEvent::MouseButtonRelease)
     {
         //恢复所有
         widget->setCursor(Qt::ArrowCursor);
@@ -185,11 +183,25 @@ bool FreeWidgetWraper::eventFilter(QObject *watched, QEvent *event)
             pressedArea[i] = false;
         }
 
-		if (widget->objectName() == "PlotItemBase")
-			emit sgnMouseEventDone(widget);
-    }
+        if (widget->objectName() == "PlotItemBase")
+            emit sgnMouseEventDone(widget);
+    }/*else if (event->type() == QEvent::Destroy)
+    {
+        // 跟随被监控的控件一起释放
+        deleteLater();
+    }*/
     
     return QObject::eventFilter(watched, event);
+}
+
+MouseMode FreeWidgetWraper::mouseMode() const
+{
+    return m_mouseMode;
+}
+
+void FreeWidgetWraper::setMouseMode(const MouseMode &mouseMode)
+{
+    m_mouseMode = mouseMode;
 }
 
 void FreeWidgetWraper::setPadding(int padding)
@@ -214,7 +226,7 @@ void FreeWidgetWraper::setMousePressed(bool mousePressed)
 
 void FreeWidgetWraper::setWidget(QWidget* widget)
 {
-    if (this->widget == 0) {
+    if (!this->widget) {
         this->widget = widget;
         //设置鼠标追踪为真
         this->widget->setMouseTracking(true);

@@ -1,5 +1,5 @@
 ﻿#ifndef _FREE_WIDGET_WRAPER_H_
-#define _FREE_WIDGET_WRAPER_H_
+#define FREE_WIDGET_WRAPER_H_
 
 /**
  * 无边框窗体类
@@ -12,13 +12,29 @@
 
 #include <QtWidgets/QWidget>
 
+// 鼠标操作模式，每种模式对应一种鼠标控制行为，属于互斥行为
+enum class MouseMode
+{
+    SelectPlot = 0,
+    Pan,
+    CenterPlot,
+    BoxZoom,
+    MeasureDistance,
+    CreatePlot,
+    MovePlot
+
+};
 
 class PlotBase;
 class FreeWidgetWraper : public QObject
 {
     Q_OBJECT
 public:
-    explicit FreeWidgetWraper(QObject *parent = 0);
+    explicit FreeWidgetWraper(QObject *parent = nullptr);
+    ~FreeWidgetWraper();
+
+    MouseMode mouseMode() const;
+    void setMouseMode(const MouseMode &mouseMode);
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event);
@@ -30,7 +46,7 @@ private:
     bool resizeEnable;
 
     //无边框窗体
-    QWidget *widget;
+    QWidget *widget= nullptr;
 
     //鼠标是否按下+按下坐标+按下时窗体区域
     bool mousePressed;
@@ -47,6 +63,8 @@ private:
     //存储窗体默认的属性
     Qt::WindowFlags flags;
 
+    MouseMode m_mouseMode = MouseMode::SelectPlot;
+
 public Q_SLOTS:
     //设置边距
     void setPadding(int padding);
@@ -60,7 +78,7 @@ public Q_SLOTS:
     void setWidget(QWidget*widget);
 
 signals:
-	void sgnMouseEventDone(QWidget*);
+    void sgnMouseEventDone(QWidget*);
 };
 
 #endif // _FREE_WIDGET_WRAPER_H_
