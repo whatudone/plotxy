@@ -18,6 +18,7 @@ enum class MouseMode
     SelectPlot = 0,
     Pan,
     CenterPlot,
+    Zoom,
     BoxZoom,
     MeasureDistance,
     CreatePlot,

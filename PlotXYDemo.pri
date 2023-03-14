@@ -93,4 +93,5 @@ FORMS += ./AddPlotPair.ui \
     ./ToolBox.ui \
     ./ToolPage.ui
 RESOURCES += resources/statusbar.qrc \
+    $$PWD/resources/qss.qrc \
     resources/toolbar.qrc

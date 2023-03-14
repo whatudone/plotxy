@@ -26,12 +26,6 @@ ToolPage::ToolPage(QWidget *parent) :
     layout->addStretch(1);
     layout->addWidget(m_pLabel);
 
-    QFile file(":/res/toolpage.qss");
-    if (file.open(QIODevice::ReadOnly)) {
-        setStyleSheet(file.readAll());
-    }
-    file.close();
-
     connect(ui->pushButtonFold, &QPushButton::clicked, this, &ToolPage::onPushButtonFoldClicked);
 }
 

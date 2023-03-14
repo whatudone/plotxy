@@ -2,6 +2,7 @@
 #include <QtWidgets/QCheckBox>
 #include <QFileDialog>
 #include <QMetaType>
+#include <QButtonGroup>
 
 #include "PlotXYDemo.h"
 #include "FreeWidgetWraper.h"
@@ -29,7 +30,7 @@ PlotXYDemo::PlotXYDemo(QWidget *parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
-	setMinimumSize(1600, 900);
+    setMinimumSize(1600, 900);
     setWindowTitle("绘图");
 
 
@@ -47,19 +48,19 @@ PlotXYDemo::PlotXYDemo(QWidget *parent)
     connect(this, &PlotXYDemo::sgn_sliderValueChanged, m_timeCtrl, &TimeControls::onRemoteSliderValueChanged);
     connect(m_timeCtrl, &TimeControls::sgn_sliderValueChanged, this, &PlotXYDemo::onRemoteSliderValueChanged);
     connect(this, &PlotXYDemo::sgn_enableActionStop, m_timeCtrl, &TimeControls::onEnableActionStop);
-	connect(this, SIGNAL(sgn_renameTabPage(QString, QString)), PlotManagerData::getInstance(), SLOT(slotChangeTabName(QString, QString)));
+    connect(this, SIGNAL(sgn_renameTabPage(QString, QString)), PlotManagerData::getInstance(), SLOT(slotChangeTabName(QString, QString)));
 
     m_curBaseInfo.Base_TabName = nullptr;
     m_curBaseInfo.Base_PlotName = nullptr;
     qRegisterMetaType<BaseInfo>("BaseInfo");
 
     connect(m_plotManager, &PlotManager::sigAddPlotPair, this, QOverload<>::of(&PlotXYDemo::onAddPlotPair));
-	connect(m_plotManager, SIGNAL(sigAdvancedDataManager()), this, SLOT(onAdvancedData()));
-	connect(this, &PlotXYDemo::sgn_sendTabWidgetRect, m_plotManager, &PlotManager::onGetTabWidgetRect);
-	connect(m_plotManager, &PlotManager::sigGetTabRect, this, &PlotXYDemo::onSendTabRect);
-	connect(m_AdvancedDataManager, SIGNAL(sgnAddPlotPair()), this, SLOT(onAddPlotPair()));
-	QRect tabRect = ui.tabWidget->rect();
-	emit sgn_sendTabWidgetRect(tabRect);
+    connect(m_plotManager, SIGNAL(sigAdvancedDataManager()), this, SLOT(onAdvancedData()));
+    connect(this, &PlotXYDemo::sgn_sendTabWidgetRect, m_plotManager, &PlotManager::onGetTabWidgetRect);
+    connect(m_plotManager, &PlotManager::sigGetTabRect, this, &PlotXYDemo::onSendTabRect);
+    connect(m_AdvancedDataManager, SIGNAL(sgnAddPlotPair()), this, SLOT(onAddPlotPair()));
+    QRect tabRect = ui.tabWidget->rect();
+    emit sgn_sendTabWidgetRect(tabRect);
 
     //右键菜单栏
     ui.tabWidget->tabBar()->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -84,7 +85,7 @@ PlotXYDemo::~PlotXYDemo()
 void PlotXYDemo::onAdvancedData()
 {
     m_AdvancedDataManager->show();
-	m_AdvancedDataManager->activateWindow();
+    m_AdvancedDataManager->activateWindow();
 }
 
 void PlotXYDemo::onPlotWizard()
@@ -96,9 +97,9 @@ void PlotXYDemo::onPlotManager()
     if (!m_plotManager) {
         return;
     }
-	m_plotManager->onSelectedPlot(m_curBaseInfo.Base_TabName, m_curBaseInfo.Base_PlotName);
+    m_plotManager->onSelectedPlot(m_curBaseInfo.Base_TabName, m_curBaseInfo.Base_PlotName);
     m_plotManager->show();
-	m_plotManager->activateWindow();
+    m_plotManager->activateWindow();
 }
 
 void PlotXYDemo::onWidgetEditor()
@@ -119,22 +120,22 @@ void PlotXYDemo::onAddPlotPair()
     m_addPlotPair->onChangeStackIndex(m_lastSelectedType);
     m_addPlotPair->setPlotBaseInfo(m_curBaseInfo);
     m_addPlotPair->show();
-	m_addPlotPair->activateWindow();
+    m_addPlotPair->activateWindow();
 }
 
 void PlotXYDemo::onAddPlotPair(const QString &tabName, const QString &plotName)
 {
     if (!m_addPlotPair) {
-		m_addPlotPair = AddPlotPair::m_getInstance();
-		connect(this, SIGNAL(sgn_loadDataReady()), m_addPlotPair, SLOT(onUpdateData()));
-		m_addPlotPair->init(getCurrentFocusPlot());
-	}
-	m_curBaseInfo.Base_TabName = tabName;
-	m_curBaseInfo.Base_PlotName = plotName;
-	m_addPlotPair->onChangeStackIndex(m_lastSelectedType);
-	m_addPlotPair->setPlotBaseInfo(m_curBaseInfo);
-	m_addPlotPair->show();
-	m_addPlotPair->activateWindow();
+        m_addPlotPair = AddPlotPair::m_getInstance();
+        connect(this, SIGNAL(sgn_loadDataReady()), m_addPlotPair, SLOT(onUpdateData()));
+        m_addPlotPair->init(getCurrentFocusPlot());
+    }
+    m_curBaseInfo.Base_TabName = tabName;
+    m_curBaseInfo.Base_PlotName = plotName;
+    m_addPlotPair->onChangeStackIndex(m_lastSelectedType);
+    m_addPlotPair->setPlotBaseInfo(m_curBaseInfo);
+    m_addPlotPair->show();
+    m_addPlotPair->activateWindow();
 }
 
 void PlotXYDemo::onDiscoveryRules()
@@ -160,7 +161,7 @@ void PlotXYDemo::onClassification()
 void PlotXYDemo::onOpenFile()
 {
     QString path = QFileDialog::getOpenFileName(this, "open File", "/home", tr("Microsoft CSV(*.csv)"));
-//    DataManager::getInstance()->loadCSV(path);
+    //    DataManager::getInstance()->loadCSV(path);
     DataManager::getInstance()->loadCSV_stringTime(path);
 
     sgn_loadDataReady();
@@ -202,17 +203,26 @@ void PlotXYDemo::onMovePlot()
 {
 }
 
+void PlotXYDemo::onStatusBtnClicked(int index)
+{
+    MouseMode mode = static_cast<MouseMode>(index);
+    if(mode == MouseMode::SelectPlot){
+
+    }
+
+}
+
 void PlotXYDemo::onSelectedPlot(QWidget* widget)
 {
-	m_curBaseInfo.Base_TabName = dynamic_cast<PlotItemBase *>(widget)->currTabName();
-	m_curBaseInfo.Base_PlotName = dynamic_cast<PlotItemBase *>(widget)->currName();
-	updateStatusBar_info(m_curBaseInfo.Base_PlotName);
+    m_curBaseInfo.Base_TabName = dynamic_cast<PlotItemBase *>(widget)->currTabName();
+    m_curBaseInfo.Base_PlotName = dynamic_cast<PlotItemBase *>(widget)->currName();
+    updateStatusBar_info(m_curBaseInfo.Base_PlotName);
 }
 
 void PlotXYDemo::onTimeControls()
 {
     m_timeCtrl->show();
-	m_timeCtrl->activateWindow();
+    m_timeCtrl->activateWindow();
 }
 
 void PlotXYDemo::onCustomContextMenuRequested(const QPoint &point)
@@ -248,8 +258,8 @@ void PlotXYDemo::onContextMenu(const QPoint &point)
     getCurrentFocusPlot();
 
     QWidget *subWidget = QApplication::widgetAt(QCursor::pos().x(), QCursor::pos().y());
-	if (subWidget == nullptr)
-		return;
+    if (subWidget == nullptr)
+        return;
 
     QString name = subWidget->objectName();
     if (name == "PlotItemBase") {
@@ -306,13 +316,13 @@ void PlotXYDemo::onNewTab()
     int currCount = ui.tabWidget->count();
     QString genTabName = QString("Tab ") + QString::number(currCount + 1);
     ui.tabWidget->addTab(tabWidgetItem, genTabName);
-	ui.tabWidget->setCurrentIndex(currCount);
+    ui.tabWidget->setCurrentIndex(currCount);
 }
 
 void PlotXYDemo::onCloseTab()
 {
-	if (ui.tabWidget->count() <= 1)
-		return;
+    if (ui.tabWidget->count() <= 1)
+        return;
 
     int currTabIndex = ui.tabWidget->currentIndex();
     ui.tabWidget->removeTab(currTabIndex);
@@ -320,19 +330,19 @@ void PlotXYDemo::onCloseTab()
 
 void PlotXYDemo::onNextTab()
 {
-	int currTabIndex = ui.tabWidget->currentIndex();
-	ui.tabWidget->setCurrentIndex(currTabIndex + 1);
+    int currTabIndex = ui.tabWidget->currentIndex();
+    ui.tabWidget->setCurrentIndex(currTabIndex + 1);
 }
 
 void PlotXYDemo::onPreviousTab()
 {
-	int currTabIndex = ui.tabWidget->currentIndex();
-	ui.tabWidget->setCurrentIndex(currTabIndex - 1);
+    int currTabIndex = ui.tabWidget->currentIndex();
+    ui.tabWidget->setCurrentIndex(currTabIndex - 1);
 }
 
 void PlotXYDemo::onShowMenubar()
 {
-//	menuBar()->setVisible(false);
+    //	menuBar()->setVisible(false);
 }
 
 void PlotXYDemo::onShowToolbar()
@@ -410,24 +420,24 @@ void PlotXYDemo::onOptions()
 
 void PlotXYDemo::onRenameTab()
 {
-	renameTab* renameDlg = new renameTab(this);
-	int ret = renameDlg->exec();
-	if (ret == QDialog::Accepted)
-	{
-		int currTabIndex = ui.tabWidget->currentIndex();
-		QString oldName = ui.tabWidget->tabText(currTabIndex);
-		QString newName = renameDlg->getNewTabName();
-		ui.tabWidget->setTabText(currTabIndex, newName);
+    renameTab* renameDlg = new renameTab(this);
+    int ret = renameDlg->exec();
+    if (ret == QDialog::Accepted)
+    {
+        int currTabIndex = ui.tabWidget->currentIndex();
+        QString oldName = ui.tabWidget->tabText(currTabIndex);
+        QString newName = renameDlg->getNewTabName();
+        ui.tabWidget->setTabText(currTabIndex, newName);
 
-		emit sgn_renameTabPage(oldName, newName);
-	}
-	renameDlg->deleteLater();
+        emit sgn_renameTabPage(oldName, newName);
+    }
+    renameDlg->deleteLater();
 }
 
 void PlotXYDemo::onSendTabRect()
 {
-	QRect tabRect = ui.tabWidget->rect();
-	emit sgn_sendTabWidgetRect(tabRect);
+    QRect tabRect = ui.tabWidget->rect();
+    emit sgn_sendTabWidgetRect(tabRect);
 }
 
 void PlotXYDemo::onAddBarPlot()
@@ -438,9 +448,9 @@ void PlotXYDemo::onAddBarPlot()
     PlotBar *plotItem = new PlotBar(ui.tabWidget->currentWidget());
     plotItem->setTabName(currTabText);
     connect(this, &PlotXYDemo::sgn_sendCurrentSeconds, plotItem, &PlotBar::onGetCurrentSecond);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
     connect(m_AdvancedDataManager, &AdvancedDataManager::updateColorThresholdMap,
             plotItem, &PlotBar::onUpdateColorThresholdMap);
 
@@ -448,15 +458,15 @@ void PlotXYDemo::onAddBarPlot()
 
     // 控制其自由移动和缩放
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
     m_freeWidgetWraper->setWidget(plotItem);
     m_freeWidgetWraper->setMoveEnable(true);
 
     plotItem->show();
 
     m_lastSelectedType = PlotType::Type_PlotBar;
-	PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
+    PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
 }
 void PlotXYDemo::onAddTextPlot()
 {
@@ -466,17 +476,17 @@ void PlotXYDemo::onAddTextPlot()
     PlotText *plotItem = new PlotText(ui.tabWidget->currentWidget());
     plotItem->setTabName(currTabText);
     connect(this, &PlotXYDemo::sgn_sendCurrentSeconds, plotItem, &PlotText::slot_getCurrentSeconds);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
 
 
     initWidget(plotItem);
 
     // 控制其自由移动和缩放
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
     m_freeWidgetWraper->setWidget(plotItem);
     m_freeWidgetWraper->setMoveEnable(true);
 
@@ -484,7 +494,7 @@ void PlotXYDemo::onAddTextPlot()
     plotItem->update();
 
     m_lastSelectedType = PlotType::Type_PlotText;
-	PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
+    PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
 }
 
 void PlotXYDemo::onAddLightPlot()
@@ -495,26 +505,26 @@ void PlotXYDemo::onAddLightPlot()
     PlotLight *plotItem = new PlotLight(ui.tabWidget->currentWidget());
     plotItem->setTabName(currTabText);
 
-	connect(this, &PlotXYDemo::sgn_sendCurrentSeconds, plotItem, &PlotLight::slot_getCurrentSeconds);
-	connect(m_addPlotPair, &AddPlotPair::sgn_getLightData, plotItem, &PlotLight::slot_getLightData);
-//	connect(m_addPlotPair,&AddPlotPair::sgn_updatePlotPair,plotItem,&PlotLight::slot_onAddButtonClicked);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
+    connect(this, &PlotXYDemo::sgn_sendCurrentSeconds, plotItem, &PlotLight::slot_getCurrentSeconds);
+    connect(m_addPlotPair, &AddPlotPair::sgn_getLightData, plotItem, &PlotLight::slot_getLightData);
+    //	connect(m_addPlotPair,&AddPlotPair::sgn_updatePlotPair,plotItem,&PlotLight::slot_onAddButtonClicked);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
 
     initWidget(plotItem);
 
     // 控制其自由移动和缩放
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
     m_freeWidgetWraper->setWidget(plotItem);
     m_freeWidgetWraper->setMoveEnable(true);
 
     plotItem->show();
 
     m_lastSelectedType = PlotType::Type_PlotLight;
-	PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
+    PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
 }
 
 void PlotXYDemo::onAddTrackPlot()
@@ -525,9 +535,9 @@ void PlotXYDemo::onAddTrackPlot()
     PlotTrack *plotItem = new PlotTrack(ui.tabWidget->currentWidget());
     plotItem->setTabName(currTabText);
     connect(this, &PlotXYDemo::sgn_sendCurrentSeconds, plotItem, &PlotTrack::onGetCurrentSeconds);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
     connect(m_AdvancedDataManager, &AdvancedDataManager::updateColorThresholdMap,
             plotItem, &PlotTrack::onUpdateColorThresholdMap);
 
@@ -535,8 +545,8 @@ void PlotXYDemo::onAddTrackPlot()
 
     // 控制其自由移动和缩放
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
     m_freeWidgetWraper->setWidget(plotItem);
     m_freeWidgetWraper->setMoveEnable(true);
 
@@ -544,7 +554,7 @@ void PlotXYDemo::onAddTrackPlot()
     plotItem->update();
 
     m_lastSelectedType = PlotType::Type_PlotTrack;
-	PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
+    PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
 }
 
 void PlotXYDemo::onAddAScopePlot()
@@ -554,23 +564,23 @@ void PlotXYDemo::onAddAScopePlot()
 
     PlotAScope *plotItem = new PlotAScope(ui.tabWidget->currentWidget());
     plotItem->setTabName(currTabText);
-//  connect(this, &PlotXYDemo::sgn_sendCurrentSeconds, plotItem, &PlotAScope::slot_getCurrentSeconds);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
+    //  connect(this, &PlotXYDemo::sgn_sendCurrentSeconds, plotItem, &PlotAScope::slot_getCurrentSeconds);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
 
     initWidget(plotItem);
     // 控制其自由移动和缩放
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
     m_freeWidgetWraper->setWidget(plotItem);
     m_freeWidgetWraper->setMoveEnable(true);
 
     plotItem->show();
 
     m_lastSelectedType = PlotType::Type_PlotAScope;
-	PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
+    PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
 }
 
 void PlotXYDemo::onAddRTIPlot()
@@ -581,22 +591,22 @@ void PlotXYDemo::onAddRTIPlot()
     PlotRTI *plotItem = new PlotRTI(ui.tabWidget->currentWidget());
     plotItem->setTabName(currTabText);
     //  connect(this, &PlotXYDemo::sgn_sendCurrentSeconds, plotItem, &PlotRTI::slot_getCurrentSeconds);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
 
     initWidget(plotItem);
     // 控制其自由移动和缩放
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
     m_freeWidgetWraper->setWidget(plotItem);
     m_freeWidgetWraper->setMoveEnable(true);
 
     plotItem->show();
 
     m_lastSelectedType = PlotType::Type_PlotRTI;
-	PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
+    PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
 }
 
 void PlotXYDemo::onAddDopplerPolt()
@@ -607,22 +617,22 @@ void PlotXYDemo::onAddDopplerPolt()
     PlotDoppler *plotItem = new PlotDoppler(ui.tabWidget->currentWidget());
     plotItem->setTabName(currTabText);
     //  connect(this, &PlotXYDemo::sgn_sendCurrentSeconds, plotItem, &PlotDoppler::slot_getCurrentSeconds);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
 
     initWidget(plotItem);
     // 控制其自由移动和缩放
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
     m_freeWidgetWraper->setWidget(plotItem);
     m_freeWidgetWraper->setMoveEnable(true);
 
     plotItem->show();
 
     m_lastSelectedType = PlotType::Type_PlotDoppler;
-	PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
+    PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
 }
 
 void PlotXYDemo::onAddScatterPlot()
@@ -634,9 +644,9 @@ void PlotXYDemo::onAddScatterPlot()
 
     plotItem->setTabName(currTabText);
     connect(this, &PlotXYDemo::sgn_sendCurrentSeconds, plotItem, &PlotScatter::onGetCurrentSeconds);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
 
     initWidget(plotItem);
 
@@ -644,12 +654,12 @@ void PlotXYDemo::onAddScatterPlot()
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
     m_freeWidgetWraper->setWidget(plotItem);
     m_freeWidgetWraper->setMoveEnable(true);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
     plotItem->show();
 
     m_lastSelectedType = PlotType::Type_PlotScatter;
-	PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
+    PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
 }
 
 void PlotXYDemo::onAddDialPlot()
@@ -661,16 +671,16 @@ void PlotXYDemo::onAddDialPlot()
 
     plotItem->setTabName(currTabText);
     connect(this, &PlotXYDemo::sgn_sendCurrentSeconds, plotItem, &PlotDial::onGetCurrentSeconds);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
 
     initWidget(plotItem);
 
     // 控制其自由移动和缩放
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
     m_freeWidgetWraper->setWidget(plotItem);
     m_freeWidgetWraper->setMoveEnable(true);
 
@@ -678,7 +688,7 @@ void PlotXYDemo::onAddDialPlot()
     plotItem->update();
 
     m_lastSelectedType = PlotType::Type_PlotDial;
-	PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
+    PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
 }
 
 void PlotXYDemo::onAutofit_Full()
@@ -729,22 +739,22 @@ void PlotXYDemo::onAddPolarPlot()
     PlotPolar *plotItem = new PlotPolar(ui.tabWidget->currentWidget());
     plotItem->setTabName(currTabText);
     connect(this, &PlotXYDemo::sgn_sendCurrentSeconds, plotItem, &PlotPolar::slot_getCurrentSeconds);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
 
     initWidget(plotItem);
     // 控制其自由移动和缩放
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
     m_freeWidgetWraper->setWidget(plotItem);
     m_freeWidgetWraper->setMoveEnable(true);
 
     plotItem->show();
 
     m_lastSelectedType = PlotType::Type_PlotPolar;
-	PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
+    PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
 }
 
 void PlotXYDemo::onSetSliderRange(int min, int max, int singleStep)
@@ -786,8 +796,8 @@ void PlotXYDemo::onTimeOut()
             } else {
                 m_timer->stop();
                 ui.actionStop->setEnabled(false);
-				ui.actionPlay->setChecked(false);
-				ui.actionReverse->setChecked(false);
+                ui.actionPlay->setChecked(false);
+                ui.actionReverse->setChecked(false);
                 emit sgn_enableActionStop(false);
             }
 
@@ -800,8 +810,8 @@ void PlotXYDemo::onTimeOut()
             } else {
                 m_timer->stop();
                 ui.actionStop->setEnabled(false);
-				ui.actionPlay->setChecked(false);
-				ui.actionReverse->setChecked(false);
+                ui.actionPlay->setChecked(false);
+                ui.actionReverse->setChecked(false);
                 emit sgn_enableActionStop(false);
             }
         } else
@@ -819,8 +829,8 @@ void PlotXYDemo::onUpdateLocalTime()
 void PlotXYDemo::onPlay()
 {
     m_bIsPlayForward = true;
-	ui.actionPlay->setChecked(true);
-	ui.actionReverse->setChecked(false);
+    ui.actionPlay->setChecked(true);
+    ui.actionReverse->setChecked(false);
     if (m_timer->isActive())
         m_timer->stop();
     m_timer->start(m_timerInterval);
@@ -832,16 +842,16 @@ void PlotXYDemo::onStop()
 {
     m_timer->stop();
     ui.actionStop->setEnabled(false);
-	ui.actionPlay->setChecked(false);
-	ui.actionReverse->setChecked(false);
+    ui.actionPlay->setChecked(false);
+    ui.actionReverse->setChecked(false);
     emit sgn_enableActionStop(false);
 }
 
 void PlotXYDemo::onReverse()
 {
     m_bIsPlayForward = false;
-	ui.actionPlay->setChecked(false);
-	ui.actionReverse->setChecked(true);
+    ui.actionPlay->setChecked(false);
+    ui.actionReverse->setChecked(true);
     if (m_timer->isActive())
         m_timer->stop();
     m_timer->start(m_timerInterval);
@@ -858,8 +868,8 @@ void PlotXYDemo::onFrameReverse()
     int step = m_timeCtrl->getStepFactor() * m_timeCtrl->getMultiplizer();
     ui.timeSlider->setValue(curValue - step);
     ui.actionStop->setEnabled(false);
-	ui.actionPlay->setChecked(false);
-	ui.actionReverse->setChecked(false);
+    ui.actionPlay->setChecked(false);
+    ui.actionReverse->setChecked(false);
     emit sgn_enableActionStop(false);
 }
 
@@ -872,8 +882,8 @@ void PlotXYDemo::onFrameForward()
     int step = m_timeCtrl->getStepFactor() * m_timeCtrl->getMultiplizer();
     ui.timeSlider->setValue(curValue + step);
     ui.actionStop->setEnabled(false);
-	ui.actionPlay->setChecked(false);
-	ui.actionReverse->setChecked(false);
+    ui.actionPlay->setChecked(false);
+    ui.actionReverse->setChecked(false);
     emit sgn_enableActionStop(false);
 }
 
@@ -925,15 +935,15 @@ void PlotXYDemo::onAddAttitudePlot()
     PlotAttitude *plotItem = new PlotAttitude(ui.tabWidget->currentWidget());
     plotItem->setTabName(currTabText);
     connect(this, &PlotXYDemo::sgn_sendCurrentSeconds, plotItem, &PlotAttitude::slot_getCurrentSeconds);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
-	connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
+    connect(plotItem, &PlotItemBase::sgn_dataPairChanged, m_AdvancedDataManager, &AdvancedDataManager::onUpdatePlotPair);
     initWidget(plotItem);
 
     // 控制其自由移动和缩放
     FreeWidgetWraper *m_freeWidgetWraper = new FreeWidgetWraper(plotItem);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
-	connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, m_plotManager, &PlotManager::onMouseEventDone);
+    connect(m_freeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
     m_freeWidgetWraper->setWidget(plotItem);
     m_freeWidgetWraper->setMoveEnable(true);
 
@@ -941,86 +951,86 @@ void PlotXYDemo::onAddAttitudePlot()
     plotItem->update();
 
     m_lastSelectedType = PlotType::Type_PlotAttitude;
-	PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
+    PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
 }
 
 void PlotXYDemo::init()
 {
-	initMenuFile();
-	initMenuEdit();
-	initMenuGraph();
-	initMenuData();
-	initMenuTime();
-	initMenuTabs();
-	initMenuView();
-	initMenuTools();
-	initMenuHelp();
+    initMenuFile();
+    initMenuEdit();
+    initMenuGraph();
+    initMenuData();
+    initMenuTime();
+    initMenuTabs();
+    initMenuView();
+    initMenuTools();
+    initMenuHelp();
 
-	initStatusBar();
+    initStatusBar();
 }
 
 void PlotXYDemo::initMenuFile()
 {
-	connect(ui.actionopen, &QAction::triggered, this, &PlotXYDemo::onOpenFile);
-	connect(ui.actionopenNetwork, &QAction::triggered, this, &PlotXYDemo::onOpenNetwork);
-	connect(ui.actionexport, &QAction::triggered, this, &PlotXYDemo::onExportDataStore);
-	connect(ui.actionclose, &QAction::triggered, this, &PlotXYDemo::onClose_Disconnect);
-	connect(ui.actionRun_Python_Script_Ctrl_E, &QAction::triggered, this, &PlotXYDemo::onRunPythonScript);
-	connect(ui.actionLoad_PML, &QAction::triggered, this, &PlotXYDemo::onLoadPML);
-	connect(ui.actionSave_to_PML, &QAction::triggered, this, &PlotXYDemo::onSaveToPML);
-	connect(ui.actionSave_Screenshot, &QAction::triggered, this, &PlotXYDemo::onSaveScreenshot);
-	connect(ui.actionQuit, &QAction::triggered, this, &PlotXYDemo::onQuit);
+    connect(ui.actionopen, &QAction::triggered, this, &PlotXYDemo::onOpenFile);
+    connect(ui.actionopenNetwork, &QAction::triggered, this, &PlotXYDemo::onOpenNetwork);
+    connect(ui.actionexport, &QAction::triggered, this, &PlotXYDemo::onExportDataStore);
+    connect(ui.actionclose, &QAction::triggered, this, &PlotXYDemo::onClose_Disconnect);
+    connect(ui.actionRun_Python_Script_Ctrl_E, &QAction::triggered, this, &PlotXYDemo::onRunPythonScript);
+    connect(ui.actionLoad_PML, &QAction::triggered, this, &PlotXYDemo::onLoadPML);
+    connect(ui.actionSave_to_PML, &QAction::triggered, this, &PlotXYDemo::onSaveToPML);
+    connect(ui.actionSave_Screenshot, &QAction::triggered, this, &PlotXYDemo::onSaveScreenshot);
+    connect(ui.actionQuit, &QAction::triggered, this, &PlotXYDemo::onQuit);
 }
 
 void PlotXYDemo::initMenuEdit()
 {
-	connect(ui.actionUndo_Ctrl_Z, &QAction::triggered, this, &PlotXYDemo::onUndo);
-	connect(ui.actionRedo_Ctrl_Y, &QAction::triggered, this, &PlotXYDemo::onRedo);
-	connect(ui.actionCut_Ctrl_X, &QAction::triggered, this, &PlotXYDemo::onCut);
-	connect(ui.actionCopy_Ctrl_C, &QAction::triggered, this, &PlotXYDemo::onCopy);
-	connect(ui.actionPaste_Ctrl_V, &QAction::triggered, this, &PlotXYDemo::onPaste);
-	connect(ui.actionDelete, &QAction::triggered, this, &PlotXYDemo::onDelete);
+    connect(ui.actionUndo_Ctrl_Z, &QAction::triggered, this, &PlotXYDemo::onUndo);
+    connect(ui.actionRedo_Ctrl_Y, &QAction::triggered, this, &PlotXYDemo::onRedo);
+    connect(ui.actionCut_Ctrl_X, &QAction::triggered, this, &PlotXYDemo::onCut);
+    connect(ui.actionCopy_Ctrl_C, &QAction::triggered, this, &PlotXYDemo::onCopy);
+    connect(ui.actionPaste_Ctrl_V, &QAction::triggered, this, &PlotXYDemo::onPaste);
+    connect(ui.actionDelete, &QAction::triggered, this, &PlotXYDemo::onDelete);
 }
 
 void PlotXYDemo::initMenuGraph()
 {
-	connect(ui.actionPlot_Wizard, &QAction::triggered, this, &PlotXYDemo::onPlotWizard);
-	connect(ui.actionPlot_Manager_Ctrl_M, &QAction::triggered, this, &PlotXYDemo::onPlotManager);
-	connect(ui.actionWidget_Editor, &QAction::triggered, this, &PlotXYDemo::onWidgetEditor);
-	connect(ui.actionExport_to_GOG, &QAction::triggered, this, &PlotXYDemo::onExportToGOG);
-	connect(ui.actionAutofit_Full, &QAction::triggered, this, &PlotXYDemo::onAutofit_Full);
-	connect(ui.actionAutofit_X, &QAction::triggered, this, &PlotXYDemo::onAutofit_X);
-	connect(ui.actionAutofit_Y, &QAction::triggered, this, &PlotXYDemo::onAutofit_Y);
-	connect(ui.actionOne_To_One, &QAction::triggered, this, &PlotXYDemo::onOneToOne);
-	connect(ui.actionRound_Ranges, &QAction::triggered, this, &PlotXYDemo::onRoundRanges);
-	connect(ui.actionLock_Data_Display, &QAction::triggered, this, &PlotXYDemo::onLockDataDisplay);
-	connect(ui.actionLock_Stacking_Order, &QAction::triggered, this, &PlotXYDemo::onLockStackingOrder);
-	connect(ui.actionInvert_Colores, &QAction::triggered, this, &PlotXYDemo::onInvertColors);
-	connect(ui.actionBring_To_Front_Ctrl, &QAction::triggered, this, &PlotXYDemo::onBringToFront);
-	connect(ui.actionSend_To_Back_Ctrl, &QAction::triggered, this, &PlotXYDemo::onSendToBack);
+    connect(ui.actionPlot_Wizard, &QAction::triggered, this, &PlotXYDemo::onPlotWizard);
+    connect(ui.actionPlot_Manager_Ctrl_M, &QAction::triggered, this, &PlotXYDemo::onPlotManager);
+    connect(ui.actionWidget_Editor, &QAction::triggered, this, &PlotXYDemo::onWidgetEditor);
+    connect(ui.actionExport_to_GOG, &QAction::triggered, this, &PlotXYDemo::onExportToGOG);
+    connect(ui.actionAutofit_Full, &QAction::triggered, this, &PlotXYDemo::onAutofit_Full);
+    connect(ui.actionAutofit_X, &QAction::triggered, this, &PlotXYDemo::onAutofit_X);
+    connect(ui.actionAutofit_Y, &QAction::triggered, this, &PlotXYDemo::onAutofit_Y);
+    connect(ui.actionOne_To_One, &QAction::triggered, this, &PlotXYDemo::onOneToOne);
+    connect(ui.actionRound_Ranges, &QAction::triggered, this, &PlotXYDemo::onRoundRanges);
+    connect(ui.actionLock_Data_Display, &QAction::triggered, this, &PlotXYDemo::onLockDataDisplay);
+    connect(ui.actionLock_Stacking_Order, &QAction::triggered, this, &PlotXYDemo::onLockStackingOrder);
+    connect(ui.actionInvert_Colores, &QAction::triggered, this, &PlotXYDemo::onInvertColors);
+    connect(ui.actionBring_To_Front_Ctrl, &QAction::triggered, this, &PlotXYDemo::onBringToFront);
+    connect(ui.actionSend_To_Back_Ctrl, &QAction::triggered, this, &PlotXYDemo::onSendToBack);
 
-	connect(ui.actionAddBarPlot, SIGNAL(triggered()), this, SLOT(onAddBarPlot()));
-	connect(ui.actionAddAttitudePlot, SIGNAL(triggered()), this, SLOT(onAddAttitudePlot()));
-	connect(ui.actionAddTextPlot, SIGNAL(triggered()), this, SLOT(onAddTextPlot()));
-	connect(ui.actionAddPolarPlot, SIGNAL(triggered()), this, SLOT(onAddPolarPlot()));
-	connect(ui.actionAddLightPlot, SIGNAL(triggered()), this, SLOT(onAddLightPlot()));
-	connect(ui.actionAddTrackPlot, SIGNAL(triggered()), this, SLOT(onAddTrackPlot()));
-	connect(ui.actionAddAScopePlot, SIGNAL(triggered()), this, SLOT(onAddAScopePlot()));
-	connect(ui.actionAddRTIPlot, SIGNAL(triggered()), this, SLOT(onAddRTIPlot()));
-	connect(ui.actionAddDopplerPlot, SIGNAL(triggered()), this, SLOT(onAddDopplerPolt()));
-	connect(ui.actionAddScatterPlot, SIGNAL(triggered()), this, SLOT(onAddScatterPlot()));
-	connect(ui.actionAddDialPlot, SIGNAL(triggered()), this, SLOT(onAddDialPlot()));
+    connect(ui.actionAddBarPlot, SIGNAL(triggered()), this, SLOT(onAddBarPlot()));
+    connect(ui.actionAddAttitudePlot, SIGNAL(triggered()), this, SLOT(onAddAttitudePlot()));
+    connect(ui.actionAddTextPlot, SIGNAL(triggered()), this, SLOT(onAddTextPlot()));
+    connect(ui.actionAddPolarPlot, SIGNAL(triggered()), this, SLOT(onAddPolarPlot()));
+    connect(ui.actionAddLightPlot, SIGNAL(triggered()), this, SLOT(onAddLightPlot()));
+    connect(ui.actionAddTrackPlot, SIGNAL(triggered()), this, SLOT(onAddTrackPlot()));
+    connect(ui.actionAddAScopePlot, SIGNAL(triggered()), this, SLOT(onAddAScopePlot()));
+    connect(ui.actionAddRTIPlot, SIGNAL(triggered()), this, SLOT(onAddRTIPlot()));
+    connect(ui.actionAddDopplerPlot, SIGNAL(triggered()), this, SLOT(onAddDopplerPolt()));
+    connect(ui.actionAddScatterPlot, SIGNAL(triggered()), this, SLOT(onAddScatterPlot()));
+    connect(ui.actionAddDialPlot, SIGNAL(triggered()), this, SLOT(onAddDialPlot()));
 }
 
 void PlotXYDemo::initMenuData()
 {
-	connect(ui.actionAdvanced_Data_Manager, &QAction::triggered, this, &PlotXYDemo::onAdvancedData);
-	connect(ui.actionAdd_Plot_Pair_Ctrl_A, SIGNAL(triggered()), this, SLOT(onAddPlotPair()));
-	connect(ui.actionDiscovery_Rules, &QAction::triggered, this, &PlotXYDemo::onDiscoveryRules);
-	connect(ui.actionShow_Object_Aliases_Ctrl_Alt_A, SIGNAL(triggered()), this, SLOT(onShowObjectAliases()));
-	connect(ui.actionReference_Points_Ctrl_R, &QAction::triggered, this, &PlotXYDemo::onReferencePoints);
-	connect(ui.actionEntity_Status_Ctrl_Alt_S, SIGNAL(triggered()), this, SLOT(onEntityStatus()));
-	connect(ui.actionClassification, &QAction::triggered, this, &PlotXYDemo::onClassification);
+    connect(ui.actionAdvanced_Data_Manager, &QAction::triggered, this, &PlotXYDemo::onAdvancedData);
+    connect(ui.actionAdd_Plot_Pair_Ctrl_A, SIGNAL(triggered()), this, SLOT(onAddPlotPair()));
+    connect(ui.actionDiscovery_Rules, &QAction::triggered, this, &PlotXYDemo::onDiscoveryRules);
+    connect(ui.actionShow_Object_Aliases_Ctrl_Alt_A, SIGNAL(triggered()), this, SLOT(onShowObjectAliases()));
+    connect(ui.actionReference_Points_Ctrl_R, &QAction::triggered, this, &PlotXYDemo::onReferencePoints);
+    connect(ui.actionEntity_Status_Ctrl_Alt_S, SIGNAL(triggered()), this, SLOT(onEntityStatus()));
+    connect(ui.actionClassification, &QAction::triggered, this, &PlotXYDemo::onClassification);
 }
 
 void PlotXYDemo::initMenuTime()
@@ -1062,43 +1072,43 @@ void PlotXYDemo::initMenuTime()
 
 void PlotXYDemo::initMenuTabs()
 {
-	connect(ui.actionNew_Tab_Ctrl_T, &QAction::triggered, this, &PlotXYDemo::onNewTab);
-	connect(ui.actionRename_Tab, &QAction::triggered, this, &PlotXYDemo::onRenameTab);
-	connect(ui.actionClose_Tab, &QAction::triggered, this, &PlotXYDemo::onCloseTab);
-	connect(ui.actionNext_Tab_Ctrl_Tab, &QAction::triggered, this, &PlotXYDemo::onNextTab);
-	connect(ui.actionPrevious_Tab_Ctrl_Shift_Tab, &QAction::triggered, this, &PlotXYDemo::onPreviousTab);
+    connect(ui.actionNew_Tab_Ctrl_T, &QAction::triggered, this, &PlotXYDemo::onNewTab);
+    connect(ui.actionRename_Tab, &QAction::triggered, this, &PlotXYDemo::onRenameTab);
+    connect(ui.actionClose_Tab, &QAction::triggered, this, &PlotXYDemo::onCloseTab);
+    connect(ui.actionNext_Tab_Ctrl_Tab, &QAction::triggered, this, &PlotXYDemo::onNextTab);
+    connect(ui.actionPrevious_Tab_Ctrl_Shift_Tab, &QAction::triggered, this, &PlotXYDemo::onPreviousTab);
 }
 
 void PlotXYDemo::initMenuView()
 {
-	connect(ui.actionShow_Menubar_Ctrl_Alt_M, &QAction::triggered, this, &PlotXYDemo::onShowMenubar);
-	connect(ui.actionShow_Toolbar_Ctrl_Alt_C, &QAction::triggered, this, &PlotXYDemo::onShowToolbar);
-	connect(ui.actionShow_Statusbar_Ctrl_Alt_B, &QAction::triggered, this, &PlotXYDemo::onShowStatusbar);
-	connect(ui.actionShow_Time_Slider, &QAction::triggered, this, &PlotXYDemo::onShowTimeSlider);
-	connect(ui.actionShow_Tabbar, &QAction::triggered, this, &PlotXYDemo::onShowTabbar);
-	connect(ui.actionShow_RTI_Controls, &QAction::triggered, this, &PlotXYDemo::onShowRTIControls);
-	connect(ui.actionShow_All_Bars_Ctrl_B, &QAction::triggered, this, &PlotXYDemo::onShowAllBars);
-	connect(ui.actionShow_Plot_Time_Ctrl_Alt_P, &QAction::triggered, this, &PlotXYDemo::onShowPlotTime);
-	connect(ui.actionShow_System_Time_Ctrl_Alt_Y, &QAction::triggered, this, &PlotXYDemo::onShowSystemTime);
-	connect(ui.actionShow_Corner_Logo, &QAction::triggered, this, &PlotXYDemo::onShowLogo);
-	connect(ui.actionShow_Frame_Rate_Alt_F, &QAction::triggered, this, &PlotXYDemo::onShowFrameRate);
-	connect(ui.actionFullScreen_Shift_F, &QAction::triggered, this, &PlotXYDemo::onShowFullScreen);
+    connect(ui.actionShow_Menubar_Ctrl_Alt_M, &QAction::triggered, this, &PlotXYDemo::onShowMenubar);
+    connect(ui.actionShow_Toolbar_Ctrl_Alt_C, &QAction::triggered, this, &PlotXYDemo::onShowToolbar);
+    connect(ui.actionShow_Statusbar_Ctrl_Alt_B, &QAction::triggered, this, &PlotXYDemo::onShowStatusbar);
+    connect(ui.actionShow_Time_Slider, &QAction::triggered, this, &PlotXYDemo::onShowTimeSlider);
+    connect(ui.actionShow_Tabbar, &QAction::triggered, this, &PlotXYDemo::onShowTabbar);
+    connect(ui.actionShow_RTI_Controls, &QAction::triggered, this, &PlotXYDemo::onShowRTIControls);
+    connect(ui.actionShow_All_Bars_Ctrl_B, &QAction::triggered, this, &PlotXYDemo::onShowAllBars);
+    connect(ui.actionShow_Plot_Time_Ctrl_Alt_P, &QAction::triggered, this, &PlotXYDemo::onShowPlotTime);
+    connect(ui.actionShow_System_Time_Ctrl_Alt_Y, &QAction::triggered, this, &PlotXYDemo::onShowSystemTime);
+    connect(ui.actionShow_Corner_Logo, &QAction::triggered, this, &PlotXYDemo::onShowLogo);
+    connect(ui.actionShow_Frame_Rate_Alt_F, &QAction::triggered, this, &PlotXYDemo::onShowFrameRate);
+    connect(ui.actionFullScreen_Shift_F, &QAction::triggered, this, &PlotXYDemo::onShowFullScreen);
 }
 
 void PlotXYDemo::initMenuTools()
 {
-	connect(ui.actionSave_Preferences, &QAction::triggered, this, &PlotXYDemo::onSavePreferences);
-	connect(ui.actionSave_Preferences_As, &QAction::triggered, this, &PlotXYDemo::onSavePreferencesAs);
-	connect(ui.actionLoad_Preferences, &QAction::triggered, this, &PlotXYDemo::onShowPlotTime);
-	connect(ui.actionUser_Functions, &QAction::triggered, this, &PlotXYDemo::onShowSystemTime);
-	connect(ui.actionFunction_Console, &QAction::triggered, this, &PlotXYDemo::onFunctionConsole);
-	connect(ui.actionHot_Keys_Ctrl_H, &QAction::triggered, this, &PlotXYDemo::onHotKeys);
-	connect(ui.actionOptions_Ctrl_Alt_O, &QAction::triggered, this, &PlotXYDemo::onOptions);
+    connect(ui.actionSave_Preferences, &QAction::triggered, this, &PlotXYDemo::onSavePreferences);
+    connect(ui.actionSave_Preferences_As, &QAction::triggered, this, &PlotXYDemo::onSavePreferencesAs);
+    connect(ui.actionLoad_Preferences, &QAction::triggered, this, &PlotXYDemo::onShowPlotTime);
+    connect(ui.actionUser_Functions, &QAction::triggered, this, &PlotXYDemo::onShowSystemTime);
+    connect(ui.actionFunction_Console, &QAction::triggered, this, &PlotXYDemo::onFunctionConsole);
+    connect(ui.actionHot_Keys_Ctrl_H, &QAction::triggered, this, &PlotXYDemo::onHotKeys);
+    connect(ui.actionOptions_Ctrl_Alt_O, &QAction::triggered, this, &PlotXYDemo::onOptions);
 }
 
 void PlotXYDemo::initMenuHelp()
 {
-	connect(ui.actionUser_Manual_F1, &QAction::triggered, this, &PlotXYDemo::onUserManual);
+    connect(ui.actionUser_Manual_F1, &QAction::triggered, this, &PlotXYDemo::onUserManual);
 }
 
 void PlotXYDemo::initStatusBar()
@@ -1151,11 +1161,22 @@ void PlotXYDemo::initStatusBar()
     m_statusBar_createPlot->setIconSize(QSize(25, 25));
     m_statusBar_movePlot->setIconSize(QSize(25, 25));
 
+    m_statusBar_selectPlot->setCheckable(true);
+    // 默认是选择第一种模式
+    m_statusBar_selectPlot->setChecked(true);
+    m_statusBar_pan->setCheckable(true);
+    m_statusBar_centerPlot->setCheckable(true);
+    m_statusBar_zoom->setCheckable(true);
+    m_statusBar_boxZoom->setCheckable(true);
+    m_statusBar_measure->setCheckable(true);
+    m_statusBar_createPlot->setCheckable(true);
+    m_statusBar_movePlot->setCheckable(true);
+
     m_statusBar_info->setFrameStyle(QFrame::Panel | QFrame::Sunken);
     m_statusBar_dataTime->setFrameStyle(QFrame::Panel | QFrame::Sunken);
     m_statusBar_localTime->setFrameStyle(QFrame::Panel | QFrame::Sunken);
 
-//  m_statusBar_dataTime->setMinimumSize(QSize(170, 10));
+    //  m_statusBar_dataTime->setMinimumSize(QSize(170, 10));
     m_statusBar_dataTime->setAlignment(Qt::AlignCenter | Qt::AlignHCenter);
     m_statusBar_null->setMinimumSize(QSize(40, 10));
     m_statusBar_null->setEnabled(false);
@@ -1175,29 +1196,34 @@ void PlotXYDemo::initStatusBar()
     ui.statusBar->addWidget(m_statusBar_movePlot);
     ui.statusBar->addWidget(m_statusBar_null);
 
-	connect(m_statusBar_EditLock, &QToolButton::triggered, this, &PlotXYDemo::onLockDataDisplay);
-	connect(m_statusBar_layoutLock, &QToolButton::triggered, this, &PlotXYDemo::onLockStackingOrder);
-	connect(m_statusBar_selectPlot, &QToolButton::triggered, this, &PlotXYDemo::onSelectPlot);
-	connect(m_statusBar_pan, &QToolButton::triggered, this, &PlotXYDemo::onPan);
-	connect(m_statusBar_centerPlot, &QToolButton::triggered, this, &PlotXYDemo::onCenterPlot);
-	connect(m_statusBar_zoom, &QToolButton::triggered, this, &PlotXYDemo::onZoom);
-	connect(m_statusBar_boxZoom, &QToolButton::triggered, this, &PlotXYDemo::onBoxZoom);
-	connect(m_statusBar_measure, &QToolButton::triggered, this, &PlotXYDemo::onMeasureDistance);
-	connect(m_statusBar_movePlot, &QToolButton::triggered, this, &PlotXYDemo::onMovePlot);
-	connect(m_statusBar_createPlot, &QToolButton::triggered, this, &PlotXYDemo::onCreatePlot);
+    connect(m_statusBar_EditLock, &QToolButton::triggered, this, &PlotXYDemo::onLockDataDisplay);
+    connect(m_statusBar_layoutLock, &QToolButton::triggered, this, &PlotXYDemo::onLockStackingOrder);
+
+    QButtonGroup *statusBtnGroup =new QButtonGroup(this);
+    statusBtnGroup->addButton(m_statusBar_selectPlot,static_cast<int>(MouseMode::SelectPlot));
+    statusBtnGroup->addButton(m_statusBar_pan,static_cast<int>(MouseMode::Pan));
+    statusBtnGroup->addButton(m_statusBar_centerPlot,static_cast<int>(MouseMode::CenterPlot));
+    statusBtnGroup->addButton(m_statusBar_zoom,static_cast<int>(MouseMode::Zoom));
+    statusBtnGroup->addButton(m_statusBar_boxZoom,static_cast<int>(MouseMode::BoxZoom));
+    statusBtnGroup->addButton(m_statusBar_measure,static_cast<int>(MouseMode::MeasureDistance));
+    statusBtnGroup->addButton(m_statusBar_movePlot,static_cast<int>(MouseMode::MovePlot));
+    statusBtnGroup->addButton(m_statusBar_createPlot,static_cast<int>(MouseMode::CreatePlot));
+    statusBtnGroup->setExclusive(true);
+    connect(statusBtnGroup,QOverload<int>::of(&QButtonGroup::buttonClicked),this,&PlotXYDemo::onStatusBtnClicked);
+
 
     m_localTimer = new QTimer(this);
     connect(m_localTimer, &QTimer::timeout, this, &PlotXYDemo::onUpdateLocalTime);
     m_localTimer->start(1000);
 
-	updateStatusBar_info("");
+    updateStatusBar_info("");
 }
 
 void PlotXYDemo::initWidget(PlotItemBase *w)
 {
     //设置无边框属性
     w->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Widget);
-//	w->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::Widget);
+    //	w->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::Widget);
     //w->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint);
     //w->setAttribute(Qt::WA_ShowModal,true);
     w->setAutoFillBackground(true);
@@ -1223,8 +1249,8 @@ void PlotXYDemo::updateStatusBar_info(QString info)
 PlotType PlotXYDemo::getCurrentFocusPlot()
 {
     QWidget *subWidget = QApplication::widgetAt(QCursor::pos().x(), QCursor::pos().y());
-	if(subWidget == nullptr)
-		return m_lastSelectedType;
+    if(subWidget == nullptr)
+        return m_lastSelectedType;
 
     QString name = subWidget->metaObject()->className();
 

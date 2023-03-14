@@ -145,6 +145,8 @@ public slots:
 	void onMeasureDistance();
 	void onCreatePlot();
 	void onMovePlot();
+    // 将上述信号槽合并成一个
+    void onStatusBtnClicked(int index);
 
 	void onSelectedPlot(QWidget*);
     void onCustomContextMenuRequested(const QPoint &);
