@@ -1,5 +1,6 @@
 ﻿#include "PlotManager.h"
-#include "addplotpair.h"
+#include "AddPlotPair.h"
+
 #include <QColorDialog>
 #include <QTreeWidget>
 #include <QTableWidgetItem>

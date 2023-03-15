@@ -98,7 +98,7 @@ void PlotAScope::initPlot()
 	m_customPlot->replot();
 }
 
-void PlotAScope::slot_getCurrentSeconds(double secs)
+void PlotAScope::onGetCurrentSeconds(double secs)
 {
 	if (getDataPair().isEmpty())
 	{

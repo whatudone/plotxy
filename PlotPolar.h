@@ -77,7 +77,7 @@ public slots:
 	void slot_setRangeZoom(bool);
 
 	//接收当前时间
-	void slot_getCurrentSeconds(double);
+	void onGetCurrentSeconds(double);
 
 	//mouseEvent
 	void slot_setMouseEventEnable(bool);

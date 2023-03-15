@@ -104,10 +104,6 @@ private:
 	double m_leftPadding;				//绘图间隔-left
 	double m_rightPadding;				//绘图间隔-right
 
-	QColor	m_axisLabelColor;			
-	QFont	m_axisLabelFont;			//坐标标题字体
-	QString m_xAxisLabel;
-	QString m_yAxisLabel;
 
 public slots:
 	//mouseEvent

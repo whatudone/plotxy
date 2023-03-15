@@ -99,7 +99,7 @@ public:
 	virtual int getTitleFontSize() { return m_titleFontSize; }
 
 public slots:
-    void onGetCurrentSeconds(double secs);
+    void onGetCurrentSeconds(double secs) override;
 
 protected:
     virtual void paintEvent(QPaintEvent *event) override;
@@ -128,10 +128,6 @@ private:
 
 	QMap<QPair<QString, QString>, ScatterInfo> m_mapScatter;
 
-	QColor	m_axisLabelColor;			//坐标标题颜色
-	QFont	m_axisLabelFont;			//坐标标题字体
-	QString m_xAxisLabel;
-	QString m_yAxisLabel;
 
 //    QList<QColor> m_clrList;
 };

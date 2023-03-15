@@ -33,19 +33,13 @@ private:
 	QColor m_rollColor;					//roll主题颜色
 	QColor m_pitchColor;				//pitch主题颜色
 
-	QFont m_tickLabelFont;				//刻度字体
-	QFont m_axisLabelFont;					//文本字体
 
 	double m_pitchValue;				//旋转角度
 	double m_rollValue;					//滚动值
-	int    m_horzGrids;					//roll坐标个数
-	double m_coordBgn_x;				//roll起始角度
-	double m_coordEnd_x;				//roll结束角度
+
 	int	   m_decision_roll;				//roll小数点精度
 
-	int    m_vertGrids;					//pitch坐标个数
-	double m_coordBgn_y;				//pitch起始角度
-	double m_coordEnd_y;				//pitch结束角度
+
 	int	   m_decision_pitch;			//pitch小数点精度
 
 	double m_topPadding;				//绘图间隔-top
@@ -151,6 +145,6 @@ public slots:
 	void slot_setRollValue(double rollValue);
 
 	//接收当前时间
-	void slot_getCurrentSeconds(double);
+	void onGetCurrentSeconds(double);
 };
 

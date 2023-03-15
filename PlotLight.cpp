@@ -281,7 +281,7 @@ void PlotLight::slot_onAddButtonClicked()
 	update();
 }
 
-void PlotLight::slot_getCurrentSeconds(double secs)
+void PlotLight::onGetCurrentSeconds(double secs)
 {
 	if (getDataPair().isEmpty())
 		return;

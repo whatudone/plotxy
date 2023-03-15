@@ -29,7 +29,7 @@ public:
 
 public slots:
     void onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>>);
-    void onGetCurrentSeconds(double secs);
+    void onGetCurrentSeconds(double secs) override;
 
 protected:
     virtual void paintEvent(QPaintEvent *event);
@@ -49,9 +49,7 @@ private:
     QMap<QString, QMap<int, QColor>> m_thresholdColorMap;    //key:entityType+entityAttr, threshold,QColor
     QColor m_defaultColor;
 
-    QColor m_gridColor;
-    QColor m_gridFillColor;
-    QColor m_axisColor;
+
 	QFont  m_axisFont;					//坐标标题字体
 
     int m_horiGridNum;
@@ -59,9 +57,7 @@ private:
     double m_seconds;
     int m_itemCnt;
 
-	QString m_title;
-	QColor	m_titleColor;				//标题颜色
-	QFont	m_titleFont;				//标题字体
+
 	bool	m_titleShow;				//标题是否显示
 };
 

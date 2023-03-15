@@ -28,7 +28,7 @@ public:
 	static int m_instanceCount;			//实体个数
 
 public slots:
-	void slot_getCurrentSeconds(double secs);
+	void onGetCurrentSeconds(double secs);
 	//void slot_setValue(double);
 	//void slot_getGridColor();
 	//QColor slot_getGridColor();
@@ -66,7 +66,7 @@ private:
 	QList<QList<double>> m_temValueList;
 	QList<QString> m_entityName, m_attriName;
 	double m_secValue;
-	void setTitle(QPainter& painter, QRect& rect);
+    void drawTitleText(QPainter& painter, QRect& rect);
 	void drawXYTitle(QPainter& painter, int& horiGridWidth, int& verGridWidth , QVector<DataPair*> & dataVector ,double &as);
 	void drawNMCell(QPainter& painter, QSet<QString>& xset, QSet<QString>& yset, QVector<DataPair*> dataVector,
 		int& horiGridWidth, int& verGridWidth,double &as);

@@ -12,7 +12,7 @@ class PlotItemBase;
 class PlotManager;
 class AddPlotPair;
 class AdvancedDataManager;
-
+enum class MouseMode:uint8_t;
 class PlotXYDemo : public QMainWindow
 {
     Q_OBJECT
@@ -59,8 +59,9 @@ public slots:
 	void onPlotWizard();
 	void onPlotManager();
 	void onWidgetEditor();
-	void onExportToGOG();
-	void onAddBarPlot();
+    void onExportToGOG();
+
+    void onAddBarPlot();
 	void onAddAttitudePlot();
 	void onAddTextPlot();
 	void onAddPolarPlot();
@@ -71,6 +72,9 @@ public slots:
 	void onAddDopplerPolt();
 	void onAddScatterPlot();
 	void onAddDialPlot();
+    // 将添加图表控件操作合并到一个槽函数
+    void onAddPlot();
+
 	void onAutofit_Full();
 	void onAutofit_X();
 	void onAutofit_Y();
@@ -168,6 +172,8 @@ signals:
     void sgn_enableActionStop(bool);
 	void sgn_sendTabWidgetRect(QRect);
 	void sgn_renameTabPage(QString, QString);
+    // 状态栏鼠标模式切换
+    void mouseModeChanged(MouseMode mode);
 private:
     Ui::PlotXYDemo ui;
     //FreeWidgetWraper* m_freeWidgetWraper;

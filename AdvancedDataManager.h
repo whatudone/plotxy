@@ -15,7 +15,7 @@ class AdvancedDataManager : public QWidget
     Q_OBJECT
 
 public:
-    explicit AdvancedDataManager(QWidget* parent = 0);
+    explicit AdvancedDataManager(QWidget* parent = nullptr);
     ~AdvancedDataManager();
 
     QMap<QString, QMap<int, QColor>> m_map;

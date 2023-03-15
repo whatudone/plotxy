@@ -109,7 +109,7 @@ public slots:
 	//mouseEvent
 	void slot_setMouseEventEnable(bool on);
 
-	void slot_getCurrentSeconds(double secs);
+	void onGetCurrentSeconds(double secs);
 
 protected:
 	virtual void paintEvent(QPaintEvent* event);

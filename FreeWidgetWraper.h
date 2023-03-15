@@ -13,7 +13,7 @@
 #include <QtWidgets/QWidget>
 
 // 鼠标操作模式，每种模式对应一种鼠标控制行为，属于互斥行为
-enum class MouseMode
+enum class MouseMode:uint8_t
 {
     SelectPlot = 0,
     Pan,

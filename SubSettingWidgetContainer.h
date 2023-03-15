@@ -40,7 +40,7 @@ class General :public QWidget
 	Q_OBJECT
 
 public:
-	explicit General(QWidget* parent = 0);
+	explicit General(QWidget* parent = nullptr);
 	~General();
 
 signals:
@@ -69,7 +69,7 @@ class Extrapolation :public QWidget
 	Q_OBJECT
 
 public:
-	explicit Extrapolation(QWidget* parent = 0);
+	explicit Extrapolation(QWidget* parent = nullptr);
 	~Extrapolation();
 private:
 	Ui::Extrapolation ui;
@@ -80,7 +80,7 @@ class LabelSettings :public QWidget
 	Q_OBJECT
 
 public:
-	explicit LabelSettings(QWidget* parent = 0);
+	explicit LabelSettings(QWidget* parent = nullptr);
 	~LabelSettings();
 private:
 	Ui::LabelSettings ui;
@@ -129,7 +129,7 @@ class LabelText :public QWidget
 	Q_OBJECT
 
 public:
-	explicit LabelText(QWidget* parent = 0);
+	explicit LabelText(QWidget* parent = nullptr);
 	~LabelText();
 private:
 	Ui::LabelText ui;
@@ -169,7 +169,7 @@ class ColorRanges :public QWidget
 	Q_OBJECT
 
 public:
-	explicit ColorRanges(QWidget* parent = 0);
+	explicit ColorRanges(QWidget* parent = nullptr);
 	~ColorRanges();
 signals:
 	void sigBtnColorRangesMoreclicked();

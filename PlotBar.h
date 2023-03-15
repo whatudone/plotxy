@@ -60,12 +60,7 @@ private:
 
     QMap<QString, QMap<int, QColor>> m_thresholdColorMap;   //key:entityType+entityAttr, threshold,QColor
     QColor m_defaultColor;
-	QColor m_titleColor;				//标题颜色
-	QFont m_titleFont;					//标题字体
-	QString m_title;					//标题
-    QColor m_gridColor;
-    QColor m_gridFillColor;
-    QColor m_axisColor;
+
 
     int m_horiGridNum;
     int m_verGridNum;

@@ -181,7 +181,7 @@ private:
     QMap<QString/*int*/, QList<PlotItemBase*>> m_plotManager;	//tabName
 	bool m_radioPixelChecked;
 	QRect m_tabWidgetRect;
-	PlotItemBase* m_curSelectPlot = nullptr;;
+    PlotItemBase* m_curSelectPlot = nullptr;
 };
 
 #endif // ! 

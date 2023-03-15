@@ -4,8 +4,8 @@
 * @create time: 2022-09-27
 *  */
 
-#ifndef  _DATA_MANAGER_H_
-#define  _DATA_MANAGER_H_
+#ifndef  DATA_MANAGER_H_
+#define  DATA_MANAGER_H_
 
 #include "BaseData.h"
 #include <QMutex>
@@ -77,4 +77,4 @@ public:
 
 
 
-#endif // ! 
+#endif // !

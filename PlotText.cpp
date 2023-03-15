@@ -73,7 +73,7 @@ void PlotText::paintEvent(QPaintEvent* event)
 		verGridWidth = (0.93*height() - as) / m_verGridNum;
 	}
 	//以下为绘制表格title名字
-	setTitle(painter, rect);
+    drawTitleText(painter, rect);
 	//以下绘制n×m的格子
 	drawNMCell(painter, xset, yset, dataVector, horiGridWidth, verGridWidth, as);
 	//以下为绘制X/Y轴item名字
@@ -134,7 +134,7 @@ void PlotText::paintEvent(QPaintEvent* event)
 //}
 
 
-void PlotText::setTitle(QPainter& painter, QRect& rect)
+void PlotText::drawTitleText(QPainter& painter, QRect& rect)
 {
 	QFont titleFont;
 	QPen pen;
@@ -182,7 +182,7 @@ void PlotText::drawData(QSet<QString>& xset, QSet<QString>& yset, int& horiGridW
 
 
 
-void PlotText::slot_getCurrentSeconds(double secs)
+void PlotText::onGetCurrentSeconds(double secs)
 {
 	m_secValue = secs;
 	if (getDataPair().isEmpty())
@@ -295,7 +295,7 @@ void PlotText::drawXYTitle(QPainter& painter, int& horiGridWidth, int& verGridWi
 	m_xColumnList.clear();
 	m_yColumnList.clear();
 	if (!(m_secValue == -1))
-		slot_getCurrentSeconds(m_secValue);
+        onGetCurrentSeconds(m_secValue);
 	update();
 }
 

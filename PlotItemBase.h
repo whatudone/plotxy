@@ -4,8 +4,8 @@
 * @create time: 2022-09-21
 *  */
 
-#ifndef  _PLOT_ITEM_BASE_H_
-#define  _PLOT_ITEM_BASE_H_
+#ifndef  PLOT_ITEM_BASE_H_
+#define  PLOT_ITEM_BASE_H_
 
 #include <QWidget>
 #include "ui_PlotItemBase.h"
@@ -17,7 +17,7 @@ class PlotItemBase : public QWidget
 	Q_OBJECT
 
 public:
-	explicit PlotItemBase(QWidget* parent = 0);
+    explicit PlotItemBase(QWidget* parent = nullptr);
 	~PlotItemBase();
 
 public:
@@ -156,6 +156,7 @@ protected:
 public slots:
 	void slot_updateRect(QRect);
 	void slot_setVisible(bool);
+    virtual void onGetCurrentSeconds(double /*secs*/){}
 
 signals:
 	void sgn_dataPairChanged(QString, QString);		//数据对改变信号,tabName,plotName

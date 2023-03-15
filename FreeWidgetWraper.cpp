@@ -57,7 +57,7 @@ bool FreeWidgetWraper::eventFilter(QObject *watched, QEvent *event)
     else if (event->type() == QEvent::HoverMove)
     {
         //设置对应鼠标形状,这个必须放在这里而不是下面,因为可以在鼠标没有按下的时候识别
-        QHoverEvent *hoverEvent = (QHoverEvent *)event;
+        QHoverEvent *hoverEvent = static_cast<QHoverEvent *>(event);
         QPoint point = hoverEvent->pos();
         if (resizeEnable) {
             if (pressedRect.at(0).contains(point)) {
@@ -145,30 +145,19 @@ bool FreeWidgetWraper::eventFilter(QObject *watched, QEvent *event)
     else if (event->type() == QEvent::MouseButtonPress)
     {
         //记住鼠标按下的坐标+窗体区域
-        QMouseEvent *mouseEvent = (QMouseEvent *)event;
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
         mousePoint = mouseEvent->pos();
         mouseRect = widget->geometry();
-
         //判断按下的手柄的区域位置
-        if (pressedRect.at(0).contains(mousePoint)) {
-            pressedArea[0] = true;
-        } else if (pressedRect.at(1).contains(mousePoint)) {
-            pressedArea[1] = true;
-        } else if (pressedRect.at(2).contains(mousePoint)) {
-            pressedArea[2] = true;
-        } else if (pressedRect.at(3).contains(mousePoint)) {
-            pressedArea[3] = true;
-        } else if (pressedRect.at(4).contains(mousePoint)) {
-            pressedArea[4] = true;
-        } else if (pressedRect.at(5).contains(mousePoint)) {
-            pressedArea[5] = true;
-        } else if (pressedRect.at(6).contains(mousePoint)) {
-            pressedArea[6] = true;
-        } else if (pressedRect.at(7).contains(mousePoint)) {
-            pressedArea[7] = true;
-        } else {
-            mousePressed = true;
+        for(const auto &rect:pressedRect){
+            if(rect.contains(mousePoint)){
+                int index= pressedRect.indexOf(rect);
+                pressedArea[index]=true;
+                return false;
+            }
         }
+
+        mousePressed = true;
     }
     else if (event->type() == QEvent::MouseMove)
     {

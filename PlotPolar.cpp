@@ -369,7 +369,7 @@ void PlotPolar::slot_setRangeZoom(bool enabled)
 	m_customPlot->replot();
 }
 
-void PlotPolar::slot_getCurrentSeconds(double secs)
+void PlotPolar::onGetCurrentSeconds(double secs)
 {
 	if (getDataPair().isEmpty())
 		return;

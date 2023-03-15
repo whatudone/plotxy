@@ -32,9 +32,7 @@ protected:
 private:
 	bool m_bHorizontal;
 	bool m_started;
-	QColor m_gridColor;
-	QColor m_gridFillColor;
-	QColor m_axisColor;
+
 	QColor m_defaultColor;
 	QStringList m_entityTypeList;
 	QStringList m_entityAttrList;
@@ -71,7 +69,7 @@ private:
 	virtual Qt::PenStyle getGridStyle() { return m_gridStyle; }
 public slots:
 	void slot_getLightData(QList<QList<QString>>);
-	void slot_getCurrentSeconds(double secs);
+    void onGetCurrentSeconds(double secs) override;
 	//更新后的由base 的sgn_发出
 	void slot_onAddButtonClicked();
 };

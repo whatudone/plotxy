@@ -19,7 +19,7 @@ public:
     void updatePointer(double secs);
     static int m_instanceCount;         //实体个数
 public slots:
-    void onGetCurrentSeconds(double secs);
+    void onGetCurrentSeconds(double secs) override;
 
 protected:
     virtual void paintEvent(QPaintEvent *event);
@@ -27,17 +27,15 @@ protected:
 private:
     bool m_bThinStyle;
 
-	QString m_title;
-	QColor	m_titleColor;				//标题颜色
-	QFont	m_titleFont;				//标题字体
-	bool	m_titleShow;				//标题是否显示
 
-	double m_topPadding;				//绘图间隔-top
-	double m_bottomPadding;				//绘图间隔-bottom
-	double m_leftPadding;				//绘图间隔-left
-	double m_rightPadding;				//绘图间隔-right
+    bool	m_titleShow;				//标题是否显示
 
-	QFont	m_axisFont;					//坐标标题字体
+    double m_topPadding;				//绘图间隔-top
+    double m_bottomPadding;				//绘图间隔-bottom
+    double m_leftPadding;				//绘图间隔-left
+    double m_rightPadding;				//绘图间隔-right
+
+    QFont	m_axisFont;					//坐标标题字体
 
     double m_seconds;
 

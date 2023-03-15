@@ -1,5 +1,5 @@
 ﻿#include "AddPlotPair.h"
-#include "ui_addplotpair.h"
+#include "ui_AddPlotPair.h"
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QDebug>

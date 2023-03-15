@@ -592,7 +592,7 @@ void PlotAttitude::slot_setRollValue(double rollValue)
 	update();
 }
 
-void PlotAttitude::slot_getCurrentSeconds(double secs)
+void PlotAttitude::onGetCurrentSeconds(double secs)
 {
 	if (getDataPair().isEmpty())
 		return;
