@@ -1,4 +1,4 @@
-﻿#ifndef _FREE_WIDGET_WRAPER_H_
+﻿#ifndef FREE_WIDGET_WRAPER_H_
 #define FREE_WIDGET_WRAPER_H_
 
 /**
@@ -13,7 +13,7 @@
 #include <QtWidgets/QWidget>
 
 // 鼠标操作模式，每种模式对应一种鼠标控制行为，属于互斥行为
-enum class MouseMode:uint8_t
+enum class MouseMode : uint8_t
 {
     SelectPlot = 0,
     Pan,
@@ -31,14 +31,14 @@ class FreeWidgetWraper : public QObject
 {
     Q_OBJECT
 public:
-    explicit FreeWidgetWraper(QObject *parent = nullptr);
+    explicit FreeWidgetWraper(QObject* parent = nullptr);
     ~FreeWidgetWraper();
 
     MouseMode mouseMode() const;
-    void setMouseMode(const MouseMode &mouseMode);
+    void setMouseMode(const MouseMode& mouseMode);
 
 protected:
-    bool eventFilter(QObject *watched, QEvent *event);
+    bool eventFilter(QObject* watched, QEvent* event);
 
 private:
     //边距+可移动+可拉伸
@@ -47,7 +47,7 @@ private:
     bool resizeEnable;
 
     //无边框窗体
-    QWidget *widget= nullptr;
+    QWidget* m_pBindWidget = nullptr;
 
     //鼠标是否按下+按下坐标+按下时窗体区域
     bool mousePressed;
@@ -76,7 +76,9 @@ public Q_SLOTS:
     void setMousePressed(bool mousePressed);
 
     //设置要无边框的窗体
-    void setWidget(QWidget*widget);
+    void setWidget(QWidget* widget);
+    //接受主窗口鼠标模式切换信号，设置当前鼠标模式
+    void onMouseModeChanged(MouseMode mode);
 
 signals:
     void sgnMouseEventDone(QWidget*);

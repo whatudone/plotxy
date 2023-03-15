@@ -494,6 +494,11 @@ void PlotXYDemo::onAddPlot()
             &PlotManager::onMouseEventDone);
     connect(
         pFreeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
+
+    connect(this,
+            &PlotXYDemo::mouseModeChanged,
+            pFreeWidgetWraper,
+            &FreeWidgetWraper::onMouseModeChanged);
     pFreeWidgetWraper->setWidget(plotItem);
     pFreeWidgetWraper->setMoveEnable(true);
 
