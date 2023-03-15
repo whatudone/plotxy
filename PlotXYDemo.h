@@ -1,27 +1,27 @@
 ﻿#ifndef PLOTXY_DEMO_H_
 #define PLOTXY_DEMO_H_
 
-#include <QtWidgets/QMainWindow>
-#include <QContextMenuEvent>
-#include "ui_PlotXYDemo.h"
-#include "constdef.h"
 #include "TimeControls.h"
+#include "constdef.h"
+#include "ui_PlotXYDemo.h"
+#include <QContextMenuEvent>
+#include <QtWidgets/QMainWindow>
 
 class FreeWidgetWraper;
 class PlotItemBase;
 class PlotManager;
 class AddPlotPair;
 class AdvancedDataManager;
-enum class MouseMode:uint8_t;
+enum class MouseMode : uint8_t;
 class PlotXYDemo : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    PlotXYDemo(QWidget *parent = Q_NULLPTR);
+    PlotXYDemo(QWidget* parent = Q_NULLPTR);
     ~PlotXYDemo();
 
-    void init();            //初始化函数，连接信号槽
+    void init(); //初始化函数，连接信号槽
 	void initMenuFile();
 	void initMenuEdit();
 	void initMenuGraph();
@@ -33,7 +33,7 @@ public:
 	void initMenuHelp();
 
     void initStatusBar();
-    void initWidget(PlotItemBase *w);
+    void initWidget(PlotItemBase* w);
 	void updateStatusBar_info(QString);
     PlotType getCurrentFocusPlot();
 
@@ -61,17 +61,6 @@ public slots:
 	void onWidgetEditor();
     void onExportToGOG();
 
-    void onAddBarPlot();
-	void onAddAttitudePlot();
-	void onAddTextPlot();
-	void onAddPolarPlot();
-	void onAddLightPlot();
-	void onAddTrackPlot();
-	void onAddAScopePlot();
-	void onAddRTIPlot();
-	void onAddDopplerPolt();
-	void onAddScatterPlot();
-	void onAddDialPlot();
     // 将添加图表控件操作合并到一个槽函数
     void onAddPlot();
 
@@ -153,9 +142,9 @@ public slots:
     void onStatusBtnClicked(int index);
 
 	void onSelectedPlot(QWidget*);
-    void onCustomContextMenuRequested(const QPoint &);
-    void onContextMenu(const QPoint &point);
- 
+    void onCustomContextMenuRequested(const QPoint&);
+    void onContextMenu(const QPoint& point);
+
 	void onSendTabRect();
 
     void onSetSliderRange(int min, int max, int singleStep);
@@ -174,37 +163,37 @@ signals:
 	void sgn_renameTabPage(QString, QString);
     // 状态栏鼠标模式切换
     void mouseModeChanged(MouseMode mode);
+
 private:
     Ui::PlotXYDemo ui;
-    //FreeWidgetWraper* m_freeWidgetWraper;
-    PlotManager *m_plotManager;
-    AddPlotPair *m_addPlotPair;
-    AdvancedDataManager *m_AdvancedDataManager;
+    PlotManager* m_plotManager;
+    AddPlotPair* m_addPlotPair;
+    AdvancedDataManager* m_AdvancedDataManager;
     BaseInfo m_curBaseInfo;
     PlotType m_lastSelectedType;
-    TimeControls *m_timeCtrl;
+    TimeControls* m_timeCtrl;
 
-    QTimer *m_timer;
+    QTimer* m_timer;
     int m_timerInterval;
     bool m_bIsPlayForward;
 
-    QTimer *m_localTimer;
+    QTimer* m_localTimer;
 
     //statusBar widget
-    QLabel      *m_statusBar_info;
-    QToolButton *m_statusBar_EditLock;
-    QToolButton *m_statusBar_layoutLock;
-    QLabel      *m_statusBar_dataTime;
-    QLabel      *m_statusBar_localTime;
-    QToolButton *m_statusBar_selectPlot;
-    QToolButton *m_statusBar_pan;
-    QToolButton *m_statusBar_centerPlot;
-    QToolButton *m_statusBar_zoom;
-    QToolButton *m_statusBar_boxZoom;
-    QToolButton *m_statusBar_measure;
-    QToolButton *m_statusBar_createPlot;
-    QToolButton *m_statusBar_movePlot;
-    QLabel      *m_statusBar_null;
+    QLabel* m_statusBar_info;
+    QToolButton* m_statusBar_EditLock;
+    QToolButton* m_statusBar_layoutLock;
+    QLabel* m_statusBar_dataTime;
+    QLabel* m_statusBar_localTime;
+    QToolButton* m_statusBar_selectPlot;
+    QToolButton* m_statusBar_pan;
+    QToolButton* m_statusBar_centerPlot;
+    QToolButton* m_statusBar_zoom;
+    QToolButton* m_statusBar_boxZoom;
+    QToolButton* m_statusBar_measure;
+    QToolButton* m_statusBar_createPlot;
+    QToolButton* m_statusBar_movePlot;
+    QLabel* m_statusBar_null;
 };
 
-#endif // ! 
+#endif // !

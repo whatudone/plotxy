@@ -11,8 +11,8 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     : QWidget(parent)
 {
     ui.setupUi(this);
-    
-    m_position = QPoint(0,0);
+
+    m_position = QPoint(0, 0);
     m_width = 0;
     m_height = 0;
     m_bVisible = true;
@@ -51,15 +51,9 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     m_titleFont.setPointSizeF(m_titleFontSize);
 }
 
-PlotItemBase::~PlotItemBase()
-{
-}
+PlotItemBase::~PlotItemBase() {}
 
-
-void PlotItemBase::init()
-{
-
-}
+void PlotItemBase::init() {}
 
 void PlotItemBase::setPosition(int x, int y)
 {
@@ -124,7 +118,6 @@ void PlotItemBase::setTabName(const QString& tabName)
     m_tabName = tabName;
 }
 
-
 QString PlotItemBase::currName()
 {
     return m_plotItemName;
@@ -161,13 +154,13 @@ void PlotItemBase::setCoordRangeY(double lower, double upper)
     m_coordEnd_y = upper;
 }
 
-void PlotItemBase::getCoordRangeX(double & lower, double & upper)
+void PlotItemBase::getCoordRangeX(double& lower, double& upper)
 {
     lower = m_coordBgn_x;
     upper = m_coordEnd_x;
 }
 
-void PlotItemBase::getCoordRangeY(double & lower, double & upper)
+void PlotItemBase::getCoordRangeY(double& lower, double& upper)
 {
     lower = m_coordBgn_y;
     upper = m_coordEnd_y;
@@ -205,12 +198,12 @@ void PlotItemBase::setGridVisible(bool enable)
     m_gridVisible = enable;
 }
 
-void PlotItemBase::setTickLabelColor(const QColor & color)
+void PlotItemBase::setTickLabelColor(const QColor& color)
 {
     m_tickLabelColor = color;
 }
 
-void PlotItemBase::setTickLabelFont(const QFont & font)
+void PlotItemBase::setTickLabelFont(const QFont& font)
 {
     m_tickLabelFont = font;
 }
@@ -223,7 +216,7 @@ void PlotItemBase::setTickLabelFontSize(int size)
 
 void PlotItemBase::setGridStyle(GridStyle style)
 {
-    switch (style)
+    switch(style)
     {
     case GridStyle::SOLIDLINE:
         m_gridStyle = Qt::SolidLine;
@@ -263,12 +256,12 @@ void PlotItemBase::setUnitsShowY(bool on)
     m_showUnits_y = on;
 }
 
-void PlotItemBase::setUnitsX(const QString & units)
+void PlotItemBase::setUnitsX(const QString& units)
 {
     m_units_x = units;
 }
 
-void PlotItemBase::setUnitsY(const QString & units)
+void PlotItemBase::setUnitsY(const QString& units)
 {
     m_units_y = units;
 }
@@ -278,7 +271,7 @@ void PlotItemBase::setTitleVisible(bool on)
     m_titleVisible = on;
 }
 
-void PlotItemBase::setTitle(const QString & title)
+void PlotItemBase::setTitle(const QString& title)
 {
     m_title = title;
 }
@@ -304,22 +297,22 @@ void PlotItemBase::setTitleFontSize(int size)
     m_titleFont.setPointSize(size);
 }
 
-void PlotItemBase::setxAxisLabel(const QString &label)
+void PlotItemBase::setxAxisLabel(const QString& label)
 {
     m_xAxisLabel = label;
 }
 
-void PlotItemBase::setyAxisLabel(const QString & label)
+void PlotItemBase::setyAxisLabel(const QString& label)
 {
     m_yAxisLabel = label;
 }
 
-void PlotItemBase::setAxisLabelColor(const QColor & color)
+void PlotItemBase::setAxisLabelColor(const QColor& color)
 {
     m_axisLabelColor = color;
 }
 
-void PlotItemBase::setAxisLabelFont(const QFont &font)
+void PlotItemBase::setAxisLabelFont(const QFont& font)
 {
     m_axisLabelFont = font;
 }
@@ -340,12 +333,12 @@ void PlotItemBase::addPlotPairData(QPair<QString, QString> pair)
 
 void PlotItemBase::delPlotPairData(QPair<QString, QString> pair)
 {
-    if (m_dataPair.isEmpty())
+    if(m_dataPair.isEmpty())
         return;
 
-    for (int i = 0; i < m_dataPair.size(); ++i)
+    for(int i = 0; i < m_dataPair.size(); ++i)
     {
-        if (m_dataPair.at(i)->getDataPair() == pair)
+        if(m_dataPair.at(i)->getDataPair() == pair)
         {
             m_dataPair.remove(i);
 
@@ -355,14 +348,15 @@ void PlotItemBase::delPlotPairData(QPair<QString, QString> pair)
     }
 }
 
-void PlotItemBase::updatePlotPairData(QPair<QString, QString> oldPair, QPair<QString, QString> newPair)
+void PlotItemBase::updatePlotPairData(QPair<QString, QString> oldPair,
+                                      QPair<QString, QString> newPair)
 {
-    if (m_dataPair.isEmpty())
+    if(m_dataPair.isEmpty())
         return;
 
-    for (int i = 0; i < m_dataPair.size(); ++i)
+    for(int i = 0; i < m_dataPair.size(); ++i)
     {
-        if (m_dataPair.at(i)->getDataPair() == oldPair)
+        if(m_dataPair.at(i)->getDataPair() == oldPair)
         {
             m_dataPair.at(i)->setDataPair(newPair);
 
@@ -394,8 +388,10 @@ void PlotItemBase::slot_updateRect(QRect rect)
 //{
 //    m_bVisible = bVisible;
 //}
-// 
+//
 //bool PlotItemBase::bVisible()
 //{
 //    return m_bVisible;
 //}
+
+void PlotItemBase::onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>> /* targetMap*/) {}
