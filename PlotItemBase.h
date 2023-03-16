@@ -203,8 +203,13 @@ public:
     }
 	void setDataPair(QVector<DataPair*> newVector);
 
+    virtual PlotType plotType() const
+    {
+        return Type_PlotUnknown;
+    }
+
 protected:
-	QVector<DataPair*> m_dataPair;
+    QVector<DataPair*> m_dataPair;
 	//General
 	QColor m_outerFillColor;
 	QColor m_outlineColor;

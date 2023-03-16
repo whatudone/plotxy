@@ -1,21 +1,20 @@
-﻿#pragma once
-/* * @filename: PlotLight.h
+﻿/* * @filename: PlotLight.h
 * @brief: PlotLight控件类
 * @author: zhangdingwen
 * @create time: 2022-11-1
 *  */
 
-#ifndef  _PLOT_LIGHT_H_
-#define  _PLOT_LIGHT_H_ 
+#ifndef PLOT_LIGHT_H
+#define PLOT_LIGHT_H
 
-#include "PlotItemBase.h"
 #include "BaseData.h"
-#include <QTimer>
+#include "PlotItemBase.h"
 #include <QColor>
 #include <QMap>
 #include <QPaintEvent>
+#include <QTimer>
 
-class PlotLight :public PlotItemBase
+class PlotLight : public PlotItemBase
 {
 	Q_OBJECT
 public:
@@ -23,8 +22,12 @@ public:
 	~PlotLight();
 	void onTimeout();
 	void onSwitch(bool bOn);
-	static int m_instanceCount;			//实体个数
+    static int m_instanceCount; //实体个数
 	//void updateItems();
+    virtual PlotType plotType() const
+    {
+        return Type_PlotLight;
+    }
 
 protected:
 	virtual void paintEvent(QPaintEvent* event);
@@ -36,10 +39,10 @@ private:
 	QColor m_defaultColor;
 	QStringList m_entityTypeList;
 	QStringList m_entityAttrList;
-	QMap<QString,QBrush> m_brushColor;
+    QMap<QString, QBrush> m_brushColor;
 	QList<QPair<QString, QPair<QString, double>>> m_thresholdData;
 	QPair<QString, QPair<QString, double>> m_innerThresholdData;
-	QPair<QString,double> m_innerInnerThresholdData;
+    QPair<QString, double> m_innerInnerThresholdData;
 	QBrush m_temBrush;
 	QList<QString> m_entityAndAttr;
 	QList<QBrush> m_brush;
@@ -58,19 +61,28 @@ private:
 	int m_currTimeIndex;
 	int m_circleRadius;
 	void judgeLight();
-	void setCircleRadius(double &);
-	void drawLight(QPainter &,double &,double &);
-	void drawTitle(QPainter &,QRect&);
+    void setCircleRadius(double&);
+    void drawLight(QPainter&, double&, double&);
+    void drawTitle(QPainter&, QRect&);
 	//virtual void dataPairOrder();
 	//virtual void setGridColorWidth(QColor color, uint width);
 	virtual void setGridStyle(GridStyle);
-	virtual uint getGridWidth() { return m_gridWidth; }
-	virtual QColor getGridColor() { return m_gridColor; }
-	virtual Qt::PenStyle getGridStyle() { return m_gridStyle; }
+    virtual uint getGridWidth()
+    {
+        return m_gridWidth;
+    }
+    virtual QColor getGridColor()
+    {
+        return m_gridColor;
+    }
+    virtual Qt::PenStyle getGridStyle()
+    {
+        return m_gridStyle;
+    }
 public slots:
 	void slot_getLightData(QList<QList<QString>>);
     void onGetCurrentSeconds(double secs) override;
 	//更新后的由base 的sgn_发出
 	void slot_onAddButtonClicked();
 };
-#endif // _PLOT_LIGHT_H_ 
+#endif // _PLOT_LIGHT_H_

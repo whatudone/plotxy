@@ -25,6 +25,10 @@ public:
     void setInterPadding(int);
 
     void drawRect(int itemIndex, QList<QColor> dataList);
+    virtual PlotType plotType() const
+    {
+        return Type_PlotTrack;
+    }
 
 public:
     static int m_instanceCount; //实体个数

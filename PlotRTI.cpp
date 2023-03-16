@@ -2,7 +2,7 @@
 
 int PlotRTI::m_instanceCount = 1;
 PlotRTI::PlotRTI(QWidget* parent)
-	:PlotItemBase(parent)
+    : PlotItemBase(parent)
 {
 	QString name = QString("RTI%1").arg(m_instanceCount);
 	this->setName(name);
@@ -55,18 +55,17 @@ PlotRTI::PlotRTI(QWidget* parent)
 	m_showUnits_x = false;
 	m_showUnits_y = false;
 
-
 	initPlot();
 }
 
-
-PlotRTI::~PlotRTI()
-{
-}
+PlotRTI::~PlotRTI() {}
 
 void PlotRTI::initPlot()
 {
 	m_customPlot = new QCustomPlot(this);
+    QHBoxLayout* pLayout = new QHBoxLayout(this);
+    pLayout->addWidget(m_customPlot);
+    setLayout(pLayout);
 	m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 	m_customPlot->axisRect()->setupFullAxesBox(true);
 
@@ -106,14 +105,14 @@ void PlotRTI::initPlot()
 	m_colorMap->rescaleDataRange();
 
 	m_marginGroup = new QCPMarginGroup(m_customPlot);
-//	m_customPlot->axisRect()->setMinimumMargins(QMargins(2, 2, 2, 2));
+    //	m_customPlot->axisRect()->setMinimumMargins(QMargins(2, 2, 2, 2));
 	m_customPlot->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, m_marginGroup);
 	m_colorScale->setMarginGroup(QCP::msBottom | QCP::msTop, m_marginGroup);
 
-//	m_customPlot->rescaleAxes();
+    //	m_customPlot->rescaleAxes();
 }
 
-void PlotRTI::paintEvent(QPaintEvent * event)
+void PlotRTI::paintEvent(QPaintEvent* event)
 {
 	int width = this->width();
 	int height = this->height();
@@ -127,16 +126,20 @@ void PlotRTI::paintEvent(QPaintEvent * event)
 	double as = fm.ascent();
 	QRectF rect = fm.boundingRect(m_title);
 
-	if (m_titleVisible)
+    if(m_titleVisible)
 	{
 		painter.setFont(m_titleFont);
 		painter.setPen(m_titleColor);
-		painter.fillRect((width - w + m_leftPadding - m_rightPadding) / 2, m_topPadding, w, h, m_titleFillColor);
-		painter.drawText(QPoint((width + m_leftPadding - m_rightPadding - w) / 2, as + m_topPadding), m_title);
+        painter.fillRect(
+            (width - w + m_leftPadding - m_rightPadding) / 2, m_topPadding, w, h, m_titleFillColor);
+        painter.drawText(
+            QPoint((width + m_leftPadding - m_rightPadding - w) / 2, as + m_topPadding), m_title);
 	}
 
-	m_customPlot->setGeometry(m_leftPadding, h + m_topPadding,
-		width - m_leftPadding - m_rightPadding, height - h - m_topPadding - m_bottomPadding);
+    m_customPlot->setGeometry(m_leftPadding,
+                              h + m_topPadding,
+                              width - m_leftPadding - m_rightPadding,
+                              height - h - m_topPadding - m_bottomPadding);
 }
 
 void PlotRTI::slot_setMouseEventEnable(bool on)
@@ -158,33 +161,33 @@ void PlotRTI::setUnitsShowY(bool on)
 	m_customPlot->replot();
 }
 
-void PlotRTI::setUnitsX(const QString & units)
+void PlotRTI::setUnitsX(const QString& units)
 {
 	m_units_x = units;
 	m_customPlot->xAxis->setAxisFormat(units);
 	m_customPlot->replot();
 }
 
-void PlotRTI::setUnitsY(const QString & units)
+void PlotRTI::setUnitsY(const QString& units)
 {
 	m_units_y = units;
 	m_customPlot->yAxis->setAxisFormat(units);
 	m_customPlot->replot();
 }
 
-void PlotRTI::setTitle(QString & str)
+void PlotRTI::setTitle(QString& str)
 {
 	m_title = str;
 	update();
 }
 
-void PlotRTI::setTitleColor(QColor & color)
+void PlotRTI::setTitleColor(QColor& color)
 {
 	m_titleColor = color;
 	update();
 }
 
-void PlotRTI::setTitleFillColor(QColor & color)
+void PlotRTI::setTitleFillColor(QColor& color)
 {
 	m_titleFillColor = color;
 	update();
@@ -197,7 +200,7 @@ void PlotRTI::setTitleFontSize(int size)
 	update();
 }
 
-void PlotRTI::setTitleFont(QFont & font)
+void PlotRTI::setTitleFont(QFont& font)
 {
 	m_titleFont = font;
 	update();
@@ -209,21 +212,21 @@ void PlotRTI::setTitleVisible(bool show)
 	update();
 }
 
-void PlotRTI::setxAxisLabel(QString & str)
+void PlotRTI::setxAxisLabel(QString& str)
 {
 	m_xAxisLabel = str;
 	m_customPlot->xAxis->setLabel(m_xAxisLabel);
 	m_customPlot->replot();
 }
 
-void PlotRTI::setyAxisLabel(QString & str)
+void PlotRTI::setyAxisLabel(QString& str)
 {
 	m_yAxisLabel = str;
 	m_customPlot->yAxis->setLabel(m_yAxisLabel);
 	m_customPlot->replot();
 }
 
-void PlotRTI::setAxisLabelColor(QColor & color)
+void PlotRTI::setAxisLabelColor(QColor& color)
 {
 	m_axisColor = color;
 	m_customPlot->xAxis->setLabelColor(m_axisColor);
@@ -231,7 +234,7 @@ void PlotRTI::setAxisLabelColor(QColor & color)
 	m_customPlot->replot();
 }
 
-void PlotRTI::setAxisLabelFont(QFont & font)
+void PlotRTI::setAxisLabelFont(QFont& font)
 {
 	m_axisLabelFont = font;
 	m_customPlot->xAxis->setLabelFont(m_axisLabelFont);
@@ -241,7 +244,7 @@ void PlotRTI::setAxisLabelFont(QFont & font)
 
 void PlotRTI::setAxisVisible(bool on, AxisType type)
 {
-	switch (type)
+    switch(type)
 	{
 	case AxisType::xAxis:
 		m_customPlot->xAxis->setVisible(on);
@@ -263,7 +266,7 @@ void PlotRTI::setAxisVisible(bool on, AxisType type)
 
 void PlotRTI::setAxisTickLabelShow(bool on, AxisType type)
 {
-	switch (type)
+    switch(type)
 	{
 	case AxisType::xAxis:
 		m_customPlot->xAxis->setTickLabels(on);
@@ -296,7 +299,7 @@ void PlotRTI::setOuterFillColor(QColor color)
 
 void PlotRTI::setCoordRangeX(double lower, double upper)
 {
-	if (m_coordBgn_x == lower && m_coordEnd_x == upper)
+    if(m_coordBgn_x == lower && m_coordEnd_x == upper)
 	{
 		return;
 	}
@@ -304,12 +307,12 @@ void PlotRTI::setCoordRangeX(double lower, double upper)
 	m_coordBgn_x = lower;
 	m_coordEnd_x = upper;
 	m_customPlot->xAxis->setRange(lower, upper);
-//	m_customPlot->replot();
+    //	m_customPlot->replot();
 }
 
 void PlotRTI::setCoordRangeY(double lower, double upper)
 {
-	if (m_coordBgn_y == lower && m_coordEnd_y == upper)
+    if(m_coordBgn_y == lower && m_coordEnd_y == upper)
 	{
 		return;
 	}
@@ -317,30 +320,29 @@ void PlotRTI::setCoordRangeY(double lower, double upper)
 	m_coordBgn_y = lower;
 	m_coordEnd_y = upper;
 	m_customPlot->yAxis->setRange(lower, upper);
-//	m_customPlot->replot();
+    //	m_customPlot->replot();
 }
 
-void PlotRTI::getCoordRangeX(double & lower, double & upper)
+void PlotRTI::getCoordRangeX(double& lower, double& upper)
 {
 	lower = m_coordBgn_x;
 	upper = m_coordEnd_x;
 }
 
-void PlotRTI::getCoordRangeY(double & lower, double & upper)
+void PlotRTI::getCoordRangeY(double& lower, double& upper)
 {
 	lower = m_coordBgn_y;
 	upper = m_coordEnd_y;
 }
 
-
 void PlotRTI::setHorzGrids(uint count)
 {
-	if (m_horzGrids == count || count < 0)
+    if(m_horzGrids == count || count < 0)
 	{
 		return;
 	}
 	m_horzGrids = count;
-	if (count == 0)
+    if(count == 0)
 	{
 		m_customPlot->yAxis->grid()->setVisible(false);
 	}
@@ -354,12 +356,12 @@ void PlotRTI::setHorzGrids(uint count)
 
 void PlotRTI::setVertGrids(uint count)
 {
-	if (m_vertGrids == count || count < 0)
+    if(m_vertGrids == count || count < 0)
 	{
 		return;
 	}
 	m_vertGrids = count;
-	if (count == 0)
+    if(count == 0)
 	{
 		m_customPlot->xAxis->grid()->setVisible(false);
 	}
@@ -394,8 +396,8 @@ void PlotRTI::setGridColorWidth(QColor color, uint width)
 void PlotRTI::setGridFillColor(QColor color)
 {
 	m_gridFillColor = color;
-// 	m_customPlot->axisRect()->setBackground(color);
-// 	m_customPlot->replot();
+    // 	m_customPlot->axisRect()->setBackground(color);
+    // 	m_customPlot->replot();
 }
 
 void PlotRTI::setGridVisible(bool enable)
@@ -406,7 +408,7 @@ void PlotRTI::setGridVisible(bool enable)
 	m_customPlot->replot();
 }
 
-void PlotRTI::setTickLabelColor(QColor & color)
+void PlotRTI::setTickLabelColor(QColor& color)
 {
 	m_tickLabelColor = color;
 	m_customPlot->xAxis->setTickLabelColor(m_tickLabelColor);
@@ -414,7 +416,7 @@ void PlotRTI::setTickLabelColor(QColor & color)
 	m_customPlot->replot();
 }
 
-void PlotRTI::setTickLabelFont(QFont & font)
+void PlotRTI::setTickLabelFont(QFont& font)
 {
 	m_tickLabelFont = font;
 	m_customPlot->xAxis->setTickLabelFont(m_tickLabelFont);
@@ -431,7 +433,7 @@ void PlotRTI::setTickLabelFontSize(int size)
 
 void PlotRTI::setGridStyle(GridStyle style)
 {
-	switch (style)
+    switch(style)
 	{
 	case GridStyle::SOLIDLINE:
 		m_gridStyle = Qt::SolidLine;
@@ -454,6 +456,4 @@ void PlotRTI::setGridStyle(GridStyle style)
 	m_customPlot->replot();
 }
 
-void PlotRTI::setGridDensity(GridDensity density)
-{
-}
+void PlotRTI::setGridDensity(GridDensity density) {}

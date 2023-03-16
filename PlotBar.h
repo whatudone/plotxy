@@ -32,6 +32,11 @@ public:
                   int rightBoundary,
                   QColor color);
 
+    virtual PlotType plotType() const
+    {
+        return Type_PlotBar;
+    }
+
 public:
     static int m_instanceCount; //实体个数
 

@@ -2,7 +2,7 @@
 
 int PlotAScope::m_instanceCount = 1;
 PlotAScope::PlotAScope(QWidget* parent)
-	:PlotItemBase(parent)
+    : PlotItemBase(parent)
 {
 	QString name = QString("A-Scope%1").arg(m_instanceCount);
 	this->setName(name);
@@ -33,7 +33,6 @@ PlotAScope::PlotAScope(QWidget* parent)
 	m_coordBgn_y = 0;
 	m_coordEnd_y = 100;
 
-
 	m_horzGrids = 5;
 	m_vertGrids = 5;
 	m_axisWidth = 1;
@@ -51,20 +50,19 @@ PlotAScope::PlotAScope(QWidget* parent)
 	m_showUnits_x = false;
 	m_showUnits_y = false;
 
-
 	initPlot();
 
 	parent->installEventFilter(this);
 }
 
-
-PlotAScope::~PlotAScope()
-{
-}
+PlotAScope::~PlotAScope() {}
 
 void PlotAScope::initPlot()
 {
 	m_customPlot = new QCustomPlot(this);
+    QHBoxLayout* pLayout = new QHBoxLayout(this);
+    pLayout->addWidget(m_customPlot);
+    setLayout(pLayout);
 	m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 	m_customPlot->axisRect()->setupFullAxesBox(true);
 
@@ -100,19 +98,19 @@ void PlotAScope::initPlot()
 
 void PlotAScope::onGetCurrentSeconds(double secs)
 {
-	if (getDataPair().isEmpty())
+    if(getDataPair().isEmpty())
 	{
 		return;
 	}
 	int isize = getDataPair().size();
-	for (int i = 0; i < isize; ++i)
+    for(int i = 0; i < isize; ++i)
 	{
 		QString xcolumn = getDataPair().at(i)->getDataPair().first;
 		QString ycolumn = getDataPair().at(i)->getDataPair().second;
 	}
 }
 
-void PlotAScope::paintEvent(QPaintEvent * event)
+void PlotAScope::paintEvent(QPaintEvent* event)
 {
 	int width = this->width();
 	int height = this->height();
@@ -125,21 +123,25 @@ void PlotAScope::paintEvent(QPaintEvent * event)
 	double h = fm.size(Qt::TextSingleLine, m_title).height();
 	double as = fm.ascent();
 
-	if (m_titleVisible)
+    if(m_titleVisible)
 	{
 		painter.setFont(m_titleFont);
 		painter.setPen(m_titleColor);
-		painter.fillRect((width - w + m_leftPadding - m_rightPadding) / 2, m_topPadding, w, h, m_titleFillColor);
-		painter.drawText(QPoint((width + m_leftPadding - m_rightPadding - w) / 2, as + m_topPadding), m_title);
+        painter.fillRect(
+            (width - w + m_leftPadding - m_rightPadding) / 2, m_topPadding, w, h, m_titleFillColor);
+        painter.drawText(
+            QPoint((width + m_leftPadding - m_rightPadding - w) / 2, as + m_topPadding), m_title);
 	}
-	
-	m_customPlot->setGeometry(m_leftPadding, h + m_topPadding, 
-		width - m_leftPadding - m_rightPadding, height - h - m_topPadding - m_bottomPadding);	
+
+    m_customPlot->setGeometry(m_leftPadding,
+                              h + m_topPadding,
+                              width - m_leftPadding - m_rightPadding,
+                              height - h - m_topPadding - m_bottomPadding);
 }
 
-bool PlotAScope::eventFilter(QObject * watched, QEvent * event)
+bool PlotAScope::eventFilter(QObject* watched, QEvent* event)
 {
-	if (watched == parent() && event->type() == QEvent::Paint)
+    if(watched == parent() && event->type() == QEvent::Paint)
 	{
 		this->paintEvent((QPaintEvent*)event);
 	}
@@ -174,33 +176,33 @@ void PlotAScope::setUnitsShowY(bool on)
 	m_customPlot->replot();
 }
 
-void PlotAScope::setUnitsX(const QString & units)
+void PlotAScope::setUnitsX(const QString& units)
 {
 	m_units_x = units;
 	m_customPlot->xAxis->setAxisFormat(units);
 	m_customPlot->replot();
 }
 
-void PlotAScope::setUnitsY(const QString & units)
+void PlotAScope::setUnitsY(const QString& units)
 {
 	m_units_y = units;
 	m_customPlot->yAxis->setAxisFormat(units);
 	m_customPlot->replot();
 }
 
-void PlotAScope::setTitle(const QString & str)
+void PlotAScope::setTitle(const QString& str)
 {
 	m_title = str;
 	update();
 }
 
-void PlotAScope::setTitleColor(const QColor & color)
+void PlotAScope::setTitleColor(const QColor& color)
 {
 	m_titleColor = color;
 	update();
 }
 
-void PlotAScope::setTitleFont(const QFont &font)
+void PlotAScope::setTitleFont(const QFont& font)
 {
 	m_titleFont = font;
 	update();
@@ -219,27 +221,27 @@ void PlotAScope::setTitleFontSize(int size)
 	update();
 }
 
-void PlotAScope::setTitleFillColor(QColor & color)
+void PlotAScope::setTitleFillColor(QColor& color)
 {
 	m_titleFillColor = color;
 	update();
 }
 
-void PlotAScope::setxAxisLabel(const QString &str)
+void PlotAScope::setxAxisLabel(const QString& str)
 {
 	m_xAxisLabel = str;
 	m_customPlot->xAxis->setLabel(m_xAxisLabel);
 	m_customPlot->replot();
 }
 
-void PlotAScope::setyAxisLabel(const QString & str)
+void PlotAScope::setyAxisLabel(const QString& str)
 {
 	m_yAxisLabel = str;
 	m_customPlot->yAxis->setLabel(m_yAxisLabel);
 	m_customPlot->replot();
 }
 
-void PlotAScope::setAxisLabelColor(QColor & color)
+void PlotAScope::setAxisLabelColor(QColor& color)
 {
 	m_axisColor = color;
 	m_customPlot->xAxis->setLabelColor(m_axisLabelColor);
@@ -247,7 +249,7 @@ void PlotAScope::setAxisLabelColor(QColor & color)
 	m_customPlot->replot();
 }
 
-void PlotAScope::setAxisLabelFont(QFont & font)
+void PlotAScope::setAxisLabelFont(QFont& font)
 {
 	m_axisLabelFont = font;
 	m_customPlot->xAxis->setLabelFont(m_axisLabelFont);
@@ -257,7 +259,7 @@ void PlotAScope::setAxisLabelFont(QFont & font)
 
 void PlotAScope::setAxisVisible(bool on, AxisType type)
 {
-	switch (type)
+    switch(type)
 	{
 	case AxisType::xAxis:
 		m_customPlot->xAxis->setVisible(on);
@@ -279,7 +281,7 @@ void PlotAScope::setAxisVisible(bool on, AxisType type)
 
 void PlotAScope::setAxisTickLabelShow(bool on, AxisType type)
 {
-	switch (type)
+    switch(type)
 	{
 	case AxisType::xAxis:
 		m_customPlot->xAxis->setTickLabels(on);
@@ -301,7 +303,7 @@ void PlotAScope::setAxisTickLabelShow(bool on, AxisType type)
 
 void PlotAScope::setCoordRangeX(double lower, double upper)
 {
-	if (m_coordBgn_x == lower && m_coordEnd_x == upper)
+    if(m_coordBgn_x == lower && m_coordEnd_x == upper)
 	{
 		return;
 	}
@@ -310,12 +312,11 @@ void PlotAScope::setCoordRangeX(double lower, double upper)
 	m_coordEnd_x = upper;
 	m_customPlot->xAxis->setRange(lower, upper);
 	m_customPlot->replot();
-
 }
 
 void PlotAScope::setCoordRangeY(double lower, double upper)
 {
-	if (m_coordBgn_y == lower && m_coordEnd_y == upper)
+    if(m_coordBgn_y == lower && m_coordEnd_y == upper)
 	{
 		return;
 	}
@@ -324,16 +325,15 @@ void PlotAScope::setCoordRangeY(double lower, double upper)
 	m_coordEnd_y = upper;
 	m_customPlot->yAxis->setRange(lower, upper);
 	m_customPlot->replot();
-
 }
 
-void PlotAScope::getCoordRangeX(double & lower, double & upper)
+void PlotAScope::getCoordRangeX(double& lower, double& upper)
 {
 	lower = m_coordBgn_x;
 	upper = m_coordEnd_x;
 }
 
-void PlotAScope::getCoordRangeY(double & lower, double & upper)
+void PlotAScope::getCoordRangeY(double& lower, double& upper)
 {
 	lower = m_coordBgn_y;
 	upper = m_coordEnd_y;
@@ -341,12 +341,12 @@ void PlotAScope::getCoordRangeY(double & lower, double & upper)
 
 void PlotAScope::setHorzGrids(uint count)
 {
-	if (m_horzGrids == count || count < 0)
+    if(m_horzGrids == count || count < 0)
 	{
 		return;
 	}
 	m_horzGrids = count;
-	if (count == 0)
+    if(count == 0)
 	{
 		m_customPlot->yAxis->grid()->setVisible(false);
 	}
@@ -360,12 +360,12 @@ void PlotAScope::setHorzGrids(uint count)
 
 void PlotAScope::setVertGrids(uint count)
 {
-	if (m_vertGrids == count || count < 0)
+    if(m_vertGrids == count || count < 0)
 	{
 		return;
 	}
 	m_vertGrids = count;
-	if (count == 0)
+    if(count == 0)
 	{
 		m_customPlot->xAxis->grid()->setVisible(false);
 	}
@@ -412,7 +412,7 @@ void PlotAScope::setGridVisible(bool enable)
 	m_customPlot->replot();
 }
 
-void PlotAScope::setTickLabelColor(QColor & color)
+void PlotAScope::setTickLabelColor(QColor& color)
 {
 	m_tickLabelColor = color;
 	m_customPlot->xAxis->setTickLabelColor(m_tickLabelColor);
@@ -420,7 +420,7 @@ void PlotAScope::setTickLabelColor(QColor & color)
 	m_customPlot->replot();
 }
 
-void PlotAScope::setTickLabelFont(QFont & font)
+void PlotAScope::setTickLabelFont(QFont& font)
 {
 	m_tickLabelFont = font;
 	m_customPlot->xAxis->setTickLabelFont(m_tickLabelFont);
@@ -437,7 +437,7 @@ void PlotAScope::setTickLabelFontSize(int size)
 
 void PlotAScope::setGridStyle(GridStyle style)
 {
-	switch (style)
+    switch(style)
 	{
 	case GridStyle::SOLIDLINE:
 		m_gridStyle = Qt::SolidLine;
@@ -460,11 +460,9 @@ void PlotAScope::setGridStyle(GridStyle style)
 	m_customPlot->replot();
 }
 
-void PlotAScope::setGridDensity(GridDensity density)
-{
-}
+void PlotAScope::setGridDensity(GridDensity density) {}
 
-void PlotAScope::setMinimumMargins(const QMargins & margins)
+void PlotAScope::setMinimumMargins(const QMargins& margins)
 {
 	m_customPlot->axisRect()->setMinimumMargins(margins);
 }
@@ -479,4 +477,3 @@ void PlotAScope::setOuterFillColor(QColor color)
 	m_customPlot->setBackground(color);
 	m_customPlot->replot();
 }
-

@@ -136,6 +136,11 @@ public:
         return m_titleFontSize;
     }
 
+    virtual PlotType plotType() const
+    {
+        return Type_PlotPolar;
+    }
+
 public slots:
     void onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>>) override;
 

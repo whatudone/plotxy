@@ -1,22 +1,21 @@
-﻿#pragma once
-/* * @filename: PlotText.h
+﻿/* * @filename: PlotText.h
 * @brief: PlotText控件类
 * @author: zhangdingwen
 * @create time: 2022-10-10
 *  */
 
-#ifndef  _PLOT_TEXT_H_
-#define  _PLOT_TEXT_H_ 
+#ifndef PLOT_TEXT_H_
+#define PLOT_TEXT_H_
 
-#include "PlotItemBase.h"
 #include "BaseData.h"
-#include <QTimer>
+#include "PlotItemBase.h"
 #include <QColor>
-#include <QMap>
 #include <QDebug>
+#include <QMap>
+#include <QTimer>
 #include <QVector>
 
-class PlotText :public PlotItemBase
+class PlotText : public PlotItemBase
 {
 	Q_OBJECT
 public:
@@ -25,8 +24,11 @@ public:
 	//void onTimeout();
 
 	bool m_flag;
-	static int m_instanceCount;			//实体个数
-
+    static int m_instanceCount; //实体个数
+    virtual PlotType plotType() const
+    {
+        return Type_PlotText;
+    }
 public slots:
 	void onGetCurrentSeconds(double secs);
 	//void slot_setValue(double);
@@ -34,6 +36,7 @@ public slots:
 	//QColor slot_getGridColor();
 protected:
 	virtual void paintEvent(QPaintEvent* event);
+
 private:
 	//void updateItems(QPainter*);
 	//virtual void setGridColorWidth(QColor, uint);
@@ -44,22 +47,31 @@ private:
 	//uint m_axisWidth;
 	virtual void setGridColorWidth(QColor color, uint width);
 	virtual void setGridStyle(GridStyle);
-	virtual uint getGridWidth() { return m_gridWidth; }
-	virtual QColor getGridColor() { return m_gridColor; }
-	virtual Qt::PenStyle getGridStyle() { return m_gridStyle; }
+    virtual uint getGridWidth()
+    {
+        return m_gridWidth;
+    }
+    virtual QColor getGridColor()
+    {
+        return m_gridColor;
+    }
+    virtual Qt::PenStyle getGridStyle()
+    {
+        return m_gridStyle;
+    }
 	bool m_bHorizontal;
-	bool m_started;	
+    bool m_started;
 	QStringList m_xColumnList;
 	QStringList m_yColumnList;
 	QStringList m_entityTypeList;
 	QStringList m_entityAttrList;
 	int m_horiGridNum;
-	int m_verGridNum;	
+    int m_verGridNum;
 	int m_leftPadding;
 	int m_rightPadding;
 	int m_interPadding;
-	int m_currTimeIndex;	
-	QMap<QString, QMap<int, QColor>>m_thresholdColorMap;
+    int m_currTimeIndex;
+    QMap<QString, QMap<int, QColor>> m_thresholdColorMap;
 	QVector<QList<double>> m_valueListVector;
 	QColor m_defaultColor;
 	QList<double> m_valueList;
@@ -67,10 +79,19 @@ private:
 	QList<QString> m_entityName, m_attriName;
 	double m_secValue;
     void drawTitleText(QPainter& painter, QRect& rect);
-	void drawXYTitle(QPainter& painter, int& horiGridWidth, int& verGridWidth , QVector<DataPair*> & dataVector ,double &as);
-	void drawNMCell(QPainter& painter, QSet<QString>& xset, QSet<QString>& yset, QVector<DataPair*> dataVector,
-		int& horiGridWidth, int& verGridWidth,double &as);
+    void drawXYTitle(QPainter& painter,
+                     int& horiGridWidth,
+                     int& verGridWidth,
+                     QVector<DataPair*>& dataVector,
+                     double& as);
+    void drawNMCell(QPainter& painter,
+                    QSet<QString>& xset,
+                    QSet<QString>& yset,
+                    QVector<DataPair*> dataVector,
+                    int& horiGridWidth,
+                    int& verGridWidth,
+                    double& as);
 	void drawData(QSet<QString>& xset, QSet<QString>& yset, int& horiGridWidth, int& verGridWidth);
 };
 
-#endif // _PLOT_TEXT_H_ 
+#endif // _PLOT_TEXT_H_

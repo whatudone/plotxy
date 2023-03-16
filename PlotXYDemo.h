@@ -194,6 +194,8 @@ private:
     QToolButton* m_statusBar_createPlot;
     QToolButton* m_statusBar_movePlot;
     QLabel* m_statusBar_null;
+
+    MouseMode m_mouseMode;
 };
 
 #endif // !

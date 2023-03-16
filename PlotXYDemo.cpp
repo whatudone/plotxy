@@ -195,10 +195,9 @@ void PlotXYDemo::onMovePlot() {}
 void PlotXYDemo::onStatusBtnClicked(int index)
 {
     MouseMode mode = static_cast<MouseMode>(index);
+    m_mouseMode = mode;
+    // 通知已经存在的图表刷新鼠标模式
     emit mouseModeChanged(mode);
-    if(mode == MouseMode::SelectPlot)
-    {
-    }
 }
 
 void PlotXYDemo::onSelectedPlot(QWidget* widget)
@@ -500,7 +499,7 @@ void PlotXYDemo::onAddPlot()
             pFreeWidgetWraper,
             &FreeWidgetWraper::onMouseModeChanged);
     pFreeWidgetWraper->setWidget(plotItem);
-    pFreeWidgetWraper->setMoveEnable(true);
+    pFreeWidgetWraper->setMouseMode(m_mouseMode);
 
     plotItem->show();
     plotItem->update();
@@ -1029,67 +1028,19 @@ PlotType PlotXYDemo::getCurrentFocusPlot()
     if(subWidget == nullptr)
         return m_lastSelectedType;
 
-    QString name = subWidget->metaObject()->className();
-
     QString objname = subWidget->objectName();
     if(objname == "PlotItemBase")
     {
-        m_curBaseInfo.Base_PlotName = dynamic_cast<PlotItemBase*>(subWidget)->currName();
-        m_curBaseInfo.Base_TabName = dynamic_cast<PlotItemBase*>(subWidget)->currTabName();
+        auto plot = dynamic_cast<PlotItemBase*>(subWidget);
+        m_curBaseInfo.Base_PlotName = plot->currName();
+        m_curBaseInfo.Base_TabName = plot->currTabName();
+        m_lastSelectedType = plot->plotType();
     }
     else
     {
         m_curBaseInfo.Base_PlotName = nullptr;
         m_curBaseInfo.Base_TabName = ui.tabWidget->tabText(ui.tabWidget->currentIndex());
     }
-
-    if(name.compare("PlotScatter") == 0)
-    {
-        m_lastSelectedType = PlotType::Type_PlotScatter;
-    }
-    else if(name.compare("PlotAScope") == 0)
-    {
-        m_lastSelectedType = PlotType::Type_PlotAScope;
-    }
-    else if(name.compare("PlotRTI") == 0)
-    {
-        m_lastSelectedType = PlotType::Type_PlotRTI;
-    }
-    else if(name.compare("PlotText") == 0)
-    {
-        m_lastSelectedType = PlotType::Type_PlotText;
-    }
-    else if(name.compare("PlotLight") == 0)
-    {
-        m_lastSelectedType = PlotType::Type_PlotLight;
-    }
-    else if(name.compare("PlotBar") == 0)
-    {
-        m_lastSelectedType = PlotType::Type_PlotBar;
-    }
-    else if(name.compare("PlotDial") == 0)
-    {
-        m_lastSelectedType = PlotType::Type_PlotDial;
-    }
-    else if(name.compare("PlotAttitude") == 0)
-    {
-        m_lastSelectedType = PlotType::Type_PlotAttitude;
-    }
-    else if(name.compare("PlotPolar") == 0)
-    {
-        m_lastSelectedType = PlotType::Type_PlotPolar;
-    }
-    else if(name.compare("PlotTrack") == 0)
-    {
-        m_lastSelectedType = PlotType::Type_PlotTrack;
-    }
-    else if(name.compare("PlotDoppler") == 0)
-    {
-        m_lastSelectedType = PlotType::Type_PlotDoppler;
-    }
-    else
-        m_lastSelectedType = PlotType::Type_PlotScatter;
-
     return m_lastSelectedType;
 }
 

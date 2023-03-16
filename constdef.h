@@ -4,7 +4,8 @@
 
 enum PlotType
 {
-	Type_PlotScatter = 0,
+    Type_PlotUnknown = -1,
+    Type_PlotScatter,
 	Type_PlotAScope,
 	Type_PlotRTI,
 	Type_PlotText,

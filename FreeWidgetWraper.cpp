@@ -3,6 +3,10 @@
 
 #include <QDebug>
 #include <QEvent>
+#include <QHoverEvent>
+#include <QMouseEvent>
+#include <QRubberBand>
+
 static const QMap<int, Qt::CursorShape> CursorMap{
     {0, Qt::SizeHorCursor},
     {1, Qt::SizeHorCursor},
@@ -16,15 +20,8 @@ static const QMap<int, Qt::CursorShape> CursorMap{
 FreeWidgetWraper::FreeWidgetWraper(QObject* parent)
     : QObject(parent)
 {
-    padding = 8; //default
-    moveEnable = true;
-    resizeEnable = true;
-
-    mousePressed = false;
-    mousePoint = QPoint(0, 0);
-    mouseRect = QRect(0, 0, 0, 0);
-
-    for(int i = 0; i < 8; ++i)
+    int size = 8;
+    for(int i = 0; i < size; ++i)
     {
         pressedArea << false;
         pressedRect << QRect(0, 0, 0, 0);
@@ -42,34 +39,18 @@ bool FreeWidgetWraper::eventFilter(QObject* watched, QEvent* event)
 
     if(event->type() == QEvent::Resize)
     {
-        //重新计算八个描点的区域,描点区域的作用还有就是计算鼠标坐标是否在某一个区域内
-        int width = m_pBindWidget->width();
-        int height = m_pBindWidget->height();
-
-        //左侧描点区域
-        pressedRect[0] = QRect(0, padding, padding, height - padding * 2);
-        //右侧描点区域
-        pressedRect[1] = QRect(width - padding, padding, padding, height - padding * 2);
-        //上侧描点区域
-        pressedRect[2] = QRect(padding, 0, width - padding * 2, padding);
-        //下侧描点区域
-        pressedRect[3] = QRect(padding, height - padding, width - padding * 2, padding);
-
-        //左上角描点区域
-        pressedRect[4] = QRect(0, 0, padding, padding);
-        //右上角描点区域
-        pressedRect[5] = QRect(width - padding, 0, padding, padding);
-        //左下角描点区域
-        pressedRect[6] = QRect(0, height - padding, padding, padding);
-        //右下角描点区域
-        pressedRect[7] = QRect(width - padding, height - padding, padding, padding);
+        handleResize();
     }
     else if(event->type() == QEvent::HoverMove)
     {
         //设置对应鼠标形状,这个必须放在这里而不是下面,因为可以在鼠标没有按下的时候识别
         QHoverEvent* hoverEvent = static_cast<QHoverEvent*>(event);
         QPoint point = hoverEvent->pos();
-        if(resizeEnable)
+        //根据当前鼠标位置,计算XY轴移动了多少
+        int offsetX = point.x() - mousePoint.x();
+        int offsetY = point.y() - mousePoint.y();
+        // 缩放模式显示不同缩放光标提示
+        if(m_mouseMode == MouseMode::Zoom)
         {
             bool isInCorner = false;
             for(int index = 0; index < pressedRect.size(); ++index)
@@ -85,20 +66,7 @@ bool FreeWidgetWraper::eventFilter(QObject* watched, QEvent* event)
             {
                 m_pBindWidget->setCursor(Qt::ArrowCursor);
             }
-        }
 
-        //根据当前鼠标位置,计算XY轴移动了多少
-        int offsetX = point.x() - mousePoint.x();
-        int offsetY = point.y() - mousePoint.y();
-
-        //根据按下处的位置判断是否是移动控件还是拉伸控件
-        if(moveEnable && mousePressed)
-        {
-            m_pBindWidget->move(m_pBindWidget->x() + offsetX, m_pBindWidget->y() + offsetY);
-        }
-
-        if(resizeEnable)
-        {
             int rectX = mouseRect.x();
             int rectY = mouseRect.y();
             int rectW = mouseRect.width();
@@ -176,6 +144,14 @@ bool FreeWidgetWraper::eventFilter(QObject* watched, QEvent* event)
                     m_pBindWidget->x(), m_pBindWidget->y(), resizeW, resizeH);
             }
         }
+
+        //根据按下处的位置判断是否是移动控件还是拉伸控件
+        else if((m_mouseMode == MouseMode::Pan))
+        {
+
+            if(mousePressed)
+                m_pBindWidget->move(m_pBindWidget->x() + offsetX, m_pBindWidget->y() + offsetY);
+        }
     }
     else if(event->type() == QEvent::MouseButtonPress)
     {
@@ -183,23 +159,22 @@ bool FreeWidgetWraper::eventFilter(QObject* watched, QEvent* event)
         QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
         mousePoint = mouseEvent->pos();
         mouseRect = m_pBindWidget->geometry();
-        //判断按下的手柄的区域位置
-        for(const auto& rect : pressedRect)
+        mousePressed = true;
+        if(m_mouseMode == MouseMode::Zoom)
         {
-            if(rect.contains(mousePoint))
+            //判断按下的手柄的区域位置
+            for(const auto& rect : pressedRect)
             {
-                int index = pressedRect.indexOf(rect);
-                pressedArea[index] = true;
-                return false;
+                if(rect.contains(mousePoint))
+                {
+                    int index = pressedRect.indexOf(rect);
+                    pressedArea[index] = true;
+                    return false;
+                }
             }
         }
+    }
 
-        mousePressed = true;
-    }
-    else if(event->type() == QEvent::MouseMove)
-    {
-        //改成用HoverMove识别
-    }
     else if(event->type() == QEvent::MouseButtonRelease)
     {
         //恢复所有
@@ -217,6 +192,35 @@ bool FreeWidgetWraper::eventFilter(QObject* watched, QEvent* event)
     return QObject::eventFilter(watched, event);
 }
 
+void FreeWidgetWraper::handleResize()
+{
+    //重新计算八个描点的区域,描点区域的作用还有就是计算鼠标坐标是否在某一个区域内
+    int width = m_pBindWidget->width();
+    int height = m_pBindWidget->height();
+
+    //左侧描点区域
+    pressedRect[0] = QRect(0, padding, padding, height - padding * 2);
+    //右侧描点区域
+    pressedRect[1] = QRect(width - padding, padding, padding, height - padding * 2);
+    //上侧描点区域
+    pressedRect[2] = QRect(padding, 0, width - padding * 2, padding);
+    //下侧描点区域
+    pressedRect[3] = QRect(padding, height - padding, width - padding * 2, padding);
+
+    //左上角描点区域
+    pressedRect[4] = QRect(0, 0, padding, padding);
+    //右上角描点区域
+    pressedRect[5] = QRect(width - padding, 0, padding, padding);
+    //左下角描点区域
+    pressedRect[6] = QRect(0, height - padding, padding, padding);
+    //右下角描点区域
+    pressedRect[7] = QRect(width - padding, height - padding, padding, padding);
+}
+
+void FreeWidgetWraper::handleMouseButtonPressWithCenterPlot() {}
+
+void FreeWidgetWraper::handleMouseButtonPressWithBoxZoom() {}
+
 MouseMode FreeWidgetWraper::mouseMode() const
 {
     return m_mouseMode;
@@ -225,6 +229,7 @@ MouseMode FreeWidgetWraper::mouseMode() const
 void FreeWidgetWraper::setMouseMode(const MouseMode& mouseMode)
 {
     m_mouseMode = mouseMode;
+    // 不同鼠标模式，控件能够操作的模式不同
 }
 
 void FreeWidgetWraper::setPadding(int padding)
@@ -232,14 +237,14 @@ void FreeWidgetWraper::setPadding(int padding)
     this->padding = padding;
 }
 
-void FreeWidgetWraper::setMoveEnable(bool moveEnable)
+void FreeWidgetWraper::setMoveEnable(bool m_moveEnable)
 {
-    this->moveEnable = moveEnable;
+    this->m_moveEnable = m_moveEnable;
 }
 
-void FreeWidgetWraper::setResizeEnable(bool resizeEnable)
+void FreeWidgetWraper::setResizeEnable(bool m_resizeEnable)
 {
-    this->resizeEnable = resizeEnable;
+    this->m_resizeEnable = m_resizeEnable;
 }
 
 void FreeWidgetWraper::setMousePressed(bool mousePressed)
@@ -266,5 +271,5 @@ void FreeWidgetWraper::setWidget(QWidget* widget)
 
 void FreeWidgetWraper::onMouseModeChanged(MouseMode mode)
 {
-    m_mouseMode = mode;
+    setMouseMode(mode);
 }

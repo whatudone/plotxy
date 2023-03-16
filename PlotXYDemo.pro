@@ -3,9 +3,11 @@
 # ------------------------------------------------------
 
 TEMPLATE = app
-TARGET = PlotXYDemo
+TARGET = SimDataAnalyzer
 QT += core gui widgets printsupport
+CONFIG += c++17
 LIBS += -luser32
+QMAKE_CXXFLAGS += -std=c++17
 msvc {
     QMAKE_CFLAGS += /utf-8
     QMAKE_CXXFLAGS += /utf-8

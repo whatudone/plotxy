@@ -10,7 +10,7 @@
  * 5. 可设置是否允许拉伸。
  */
 
-#include <QtWidgets/QWidget>
+#include <QWidget>
 
 // 鼠标操作模式，每种模式对应一种鼠标控制行为，属于互斥行为
 enum class MouseMode : uint8_t
@@ -41,18 +41,24 @@ protected:
     bool eventFilter(QObject* watched, QEvent* event);
 
 private:
+    // 事件类型+鼠标模式的各个处理函数
+    void handleResize();
+    void handleMouseButtonPressWithCenterPlot();
+    void handleMouseButtonPressWithBoxZoom();
+
+private:
     //边距+可移动+可拉伸
-    int padding;
-    bool moveEnable;
-    bool resizeEnable;
+    int padding = 8;
+    bool m_moveEnable = false;
+    bool m_resizeEnable = false;
 
     //无边框窗体
     QWidget* m_pBindWidget = nullptr;
 
     //鼠标是否按下+按下坐标+按下时窗体区域
-    bool mousePressed;
-    QPoint mousePoint;
-    QRect mouseRect;
+    bool mousePressed = false;
+    QPoint mousePoint{0, 0};
+    QRect mouseRect{0, 0, 0, 0};
 
     //鼠标是否按下某个区域+按下区域的大小
     //依次为 左侧+右侧+上侧+下侧+左上侧+右上侧+左下侧+右下侧
@@ -70,8 +76,8 @@ public Q_SLOTS:
     //设置边距
     void setPadding(int padding);
     //设置是否可拖动+拉伸
-    void setMoveEnable(bool moveEnable);
-    void setResizeEnable(bool resizeEnable);
+    void setMoveEnable(bool m_moveEnable);
+    void setResizeEnable(bool m_resizeEnable);
     //修复部分控件不能自动识别 MouseButtonRelease 的BUG
     void setMousePressed(bool mousePressed);
 
