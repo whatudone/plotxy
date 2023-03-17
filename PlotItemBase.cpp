@@ -328,7 +328,7 @@ void PlotItemBase::addPlotPairData(QPair<QString, QString> pair)
     DataPair* data = new DataPair(pair);
     m_dataPair.append(data);
 
-    emit sgn_dataPairChanged(m_tabName, m_plotItemName);
+    emit sgn_dataPairChanged(this);
 }
 
 void PlotItemBase::delPlotPairData(QPair<QString, QString> pair)
@@ -342,7 +342,7 @@ void PlotItemBase::delPlotPairData(QPair<QString, QString> pair)
         {
             m_dataPair.remove(i);
 
-            emit sgn_dataPairChanged(m_tabName, m_plotItemName);
+            emit sgn_dataPairChanged(this);
             break;
         }
     }
@@ -360,7 +360,7 @@ void PlotItemBase::updatePlotPairData(QPair<QString, QString> oldPair,
         {
             m_dataPair.at(i)->setDataPair(newPair);
 
-            emit sgn_dataPairChanged(m_tabName, m_plotItemName);
+            emit sgn_dataPairChanged(this);
             break;
         }
     }
@@ -370,7 +370,7 @@ void PlotItemBase::setDataPair(QVector<DataPair*> newVector)
 {
     m_dataPair.swap(newVector);
 
-    emit sgn_dataPairChanged(m_tabName, m_plotItemName);
+    emit sgn_dataPairChanged(this);
 }
 
 void PlotItemBase::slot_setVisible(bool on)

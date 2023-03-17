@@ -1,9 +1,9 @@
-﻿#ifndef  _PLOT_MANAGER_H_
-#define  _PLOT_MANAGER_H_
+﻿#ifndef _PLOT_MANAGER_H_
+#define _PLOT_MANAGER_H_
 
-#include <QtWidgets/QMainWindow>
-#include "ui_PlotManager.h"
 #include "constdef.h"
+#include "ui_PlotManager.h"
+#include <QtWidgets/QMainWindow>
 
 class PlotItemBase;
 
@@ -15,8 +15,8 @@ public:
     explicit PlotManager(QWidget* parent = Q_NULLPTR);
     ~PlotManager();
 
-    void init();								//初始化函数，连接信号槽
-	void addPlot(const QString&, PlotItemBase*);			//添加Plot
+    void init(); //初始化函数，连接信号槽
+    void addPlot(const QString&, PlotItemBase*); //添加Plot
 
 	QColor m_axisColor;
 	QColor m_gridColor;
@@ -26,8 +26,9 @@ public:
 	int m_spinBoxLeft;
 	int m_spinBoxRight;
 
- 	int m_hrozGrids;
- 	int m_vertGrids;
+    int m_hrozGrids;
+    int m_vertGrids;
+
 private:
 	void initTreeWidgetSettings();
 	void initGeneralUI();
@@ -47,7 +48,6 @@ private:
 	void refreshTextEditUI(PlotItemBase* plot);
 	void refreshAttitudeUI(PlotItemBase* plot);
 
-
 	void enableItem_Scatter();
 	void enableItem_AScope();
 	void enableItem_RTI();
@@ -62,7 +62,7 @@ private:
 public slots:
     void onTWSclicked(QTreeWidgetItem* item, int i);
     void onTWSPclicked(QTreeWidgetItem* item, int i);
-	void onSelectedPlot(QString tabName, QString plotName);	//用于默认点击的Item
+    void onSelectedPlot(PlotItemBase* pBasePlot); //用于默认点击的Item
 
 	void onUpdatePlotManager();
 	void onBtnCloseClicked();
@@ -110,7 +110,6 @@ public slots:
 	void onPushButton_69Clicked();
 	void onTableWidget_textLightDataSortItemSelectionChanged();
 
-
 	//Plot Data
 	void onTableWidget_plotDataItemSelectionChanged();
 	void onLineEdit_24EditingFinished();
@@ -143,7 +142,6 @@ public slots:
 	void onSpinBox_30ValueChanged(int);
 	void onSpinBox_31ValueChanged(int);
 
-
 signals:
     void sigAddPlotPair();
 	void sigAdvancedDataManager();
@@ -151,9 +149,6 @@ signals:
 	void sigGetTabRect();
 	void sigSetPlotVisible(bool);
 	void sigChangePlotName();
-
-
-
 
 private:
     Ui::PlotManager ui;
@@ -178,10 +173,10 @@ private:
 	QTreeWidgetItem* m_itemTrackStatus;
 	QTreeWidgetItem* m_itemRangeDoppler;
 
-    QMap<QString/*int*/, QList<PlotItemBase*>> m_plotManager;	//tabName
+    QMap<QString, QList<PlotItemBase*>> m_plotManager; //tabName
 	bool m_radioPixelChecked;
 	QRect m_tabWidgetRect;
     PlotItemBase* m_curSelectPlot = nullptr;
 };
 
-#endif // ! 
+#endif // !

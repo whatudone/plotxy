@@ -26,7 +26,7 @@ enum class MouseMode : uint8_t
 
 };
 
-class PlotBase;
+class PlotItemBase;
 class FreeWidgetWraper : public QObject
 {
     Q_OBJECT
@@ -52,8 +52,8 @@ private:
     bool m_moveEnable = false;
     bool m_resizeEnable = false;
 
-    //无边框窗体
-    QWidget* m_pBindWidget = nullptr;
+    // 绘图控件
+    PlotItemBase* m_pBindWidget = nullptr;
 
     //鼠标是否按下+按下坐标+按下时窗体区域
     bool mousePressed = false;
@@ -82,12 +82,12 @@ public Q_SLOTS:
     void setMousePressed(bool mousePressed);
 
     //设置要无边框的窗体
-    void setWidget(QWidget* widget);
+    void setWidget(PlotItemBase* widget);
     //接受主窗口鼠标模式切换信号，设置当前鼠标模式
     void onMouseModeChanged(MouseMode mode);
 
 signals:
-    void sgnMouseEventDone(QWidget*);
+    void sgnMouseEventDone(PlotItemBase*);
 };
 
 #endif // _FREE_WIDGET_WRAPER_H_

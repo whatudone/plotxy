@@ -141,7 +141,7 @@ public slots:
     // 将上述信号槽合并成一个
     void onStatusBtnClicked(int index);
 
-	void onSelectedPlot(QWidget*);
+    void onSelectedPlot(PlotItemBase*);
     void onCustomContextMenuRequested(const QPoint&);
     void onContextMenu(const QPoint& point);
 
@@ -169,7 +169,8 @@ private:
     PlotManager* m_plotManager;
     AddPlotPair* m_addPlotPair;
     AdvancedDataManager* m_AdvancedDataManager;
-    BaseInfo m_curBaseInfo;
+    // 当前选中的图表
+    PlotItemBase* m_pCurSelectedPlot = nullptr;
     PlotType m_lastSelectedType;
     TimeControls* m_timeCtrl;
 

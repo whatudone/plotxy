@@ -201,5 +201,4 @@ public slots:
 
 protected:
 	virtual void paintEvent(QPaintEvent* event);
-    bool eventFilter(QObject* watched, QEvent* event);
 };

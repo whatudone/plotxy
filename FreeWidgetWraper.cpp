@@ -185,8 +185,7 @@ bool FreeWidgetWraper::eventFilter(QObject* watched, QEvent* event)
             pressedArea[i] = false;
         }
 
-        if(m_pBindWidget->objectName() == "PlotItemBase")
-            emit sgnMouseEventDone(m_pBindWidget);
+        emit sgnMouseEventDone(m_pBindWidget);
     }
 
     return QObject::eventFilter(watched, event);
@@ -252,7 +251,7 @@ void FreeWidgetWraper::setMousePressed(bool mousePressed)
     this->mousePressed = mousePressed;
 }
 
-void FreeWidgetWraper::setWidget(QWidget* widget)
+void FreeWidgetWraper::setWidget(PlotItemBase* widget)
 {
     if(!m_pBindWidget)
     {

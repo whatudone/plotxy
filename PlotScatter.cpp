@@ -114,7 +114,7 @@ void PlotScatter::addPlotPairData(QPair<QString, QString> pair)
 	DataPair* data = new DataPair(pair);
 	m_dataPair.append(data);
 
-	emit sgn_dataPairChanged(currTabName(), currName());
+    emit sgn_dataPairChanged(this);
 
 	//scatter
 	ScatterInfo info;
@@ -140,7 +140,7 @@ void PlotScatter::delPlotPairData(QPair<QString, QString> pair)
 		{
 			m_dataPair.remove(i);
 
-			emit sgn_dataPairChanged(currTabName(), currName());
+            emit sgn_dataPairChanged(this);
 			break;
 		}
 	}
@@ -164,7 +164,7 @@ void PlotScatter::updatePlotPairData(QPair<QString, QString> oldPair,
 		{
 			m_dataPair.at(i)->setDataPair(newPair);
 
-			emit sgn_dataPairChanged(currTabName(), currName());
+            emit sgn_dataPairChanged(this);
 			break;
 		}
 	}

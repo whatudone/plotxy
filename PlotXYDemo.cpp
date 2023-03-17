@@ -59,8 +59,6 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
             PlotManagerData::getInstance(),
             SLOT(slotChangeTabName(QString, QString)));
 
-    m_curBaseInfo.Base_TabName = nullptr;
-    m_curBaseInfo.Base_PlotName = nullptr;
     qRegisterMetaType<BaseInfo>("BaseInfo");
 
     connect(m_plotManager,
@@ -116,7 +114,7 @@ void PlotXYDemo::onPlotManager()
     {
         return;
     }
-    m_plotManager->onSelectedPlot(m_curBaseInfo.Base_TabName, m_curBaseInfo.Base_PlotName);
+    m_plotManager->onSelectedPlot(m_pCurSelectedPlot);
     m_plotManager->show();
     m_plotManager->activateWindow();
 }
@@ -134,25 +132,28 @@ void PlotXYDemo::onAddPlotPair()
         m_addPlotPair->init(getCurrentFocusPlot());
     }
     m_addPlotPair->onChangeStackIndex(m_lastSelectedType);
-    m_addPlotPair->setPlotBaseInfo(m_curBaseInfo);
+    m_addPlotPair->setPlotBaseInfo(m_pCurSelectedPlot);
     m_addPlotPair->show();
     m_addPlotPair->activateWindow();
 }
 
 void PlotXYDemo::onAddPlotPair(const QString& tabName, const QString& plotName)
 {
+    // TODO:后续需要确认此处是否是需要当前选中的图表数据，或者是在其他图表列表中任意选择的图表，在后台更新他的数据
     if(!m_addPlotPair)
     {
         m_addPlotPair = AddPlotPair::m_getInstance();
         connect(this, SIGNAL(sgn_loadDataReady()), m_addPlotPair, SLOT(onUpdateData()));
         m_addPlotPair->init(getCurrentFocusPlot());
     }
-    m_curBaseInfo.Base_TabName = tabName;
-    m_curBaseInfo.Base_PlotName = plotName;
-    m_addPlotPair->onChangeStackIndex(m_lastSelectedType);
-    m_addPlotPair->setPlotBaseInfo(m_curBaseInfo);
-    m_addPlotPair->show();
-    m_addPlotPair->activateWindow();
+    if(m_pCurSelectedPlot && (m_pCurSelectedPlot->currTabName() == tabName) &&
+       (m_pCurSelectedPlot->currName() == plotName))
+    {
+        m_addPlotPair->onChangeStackIndex(m_lastSelectedType);
+        m_addPlotPair->setPlotBaseInfo(m_pCurSelectedPlot);
+        m_addPlotPair->show();
+        m_addPlotPair->activateWindow();
+    }
 }
 
 void PlotXYDemo::onDiscoveryRules() {}
@@ -196,15 +197,47 @@ void PlotXYDemo::onStatusBtnClicked(int index)
 {
     MouseMode mode = static_cast<MouseMode>(index);
     m_mouseMode = mode;
+    switch(m_mouseMode)
+    {
+    case MouseMode::SelectPlot:
+        setCursor(Qt::ArrowCursor);
+        break;
+    case MouseMode::Pan:
+        setCursor(Qt::ArrowCursor);
+        break;
+    case MouseMode::CenterPlot:
+        setCursor(Qt::ArrowCursor);
+        break;
+    case MouseMode::Zoom:
+        setCursor(Qt::SizeAllCursor);
+        break;
+    case MouseMode::BoxZoom:
+        setCursor(Qt::ArrowCursor);
+        break;
+    case MouseMode::MeasureDistance:
+        setCursor(Qt::ArrowCursor);
+        break;
+    case MouseMode::CreatePlot:
+        setCursor(Qt::ArrowCursor);
+        break;
+    case MouseMode::MovePlot:
+        setCursor(Qt::ArrowCursor);
+        break;
+    default:
+        break;
+    }
     // 通知已经存在的图表刷新鼠标模式
     emit mouseModeChanged(mode);
 }
 
-void PlotXYDemo::onSelectedPlot(QWidget* widget)
+void PlotXYDemo::onSelectedPlot(PlotItemBase* widget)
 {
-    m_curBaseInfo.Base_TabName = dynamic_cast<PlotItemBase*>(widget)->currTabName();
-    m_curBaseInfo.Base_PlotName = dynamic_cast<PlotItemBase*>(widget)->currName();
-    updateStatusBar_info(m_curBaseInfo.Base_TabName + QString(":") + m_curBaseInfo.Base_PlotName);
+    if(widget)
+    {
+        m_pCurSelectedPlot = widget;
+        updateStatusBar_info(m_pCurSelectedPlot->currTabName() + QString(":") +
+                             m_pCurSelectedPlot->currName());
+    }
 }
 
 void PlotXYDemo::onTimeControls()
@@ -1031,15 +1064,9 @@ PlotType PlotXYDemo::getCurrentFocusPlot()
     QString objname = subWidget->objectName();
     if(objname == "PlotItemBase")
     {
-        auto plot = dynamic_cast<PlotItemBase*>(subWidget);
-        m_curBaseInfo.Base_PlotName = plot->currName();
-        m_curBaseInfo.Base_TabName = plot->currTabName();
-        m_lastSelectedType = plot->plotType();
-    }
-    else
-    {
-        m_curBaseInfo.Base_PlotName = nullptr;
-        m_curBaseInfo.Base_TabName = ui.tabWidget->tabText(ui.tabWidget->currentIndex());
+        m_pCurSelectedPlot = dynamic_cast<PlotItemBase*>(subWidget);
+
+        m_lastSelectedType = m_pCurSelectedPlot->plotType();
     }
     return m_lastSelectedType;
 }

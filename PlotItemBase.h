@@ -259,7 +259,7 @@ public slots:
 
     virtual void onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>>);
 signals:
-    void sgn_dataPairChanged(QString, QString); //数据对改变信号,tabName,plotName
+    void sgn_dataPairChanged(PlotItemBase* pBaseItem); //数据对改变信号,tabName,plotName
 
 private:
     QPoint m_position;
