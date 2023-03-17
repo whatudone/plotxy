@@ -67,12 +67,10 @@ private:
 
     //记录是否最小化
     bool isMin;
-    //存储窗体默认的属性
-    Qt::WindowFlags flags;
 
     MouseMode m_mouseMode = MouseMode::SelectPlot;
 
-public Q_SLOTS:
+public:
     //设置边距
     void setPadding(int padding);
     //设置是否可拖动+拉伸
@@ -81,8 +79,11 @@ public Q_SLOTS:
     //修复部分控件不能自动识别 MouseButtonRelease 的BUG
     void setMousePressed(bool mousePressed);
 
-    //设置要无边框的窗体
-    void setWidget(PlotItemBase* widget);
+    // 绑定所有想要过滤事件的绘图控件
+    void bindWidget(PlotItemBase* widget);
+    // 设置当前需要处理的绘图控件，避免其他没选中的控件也可以进行操作
+    void setCurHandlePlot(PlotItemBase* widget);
+public Q_SLOTS:
     //接受主窗口鼠标模式切换信号，设置当前鼠标模式
     void onMouseModeChanged(MouseMode mode);
 

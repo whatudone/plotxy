@@ -34,7 +34,7 @@ public:
 
     void initStatusBar();
     void initWidget(PlotItemBase* w);
-	void updateStatusBar_info(QString);
+    void updateStatusBarInfo();
     PlotType getCurrentFocusPlot();
 
 public slots:
@@ -166,12 +166,15 @@ signals:
 
 private:
     Ui::PlotXYDemo ui;
+    // 当前选中的图表
+    FreeWidgetWraper* m_pFreeWidgetWraper = nullptr;
+    PlotItemBase* m_pCurSelectedPlot = nullptr;
+    PlotType m_lastSelectedType;
+    MouseMode m_mouseMode;
     PlotManager* m_plotManager;
     AddPlotPair* m_addPlotPair;
     AdvancedDataManager* m_AdvancedDataManager;
-    // 当前选中的图表
-    PlotItemBase* m_pCurSelectedPlot = nullptr;
-    PlotType m_lastSelectedType;
+
     TimeControls* m_timeCtrl;
 
     QTimer* m_timer;
@@ -195,8 +198,6 @@ private:
     QToolButton* m_statusBar_createPlot;
     QToolButton* m_statusBar_movePlot;
     QLabel* m_statusBar_null;
-
-    MouseMode m_mouseMode;
 };
 
 #endif // !

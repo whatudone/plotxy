@@ -28,6 +28,7 @@
 
 PlotXYDemo::PlotXYDemo(QWidget* parent)
     : QMainWindow(parent)
+    , m_pFreeWidgetWraper(new FreeWidgetWraper(this))
 {
     ui.setupUi(this);
     setMinimumSize(1600, 900);
@@ -235,8 +236,11 @@ void PlotXYDemo::onSelectedPlot(PlotItemBase* widget)
     if(widget)
     {
         m_pCurSelectedPlot = widget;
-        updateStatusBar_info(m_pCurSelectedPlot->currTabName() + QString(":") +
-                             m_pCurSelectedPlot->currName());
+        updateStatusBarInfo();
+        if(m_pFreeWidgetWraper)
+        {
+            m_pFreeWidgetWraper->setCurHandlePlot(widget);
+        }
     }
 }
 
@@ -519,20 +523,25 @@ void PlotXYDemo::onAddPlot()
     initWidget(plotItem);
 
     // 控制其自由移动和缩放
-    FreeWidgetWraper* pFreeWidgetWraper = new FreeWidgetWraper(plotItem);
-    connect(pFreeWidgetWraper,
+    connect(m_pFreeWidgetWraper,
             &FreeWidgetWraper::sgnMouseEventDone,
             m_plotManager,
             &PlotManager::onMouseEventDone);
-    connect(
-        pFreeWidgetWraper, &FreeWidgetWraper::sgnMouseEventDone, this, &PlotXYDemo::onSelectedPlot);
+    connect(m_pFreeWidgetWraper,
+            &FreeWidgetWraper::sgnMouseEventDone,
+            this,
+            &PlotXYDemo::onSelectedPlot);
 
     connect(this,
             &PlotXYDemo::mouseModeChanged,
-            pFreeWidgetWraper,
+            m_pFreeWidgetWraper,
             &FreeWidgetWraper::onMouseModeChanged);
-    pFreeWidgetWraper->setWidget(plotItem);
-    pFreeWidgetWraper->setMouseMode(m_mouseMode);
+    m_pFreeWidgetWraper->bindWidget(plotItem);
+    m_pFreeWidgetWraper->setMouseMode(m_mouseMode);
+    // 默认选中添加的图表
+    m_pFreeWidgetWraper->setCurHandlePlot(plotItem);
+    m_pCurSelectedPlot = plotItem;
+    updateStatusBarInfo();
 
     plotItem->show();
     plotItem->update();
@@ -1025,7 +1034,7 @@ void PlotXYDemo::initStatusBar()
     connect(m_localTimer, &QTimer::timeout, this, &PlotXYDemo::onUpdateLocalTime);
     m_localTimer->start(1000);
 
-    updateStatusBar_info("");
+    updateStatusBarInfo();
 }
 
 void PlotXYDemo::initWidget(PlotItemBase* w)
@@ -1050,9 +1059,18 @@ void PlotXYDemo::initWidget(PlotItemBase* w)
     connect(btn, SIGNAL(clicked(bool)), w, SLOT(close()));
 }
 
-void PlotXYDemo::updateStatusBar_info(QString info)
+void PlotXYDemo::updateStatusBarInfo()
 {
-    m_statusBar_info->setText(QString("当前选择的Plot：%1").arg(info));
+    if(m_pCurSelectedPlot)
+    {
+        m_statusBar_info->setText(QString("当前选择的Plot：%1-%2")
+                                      .arg(m_pCurSelectedPlot->currTabName())
+                                      .arg(m_pCurSelectedPlot->currName()));
+    }
+    else
+    {
+        m_statusBar_info->setText(QString("当前选择的Plot：- "));
+    }
 }
 
 PlotType PlotXYDemo::getCurrentFocusPlot()

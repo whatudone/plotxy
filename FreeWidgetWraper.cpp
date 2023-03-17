@@ -32,6 +32,22 @@ FreeWidgetWraper::~FreeWidgetWraper() {}
 
 bool FreeWidgetWraper::eventFilter(QObject* watched, QEvent* event)
 {
+    // 处于选择图表模式时，需要对鼠标点击事件独立处理，使切换图表功能优先级最高
+
+    if(m_mouseMode == MouseMode::SelectPlot)
+    {
+        if(event->type() == QEvent::MouseButtonRelease)
+        {
+            mousePressed = false;
+            auto plotWidget = dynamic_cast<PlotItemBase*>(watched);
+            if(plotWidget)
+            {
+                emit sgnMouseEventDone(plotWidget);
+            }
+            return false;
+        }
+    }
+
     if(!m_pBindWidget || watched != m_pBindWidget)
     {
         return QObject::eventFilter(watched, event);
@@ -180,12 +196,10 @@ bool FreeWidgetWraper::eventFilter(QObject* watched, QEvent* event)
         //恢复所有
         m_pBindWidget->setCursor(Qt::ArrowCursor);
         mousePressed = false;
-        for(int i = 0; i < 8; ++i)
+        for(int i = 0; i < pressedArea.size(); ++i)
         {
             pressedArea[i] = false;
         }
-
-        emit sgnMouseEventDone(m_pBindWidget);
     }
 
     return QObject::eventFilter(watched, event);
@@ -251,21 +265,24 @@ void FreeWidgetWraper::setMousePressed(bool mousePressed)
     this->mousePressed = mousePressed;
 }
 
-void FreeWidgetWraper::setWidget(PlotItemBase* widget)
+void FreeWidgetWraper::bindWidget(PlotItemBase* widget)
 {
-    if(!m_pBindWidget)
+    if(widget)
     {
-        m_pBindWidget = widget;
         //设置鼠标追踪为真
-        m_pBindWidget->setMouseTracking(true);
+        widget->setMouseTracking(true);
         //绑定事件过滤器
-        m_pBindWidget->installEventFilter(this);
+        widget->installEventFilter(this);
         //设置悬停为真,必须设置这个,不然当父窗体里边还有子窗体全部遮挡了识别不到MouseMove,需要识别HoverMove
-        m_pBindWidget->setAttribute(Qt::WA_Hover, true);
+        widget->setAttribute(Qt::WA_Hover, true);
 
         isMin = false;
-        flags = widget->windowFlags();
     }
+}
+
+void FreeWidgetWraper::setCurHandlePlot(PlotItemBase* widget)
+{
+    m_pBindWidget = widget;
 }
 
 void FreeWidgetWraper::onMouseModeChanged(MouseMode mode)
