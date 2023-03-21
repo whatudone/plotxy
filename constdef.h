@@ -1,5 +1,5 @@
-﻿#ifndef _CONST_DEF_H_
-#define _CONST_DEF_H_
+﻿#ifndef CONST_DEF_H_
+#define CONST_DEF_H_
 #include <QString>
 
 enum PlotType
@@ -134,5 +134,19 @@ enum GridDensity
 	LESS = 4,
 	NORMAL = 8,
 	MORE = 10
+};
+
+// 鼠标操作模式，每种模式对应一种鼠标控制行为，属于互斥行为
+enum class MouseMode : uint8_t
+{
+    SelectPlot = 0, //鼠标切换PLOT
+    Pan, //移动
+    CenterPlot, //居中
+    Zoom, //缩放
+    BoxZoom, //框选缩放
+    MeasureDistance, //测距
+    CreatePlot, // 创建
+    MovePlot // 移动？
+
 };
 #endif // _CONST_DEF_H_

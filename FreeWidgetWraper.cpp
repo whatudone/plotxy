@@ -1,5 +1,6 @@
 ﻿#include "FreeWidgetWraper.h"
 #include "PlotItemBase.h"
+#include "constdef.h"
 
 #include <QDebug>
 #include <QEvent>
@@ -19,6 +20,7 @@ static const QMap<int, Qt::CursorShape> CursorMap{
 };
 FreeWidgetWraper::FreeWidgetWraper(QObject* parent)
     : QObject(parent)
+    , m_mouseMode(MouseMode::SelectPlot)
 {
     int size = 8;
     for(int i = 0; i < size; ++i)
@@ -252,11 +254,13 @@ void FreeWidgetWraper::handleMouseButtonReleaseWithCenterPlot(const QPoint& cent
 {
     int width = m_pBindWidget->width();
     int height = m_pBindWidget->height();
-    //    auto point = m_pBindWidget->mapToParent(centerPoint);
     m_pBindWidget->move(centerPoint.x() - width / 2, centerPoint.y() - height / 2);
 }
 
-void FreeWidgetWraper::handleMouseButtonPressWithBoxZoom() {}
+void FreeWidgetWraper::handleBoxZoom(const QRect& rect)
+{
+    m_pBindWidget->setGeometry(rect);
+}
 
 MouseMode FreeWidgetWraper::mouseMode() const
 {

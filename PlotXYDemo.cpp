@@ -30,6 +30,7 @@
 PlotXYDemo::PlotXYDemo(QWidget* parent)
     : QMainWindow(parent)
     , m_pFreeWidgetWraper(new FreeWidgetWraper(this))
+    , m_mouseMode(MouseMode::SelectPlot)
 {
     ui.setupUi(this);
     setMinimumSize(1600, 900);
@@ -645,11 +646,18 @@ void PlotXYDemo::onTabDrawWidgetMouseRelease(const QPoint& point)
     }
 }
 
+void PlotXYDemo::onTabDrawWidgetBoxZoomed(const QRect& point)
+{
+    if(m_pFreeWidgetWraper && m_mouseMode == MouseMode::BoxZoom)
+    {
+        m_pFreeWidgetWraper->handleBoxZoom(point);
+    }
+}
+
 void PlotXYDemo::addTabPage()
 {
-    //    QPushButton* btn = new QPushButton();
-    //    connect(btn, &QPushButton::clicked, []() { qDebug() << "clciked"; });
     TabDrawWidget* tabWidgetItem = new TabDrawWidget();
+    tabWidgetItem->setMouseMode(m_mouseMode);
     int currCount = ui.tabWidget->count();
     QString genTabName = QString("Tab ") + QString::number(currCount + 1);
     ui.tabWidget->addTab(tabWidgetItem, genTabName);
@@ -658,6 +666,9 @@ void PlotXYDemo::addTabPage()
             &TabDrawWidget::mouseRelease,
             this,
             &PlotXYDemo::onTabDrawWidgetMouseRelease);
+    connect(tabWidgetItem, &TabDrawWidget::boxZoomed, this, &PlotXYDemo::onTabDrawWidgetBoxZoomed);
+
+    connect(this, &PlotXYDemo::mouseModeChanged, tabWidgetItem, &TabDrawWidget::onMouseModeChanged);
 }
 
 void PlotXYDemo::onPlay()

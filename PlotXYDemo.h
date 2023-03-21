@@ -156,6 +156,8 @@ public slots:
     // 响应tab上画板窗体的点击事件，传递给绘图
     void onTabDrawWidgetMouseRelease(const QPoint& point);
 
+    void onTabDrawWidgetBoxZoomed(const QRect& point);
+
 signals:
     void sgn_loadDataReady();
     void sgn_sliderValueChanged(int);

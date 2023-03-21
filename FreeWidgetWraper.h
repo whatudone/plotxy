@@ -11,21 +11,7 @@
  */
 
 #include <QWidget>
-
-// 鼠标操作模式，每种模式对应一种鼠标控制行为，属于互斥行为
-enum class MouseMode : uint8_t
-{
-    SelectPlot = 0, //鼠标切换PLOT
-    Pan, //移动
-    CenterPlot, //居中
-    Zoom, //缩放
-    BoxZoom, //框选缩放
-    MeasureDistance, //测距
-    CreatePlot, // 创建
-    MovePlot // 移动？
-
-};
-
+enum class MouseMode : uint8_t;
 class PlotItemBase;
 class FreeWidgetWraper : public QObject
 {
@@ -38,6 +24,7 @@ public:
     void setMouseMode(const MouseMode& mouseMode);
 
     void handleMouseButtonReleaseWithCenterPlot(const QPoint& centerPoint);
+    void handleBoxZoom(const QRect& rect);
 
 protected:
     bool eventFilter(QObject* watched, QEvent* event);
@@ -48,7 +35,6 @@ private:
 
     void handleMouseMoveWithZoom(int offsetX, int offsetY);
     void handleMouseMoveWithPan(int offsetX, int offsetY);
-    void handleMouseButtonPressWithBoxZoom();
 
 private:
     //边距+可移动+可拉伸
@@ -70,7 +56,7 @@ private:
     //记录是否最小化
     bool isMin;
 
-    MouseMode m_mouseMode = MouseMode::SelectPlot;
+    MouseMode m_mouseMode;
 
 public:
     //设置边距
