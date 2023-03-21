@@ -25,6 +25,7 @@
 #include "PlotText.h"
 #include "PlotTrack.h"
 #include "renameTab.h"
+#include "tabdrawwidget.h"
 
 PlotXYDemo::PlotXYDemo(QWidget* parent)
     : QMainWindow(parent)
@@ -32,7 +33,7 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
 {
     ui.setupUi(this);
     setMinimumSize(1600, 900);
-    setWindowTitle("绘图");
+    setWindowTitle("SimDataAnalyzer");
 
     init();
 
@@ -73,7 +74,8 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
     connect(m_AdvancedDataManager, SIGNAL(sgnAddPlotPair()), this, SLOT(onAddPlotPair()));
     QRect tabRect = ui.tabWidget->rect();
     emit sgn_sendTabWidgetRect(tabRect);
-
+    // 默认增加一页
+    addTabPage();
     //右键菜单栏
     ui.tabWidget->tabBar()->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui.tabWidget->tabBar(),
@@ -85,7 +87,6 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
             SIGNAL(customContextMenuRequested(const QPoint&)),
             this,
             SLOT(onContextMenu(const QPoint&)));
-
     m_lastSelectedType = PlotType::Type_PlotScatter;
 }
 
@@ -252,17 +253,16 @@ void PlotXYDemo::onTimeControls()
 
 void PlotXYDemo::onCustomContextMenuRequested(const QPoint& point)
 {
-    qDebug() << sender();
-    QMenu* pMenu = new QMenu();
+    QMenu menu;
 
     QAction* addTabPage = new QAction(QString("添加tab页面"), this);
     QAction* removeTabPage = new QAction(QString("删除tab页面"), this);
     QAction* renameTabPage = new QAction(QString("重命名tab页面"), this);
 
     /* 添加菜单项 */
-    pMenu->addAction(addTabPage);
-    pMenu->addAction(removeTabPage);
-    pMenu->addAction(renameTabPage);
+    menu.addAction(addTabPage);
+    menu.addAction(removeTabPage);
+    menu.addAction(renameTabPage);
 
     /* 连接槽函数 */
     connect(addTabPage, SIGNAL(triggered()), this, SLOT(onNewTab()));
@@ -270,13 +270,7 @@ void PlotXYDemo::onCustomContextMenuRequested(const QPoint& point)
     connect(renameTabPage, SIGNAL(triggered()), this, SLOT(onRenameTab()));
 
     /* 在鼠标右键处显示菜单 */
-    pMenu->exec(QCursor::pos());
-
-    /* 释放内存 */
-    QList<QAction*> list = pMenu->actions();
-    foreach(QAction* pAction, list)
-        delete pAction;
-    delete pMenu;
+    menu.exec(QCursor::pos());
 }
 
 void PlotXYDemo::onContextMenu(const QPoint& point)
@@ -341,11 +335,7 @@ void PlotXYDemo::onContextMenu(const QPoint& point)
 
 void PlotXYDemo::onNewTab()
 {
-    QWidget* tabWidgetItem = new QWidget();
-    int currCount = ui.tabWidget->count();
-    QString genTabName = QString("Tab ") + QString::number(currCount + 1);
-    ui.tabWidget->addTab(tabWidgetItem, genTabName);
-    ui.tabWidget->setCurrentIndex(currCount);
+    addTabPage();
 }
 
 void PlotXYDemo::onCloseTab()
@@ -543,9 +533,6 @@ void PlotXYDemo::onAddPlot()
     m_pCurSelectedPlot = plotItem;
     updateStatusBarInfo();
 
-    plotItem->show();
-    plotItem->update();
-
     PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
 }
 
@@ -648,6 +635,29 @@ void PlotXYDemo::onUpdateLocalTime()
     QDateTime current_time = QDateTime::currentDateTime();
     QString timestr = current_time.toString("yyyy/MM/dd hh:mm:ss");
     m_statusBar_localTime->setText(timestr);
+}
+
+void PlotXYDemo::onTabDrawWidgetMouseRelease(const QPoint& point)
+{
+    if(m_pFreeWidgetWraper && m_mouseMode == MouseMode::CenterPlot)
+    {
+        m_pFreeWidgetWraper->handleMouseButtonReleaseWithCenterPlot(point);
+    }
+}
+
+void PlotXYDemo::addTabPage()
+{
+    //    QPushButton* btn = new QPushButton();
+    //    connect(btn, &QPushButton::clicked, []() { qDebug() << "clciked"; });
+    TabDrawWidget* tabWidgetItem = new TabDrawWidget();
+    int currCount = ui.tabWidget->count();
+    QString genTabName = QString("Tab ") + QString::number(currCount + 1);
+    ui.tabWidget->addTab(tabWidgetItem, genTabName);
+    ui.tabWidget->setCurrentIndex(currCount);
+    connect(tabWidgetItem,
+            &TabDrawWidget::mouseRelease,
+            this,
+            &PlotXYDemo::onTabDrawWidgetMouseRelease);
 }
 
 void PlotXYDemo::onPlay()
@@ -1039,11 +1049,13 @@ void PlotXYDemo::initStatusBar()
 
 void PlotXYDemo::initWidget(PlotItemBase* w)
 {
+    if(!w)
+    {
+        return;
+    }
     //设置无边框属性
     w->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Widget);
-    //	w->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::Widget);
-    // w->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint |
-    // Qt::WindowMinMaxButtonsHint); w->setAttribute(Qt::WA_ShowModal,true);
+
     w->setAutoFillBackground(true);
     w->setMinimumSize(200, 150);
     w->resize(1600, 800);
@@ -1056,7 +1068,9 @@ void PlotXYDemo::initWidget(PlotItemBase* w)
     QPushButton* btn = new QPushButton(w);
     btn->setText(QString("关闭"));
     btn->setGeometry(10, 10, 130, 25);
-    connect(btn, SIGNAL(clicked(bool)), w, SLOT(close()));
+    connect(btn, &QPushButton::clicked, w, &PlotItemBase::deleteLater);
+
+    w->show();
 }
 
 void PlotXYDemo::updateStatusBarInfo()

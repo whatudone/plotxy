@@ -38,11 +38,8 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     m_gridDensity = GridDensity::LESS;
     m_gridFillColor = Qt::black;
 
-    m_units_x = nullptr;
-    m_units_y = nullptr;
     m_showUnits_x = true;
     m_showUnits_y = true;
-    m_title = nullptr;
     m_titleVisible = true;
     m_titleColor = Qt::white;
     m_titleFillColor = Qt::black;

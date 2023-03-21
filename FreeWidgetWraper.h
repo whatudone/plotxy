@@ -15,14 +15,14 @@
 // 鼠标操作模式，每种模式对应一种鼠标控制行为，属于互斥行为
 enum class MouseMode : uint8_t
 {
-    SelectPlot = 0,
-    Pan,
-    CenterPlot,
-    Zoom,
-    BoxZoom,
-    MeasureDistance,
-    CreatePlot,
-    MovePlot
+    SelectPlot = 0, //鼠标切换PLOT
+    Pan, //移动
+    CenterPlot, //居中
+    Zoom, //缩放
+    BoxZoom, //框选缩放
+    MeasureDistance, //测距
+    CreatePlot, // 创建
+    MovePlot // 移动？
 
 };
 
@@ -37,13 +37,17 @@ public:
     MouseMode mouseMode() const;
     void setMouseMode(const MouseMode& mouseMode);
 
+    void handleMouseButtonReleaseWithCenterPlot(const QPoint& centerPoint);
+
 protected:
     bool eventFilter(QObject* watched, QEvent* event);
 
 private:
     // 事件类型+鼠标模式的各个处理函数
     void handleResize();
-    void handleMouseButtonPressWithCenterPlot();
+
+    void handleMouseMoveWithZoom(int offsetX, int offsetY);
+    void handleMouseMoveWithPan(int offsetX, int offsetY);
     void handleMouseButtonPressWithBoxZoom();
 
 private:
@@ -55,8 +59,6 @@ private:
     // 绘图控件
     PlotItemBase* m_pBindWidget = nullptr;
 
-    //鼠标是否按下+按下坐标+按下时窗体区域
-    bool mousePressed = false;
     QPoint mousePoint{0, 0};
     QRect mouseRect{0, 0, 0, 0};
 
@@ -73,11 +75,6 @@ private:
 public:
     //设置边距
     void setPadding(int padding);
-    //设置是否可拖动+拉伸
-    void setMoveEnable(bool m_moveEnable);
-    void setResizeEnable(bool m_resizeEnable);
-    //修复部分控件不能自动识别 MouseButtonRelease 的BUG
-    void setMousePressed(bool mousePressed);
 
     // 绑定所有想要过滤事件的绘图控件
     void bindWidget(PlotItemBase* widget);

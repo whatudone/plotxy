@@ -46,13 +46,8 @@ background-color: rgb(3, 57, 122);
 }</string>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>-1</number>
       </property>
-      <widget class="QWidget" name="tab">
-       <attribute name="title">
-        <string>Tab 1</string>
-       </attribute>
-      </widget>
      </widget>
     </item>
     <item>
@@ -70,7 +65,7 @@ background-color: rgb(3, 57, 122);
      <x>0</x>
      <y>0</y>
      <width>1060</width>
-     <height>26</height>
+     <height>17</height>
     </rect>
    </property>
    <widget class="QMenu" name="menufile">
@@ -1198,7 +1193,6 @@ background-color: rgb(3, 57, 122);
  <layoutdefault spacing="6" margin="11"/>
  <resources>
   <include location="resources/toolbar.qrc"/>
-  <include location="resources/statusbar.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -38,7 +38,6 @@ bool FreeWidgetWraper::eventFilter(QObject* watched, QEvent* event)
     {
         if(event->type() == QEvent::MouseButtonRelease)
         {
-            mousePressed = false;
             auto plotWidget = dynamic_cast<PlotItemBase*>(watched);
             if(plotWidget)
             {
@@ -57,17 +56,36 @@ bool FreeWidgetWraper::eventFilter(QObject* watched, QEvent* event)
     {
         handleResize();
     }
-    else if(event->type() == QEvent::HoverMove)
+    else if(event->type() == QEvent::MouseMove)
     {
         //设置对应鼠标形状,这个必须放在这里而不是下面,因为可以在鼠标没有按下的时候识别
-        QHoverEvent* hoverEvent = static_cast<QHoverEvent*>(event);
-        QPoint point = hoverEvent->pos();
-        //根据当前鼠标位置,计算XY轴移动了多少
-        int offsetX = point.x() - mousePoint.x();
-        int offsetY = point.y() - mousePoint.y();
-        // 缩放模式显示不同缩放光标提示
+        QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+        // 限制鼠标左键触发缩放和移动功能
+        if(mouseEvent->buttons() & Qt::LeftButton)
+        {
+            QPoint point = mouseEvent->pos();
+            //根据当前鼠标位置,计算XY轴移动了多少
+            int offsetX = point.x() - mousePoint.x();
+            int offsetY = point.y() - mousePoint.y();
+            // 缩放模式显示不同缩放光标提示
+            if(m_mouseMode == MouseMode::Zoom)
+            {
+                handleMouseMoveWithZoom(offsetX, offsetY);
+            }
+
+            //根据按下处的位置判断是否是移动控件还是拉伸控件
+            else if((m_mouseMode == MouseMode::Pan))
+            {
+                handleMouseMoveWithPan(offsetX, offsetY);
+            }
+        }
+    }
+    else if(event->type() == QEvent::HoverMove)
+    {
         if(m_mouseMode == MouseMode::Zoom)
         {
+            QHoverEvent* hoverEvent = static_cast<QHoverEvent*>(event);
+            QPoint point = hoverEvent->pos();
             bool isInCorner = false;
             for(int index = 0; index < pressedRect.size(); ++index)
             {
@@ -82,91 +100,6 @@ bool FreeWidgetWraper::eventFilter(QObject* watched, QEvent* event)
             {
                 m_pBindWidget->setCursor(Qt::ArrowCursor);
             }
-
-            int rectX = mouseRect.x();
-            int rectY = mouseRect.y();
-            int rectW = mouseRect.width();
-            int rectH = mouseRect.height();
-
-            if(pressedArea.at(0))
-            {
-                int resizeW = m_pBindWidget->width() - offsetX;
-                if(m_pBindWidget->minimumWidth() <= resizeW)
-                {
-                    m_pBindWidget->setGeometry(m_pBindWidget->x() + offsetX, rectY, resizeW, rectH);
-                }
-            }
-            else if(pressedArea.at(1))
-            {
-                m_pBindWidget->setGeometry(rectX, rectY, rectW + offsetX, rectH);
-            }
-            else if(pressedArea.at(2))
-            {
-                int resizeH = m_pBindWidget->height() - offsetY;
-                if(m_pBindWidget->minimumHeight() <= resizeH)
-                {
-                    m_pBindWidget->setGeometry(rectX, m_pBindWidget->y() + offsetY, rectW, resizeH);
-                }
-            }
-            else if(pressedArea.at(3))
-            {
-                m_pBindWidget->setGeometry(rectX, rectY, rectW, rectH + offsetY);
-            }
-            else if(pressedArea.at(4))
-            {
-                int resizeW = m_pBindWidget->width() - offsetX;
-                int resizeH = m_pBindWidget->height() - offsetY;
-                if(m_pBindWidget->minimumWidth() <= resizeW)
-                {
-                    m_pBindWidget->setGeometry(
-                        m_pBindWidget->x() + offsetX, m_pBindWidget->y(), resizeW, resizeH);
-                }
-                if(m_pBindWidget->minimumHeight() <= resizeH)
-                {
-                    m_pBindWidget->setGeometry(
-                        m_pBindWidget->x(), m_pBindWidget->y() + offsetY, resizeW, resizeH);
-                }
-            }
-            else if(pressedArea.at(5))
-            {
-                int resizeW = rectW + offsetX;
-                int resizeH = m_pBindWidget->height() - offsetY;
-                if(m_pBindWidget->minimumHeight() <= resizeH)
-                {
-                    m_pBindWidget->setGeometry(
-                        m_pBindWidget->x(), m_pBindWidget->y() + offsetY, resizeW, resizeH);
-                }
-            }
-            else if(pressedArea.at(6))
-            {
-                int resizeW = m_pBindWidget->width() - offsetX;
-                int resizeH = rectH + offsetY;
-                if(m_pBindWidget->minimumWidth() <= resizeW)
-                {
-                    m_pBindWidget->setGeometry(
-                        m_pBindWidget->x() + offsetX, m_pBindWidget->y(), resizeW, resizeH);
-                }
-                if(m_pBindWidget->minimumHeight() <= resizeH)
-                {
-                    m_pBindWidget->setGeometry(
-                        m_pBindWidget->x(), m_pBindWidget->y(), resizeW, resizeH);
-                }
-            }
-            else if(pressedArea.at(7))
-            {
-                int resizeW = rectW + offsetX;
-                int resizeH = rectH + offsetY;
-                m_pBindWidget->setGeometry(
-                    m_pBindWidget->x(), m_pBindWidget->y(), resizeW, resizeH);
-            }
-        }
-
-        //根据按下处的位置判断是否是移动控件还是拉伸控件
-        else if((m_mouseMode == MouseMode::Pan))
-        {
-
-            if(mousePressed)
-                m_pBindWidget->move(m_pBindWidget->x() + offsetX, m_pBindWidget->y() + offsetY);
         }
     }
     else if(event->type() == QEvent::MouseButtonPress)
@@ -175,7 +108,6 @@ bool FreeWidgetWraper::eventFilter(QObject* watched, QEvent* event)
         QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
         mousePoint = mouseEvent->pos();
         mouseRect = m_pBindWidget->geometry();
-        mousePressed = true;
         if(m_mouseMode == MouseMode::Zoom)
         {
             //判断按下的手柄的区域位置
@@ -193,12 +125,14 @@ bool FreeWidgetWraper::eventFilter(QObject* watched, QEvent* event)
 
     else if(event->type() == QEvent::MouseButtonRelease)
     {
-        //恢复所有
-        m_pBindWidget->setCursor(Qt::ArrowCursor);
-        mousePressed = false;
-        for(int i = 0; i < pressedArea.size(); ++i)
+        if(m_mouseMode == MouseMode::Zoom)
         {
-            pressedArea[i] = false;
+            //恢复所有
+            m_pBindWidget->setCursor(Qt::ArrowCursor);
+            for(int i = 0; i < pressedArea.size(); ++i)
+            {
+                pressedArea[i] = false;
+            }
         }
     }
 
@@ -230,7 +164,97 @@ void FreeWidgetWraper::handleResize()
     pressedRect[7] = QRect(width - padding, height - padding, padding, padding);
 }
 
-void FreeWidgetWraper::handleMouseButtonPressWithCenterPlot() {}
+void FreeWidgetWraper::handleMouseMoveWithZoom(int offsetX, int offsetY)
+{
+    int rectX = mouseRect.x();
+    int rectY = mouseRect.y();
+    int rectW = mouseRect.width();
+    int rectH = mouseRect.height();
+    if(pressedArea.at(0))
+    {
+        int resizeW = m_pBindWidget->width() - offsetX;
+        if(m_pBindWidget->minimumWidth() <= resizeW)
+        {
+            m_pBindWidget->setGeometry(m_pBindWidget->x() + offsetX, rectY, resizeW, rectH);
+        }
+    }
+    else if(pressedArea.at(1))
+    {
+        m_pBindWidget->setGeometry(rectX, rectY, rectW + offsetX, rectH);
+    }
+    else if(pressedArea.at(2))
+    {
+        int resizeH = m_pBindWidget->height() - offsetY;
+        if(m_pBindWidget->minimumHeight() <= resizeH)
+        {
+            m_pBindWidget->setGeometry(rectX, m_pBindWidget->y() + offsetY, rectW, resizeH);
+        }
+    }
+    else if(pressedArea.at(3))
+    {
+        m_pBindWidget->setGeometry(rectX, rectY, rectW, rectH + offsetY);
+    }
+    else if(pressedArea.at(4))
+    {
+        int resizeW = m_pBindWidget->width() - offsetX;
+        int resizeH = m_pBindWidget->height() - offsetY;
+        if(m_pBindWidget->minimumWidth() <= resizeW)
+        {
+            m_pBindWidget->setGeometry(
+                m_pBindWidget->x() + offsetX, m_pBindWidget->y(), resizeW, resizeH);
+        }
+        if(m_pBindWidget->minimumHeight() <= resizeH)
+        {
+            m_pBindWidget->setGeometry(
+                m_pBindWidget->x(), m_pBindWidget->y() + offsetY, resizeW, resizeH);
+        }
+    }
+    else if(pressedArea.at(5))
+    {
+        int resizeW = rectW + offsetX;
+        int resizeH = m_pBindWidget->height() - offsetY;
+        if(m_pBindWidget->minimumHeight() <= resizeH)
+        {
+            m_pBindWidget->setGeometry(
+                m_pBindWidget->x(), m_pBindWidget->y() + offsetY, resizeW, resizeH);
+        }
+    }
+    else if(pressedArea.at(6))
+    {
+        int resizeW = m_pBindWidget->width() - offsetX;
+        int resizeH = rectH + offsetY;
+        if(m_pBindWidget->minimumWidth() <= resizeW)
+        {
+            m_pBindWidget->setGeometry(
+                m_pBindWidget->x() + offsetX, m_pBindWidget->y(), resizeW, resizeH);
+        }
+        if(m_pBindWidget->minimumHeight() <= resizeH)
+        {
+            m_pBindWidget->setGeometry(m_pBindWidget->x(), m_pBindWidget->y(), resizeW, resizeH);
+        }
+    }
+    else if(pressedArea.at(7))
+    {
+        int resizeW = rectW + offsetX;
+        int resizeH = rectH + offsetY;
+        m_pBindWidget->setGeometry(m_pBindWidget->x(), m_pBindWidget->y(), resizeW, resizeH);
+    }
+}
+
+void FreeWidgetWraper::handleMouseMoveWithPan(int offsetX, int offsetY)
+{
+    m_pBindWidget->move(m_pBindWidget->x() + offsetX, m_pBindWidget->y() + offsetY);
+}
+/*
+ * 按照centerPoint的坐标居中，此坐标为父窗体坐标系
+*/
+void FreeWidgetWraper::handleMouseButtonReleaseWithCenterPlot(const QPoint& centerPoint)
+{
+    int width = m_pBindWidget->width();
+    int height = m_pBindWidget->height();
+    //    auto point = m_pBindWidget->mapToParent(centerPoint);
+    m_pBindWidget->move(centerPoint.x() - width / 2, centerPoint.y() - height / 2);
+}
 
 void FreeWidgetWraper::handleMouseButtonPressWithBoxZoom() {}
 
@@ -248,21 +272,6 @@ void FreeWidgetWraper::setMouseMode(const MouseMode& mouseMode)
 void FreeWidgetWraper::setPadding(int padding)
 {
     this->padding = padding;
-}
-
-void FreeWidgetWraper::setMoveEnable(bool m_moveEnable)
-{
-    this->m_moveEnable = m_moveEnable;
-}
-
-void FreeWidgetWraper::setResizeEnable(bool m_resizeEnable)
-{
-    this->m_resizeEnable = m_resizeEnable;
-}
-
-void FreeWidgetWraper::setMousePressed(bool mousePressed)
-{
-    this->mousePressed = mousePressed;
 }
 
 void FreeWidgetWraper::bindWidget(PlotItemBase* widget)

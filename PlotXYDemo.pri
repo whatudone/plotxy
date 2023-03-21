@@ -8,6 +8,7 @@
 
 
 HEADERS += ./TimeClass.h \
+    $$PWD/tabdrawwidget.h \
     ./Utils.h \
     ./resource.h \
     ./BaseData.h \
@@ -43,6 +44,7 @@ HEADERS += ./TimeClass.h \
     ./AdvancedDataManager.h \
     ./PlotBar.h
 SOURCES += ./AddPlotPair.cpp \
+    $$PWD/tabdrawwidget.cpp \
     ./AdvancedDataManager.cpp \
     ./colorbutton.cpp \
     ./DataManager.cpp \

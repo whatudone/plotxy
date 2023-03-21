@@ -153,6 +153,8 @@ public slots:
 
     void onTimeOut();
     void onUpdateLocalTime();
+    // 响应tab上画板窗体的点击事件，传递给绘图
+    void onTabDrawWidgetMouseRelease(const QPoint& point);
 
 signals:
     void sgn_loadDataReady();
@@ -163,6 +165,9 @@ signals:
 	void sgn_renameTabPage(QString, QString);
     // 状态栏鼠标模式切换
     void mouseModeChanged(MouseMode mode);
+
+private:
+    void addTabPage();
 
 private:
     Ui::PlotXYDemo ui;
