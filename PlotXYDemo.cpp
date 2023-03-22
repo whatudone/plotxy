@@ -593,6 +593,14 @@ void PlotXYDemo::onTabDrawWidgetBoxZoomed(const QRect& rect)
     }
 }
 
+void PlotXYDemo::onTabDrawWidgetZoomed(double factor)
+{
+    if(m_pFreeWidgetWraper)
+    {
+        m_pFreeWidgetWraper->handleZoomInOut(factor);
+    }
+}
+
 void PlotXYDemo::onTabDrawWidgetCreatePlot(PlotType type, const QRect& rect)
 {
     addPlotWidget(type, rect);
@@ -611,6 +619,7 @@ void PlotXYDemo::addTabPage()
             this,
             &PlotXYDemo::onTabDrawWidgetMouseRelease);
     connect(tabWidgetItem, &TabDrawWidget::boxZoomed, this, &PlotXYDemo::onTabDrawWidgetBoxZoomed);
+    connect(tabWidgetItem, &TabDrawWidget::zoomed, this, &PlotXYDemo::onTabDrawWidgetZoomed);
     connect(
         tabWidgetItem, &TabDrawWidget::createPlot, this, &PlotXYDemo::onTabDrawWidgetCreatePlot);
 

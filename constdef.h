@@ -142,11 +142,11 @@ enum class MouseMode : uint8_t
     SelectPlot = 0, //鼠标切换PLOT
     Pan, //移动
     CenterPlot, //居中
-    Zoom, //缩放
+    Zoom, //整体缩放
     BoxZoom, //框选缩放
     MeasureDistance, //测距
     CreatePlot, // 创建
-    MovePlot // 移动？
+    MovePlot // 移动+移动
 
 };
 #endif // _CONST_DEF_H_

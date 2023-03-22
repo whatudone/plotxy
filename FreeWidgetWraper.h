@@ -25,6 +25,7 @@ public:
 
     void handleMouseButtonReleaseWithCenterPlot(const QPoint& centerPoint);
     void handleBoxZoom(const QRect& rect);
+    void handleZoomInOut(double factor);
 
 protected:
     bool eventFilter(QObject* watched, QEvent* event);
@@ -33,8 +34,9 @@ private:
     // 事件类型+鼠标模式的各个处理函数
     void handleResize();
 
-    void handleMouseMoveWithZoom(int offsetX, int offsetY);
+    void handleMouseMoveWithMovePlot(int offsetX, int offsetY);
     void handleMouseMoveWithPan(int offsetX, int offsetY);
+    // 根据缩放因子重新计算控件的矩形范围
 
 private:
     //边距+可移动+可拉伸
@@ -45,7 +47,7 @@ private:
     // 绘图控件
     PlotItemBase* m_pBindWidget = nullptr;
 
-    QPoint mousePoint{0, 0};
+    QPoint m_lastMousePoint{0, 0};
     QRect mouseRect{0, 0, 0, 0};
 
     //鼠标是否按下某个区域+按下区域的大小

@@ -60,22 +60,18 @@ bool FreeWidgetWraper::eventFilter(QObject* watched, QEvent* event)
     }
     else if(event->type() == QEvent::MouseMove)
     {
-        //设置对应鼠标形状,这个必须放在这里而不是下面,因为可以在鼠标没有按下的时候识别
         QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
         // 限制鼠标左键触发缩放和移动功能
         if(mouseEvent->buttons() & Qt::LeftButton)
         {
             QPoint point = mouseEvent->pos();
             //根据当前鼠标位置,计算XY轴移动了多少
-            int offsetX = point.x() - mousePoint.x();
-            int offsetY = point.y() - mousePoint.y();
-            // 缩放模式显示不同缩放光标提示
-            if(m_mouseMode == MouseMode::Zoom)
+            int offsetX = point.x() - m_lastMousePoint.x();
+            int offsetY = point.y() - m_lastMousePoint.y();
+            if(m_mouseMode == MouseMode::MovePlot)
             {
-                handleMouseMoveWithZoom(offsetX, offsetY);
+                handleMouseMoveWithMovePlot(offsetX, offsetY);
             }
-
-            //根据按下处的位置判断是否是移动控件还是拉伸控件
             else if((m_mouseMode == MouseMode::Pan))
             {
                 handleMouseMoveWithPan(offsetX, offsetY);
@@ -84,7 +80,7 @@ bool FreeWidgetWraper::eventFilter(QObject* watched, QEvent* event)
     }
     else if(event->type() == QEvent::HoverMove)
     {
-        if(m_mouseMode == MouseMode::Zoom)
+        if(m_mouseMode == MouseMode::MovePlot)
         {
             QHoverEvent* hoverEvent = static_cast<QHoverEvent*>(event);
             QPoint point = hoverEvent->pos();
@@ -108,14 +104,14 @@ bool FreeWidgetWraper::eventFilter(QObject* watched, QEvent* event)
     {
         //记住鼠标按下的坐标+窗体区域
         QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
-        mousePoint = mouseEvent->pos();
+        m_lastMousePoint = mouseEvent->pos();
         mouseRect = m_pBindWidget->geometry();
-        if(m_mouseMode == MouseMode::Zoom)
+        if(m_mouseMode == MouseMode::MovePlot)
         {
             //判断按下的手柄的区域位置
             for(const auto& rect : pressedRect)
             {
-                if(rect.contains(mousePoint))
+                if(rect.contains(m_lastMousePoint))
                 {
                     int index = pressedRect.indexOf(rect);
                     pressedArea[index] = true;
@@ -127,7 +123,7 @@ bool FreeWidgetWraper::eventFilter(QObject* watched, QEvent* event)
 
     else if(event->type() == QEvent::MouseButtonRelease)
     {
-        if(m_mouseMode == MouseMode::Zoom)
+        if(m_mouseMode == MouseMode::MovePlot)
         {
             //恢复所有
             m_pBindWidget->setCursor(Qt::ArrowCursor);
@@ -166,7 +162,7 @@ void FreeWidgetWraper::handleResize()
     pressedRect[7] = QRect(width - padding, height - padding, padding, padding);
 }
 
-void FreeWidgetWraper::handleMouseMoveWithZoom(int offsetX, int offsetY)
+void FreeWidgetWraper::handleMouseMoveWithMovePlot(int offsetX, int offsetY)
 {
     int rectX = mouseRect.x();
     int rectY = mouseRect.y();
@@ -247,6 +243,28 @@ void FreeWidgetWraper::handleMouseMoveWithPan(int offsetX, int offsetY)
 {
     m_pBindWidget->move(m_pBindWidget->x() + offsetX, m_pBindWidget->y() + offsetY);
 }
+
+void FreeWidgetWraper::handleZoomInOut(double factor)
+{
+    if(m_pBindWidget)
+    {
+        // 以原始矩形的中心点重新计算缩放后的矩形
+        auto originRect = m_pBindWidget->geometry();
+        int newWidth = static_cast<int>(originRect.width() * factor);
+        int newHeight = static_cast<int>(originRect.height() * factor);
+        // 当缩放到最小尺寸后，停止缩小
+        if((newWidth <= m_pBindWidget->minimumWidth()) ||
+           (newHeight <= m_pBindWidget->minimumHeight()))
+        {
+            return;
+        }
+        auto centerPoint = originRect.center();
+        int newX = centerPoint.x() - newWidth / 2;
+        int newY = centerPoint.y() - newHeight / 2;
+        m_pBindWidget->setGeometry(QRect(QPoint(newX, newY), QSize(newWidth, newHeight)));
+    }
+}
+
 /*
  * 按照centerPoint的坐标居中，此坐标为父窗体坐标系
 */
@@ -276,7 +294,14 @@ MouseMode FreeWidgetWraper::mouseMode() const
 void FreeWidgetWraper::setMouseMode(const MouseMode& mouseMode)
 {
     m_mouseMode = mouseMode;
-    // 不同鼠标模式，控件能够操作的模式不同
+    // TODO:不同鼠标模式，控件能够操作的模式不同,需要设置不同的光标进行区分
+    if(m_pBindWidget)
+    {
+        if(m_mouseMode == MouseMode::Zoom)
+        {
+            m_pBindWidget->setCursor(Qt::SizeVerCursor);
+        }
+    }
 }
 
 void FreeWidgetWraper::setPadding(int padding)

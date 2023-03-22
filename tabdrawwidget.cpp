@@ -2,6 +2,7 @@
 #include "choose_plot_type_dialog.h"
 #include "constdef.h"
 
+#include <QDebug>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QRubberBand>
@@ -14,15 +15,14 @@ void TabDrawWidget::mousePressEvent(QMouseEvent* event)
 {
     if((event->button() == Qt::LeftButton))
     {
+        m_originPoint = event->pos();
         if((m_mouseMode == MouseMode::BoxZoom) || (m_mouseMode == MouseMode::CreatePlot))
         {
-            m_originPoint = event->pos();
             m_pRubberBand->setGeometry(QRect(m_originPoint, QSize()));
             m_pRubberBand->show();
         }
         else if(m_mouseMode == MouseMode::MeasureDistance)
         {
-            m_originPoint = event->pos();
             m_measureLine.setPoints(m_originPoint, m_originPoint);
         }
     }
@@ -42,8 +42,67 @@ void TabDrawWidget::mouseMoveEvent(QMouseEvent* event)
             m_measureLine.setP2(event->pos());
             update();
         }
+        else if(m_mouseMode == MouseMode::Zoom)
+        {
+            /*
+             * 实时等比缩放图表的大小
+             * 向下表示缩小，此时delta为负值，facor范围为0<factor<1.0
+             * 向上表示放大，此时delta为正值，facor范围为1.0<factor<正无穷大
+            */
+            constexpr double step = 100.0;
+            auto delta = m_originPoint.y() - event->pos().y();
+            double factor = 1.0;
+            if(delta > 0)
+            {
+                factor = delta / step + 1;
+            }
+            else
+            {
+                factor = 1 - std::abs(delta) / step;
+            }
+            emit zoomed(factor);
+            m_originPoint = event->pos();
+        }
     }
     QWidget::mouseMoveEvent(event);
+}
+
+void TabDrawWidget::mouseReleaseEvent(QMouseEvent* event)
+{
+
+    if(event->button() == Qt::LeftButton)
+    {
+        if((m_mouseMode == MouseMode::BoxZoom))
+        {
+            m_pRubberBand->hide();
+            emit boxZoomed(m_pRubberBand->geometry());
+        }
+        else if((m_mouseMode == MouseMode::CreatePlot))
+        {
+            // 避免点击事件直接触发CreatePlot逻辑，需要判断橡皮筋的大小
+            m_pRubberBand->hide();
+            if((m_pRubberBand->size().width() < 100) || (m_pRubberBand->size().height() < 100))
+                return;
+            // 选择图表类型
+            ChoosePlotTypeDialog dialog;
+            int ret = dialog.exec();
+            if(ret)
+            {
+                emit createPlot(dialog.getPlotType(), m_pRubberBand->geometry());
+            }
+        }
+        else if((m_mouseMode == MouseMode::MeasureDistance))
+        {
+            // 重置到无效状态
+            m_measureLine.setPoints(QPoint(), QPoint());
+            update();
+        }
+        else if((m_mouseMode == MouseMode::CenterPlot))
+        {
+            emit mouseRelease(event->pos());
+        }
+    }
+    QWidget::mouseReleaseEvent(event);
 }
 
 void TabDrawWidget::paintEvent(QPaintEvent* event)
@@ -99,39 +158,4 @@ MouseMode TabDrawWidget::mouseMode() const
 void TabDrawWidget::setMouseMode(const MouseMode& mouseMode)
 {
     m_mouseMode = mouseMode;
-}
-
-void TabDrawWidget::mouseReleaseEvent(QMouseEvent* event)
-{
-
-    if(event->button() == Qt::LeftButton)
-    {
-        if((m_mouseMode == MouseMode::BoxZoom))
-        {
-            m_pRubberBand->hide();
-            emit boxZoomed(m_pRubberBand->geometry());
-        }
-        else if((m_mouseMode == MouseMode::CreatePlot))
-        {
-            m_pRubberBand->hide();
-            // 选择图表类型
-            ChoosePlotTypeDialog dialog;
-            int ret = dialog.exec();
-            if(ret)
-            {
-                emit createPlot(dialog.getPlotType(), m_pRubberBand->geometry());
-            }
-        }
-        else if((m_mouseMode == MouseMode::MeasureDistance))
-        {
-            // 重置到无效状态
-            m_measureLine.setPoints(QPoint(), QPoint());
-            update();
-        }
-        else if((m_mouseMode == MouseMode::CenterPlot))
-        {
-            emit mouseRelease(event->pos());
-        }
-    }
-    QWidget::mouseReleaseEvent(event);
 }

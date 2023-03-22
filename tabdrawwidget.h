@@ -26,6 +26,8 @@ signals:
     void boxZoomed(const QRect& rec);
     // 创建图表
     void createPlot(PlotType type, const QRect& rec);
+    // 等比缩放
+    void zoomed(double factor);
 public slots:
     void onMouseModeChanged(MouseMode mode);
 

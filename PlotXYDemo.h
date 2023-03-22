@@ -157,6 +157,8 @@ public slots:
 
     void onTabDrawWidgetBoxZoomed(const QRect& rect);
 
+    void onTabDrawWidgetZoomed(double factor);
+
     void onTabDrawWidgetCreatePlot(PlotType type, const QRect& rect);
 
 signals:
