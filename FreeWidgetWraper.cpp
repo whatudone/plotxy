@@ -252,14 +252,20 @@ void FreeWidgetWraper::handleMouseMoveWithPan(int offsetX, int offsetY)
 */
 void FreeWidgetWraper::handleMouseButtonReleaseWithCenterPlot(const QPoint& centerPoint)
 {
-    int width = m_pBindWidget->width();
-    int height = m_pBindWidget->height();
-    m_pBindWidget->move(centerPoint.x() - width / 2, centerPoint.y() - height / 2);
+    if(m_pBindWidget)
+    {
+        int width = m_pBindWidget->width();
+        int height = m_pBindWidget->height();
+        m_pBindWidget->move(centerPoint.x() - width / 2, centerPoint.y() - height / 2);
+    }
 }
 
 void FreeWidgetWraper::handleBoxZoom(const QRect& rect)
 {
-    m_pBindWidget->setGeometry(rect);
+    if(m_pBindWidget)
+    {
+        m_pBindWidget->setGeometry(rect);
+    }
 }
 
 MouseMode FreeWidgetWraper::mouseMode() const

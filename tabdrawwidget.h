@@ -1,6 +1,7 @@
 #ifndef TABDRAWWIDGET_H
 #define TABDRAWWIDGET_H
 
+#include <QLine>
 #include <QWidget>
 class QRubberBand;
 enum class MouseMode : uint8_t;
@@ -14,9 +15,10 @@ public:
     void setMouseMode(const MouseMode& mouseMode);
 
 protected:
-    void mouseReleaseEvent(QMouseEvent* event);
-    void mousePressEvent(QMouseEvent* event);
-    void mouseMoveEvent(QMouseEvent* event);
+    void mouseReleaseEvent(QMouseEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void paintEvent(QPaintEvent* event) override;
 signals:
     void mouseRelease(QPoint point);
 
@@ -25,9 +27,12 @@ public slots:
     void onMouseModeChanged(MouseMode mode);
 
 private:
+    // 框选缩放辅助矩形框
     QRubberBand* m_pRubberBand;
     QPoint m_originPoint;
     MouseMode m_mouseMode;
+    // 测距辅助线段
+    QLine m_measureLine;
 };
 
 #endif // TABDRAWWIDGET_H
