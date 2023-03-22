@@ -7,93 +7,99 @@
 #message("You are running qmake on a generated .pro file. This may not work!")
 
 
-HEADERS += ./TimeClass.h \
+HEADERS += $$PWD/TimeClass.h \
     $$PWD/tabdrawwidget.h \
-    ./Utils.h \
-    ./resource.h \
-    ./BaseData.h \
-    ./constdef.h \
-    ./DataManager.h \
-    ./PlotXYDemo.h \
-    ./PlotManager.h \
-    ./PlotItemBase.h \
-    ./FreeWidgetWraper.h \
-    ./colorbutton.h \
-    ./PlotDoppler.h \
-    ./PlotRTI.h \
-    ./PlotTrack.h \
-    ./PlotAScope.h \
-    ./PlotDial.h \
-    ./PlotScatter.h \
-    ./renameTab.h \
-    ./DataPair.h \
-    ./PlotManagerData.h \
-    ./TimeControls.h \
-    ./StippleSetting.h \
-    ./PlotAttitude.h \
-    ./PlotLight.h \
-    ./EventSetting.h \
-    ./IconSetting.h \
-    ./qcustomplot.h \
-    ./PlotText.h \
-    ./PlotPolar.h \
-    ./SubSettingWidgetContainer.h \
-    ./ToolPage.h \
-    ./ToolBox.h \
-    ./AddPlotPair.h \
-    ./AdvancedDataManager.h \
-    ./PlotBar.h
-SOURCES += ./AddPlotPair.cpp \
+    $$PWD/Utils.h \
+    $$PWD/resource.h \
+    $$PWD/BaseData.h \
+    $$PWD/constdef.h \
+    $$PWD/DataManager.h \
+    $$PWD/PlotXYDemo.h \
+    $$PWD/PlotManager.h \
+    $$PWD/PlotItemBase.h \
+    $$PWD/FreeWidgetWraper.h \
+    $$PWD/colorbutton.h \
+    $$PWD/PlotDoppler.h \
+    $$PWD/PlotRTI.h \
+    $$PWD/PlotTrack.h \
+    $$PWD/PlotAScope.h \
+    $$PWD/PlotDial.h \
+    $$PWD/PlotScatter.h \
+    $$PWD/renameTab.h \
+    $$PWD/DataPair.h \
+    $$PWD/PlotManagerData.h \
+    $$PWD/TimeControls.h \
+    $$PWD/StippleSetting.h \
+    $$PWD/PlotAttitude.h \
+    $$PWD/PlotLight.h \
+    $$PWD/EventSetting.h \
+    $$PWD/IconSetting.h \
+    $$PWD/qcustomplot.h \
+    $$PWD/PlotText.h \
+    $$PWD/PlotPolar.h \
+    $$PWD/SubSettingWidgetContainer.h \
+    $$PWD/ToolPage.h \
+    $$PWD/ToolBox.h \
+    $$PWD/AddPlotPair.h \
+    $$PWD/AdvancedDataManager.h \
+    $$PWD/PlotBar.h \
+    choose_plot_type_dialog.h \
+
+SOURCES += $$PWD/AddPlotPair.cpp \
     $$PWD/tabdrawwidget.cpp \
-    ./AdvancedDataManager.cpp \
-    ./colorbutton.cpp \
-    ./DataManager.cpp \
-    ./DataPair.cpp \
-    ./EventSetting.cpp \
-    ./FreeWidgetWraper.cpp \
-    ./IconSetting.cpp \
-    ./PlotAScope.cpp \
-    ./PlotDial.cpp \
-    ./PlotDoppler.cpp \
-    ./PlotLight.cpp \
-    ./main.cpp \
-    ./PlotAttitude.cpp \
-    ./PlotManagerData.cpp \
-    ./PlotPolar.cpp \
-    ./PlotRTI.cpp \
-    ./PlotScatter.cpp \
-    ./PlotText.cpp \
-    ./PlotTrack.cpp \
-    ./qcustomplot.cpp \
-    ./renameTab.cpp \
-    ./StippleSetting.cpp \
-    ./SubSettingWidgetContainer.cpp \
-    ./PlotBar.cpp \
-    ./PlotItemBase.cpp \
-    ./PlotManager.cpp \
-    ./PlotXYDemo.cpp \
-    ./TimeClass.cpp \
-    ./TimeControls.cpp \
-    ./ToolBox.cpp \
-    ./Toolpage.cpp \
-    ./Utils.cpp
-FORMS += ./AddPlotPair.ui \
-    ./AdvancedDataManager.ui \
-    ./ColorRanges.ui \
-    ./EventSetting.ui \
-    ./Extrapolation.ui \
-    ./General.ui \
-    ./IconSetting.ui \
-    ./LabelSettings.ui \
-    ./LabelText.ui \
-    ./PlotItemBase.ui \
-    ./PlotManager.ui \
-    ./PlotXYDemo.ui \
-    ./renameTab.ui \
-    ./StippleSetting.ui \
-    ./TimeControls.ui \
-    ./ToolBox.ui \
-    ./ToolPage.ui
+    $$PWD/AdvancedDataManager.cpp \
+    $$PWD/colorbutton.cpp \
+    $$PWD/DataManager.cpp \
+    $$PWD/DataPair.cpp \
+    $$PWD/EventSetting.cpp \
+    $$PWD/FreeWidgetWraper.cpp \
+    $$PWD/IconSetting.cpp \
+    $$PWD/PlotAScope.cpp \
+    $$PWD/PlotDial.cpp \
+    $$PWD/PlotDoppler.cpp \
+    $$PWD/PlotLight.cpp \
+    $$PWD/main.cpp \
+    $$PWD/PlotAttitude.cpp \
+    $$PWD/PlotManagerData.cpp \
+    $$PWD/PlotPolar.cpp \
+    $$PWD/PlotRTI.cpp \
+    $$PWD/PlotScatter.cpp \
+    $$PWD/PlotText.cpp \
+    $$PWD/PlotTrack.cpp \
+    $$PWD/qcustomplot.cpp \
+    $$PWD/renameTab.cpp \
+    $$PWD/StippleSetting.cpp \
+    $$PWD/SubSettingWidgetContainer.cpp \
+    $$PWD/PlotBar.cpp \
+    $$PWD/PlotItemBase.cpp \
+    $$PWD/PlotManager.cpp \
+    $$PWD/PlotXYDemo.cpp \
+    $$PWD/TimeClass.cpp \
+    $$PWD/TimeControls.cpp \
+    $$PWD/ToolBox.cpp \
+    $$PWD/Toolpage.cpp \
+    $$PWD/Utils.cpp \
+    choose_plot_type_dialog.cpp
+
+FORMS += $$PWD/AddPlotPair.ui \
+    $$PWD/AdvancedDataManager.ui \
+    $$PWD/ColorRanges.ui \
+    $$PWD/EventSetting.ui \
+    $$PWD/Extrapolation.ui \
+    $$PWD/General.ui \
+    $$PWD/IconSetting.ui \
+    $$PWD/LabelSettings.ui \
+    $$PWD/LabelText.ui \
+    $$PWD/PlotItemBase.ui \
+    $$PWD/PlotManager.ui \
+    $$PWD/PlotXYDemo.ui \
+    $$PWD/renameTab.ui \
+    $$PWD/StippleSetting.ui \
+    $$PWD/TimeControls.ui \
+    $$PWD/ToolBox.ui \
+    $$PWD/ToolPage.ui \
+    choose_plot_type_dialog.ui
+
 RESOURCES += resources/statusbar.qrc \
     $$PWD/resources/qss.qrc \
     resources/toolbar.qrc

@@ -5,6 +5,7 @@
 #include <QWidget>
 class QRubberBand;
 enum class MouseMode : uint8_t;
+enum PlotType : int32_t;
 class TabDrawWidget : public QWidget
 {
     Q_OBJECT
@@ -23,6 +24,8 @@ signals:
     void mouseRelease(QPoint point);
 
     void boxZoomed(const QRect& rec);
+    // 创建图表
+    void createPlot(PlotType type, const QRect& rec);
 public slots:
     void onMouseModeChanged(MouseMode mode);
 

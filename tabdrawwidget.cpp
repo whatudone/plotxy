@@ -1,4 +1,5 @@
 #include "tabdrawwidget.h"
+#include "choose_plot_type_dialog.h"
 #include "constdef.h"
 
 #include <QMouseEvent>
@@ -13,7 +14,7 @@ void TabDrawWidget::mousePressEvent(QMouseEvent* event)
 {
     if((event->button() == Qt::LeftButton))
     {
-        if(m_mouseMode == MouseMode::BoxZoom)
+        if((m_mouseMode == MouseMode::BoxZoom) || (m_mouseMode == MouseMode::CreatePlot))
         {
             m_originPoint = event->pos();
             m_pRubberBand->setGeometry(QRect(m_originPoint, QSize()));
@@ -32,13 +33,12 @@ void TabDrawWidget::mouseMoveEvent(QMouseEvent* event)
 {
     if(event->buttons() & Qt::LeftButton)
     {
-        if(m_mouseMode == MouseMode::BoxZoom)
+        if((m_mouseMode == MouseMode::BoxZoom) || (m_mouseMode == MouseMode::CreatePlot))
         {
             m_pRubberBand->setGeometry(QRect(m_originPoint, event->pos()).normalized());
         }
         else if(m_mouseMode == MouseMode::MeasureDistance)
         {
-
             m_measureLine.setP2(event->pos());
             update();
         }
@@ -110,6 +110,17 @@ void TabDrawWidget::mouseReleaseEvent(QMouseEvent* event)
         {
             m_pRubberBand->hide();
             emit boxZoomed(m_pRubberBand->geometry());
+        }
+        else if((m_mouseMode == MouseMode::CreatePlot))
+        {
+            m_pRubberBand->hide();
+            // 选择图表类型
+            ChoosePlotTypeDialog dialog;
+            int ret = dialog.exec();
+            if(ret)
+            {
+                emit createPlot(dialog.getPlotType(), m_pRubberBand->geometry());
+            }
         }
         else if((m_mouseMode == MouseMode::MeasureDistance))
         {

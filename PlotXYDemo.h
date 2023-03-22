@@ -61,7 +61,6 @@ public slots:
 	void onWidgetEditor();
     void onExportToGOG();
 
-    // 将添加图表控件操作合并到一个槽函数
     void onAddPlot();
 
 	void onAutofit_Full();
@@ -156,7 +155,9 @@ public slots:
     // 响应tab上画板窗体的点击事件，传递给绘图
     void onTabDrawWidgetMouseRelease(const QPoint& point);
 
-    void onTabDrawWidgetBoxZoomed(const QRect& point);
+    void onTabDrawWidgetBoxZoomed(const QRect& rect);
+
+    void onTabDrawWidgetCreatePlot(PlotType type, const QRect& rect);
 
 signals:
     void sgn_loadDataReady();
@@ -170,6 +171,8 @@ signals:
 
 private:
     void addTabPage();
+    // 将添加图表控件操作合并到一个函数
+    void addPlotWidget(PlotType type, const QRect& geo = QRect());
 
 private:
     Ui::PlotXYDemo ui;

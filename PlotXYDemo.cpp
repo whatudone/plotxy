@@ -425,116 +425,55 @@ void PlotXYDemo::onSendTabRect()
 
 void PlotXYDemo::onAddPlot()
 {
-    PlotItemBase* plotItem = nullptr;
     if(sender() == ui.actionAddBarPlot)
     {
-        plotItem = new PlotBar(ui.tabWidget->currentWidget());
         m_lastSelectedType = PlotType::Type_PlotBar;
     }
     else if(sender() == ui.actionAddAttitudePlot)
     {
-        plotItem = new PlotAttitude(ui.tabWidget->currentWidget());
         m_lastSelectedType = PlotType::Type_PlotAttitude;
     }
     else if(sender() == ui.actionAddTextPlot)
     {
-        plotItem = new PlotText(ui.tabWidget->currentWidget());
         m_lastSelectedType = PlotType::Type_PlotText;
     }
     else if(sender() == ui.actionAddPolarPlot)
     {
-        plotItem = new PlotPolar(ui.tabWidget->currentWidget());
         m_lastSelectedType = PlotType::Type_PlotPolar;
     }
     else if(sender() == ui.actionAddLightPlot)
     {
-        plotItem = new PlotLight(ui.tabWidget->currentWidget());
         m_lastSelectedType = PlotType::Type_PlotLight;
-        auto plotLight = static_cast<PlotLight*>(plotItem);
-        connect(m_addPlotPair,
-                &AddPlotPair::sgn_getLightData,
-                plotLight,
-                &PlotLight::slot_getLightData);
     }
     else if(sender() == ui.actionAddTrackPlot)
     {
-        plotItem = new PlotTrack(ui.tabWidget->currentWidget());
         m_lastSelectedType = PlotType::Type_PlotTrack;
     }
     else if(sender() == ui.actionAddAScopePlot)
     {
-        plotItem = new PlotAScope(ui.tabWidget->currentWidget());
         m_lastSelectedType = PlotType::Type_PlotAScope;
     }
     else if(sender() == ui.actionAddRTIPlot)
     {
-        plotItem = new PlotRTI(ui.tabWidget->currentWidget());
         m_lastSelectedType = PlotType::Type_PlotRTI;
     }
     else if(sender() == ui.actionAddDopplerPlot)
     {
-        plotItem = new PlotDoppler(ui.tabWidget->currentWidget());
         m_lastSelectedType = PlotType::Type_PlotDoppler;
     }
     else if(sender() == ui.actionAddScatterPlot)
     {
-        plotItem = new PlotScatter(ui.tabWidget->currentWidget());
         m_lastSelectedType = PlotType::Type_PlotScatter;
     }
     else if(sender() == ui.actionAddDialPlot)
     {
-        plotItem = new PlotDial(ui.tabWidget->currentWidget());
         m_lastSelectedType = PlotType::Type_PlotDial;
     }
     else
     {
         return;
     }
-
-    int currTabIndex = ui.tabWidget->currentIndex();
-    QString currTabText = ui.tabWidget->tabText(currTabIndex);
-    plotItem->setTabName(currTabText);
-    connect(
-        this, &PlotXYDemo::sgn_sendCurrentSeconds, plotItem, &PlotItemBase::onGetCurrentSeconds);
-    connect(plotItem,
-            &PlotItemBase::sgn_dataPairChanged,
-            m_addPlotPair,
-            &AddPlotPair::onUpdatePlotPair);
-    connect(
-        plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
-    connect(plotItem,
-            &PlotItemBase::sgn_dataPairChanged,
-            m_AdvancedDataManager,
-            &AdvancedDataManager::onUpdatePlotPair);
-    connect(m_AdvancedDataManager,
-            &AdvancedDataManager::updateColorThresholdMap,
-            plotItem,
-            &PlotItemBase::onUpdateColorThresholdMap);
-
-    initWidget(plotItem);
-
-    // 控制其自由移动和缩放
-    connect(m_pFreeWidgetWraper,
-            &FreeWidgetWraper::sgnMouseEventDone,
-            m_plotManager,
-            &PlotManager::onMouseEventDone);
-    connect(m_pFreeWidgetWraper,
-            &FreeWidgetWraper::sgnMouseEventDone,
-            this,
-            &PlotXYDemo::onSelectedPlot);
-
-    connect(this,
-            &PlotXYDemo::mouseModeChanged,
-            m_pFreeWidgetWraper,
-            &FreeWidgetWraper::onMouseModeChanged);
-    m_pFreeWidgetWraper->bindWidget(plotItem);
-    m_pFreeWidgetWraper->setMouseMode(m_mouseMode);
-    // 默认选中添加的图表
-    m_pFreeWidgetWraper->setCurHandlePlot(plotItem);
-    m_pCurSelectedPlot = plotItem;
-    updateStatusBarInfo();
-
-    PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
+    addPlotWidget(m_lastSelectedType);
 }
 
 void PlotXYDemo::onAutofit_Full() {}
@@ -646,12 +585,17 @@ void PlotXYDemo::onTabDrawWidgetMouseRelease(const QPoint& point)
     }
 }
 
-void PlotXYDemo::onTabDrawWidgetBoxZoomed(const QRect& point)
+void PlotXYDemo::onTabDrawWidgetBoxZoomed(const QRect& rect)
 {
     if(m_pFreeWidgetWraper && m_mouseMode == MouseMode::BoxZoom)
     {
-        m_pFreeWidgetWraper->handleBoxZoom(point);
+        m_pFreeWidgetWraper->handleBoxZoom(rect);
     }
+}
+
+void PlotXYDemo::onTabDrawWidgetCreatePlot(PlotType type, const QRect& rect)
+{
+    addPlotWidget(type, rect);
 }
 
 void PlotXYDemo::addTabPage()
@@ -667,8 +611,116 @@ void PlotXYDemo::addTabPage()
             this,
             &PlotXYDemo::onTabDrawWidgetMouseRelease);
     connect(tabWidgetItem, &TabDrawWidget::boxZoomed, this, &PlotXYDemo::onTabDrawWidgetBoxZoomed);
+    connect(
+        tabWidgetItem, &TabDrawWidget::createPlot, this, &PlotXYDemo::onTabDrawWidgetCreatePlot);
 
     connect(this, &PlotXYDemo::mouseModeChanged, tabWidgetItem, &TabDrawWidget::onMouseModeChanged);
+}
+
+void PlotXYDemo::addPlotWidget(PlotType type, const QRect& geo)
+{
+    PlotItemBase* plotItem = nullptr;
+    if(type == PlotType::Type_PlotBar)
+    {
+        plotItem = new PlotBar(ui.tabWidget->currentWidget());
+    }
+    else if(type == PlotType::Type_PlotAttitude)
+    {
+        plotItem = new PlotAttitude(ui.tabWidget->currentWidget());
+    }
+    else if(type == PlotType::Type_PlotText)
+    {
+        plotItem = new PlotText(ui.tabWidget->currentWidget());
+    }
+    else if(type == PlotType::Type_PlotPolar)
+    {
+        plotItem = new PlotPolar(ui.tabWidget->currentWidget());
+    }
+    else if(type == PlotType::Type_PlotLight)
+    {
+        plotItem = new PlotLight(ui.tabWidget->currentWidget());
+        auto plotLight = static_cast<PlotLight*>(plotItem);
+        connect(m_addPlotPair,
+                &AddPlotPair::sgn_getLightData,
+                plotLight,
+                &PlotLight::slot_getLightData);
+    }
+    else if(type == PlotType::Type_PlotTrack)
+    {
+        plotItem = new PlotTrack(ui.tabWidget->currentWidget());
+    }
+    else if(type == PlotType::Type_PlotAScope)
+    {
+        plotItem = new PlotAScope(ui.tabWidget->currentWidget());
+    }
+    else if(type == PlotType::Type_PlotRTI)
+    {
+        plotItem = new PlotRTI(ui.tabWidget->currentWidget());
+    }
+    else if(type == PlotType::Type_PlotDoppler)
+    {
+        plotItem = new PlotDoppler(ui.tabWidget->currentWidget());
+    }
+    else if(type == PlotType::Type_PlotScatter)
+    {
+        plotItem = new PlotScatter(ui.tabWidget->currentWidget());
+    }
+    else if(type == PlotType::Type_PlotDial)
+    {
+        plotItem = new PlotDial(ui.tabWidget->currentWidget());
+    }
+    else
+    {
+        return;
+    }
+    int currTabIndex = ui.tabWidget->currentIndex();
+    QString currTabText = ui.tabWidget->tabText(currTabIndex);
+    plotItem->setTabName(currTabText);
+    connect(
+        this, &PlotXYDemo::sgn_sendCurrentSeconds, plotItem, &PlotItemBase::onGetCurrentSeconds);
+    connect(plotItem,
+            &PlotItemBase::sgn_dataPairChanged,
+            m_addPlotPair,
+            &AddPlotPair::onUpdatePlotPair);
+    connect(
+        plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
+    connect(plotItem,
+            &PlotItemBase::sgn_dataPairChanged,
+            m_AdvancedDataManager,
+            &AdvancedDataManager::onUpdatePlotPair);
+    connect(m_AdvancedDataManager,
+            &AdvancedDataManager::updateColorThresholdMap,
+            plotItem,
+            &PlotItemBase::onUpdateColorThresholdMap);
+
+    initWidget(plotItem);
+    if(geo.isValid())
+    {
+        plotItem->setGeometry(geo);
+    }
+
+    // 控制其自由移动和缩放
+    connect(m_pFreeWidgetWraper,
+            &FreeWidgetWraper::sgnMouseEventDone,
+            m_plotManager,
+            &PlotManager::onMouseEventDone);
+    connect(m_pFreeWidgetWraper,
+            &FreeWidgetWraper::sgnMouseEventDone,
+            this,
+            &PlotXYDemo::onSelectedPlot);
+
+    connect(this,
+            &PlotXYDemo::mouseModeChanged,
+            m_pFreeWidgetWraper,
+            &FreeWidgetWraper::onMouseModeChanged);
+    m_pFreeWidgetWraper->bindWidget(plotItem);
+    m_pFreeWidgetWraper->setMouseMode(m_mouseMode);
+    // 默认选中添加的图表
+    m_pFreeWidgetWraper->setCurHandlePlot(plotItem);
+    m_pCurSelectedPlot = plotItem;
+    updateStatusBarInfo();
+
+    PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
 }
 
 void PlotXYDemo::onPlay()
