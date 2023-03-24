@@ -15,10 +15,6 @@ PlotScatter::PlotScatter(QWidget* parent)
 	this->setName(name);
 	m_instanceCount += 1;
 
-	//     qsrand(QTime(0, 0, 0).secsTo(QTime::currentTime()));
-	//     for (int i = 0; i < 20; i++) {
-	//         m_clrList << QColor::fromRgb(qrand() % 255, qrand() % 255, qrand() % 255);
-	//     }
 	m_outerFillColor = Qt::black;
 	m_gridFillColor = Qt::black;
 	m_title = "Scatter Plot";
@@ -508,7 +504,7 @@ void PlotScatter::paintEvent(QPaintEvent* event)
                               width - m_leftPadding - m_rightPadding,
                               height - h - m_topPadding - m_bottomPadding);
 
-	//    getDataInfo(m_curSeconds);
+    PlotItemBase::paintEvent(event);
 }
 
 void PlotScatter::setPaddings(double top, double bottom, double left, double right)

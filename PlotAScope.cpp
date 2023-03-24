@@ -135,6 +135,7 @@ void PlotAScope::paintEvent(QPaintEvent* event)
                               h + m_topPadding,
                               width - m_leftPadding - m_rightPadding,
                               height - h - m_topPadding - m_bottomPadding);
+    PlotItemBase::paintEvent(event);
 }
 
 void PlotAScope::slot_setMouseEventEnable(bool on)

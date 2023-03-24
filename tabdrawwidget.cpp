@@ -1,15 +1,24 @@
 #include "tabdrawwidget.h"
+#include "PlotItemBase.h"
 #include "choose_plot_type_dialog.h"
 #include "constdef.h"
 
+#include <QApplication>
 #include <QDebug>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QRubberBand>
+
+PlotItemBase* TabDrawWidget::m_pCurWidget = nullptr;
+QList<PlotItemBase*> TabDrawWidget::m_curSelectedPlots = {};
+MouseMode TabDrawWidget::m_mouseMode = MouseMode::SelectPlot;
+
 TabDrawWidget::TabDrawWidget(QWidget* parent)
     : QWidget(parent)
     , m_pRubberBand(new QRubberBand(QRubberBand::Rectangle, this))
-{}
+{
+    setMouseTracking(true);
+}
 
 void TabDrawWidget::mousePressEvent(QMouseEvent* event)
 {
@@ -24,6 +33,16 @@ void TabDrawWidget::mousePressEvent(QMouseEvent* event)
         else if(m_mouseMode == MouseMode::MeasureDistance)
         {
             m_measureLine.setPoints(m_originPoint, m_originPoint);
+        }
+        else if(m_mouseMode == MouseMode::MovePlot)
+        {
+
+            //根据点击的位置区分是缩放、移动、单选多选行为
+            if(auto plot = findPlotByMousePos(event->pos()))
+            {
+                emit selectedPlotChanged(plot);
+                m_pCurWidget = plot;
+            }
         }
     }
     QWidget::mousePressEvent(event);
@@ -60,7 +79,26 @@ void TabDrawWidget::mouseMoveEvent(QMouseEvent* event)
             {
                 factor = 1 - std::abs(delta) / step;
             }
-            emit zoomed(factor);
+            handleZoomInOut(factor);
+            m_originPoint = event->pos();
+        }
+        else if(m_mouseMode == MouseMode::MovePlot)
+        {
+            QPoint point = event->pos();
+            //根据当前鼠标位置,计算XY轴移动了多少
+            int offsetX = point.x() - m_originPoint.x();
+            int offsetY = point.y() - m_originPoint.y();
+            //本模式有两种行为，一种是移动，一种是缩放
+            handleMouseMoveWithMovePlot(offsetX, offsetY);
+            m_originPoint = event->pos();
+        }
+        else if((m_mouseMode == MouseMode::Pan))
+        {
+            QPoint point = event->pos();
+            //根据当前鼠标位置,计算XY轴移动了多少
+            int offsetX = point.x() - m_originPoint.x();
+            int offsetY = point.y() - m_originPoint.y();
+            handleMouseMoveWithPan(offsetX, offsetY);
             m_originPoint = event->pos();
         }
     }
@@ -75,7 +113,7 @@ void TabDrawWidget::mouseReleaseEvent(QMouseEvent* event)
         if((m_mouseMode == MouseMode::BoxZoom))
         {
             m_pRubberBand->hide();
-            emit boxZoomed(m_pRubberBand->geometry());
+            handleBoxZoom(m_pRubberBand->geometry());
         }
         else if((m_mouseMode == MouseMode::CreatePlot))
         {
@@ -99,10 +137,37 @@ void TabDrawWidget::mouseReleaseEvent(QMouseEvent* event)
         }
         else if((m_mouseMode == MouseMode::CenterPlot))
         {
-            emit mouseRelease(event->pos());
+            handleMouseReleaseWithCenterPlot(event->pos());
         }
+        else if((m_mouseMode == MouseMode::SelectPlot))
+        {
+            if(auto plot = findPlotByMousePos(event->pos()))
+            {
+                emit selectedPlotChanged(plot);
+                m_curSelectedPlots.clear();
+                m_curSelectedPlots.append(plot);
+            }
+        }
+        else if((m_mouseMode == MouseMode::MovePlot))
+        {
+            // 通过组合键区分是否为多选行为
+            auto plot = findPlotByMousePos(event->pos());
+            if(plot)
+            {
+                emit selectedPlotChanged(plot);
+                if(event->modifiers() & Qt::ControlModifier)
+                {
+                    m_curSelectedPlots.append(plot);
+                }
+                else
+                {
+                    m_curSelectedPlots.clear();
+                    m_curSelectedPlots.append(plot);
+                }
+            }
+        }
+        QWidget::mouseReleaseEvent(event);
     }
-    QWidget::mouseReleaseEvent(event);
 }
 
 void TabDrawWidget::paintEvent(QPaintEvent* event)
@@ -111,46 +176,28 @@ void TabDrawWidget::paintEvent(QPaintEvent* event)
     {
         if(!m_measureLine.isNull())
         {
-            constexpr int textRectSize = 30;
-            QPainter painter(this);
-            painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
-            QPen pen;
-            pen.setColor(Qt::red);
-            pen.setWidth(4);
-            pen.setStyle(Qt::SolidLine);
-            painter.setPen(pen);
-            painter.drawLine(m_measureLine);
-            pen.setStyle(Qt::DashLine);
-            painter.setPen(pen);
-            int xDistance = m_measureLine.x2() - m_originPoint.x();
-            int yDistance = m_measureLine.y2() - m_originPoint.y();
-            QLine xLine(m_originPoint, QPoint(m_measureLine.p2().x(), m_originPoint.y()));
-            painter.drawLine(xLine);
-            auto xHeightOffset =
-                (m_measureLine.y1() > m_measureLine.y2()) ? textRectSize : -textRectSize;
-            QRect xTextRect = QRect(m_originPoint, QSize(xDistance, xHeightOffset));
-            painter.drawText(xTextRect, Qt::AlignCenter, QString::number(std::abs(xDistance)));
-            QLine yLine(m_originPoint, QPoint(m_originPoint.x(), m_measureLine.p2().y()));
-            painter.drawLine(yLine);
-            auto yWidthOffset = (m_measureLine.x1() < m_measureLine.x2()) ? -textRectSize : 0;
-            auto yHeightOffset = (m_measureLine.y1() > m_measureLine.y2()) ? yDistance : 0;
-            auto yWidthSizeOffset =
-                (m_measureLine.y1() > m_measureLine.y2()) ? -yDistance : yDistance;
-            QRect yTextRect =
-                QRect(QPoint(m_originPoint.x() + yWidthOffset, m_originPoint.y() + yHeightOffset),
-                      QSize(textRectSize, yWidthSizeOffset));
-            painter.drawText(yTextRect, Qt::AlignCenter, QString::number(std::abs(yDistance)));
+            drawMeasureLines();
         }
     }
+
     QWidget::paintEvent(event);
 }
 
-void TabDrawWidget::onMouseModeChanged(MouseMode mode)
+PlotItemBase* TabDrawWidget::findPlotByMousePos(const QPoint& point)
 {
-    m_mouseMode = mode;
+    // 获取最上层的控件
+    return dynamic_cast<PlotItemBase*>(qApp->widgetAt(point));
 }
 
-MouseMode TabDrawWidget::mouseMode() const
+void TabDrawWidget::handleMouseMoveWithMovePlot(int offsetX, int offsetY)
+{
+    for(auto plot : m_curSelectedPlots)
+    {
+        plot->move(plot->x() + offsetX, plot->y() + offsetY);
+    }
+}
+
+MouseMode TabDrawWidget::mouseMode()
 {
     return m_mouseMode;
 }
@@ -158,4 +205,121 @@ MouseMode TabDrawWidget::mouseMode() const
 void TabDrawWidget::setMouseMode(const MouseMode& mouseMode)
 {
     m_mouseMode = mouseMode;
+    // 切换光标类型
+    if(m_mouseMode == MouseMode::MovePlot)
+    {
+        for(auto plot : m_curSelectedPlots)
+        {
+            plot->setIsNeedDrawBorder(true);
+            plot->update();
+        }
+    }
+    else
+    {
+        for(auto plot : m_curSelectedPlots)
+        {
+            plot->setIsNeedDrawBorder(false);
+            plot->update();
+        }
+    }
+}
+
+/*
+ * 按照centerPoint的坐标居中，此坐标为父窗体坐标系
+*/
+void TabDrawWidget::handleMouseReleaseWithCenterPlot(const QPoint& centerPoint)
+{
+    for(auto plot : m_curSelectedPlots)
+    {
+        int width = plot->width();
+        int height = plot->height();
+        plot->move(centerPoint.x() - width / 2, centerPoint.y() - height / 2);
+    }
+}
+
+void TabDrawWidget::handleBoxZoom(const QRect& rect)
+{
+    for(auto plot : m_curSelectedPlots)
+    {
+        plot->setGeometry(rect);
+    }
+}
+
+void TabDrawWidget::handleZoomInOut(double factor)
+{
+    for(auto plot : m_curSelectedPlots)
+    {
+        // 以原始矩形的中心点重新计算缩放后的矩形
+        auto originRect = plot->geometry();
+        int newWidth = static_cast<int>(originRect.width() * factor);
+        int newHeight = static_cast<int>(originRect.height() * factor);
+        // 当缩放到最小尺寸后，停止缩小
+        if((newWidth <= plot->minimumWidth()) || (newHeight <= plot->minimumHeight()))
+        {
+            continue;
+        }
+        auto centerPoint = originRect.center();
+        int newX = centerPoint.x() - newWidth / 2;
+        int newY = centerPoint.y() - newHeight / 2;
+        plot->setGeometry(QRect(QPoint(newX, newY), QSize(newWidth, newHeight)));
+    }
+}
+
+void TabDrawWidget::handleMouseMoveWithPan(int offsetX, int offsetY)
+{
+    for(auto plot : m_curSelectedPlots)
+    {
+        plot->move(plot->x() + offsetX, plot->y() + offsetY);
+    }
+}
+
+void TabDrawWidget::drawMeasureLines()
+{
+    constexpr int textRectSize = 30;
+    QPainter painter(this);
+    painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+    QPen pen;
+    pen.setColor(Qt::red);
+    pen.setWidth(4);
+    pen.setStyle(Qt::SolidLine);
+    painter.setPen(pen);
+    painter.drawLine(m_measureLine);
+    pen.setStyle(Qt::DashLine);
+    painter.setPen(pen);
+    int xDistance = m_measureLine.x2() - m_originPoint.x();
+    int yDistance = m_measureLine.y2() - m_originPoint.y();
+    QLine xLine(m_originPoint, QPoint(m_measureLine.p2().x(), m_originPoint.y()));
+    painter.drawLine(xLine);
+    auto xHeightOffset = (m_measureLine.y1() > m_measureLine.y2()) ? textRectSize : -textRectSize;
+    QRect xTextRect = QRect(m_originPoint, QSize(xDistance, xHeightOffset));
+    painter.drawText(xTextRect, Qt::AlignCenter, QString::number(std::abs(xDistance)));
+    QLine yLine(m_originPoint, QPoint(m_originPoint.x(), m_measureLine.p2().y()));
+    painter.drawLine(yLine);
+    auto yWidthOffset = (m_measureLine.x1() < m_measureLine.x2()) ? -textRectSize : 0;
+    auto yHeightOffset = (m_measureLine.y1() > m_measureLine.y2()) ? yDistance : 0;
+    auto yWidthSizeOffset = (m_measureLine.y1() > m_measureLine.y2()) ? -yDistance : yDistance;
+    QRect yTextRect =
+        QRect(QPoint(m_originPoint.x() + yWidthOffset, m_originPoint.y() + yHeightOffset),
+              QSize(textRectSize, yWidthSizeOffset));
+    painter.drawText(yTextRect, Qt::AlignCenter, QString::number(std::abs(yDistance)));
+}
+
+QList<PlotItemBase*> TabDrawWidget::getCurSelectedPlots()
+{
+    return m_curSelectedPlots;
+}
+
+void TabDrawWidget::setCurSelectedPlots(const QList<PlotItemBase*>& curSelectedPlots)
+{
+    m_curSelectedPlots = curSelectedPlots;
+}
+
+QCursor TabDrawWidget::getCurCursor() const
+{
+    return m_curCursor;
+}
+
+void TabDrawWidget::setCurCursor(const QCursor& curCursor)
+{
+    m_curCursor = curCursor;
 }

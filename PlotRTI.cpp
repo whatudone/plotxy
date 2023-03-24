@@ -116,7 +116,6 @@ void PlotRTI::paintEvent(QPaintEvent* event)
 {
 	int width = this->width();
 	int height = this->height();
-	//»­±Ê
 	QPainter painter(this);
 	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
 
@@ -140,6 +139,7 @@ void PlotRTI::paintEvent(QPaintEvent* event)
                               h + m_topPadding,
                               width - m_leftPadding - m_rightPadding,
                               height - h - m_topPadding - m_bottomPadding);
+    PlotItemBase::paintEvent(event);
 }
 
 void PlotRTI::slot_setMouseEventEnable(bool on)

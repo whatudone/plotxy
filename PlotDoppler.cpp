@@ -188,6 +188,7 @@ void PlotDoppler::paintEvent(QPaintEvent* event)
                                   horHeight);
 
     m_customPlot->setGeometry(m_leftPadding + verWidth, h + m_topPadding, plotWidth, plotHeight);
+    PlotItemBase::paintEvent(event);
 }
 
 void PlotDoppler::slot_setMouseEventEnable(bool on)

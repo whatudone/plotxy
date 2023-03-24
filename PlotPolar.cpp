@@ -20,8 +20,8 @@ PlotPolar::PlotPolar(QWidget* parent)
 	m_titleFont.setPointSizeF(m_titleFontSize);
 	m_titleVisible = true;
 
-    m_units_x = QString("¡ã");
-    m_units_y = QString("¡ã");
+    m_units_x = QString("X");
+    m_units_y = QString("Y");
 	m_showUnits_x = true;
 	m_showUnits_y = true;
 
@@ -246,7 +246,6 @@ void PlotPolar::paintEvent(QPaintEvent* event)
 {
 	int width = this->width();
 	int height = this->height();
-	//»­±Ê
 	QPainter painter(this);
 	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
 
@@ -277,6 +276,7 @@ void PlotPolar::paintEvent(QPaintEvent* event)
 			painter.drawText(QPoint((width - w) / 2, (height + h - radius) / 2), m_title);
 		}
 	}
+    PlotItemBase::paintEvent(event);
 }
 
 void PlotPolar::setTitle(QString& title)

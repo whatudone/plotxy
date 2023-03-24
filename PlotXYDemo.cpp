@@ -9,7 +9,6 @@
 #include "AddPlotPair.h"
 #include "AdvancedDataManager.h"
 #include "DataManager.h"
-#include "FreeWidgetWraper.h"
 #include "PlotAScope.h"
 #include "PlotAttitude.h"
 #include "PlotBar.h"
@@ -29,7 +28,6 @@
 
 PlotXYDemo::PlotXYDemo(QWidget* parent)
     : QMainWindow(parent)
-    , m_pFreeWidgetWraper(new FreeWidgetWraper(this))
     , m_mouseMode(MouseMode::SelectPlot)
 {
     ui.setupUi(this);
@@ -230,7 +228,7 @@ void PlotXYDemo::onStatusBtnClicked(int index)
         break;
     }
     // 通知已经存在的图表刷新鼠标模式
-    emit mouseModeChanged(mode);
+    TabDrawWidget::setMouseMode(mode);
 }
 
 void PlotXYDemo::onSelectedPlot(PlotItemBase* widget)
@@ -239,10 +237,6 @@ void PlotXYDemo::onSelectedPlot(PlotItemBase* widget)
     {
         m_pCurSelectedPlot = widget;
         updateStatusBarInfo();
-        if(m_pFreeWidgetWraper)
-        {
-            m_pFreeWidgetWraper->setCurHandlePlot(widget);
-        }
     }
 }
 
@@ -577,30 +571,6 @@ void PlotXYDemo::onUpdateLocalTime()
     m_statusBar_localTime->setText(timestr);
 }
 
-void PlotXYDemo::onTabDrawWidgetMouseRelease(const QPoint& point)
-{
-    if(m_pFreeWidgetWraper && m_mouseMode == MouseMode::CenterPlot)
-    {
-        m_pFreeWidgetWraper->handleMouseButtonReleaseWithCenterPlot(point);
-    }
-}
-
-void PlotXYDemo::onTabDrawWidgetBoxZoomed(const QRect& rect)
-{
-    if(m_pFreeWidgetWraper && m_mouseMode == MouseMode::BoxZoom)
-    {
-        m_pFreeWidgetWraper->handleBoxZoom(rect);
-    }
-}
-
-void PlotXYDemo::onTabDrawWidgetZoomed(double factor)
-{
-    if(m_pFreeWidgetWraper)
-    {
-        m_pFreeWidgetWraper->handleZoomInOut(factor);
-    }
-}
-
 void PlotXYDemo::onTabDrawWidgetCreatePlot(PlotType type, const QRect& rect)
 {
     addPlotWidget(type, rect);
@@ -614,16 +584,15 @@ void PlotXYDemo::addTabPage()
     QString genTabName = QString("Tab ") + QString::number(currCount + 1);
     ui.tabWidget->addTab(tabWidgetItem, genTabName);
     ui.tabWidget->setCurrentIndex(currCount);
+
     connect(tabWidgetItem,
-            &TabDrawWidget::mouseRelease,
-            this,
-            &PlotXYDemo::onTabDrawWidgetMouseRelease);
-    connect(tabWidgetItem, &TabDrawWidget::boxZoomed, this, &PlotXYDemo::onTabDrawWidgetBoxZoomed);
-    connect(tabWidgetItem, &TabDrawWidget::zoomed, this, &PlotXYDemo::onTabDrawWidgetZoomed);
+            &TabDrawWidget::selectedPlotChanged,
+            m_plotManager,
+            &PlotManager::onMouseEventDone);
+    connect(tabWidgetItem, &TabDrawWidget::selectedPlotChanged, this, &PlotXYDemo::onSelectedPlot);
+
     connect(
         tabWidgetItem, &TabDrawWidget::createPlot, this, &PlotXYDemo::onTabDrawWidgetCreatePlot);
-
-    connect(this, &PlotXYDemo::mouseModeChanged, tabWidgetItem, &TabDrawWidget::onMouseModeChanged);
 }
 
 void PlotXYDemo::addPlotWidget(PlotType type, const QRect& geo)
@@ -702,30 +671,14 @@ void PlotXYDemo::addPlotWidget(PlotType type, const QRect& geo)
             plotItem,
             &PlotItemBase::onUpdateColorThresholdMap);
 
-    initWidget(plotItem);
+    plotItem->show();
     if(geo.isValid())
     {
         plotItem->setGeometry(geo);
     }
 
-    // 控制其自由移动和缩放
-    connect(m_pFreeWidgetWraper,
-            &FreeWidgetWraper::sgnMouseEventDone,
-            m_plotManager,
-            &PlotManager::onMouseEventDone);
-    connect(m_pFreeWidgetWraper,
-            &FreeWidgetWraper::sgnMouseEventDone,
-            this,
-            &PlotXYDemo::onSelectedPlot);
-
-    connect(this,
-            &PlotXYDemo::mouseModeChanged,
-            m_pFreeWidgetWraper,
-            &FreeWidgetWraper::onMouseModeChanged);
-    m_pFreeWidgetWraper->bindWidget(plotItem);
-    m_pFreeWidgetWraper->setMouseMode(m_mouseMode);
     // 默认选中添加的图表
-    m_pFreeWidgetWraper->setCurHandlePlot(plotItem);
+    TabDrawWidget::setCurSelectedPlots(QList<PlotItemBase*>() << plotItem);
     m_pCurSelectedPlot = plotItem;
     updateStatusBarInfo();
 
@@ -1117,32 +1070,6 @@ void PlotXYDemo::initStatusBar()
     m_localTimer->start(1000);
 
     updateStatusBarInfo();
-}
-
-void PlotXYDemo::initWidget(PlotItemBase* w)
-{
-    if(!w)
-    {
-        return;
-    }
-    //设置无边框属性
-    w->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Widget);
-
-    w->setAutoFillBackground(true);
-    w->setMinimumSize(200, 150);
-    w->resize(1600, 800);
-
-    //设置下背景颜色区别看
-    QPalette palette = w->palette();
-    palette.setColor(QPalette::Window, w->getOuterFillColor());
-    w->setPalette(palette);
-
-    QPushButton* btn = new QPushButton(w);
-    btn->setText(QString("关闭"));
-    btn->setGeometry(10, 10, 130, 25);
-    connect(btn, &QPushButton::clicked, w, &PlotItemBase::deleteLater);
-
-    w->show();
 }
 
 void PlotXYDemo::updateStatusBarInfo()

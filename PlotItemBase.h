@@ -19,6 +19,17 @@ class PlotItemBase : public QWidget
 public:
     explicit PlotItemBase(QWidget* parent = nullptr);
 	~PlotItemBase();
+    enum ResizeDirection
+    {
+        NORTH_MIDDLE,
+        NORTH_EAST,
+        EAST_MIDDLE,
+        SOUTH_EAST,
+        SOUTH_MIDDLE,
+        SOUTH_WEST,
+        WEST_MIDDLE,
+        NORTH_WEST
+    };
 
 public:
     void init(); //初始化函数，连接信号槽
@@ -208,6 +219,18 @@ public:
         return Type_PlotUnknown;
     }
 
+    bool getIsNeedDrawBorder() const;
+    void setIsNeedDrawBorder(bool isNeedDrawBorder);
+
+private:
+    void updateResizeFocusPos();
+    QRect getRectByDirection(ResizeDirection direction);
+    void setCursorByDirection();
+    void drawBorderAndControls();
+
+protected:
+    void paintEvent(QPaintEvent* event) override;
+
 protected:
     QVector<DataPair*> m_dataPair;
 	//General
@@ -268,7 +291,10 @@ private:
     QString m_plotItemName;
     QString m_tabName;
     bool m_bVisible;
-
+    QMap<ResizeDirection, QRect> m_resizeRectMap;
+    ResizeDirection m_curResizeDirection;
+    bool m_isNeedDrawBorder = false;
+    const int32_t m_resizeFocusSize = 10;
     Ui::PlotItemBase ui;
 };
 

@@ -7,7 +7,6 @@
 #include <QContextMenuEvent>
 #include <QtWidgets/QMainWindow>
 
-class FreeWidgetWraper;
 class PlotItemBase;
 class PlotManager;
 class AddPlotPair;
@@ -33,7 +32,6 @@ public:
 	void initMenuHelp();
 
     void initStatusBar();
-    void initWidget(PlotItemBase* w);
     void updateStatusBarInfo();
     PlotType getCurrentFocusPlot();
 
@@ -152,12 +150,6 @@ public slots:
 
     void onTimeOut();
     void onUpdateLocalTime();
-    // 响应tab上画板窗体的点击事件，传递给绘图
-    void onTabDrawWidgetMouseRelease(const QPoint& point);
-
-    void onTabDrawWidgetBoxZoomed(const QRect& rect);
-
-    void onTabDrawWidgetZoomed(double factor);
 
     void onTabDrawWidgetCreatePlot(PlotType type, const QRect& rect);
 
@@ -179,7 +171,6 @@ private:
 private:
     Ui::PlotXYDemo ui;
     // 当前选中的图表
-    FreeWidgetWraper* m_pFreeWidgetWraper = nullptr;
     PlotItemBase* m_pCurSelectedPlot = nullptr;
     PlotType m_lastSelectedType;
     MouseMode m_mouseMode;

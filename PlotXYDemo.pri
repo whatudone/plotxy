@@ -17,7 +17,6 @@ HEADERS += $$PWD/TimeClass.h \
     $$PWD/PlotXYDemo.h \
     $$PWD/PlotManager.h \
     $$PWD/PlotItemBase.h \
-    $$PWD/FreeWidgetWraper.h \
     $$PWD/colorbutton.h \
     $$PWD/PlotDoppler.h \
     $$PWD/PlotRTI.h \
@@ -52,7 +51,6 @@ SOURCES += $$PWD/AddPlotPair.cpp \
     $$PWD/DataManager.cpp \
     $$PWD/DataPair.cpp \
     $$PWD/EventSetting.cpp \
-    $$PWD/FreeWidgetWraper.cpp \
     $$PWD/IconSetting.cpp \
     $$PWD/PlotAScope.cpp \
     $$PWD/PlotDial.cpp \

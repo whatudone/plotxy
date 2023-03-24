@@ -6,6 +6,9 @@
 
 #include "PlotItemBase.h"
 #include <QDebug>
+#include <QPainter>
+#include <QPen>
+#include <QPushButton>
 
 PlotItemBase::PlotItemBase(QWidget* parent)
     : QWidget(parent)
@@ -46,6 +49,24 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     m_titleFontSize = 16;
     m_titleFont.setFamily("Microsoft YaHei");
     m_titleFont.setPointSizeF(m_titleFontSize);
+
+    //设置无边框属性
+    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Widget);
+
+    setAutoFillBackground(true);
+    setMinimumSize(200, 150);
+    resize(1600, 800);
+
+    //设置下背景颜色区别看
+    QPalette palette = this->palette();
+    palette.setColor(QPalette::Window, getOuterFillColor());
+    setPalette(palette);
+
+    QPushButton* btn = new QPushButton(this);
+    btn->setText(QString("关闭"));
+    btn->setGeometry(10, 10, 130, 25);
+    connect(btn, &QPushButton::clicked, this, &PlotItemBase::deleteLater);
+    updateResizeFocusPos();
 }
 
 PlotItemBase::~PlotItemBase() {}
@@ -381,14 +402,125 @@ void PlotItemBase::slot_updateRect(QRect rect)
     setRect(rect);
 }
 
-//void PlotItemBase::setVisible(bool bVisible)
-//{
-//    m_bVisible = bVisible;
-//}
-//
-//bool PlotItemBase::bVisible()
-//{
-//    return m_bVisible;
-//}
+void PlotItemBase::updateResizeFocusPos()
+{
+    for(int32_t direction = NORTH_MIDDLE; direction <= NORTH_WEST; ++direction)
+    {
+        ResizeDirection directionEnum = static_cast<ResizeDirection>(direction);
+        m_resizeRectMap[directionEnum] = getRectByDirection(directionEnum);
+    }
+}
+
+QRect PlotItemBase::getRectByDirection(ResizeDirection direction)
+{
+    const QRectF parentRect = geometry();
+    const qreal parentWidth = parentRect.width();
+    const qreal parentHeight = parentRect.height();
+
+    qreal x = 0.0, y = 0.0;
+
+    switch(direction)
+    {
+    case NORTH_MIDDLE:
+        x = parentWidth / 2 - m_resizeFocusSize / 2;
+        y = 0;
+        break;
+    case SOUTH_MIDDLE:
+        x = parentWidth / 2 - m_resizeFocusSize / 2;
+        y = parentHeight - m_resizeFocusSize;
+        break;
+    case EAST_MIDDLE:
+        x = parentWidth - m_resizeFocusSize;
+        y = parentHeight / 2 - m_resizeFocusSize / 2;
+        break;
+    case WEST_MIDDLE:
+        x = 0;
+        y = parentHeight / 2 - m_resizeFocusSize / 2;
+        break;
+    case NORTH_WEST:
+        x = 0;
+        y = 0;
+        break;
+    case SOUTH_EAST:
+        x = parentWidth - m_resizeFocusSize;
+        y = parentHeight - m_resizeFocusSize;
+        break;
+    case NORTH_EAST:
+        x = parentWidth - m_resizeFocusSize;
+        y = 0;
+        break;
+    case SOUTH_WEST:
+        x = 0;
+        y = parentHeight - m_resizeFocusSize;
+        break;
+    }
+    return QRect(x, y, m_resizeFocusSize, m_resizeFocusSize);
+}
+
+void PlotItemBase::setCursorByDirection()
+{
+    switch(m_curResizeDirection)
+    {
+    case NORTH_MIDDLE:
+        setCursor(Qt::SizeVerCursor);
+        break;
+    case SOUTH_MIDDLE:
+        setCursor(Qt::SizeVerCursor);
+        break;
+    case EAST_MIDDLE:
+        setCursor(Qt::SizeHorCursor);
+        break;
+    case WEST_MIDDLE:
+        setCursor(Qt::SizeHorCursor);
+        break;
+    case NORTH_WEST:
+        setCursor(Qt::SizeFDiagCursor);
+        break;
+    case SOUTH_EAST:
+        setCursor(Qt::SizeFDiagCursor);
+        break;
+    case NORTH_EAST:
+        setCursor(Qt::SizeBDiagCursor);
+        break;
+    case SOUTH_WEST:
+        setCursor(Qt::SizeBDiagCursor);
+        break;
+    }
+}
+
+void PlotItemBase::drawBorderAndControls()
+{
+    QPainter painter(this);
+    painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+    QPen pen;
+    pen.setColor(Qt::red);
+    pen.setWidth(2);
+    pen.setStyle(Qt::SolidLine);
+    painter.setPen(pen);
+
+    painter.drawRects(m_resizeRectMap.values().toVector());
+}
+
+void PlotItemBase::paintEvent(QPaintEvent* event)
+{
+    // 绘制本身
+    QWidget::paintEvent(event);
+    // 根据场景绘制外边框和控制点
+    if(m_isNeedDrawBorder)
+    {
+        updateResizeFocusPos();
+        drawBorderAndControls();
+    }
+}
 
 void PlotItemBase::onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>> /* targetMap*/) {}
+
+bool PlotItemBase::getIsNeedDrawBorder() const
+{
+    return m_isNeedDrawBorder;
+}
+
+void PlotItemBase::setIsNeedDrawBorder(bool isNeedDrawBorder)
+{
+    m_isNeedDrawBorder = isNeedDrawBorder;
+}
