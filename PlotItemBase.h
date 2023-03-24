@@ -222,10 +222,15 @@ public:
     bool getIsNeedDrawBorder() const;
     void setIsNeedDrawBorder(bool isNeedDrawBorder);
 
+    bool isContainedInResizeRects(const QPoint& point);
+
+    void updateGeoWithMouseMove(int offsetX, int offsetY);
+
 private:
     void updateResizeFocusPos();
     QRect getRectByDirection(ResizeDirection direction);
     void setCursorByDirection();
+
     void drawBorderAndControls();
 
 protected:
@@ -294,7 +299,7 @@ private:
     QMap<ResizeDirection, QRect> m_resizeRectMap;
     ResizeDirection m_curResizeDirection;
     bool m_isNeedDrawBorder = false;
-    const int32_t m_resizeFocusSize = 10;
+    const int32_t m_resizeFocusSize = 20;
     Ui::PlotItemBase ui;
 };
 

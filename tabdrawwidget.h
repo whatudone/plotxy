@@ -18,6 +18,7 @@ public:
     enum MovePlotMode
     {
         MultipleSelect = 0,
+        SingleSelect,
         Move,
         Resize
     };

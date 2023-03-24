@@ -488,6 +488,65 @@ void PlotItemBase::setCursorByDirection()
     }
 }
 
+void PlotItemBase::updateGeoWithMouseMove(int offsetX, int offsetY)
+{
+    QRect rect = this->geometry();
+    qreal x1 = rect.x();
+    qreal y1 = rect.y();
+    qreal newWidth = rect.width();
+    qreal newHeight = rect.height();
+
+    switch(m_curResizeDirection)
+    {
+    case PlotItemBase::EAST_MIDDLE:
+        // 正右边
+        newWidth += offsetX;
+        break;
+    case PlotItemBase::SOUTH_MIDDLE:
+        // 正下方
+        newHeight += offsetY;
+        break;
+    case PlotItemBase::WEST_MIDDLE:
+        // 正左边
+        x1 += offsetX;
+        newWidth -= offsetX;
+        break;
+    case PlotItemBase::NORTH_MIDDLE:
+        // 正上方
+        y1 += offsetY;
+        newHeight -= offsetY;
+        break;
+    case PlotItemBase::NORTH_EAST:
+        // 右上方
+        y1 += offsetY;
+        newWidth += offsetX;
+        newHeight -= offsetY;
+        break;
+    case PlotItemBase::NORTH_WEST:
+        // 左上方
+        x1 += offsetX;
+        y1 += offsetY;
+        newWidth -= offsetX;
+        newHeight -= offsetY;
+        break;
+    case PlotItemBase::SOUTH_EAST:
+        // 右下方
+        newWidth += offsetX;
+        newHeight += offsetY;
+        break;
+    case PlotItemBase::SOUTH_WEST:
+        // 左下方
+        x1 += offsetX;
+        newWidth -= offsetX;
+        newHeight += offsetY;
+        break;
+    }
+
+    if(newWidth <= minimumWidth() && newHeight <= minimumHeight())
+        return;
+    setGeometry(x1, y1, newWidth, newHeight);
+}
+
 void PlotItemBase::drawBorderAndControls()
 {
     QPainter painter(this);
@@ -523,4 +582,17 @@ bool PlotItemBase::getIsNeedDrawBorder() const
 void PlotItemBase::setIsNeedDrawBorder(bool isNeedDrawBorder)
 {
     m_isNeedDrawBorder = isNeedDrawBorder;
+}
+
+bool PlotItemBase::isContainedInResizeRects(const QPoint& point)
+{
+    for(const auto& key : m_resizeRectMap.keys())
+    {
+        if(m_resizeRectMap[key].contains(point))
+        {
+            m_curResizeDirection = static_cast<ResizeDirection>(key);
+            return true;
+        }
+    }
+    return false;
 }

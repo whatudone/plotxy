@@ -36,12 +36,32 @@ void TabDrawWidget::mousePressEvent(QMouseEvent* event)
         }
         else if(m_mouseMode == MouseMode::MovePlot)
         {
-
-            //根据点击的位置区分是缩放、移动、单选多选行为
-            if(auto plot = findPlotByMousePos(event->pos()))
+            // 如果此时是CTRL组合键，那么肯定是多选功能
+            if(event->modifiers() & Qt::ControlModifier)
             {
-                emit selectedPlotChanged(plot);
-                m_pCurWidget = plot;
+                m_movePlotMode = MultipleSelect;
+            }
+            else
+            {
+                //根据点击的位置区分是缩放、移动、单选行为
+
+                if(auto plot = findPlotByMousePos(mapToGlobal(event->pos())))
+                {
+                    auto plotPoint = plot->mapFromParent(event->pos());
+                    // 需要将坐标转化到plot中
+                    if(plot->isContainedInResizeRects(plotPoint))
+                    {
+                        m_movePlotMode = Resize;
+                    }
+                    else
+                    {
+                        m_movePlotMode = SingleSelect;
+                    }
+                }
+                else
+                {
+                    m_movePlotMode = Move;
+                }
             }
         }
     }
@@ -191,9 +211,19 @@ PlotItemBase* TabDrawWidget::findPlotByMousePos(const QPoint& point)
 
 void TabDrawWidget::handleMouseMoveWithMovePlot(int offsetX, int offsetY)
 {
-    for(auto plot : m_curSelectedPlots)
+    if((m_movePlotMode == Move) || (m_movePlotMode == SingleSelect))
     {
-        plot->move(plot->x() + offsetX, plot->y() + offsetY);
+        for(auto plot : m_curSelectedPlots)
+        {
+            plot->move(plot->x() + offsetX, plot->y() + offsetY);
+        }
+    }
+    else if(m_movePlotMode == Resize)
+    {
+        for(auto plot : m_curSelectedPlots)
+        {
+            plot->updateGeoWithMouseMove(offsetX, offsetY);
+        }
     }
 }
 
