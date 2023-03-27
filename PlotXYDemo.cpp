@@ -231,11 +231,11 @@ void PlotXYDemo::onStatusBtnClicked(int index)
     TabDrawWidget::setMouseMode(mode);
 }
 
-void PlotXYDemo::onSelectedPlot(PlotItemBase* widget)
+void PlotXYDemo::onSelectedPlot(const QList<PlotItemBase*> plots)
 {
-    if(widget)
+    if(plots.size() > 0)
     {
-        m_pCurSelectedPlot = widget;
+        m_pCurSelectedPlot = plots.at(0);
         updateStatusBarInfo();
     }
 }
@@ -480,15 +480,56 @@ void PlotXYDemo::onOneToOne() {}
 
 void PlotXYDemo::onRoundRanges() {}
 
-void PlotXYDemo::onLockDataDisplay() {}
+void PlotXYDemo::onLockDataDisplay(bool checked)
+{
+    if(auto widget = getCurDrawWidget())
+    {
+        widget->setIsLockingEdit(checked);
+        widget->setEnabled(!checked);
+    }
+    //避免两个操作状态不同步， TODO 后续将两个操作合并成一个action
+    ui.actionLock_Data_Display->setChecked(checked);
+    m_statusBar_EditLock->setChecked(checked);
+}
 
-void PlotXYDemo::onLockStackingOrder() {}
+void PlotXYDemo::onLockStackingOrder(bool checked)
+{
+    if(auto widget = getCurDrawWidget())
+    {
+        widget->setIsLockingStack(checked);
+    }
+    ui.menuOrder->setEnabled(!checked);
+    ui.actionLock_Stacking_Order->setChecked(checked);
+    m_statusBar_StackLock->setChecked(checked);
+}
 
 void PlotXYDemo::onInvertColors() {}
 
-void PlotXYDemo::onBringToFront() {}
+void PlotXYDemo::onBringToTop()
+{
+    auto drawWidget = getCurDrawWidget();
+    if(drawWidget)
+    {
+        drawWidget->bringToTop();
+    }
+}
 
-void PlotXYDemo::onSendToBack() {}
+void PlotXYDemo::onSendToBottom()
+{
+    auto drawWidget = getCurDrawWidget();
+    if(drawWidget)
+    {
+        drawWidget->sendToBottom();
+    }
+}
+
+void PlotXYDemo::onBringForward() {}
+
+void PlotXYDemo::onSendBackward() {}
+
+void PlotXYDemo::onHorizonAlign() {}
+
+void PlotXYDemo::onVerticalAlign() {}
 
 void PlotXYDemo::onSetSliderRange(int min, int max, int singleStep)
 {
@@ -685,6 +726,11 @@ void PlotXYDemo::addPlotWidget(PlotType type, const QRect& geo)
     PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
 }
 
+TabDrawWidget* PlotXYDemo::getCurDrawWidget()
+{
+    return static_cast<TabDrawWidget*>(ui.tabWidget->currentWidget());
+}
+
 void PlotXYDemo::onPlay()
 {
     m_bIsPlayForward = true;
@@ -836,8 +882,13 @@ void PlotXYDemo::initMenuGraph()
     connect(
         ui.actionLock_Stacking_Order, &QAction::triggered, this, &PlotXYDemo::onLockStackingOrder);
     connect(ui.actionInvert_Colores, &QAction::triggered, this, &PlotXYDemo::onInvertColors);
-    connect(ui.actionBring_To_Front_Ctrl, &QAction::triggered, this, &PlotXYDemo::onBringToFront);
-    connect(ui.actionSend_To_Back_Ctrl, &QAction::triggered, this, &PlotXYDemo::onSendToBack);
+    // 排序菜单信号槽
+    connect(ui.actionBring_To_Top, &QAction::triggered, this, &PlotXYDemo::onBringToTop);
+    connect(ui.actionSend_To_Bottom, &QAction::triggered, this, &PlotXYDemo::onSendToBottom);
+    connect(ui.actionBring_Forward, &QAction::triggered, this, &PlotXYDemo::onBringForward);
+    connect(ui.actionSend_Backward, &QAction::triggered, this, &PlotXYDemo::onSendBackward);
+    connect(ui.actionTile_Horizontally, &QAction::triggered, this, &PlotXYDemo::onHorizonAlign);
+    connect(ui.actionTile_Vertically, &QAction::triggered, this, &PlotXYDemo::onVerticalAlign);
 
     connect(ui.actionAddBarPlot, &QAction::triggered, this, &PlotXYDemo::onAddPlot);
     connect(ui.actionAddAttitudePlot, &QAction::triggered, this, &PlotXYDemo::onAddPlot);
@@ -965,7 +1016,7 @@ void PlotXYDemo::initStatusBar()
 {
     m_statusBar_info = new QLabel(this);
     m_statusBar_EditLock = new QToolButton(this);
-    m_statusBar_layoutLock = new QToolButton(this);
+    m_statusBar_StackLock = new QToolButton(this);
     m_statusBar_dataTime = new QLabel("<Data Time>", this);
     m_statusBar_localTime = new QLabel("<Local Time>", this);
     m_statusBar_selectPlot = new QToolButton(this);
@@ -979,7 +1030,7 @@ void PlotXYDemo::initStatusBar()
     m_statusBar_null = new QLabel(this);
 
     m_statusBar_EditLock->setToolTip("Editing Lock");
-    m_statusBar_layoutLock->setToolTip("Stacking Lock");
+    m_statusBar_StackLock->setToolTip("Stacking Lock");
     m_statusBar_selectPlot->setToolTip("Select Plot");
     m_statusBar_pan->setToolTip("Pan");
     m_statusBar_centerPlot->setToolTip("Center Plot");
@@ -990,7 +1041,7 @@ void PlotXYDemo::initStatusBar()
     m_statusBar_movePlot->setToolTip("Move Plot");
 
     m_statusBar_EditLock->setIcon(QIcon(":/statusbar/editingLock.bmp"));
-    m_statusBar_layoutLock->setIcon(QIcon(":/statusbar/stackingLock.bmp"));
+    m_statusBar_StackLock->setIcon(QIcon(":/statusbar/stackingLock.bmp"));
     m_statusBar_selectPlot->setIcon(QIcon(":/statusbar/selectPlot.bmp"));
     m_statusBar_pan->setIcon(QIcon(":/statusbar/pan.bmp"));
     m_statusBar_centerPlot->setIcon(QIcon(":/statusbar/centerPlot.bmp"));
@@ -1001,7 +1052,7 @@ void PlotXYDemo::initStatusBar()
     m_statusBar_movePlot->setIcon(QIcon(":/statusbar/movePlot.bmp"));
 
     m_statusBar_EditLock->setIconSize(QSize(25, 25));
-    m_statusBar_layoutLock->setIconSize(QSize(25, 25));
+    m_statusBar_StackLock->setIconSize(QSize(25, 25));
     m_statusBar_selectPlot->setIconSize(QSize(25, 25));
     m_statusBar_pan->setIconSize(QSize(25, 25));
     m_statusBar_centerPlot->setIconSize(QSize(25, 25));
@@ -1011,6 +1062,8 @@ void PlotXYDemo::initStatusBar()
     m_statusBar_createPlot->setIconSize(QSize(25, 25));
     m_statusBar_movePlot->setIconSize(QSize(25, 25));
 
+    m_statusBar_EditLock->setCheckable(true);
+    m_statusBar_StackLock->setCheckable(true);
     m_statusBar_selectPlot->setCheckable(true);
     // 默认是选择第一种模式
     m_statusBar_selectPlot->setChecked(true);
@@ -1026,14 +1079,13 @@ void PlotXYDemo::initStatusBar()
     m_statusBar_dataTime->setFrameStyle(QFrame::Panel | QFrame::Sunken);
     m_statusBar_localTime->setFrameStyle(QFrame::Panel | QFrame::Sunken);
 
-    //  m_statusBar_dataTime->setMinimumSize(QSize(170, 10));
     m_statusBar_dataTime->setAlignment(Qt::AlignCenter | Qt::AlignHCenter);
     m_statusBar_null->setMinimumSize(QSize(40, 10));
     m_statusBar_null->setEnabled(false);
 
     ui.statusBar->addWidget(m_statusBar_info, 1);
     ui.statusBar->addWidget(m_statusBar_EditLock);
-    ui.statusBar->addWidget(m_statusBar_layoutLock);
+    ui.statusBar->addWidget(m_statusBar_StackLock);
     ui.statusBar->addWidget(m_statusBar_dataTime);
     ui.statusBar->addWidget(m_statusBar_localTime);
     ui.statusBar->addWidget(m_statusBar_selectPlot);
@@ -1046,9 +1098,8 @@ void PlotXYDemo::initStatusBar()
     ui.statusBar->addWidget(m_statusBar_movePlot);
     ui.statusBar->addWidget(m_statusBar_null);
 
-    connect(m_statusBar_EditLock, &QToolButton::triggered, this, &PlotXYDemo::onLockDataDisplay);
-    connect(
-        m_statusBar_layoutLock, &QToolButton::triggered, this, &PlotXYDemo::onLockStackingOrder);
+    connect(m_statusBar_EditLock, &QToolButton::clicked, this, &PlotXYDemo::onLockDataDisplay);
+    connect(m_statusBar_StackLock, &QToolButton::clicked, this, &PlotXYDemo::onLockStackingOrder);
 
     QButtonGroup* statusBtnGroup = new QButtonGroup(this);
     statusBtnGroup->addButton(m_statusBar_selectPlot, static_cast<int>(MouseMode::SelectPlot));

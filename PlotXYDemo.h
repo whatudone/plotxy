@@ -11,6 +11,7 @@ class PlotItemBase;
 class PlotManager;
 class AddPlotPair;
 class AdvancedDataManager;
+class TabDrawWidget;
 enum class MouseMode : uint8_t;
 class PlotXYDemo : public QMainWindow
 {
@@ -53,6 +54,21 @@ public slots:
 	void onCopy();
 	void onPaste();
 	void onDelete();
+    // 最顶上
+    void onBringToTop();
+    // 最底下
+    void onSendToBottom();
+    // 往前
+    void onBringForward();
+    // 往后
+    void onSendBackward();
+    // 水平对齐
+    void onHorizonAlign();
+    // 垂直对齐
+    void onVerticalAlign();
+
+    void onLockDataDisplay(bool checked);
+    void onLockStackingOrder(bool checked);
 	//menu-graph
 	void onPlotWizard();
 	void onPlotManager();
@@ -66,11 +82,7 @@ public slots:
 	void onAutofit_Y();
 	void onOneToOne();
 	void onRoundRanges();
-	void onLockDataDisplay();
-	void onLockStackingOrder();
 	void onInvertColors();
-	void onBringToFront();
-	void onSendToBack();
 	//menu-data
 	void onAdvancedData();
 	void onAddPlotPair();
@@ -138,7 +150,7 @@ public slots:
     // 将上述信号槽合并成一个
     void onStatusBtnClicked(int index);
 
-    void onSelectedPlot(PlotItemBase*);
+    void onSelectedPlot(const QList<PlotItemBase*> plots);
     void onCustomContextMenuRequested(const QPoint&);
     void onContextMenu(const QPoint& point);
 
@@ -167,6 +179,7 @@ private:
     void addTabPage();
     // 将添加图表控件操作合并到一个函数
     void addPlotWidget(PlotType type, const QRect& geo = QRect());
+    TabDrawWidget* getCurDrawWidget();
 
 private:
     Ui::PlotXYDemo ui;
@@ -189,7 +202,7 @@ private:
     //statusBar widget
     QLabel* m_statusBar_info;
     QToolButton* m_statusBar_EditLock;
-    QToolButton* m_statusBar_layoutLock;
+    QToolButton* m_statusBar_StackLock;
     QLabel* m_statusBar_dataTime;
     QLabel* m_statusBar_localTime;
     QToolButton* m_statusBar_selectPlot;

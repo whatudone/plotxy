@@ -129,8 +129,8 @@ background-color: rgb(3, 57, 122);
      <property name="title">
       <string>排序</string>
      </property>
-     <addaction name="actionBring_To_Front_Ctrl"/>
-     <addaction name="actionSend_To_Back_Ctrl"/>
+     <addaction name="actionBring_To_Top"/>
+     <addaction name="actionSend_To_Bottom"/>
      <addaction name="actionBring_Forward"/>
      <addaction name="actionSend_Backward"/>
      <addaction name="separator"/>
@@ -311,8 +311,8 @@ background-color: rgb(3, 57, 122);
    <addaction name="actionAdvanced_Data_Manager"/>
    <addaction name="actionAdd_Plot_Pair_Ctrl_A"/>
    <addaction name="actionAutofit_Full"/>
-   <addaction name="actionBring_To_Front_Ctrl"/>
-   <addaction name="actionSend_To_Back_Ctrl"/>
+   <addaction name="actionBring_To_Top"/>
+   <addaction name="actionSend_To_Bottom"/>
    <addaction name="separator"/>
    <addaction name="actionSave_Screenshot"/>
    <addaction name="actionTime_Server"/>
@@ -420,7 +420,7 @@ background-color: rgb(3, 57, 122);
     <string>删除...</string>
    </property>
   </action>
-  <action name="actionBring_To_Front_Ctrl">
+  <action name="actionBring_To_Top">
    <property name="icon">
     <iconset resource="resources/toolbar.qrc">
      <normaloff>:/toolbar/Takefront.png</normaloff>:/toolbar/Takefront.png</iconset>
@@ -429,7 +429,7 @@ background-color: rgb(3, 57, 122);
     <string>将绘图置于最上</string>
    </property>
   </action>
-  <action name="actionSend_To_Back_Ctrl">
+  <action name="actionSend_To_Bottom">
    <property name="icon">
     <iconset resource="resources/toolbar.qrc">
      <normaloff>:/toolbar/Takeback.png</normaloff>:/toolbar/Takeback.png</iconset>
@@ -641,6 +641,10 @@ background-color: rgb(3, 57, 122);
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="resources/statusbar.qrc">
+     <normaloff>:/statusbar/editingLock.bmp</normaloff>:/statusbar/editingLock.bmp</iconset>
+   </property>
    <property name="text">
     <string>Lock Data Display</string>
    </property>
@@ -648,6 +652,10 @@ background-color: rgb(3, 57, 122);
   <action name="actionLock_Stacking_Order">
    <property name="checkable">
     <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/statusbar.qrc">
+     <normaloff>:/statusbar/stackingLock.bmp</normaloff>:/statusbar/stackingLock.bmp</iconset>
    </property>
    <property name="text">
     <string>Lock Stacking Order</string>
@@ -1192,6 +1200,7 @@ background-color: rgb(3, 57, 122);
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
+  <include location="resources/statusbar.qrc"/>
   <include location="resources/toolbar.qrc"/>
  </resources>
  <connections/>

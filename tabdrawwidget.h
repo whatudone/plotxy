@@ -31,6 +31,21 @@ public:
 
     static QList<PlotItemBase*> getCurSelectedPlots();
     static void setCurSelectedPlots(const QList<PlotItemBase*>& curSelectedPlots);
+    // 调整图表的z轴顺序
+    void bringToTop();
+    void sendToBottom();
+    void bringForward();
+    void sendBackward();
+    // 将所有图表缩放到同一大小水平排开
+    void horizonAlign();
+    // 将所有图表缩放到同一大小垂直排开
+    void verticalAlign();
+
+    static bool getIsLockingEdit();
+    static void setIsLockingEdit(bool isLockingEdit);
+
+    static bool getIsLockingStack();
+    static void setIsLockingStack(bool isLockingStack);
 
 protected:
     void mouseReleaseEvent(QMouseEvent* event) override;
@@ -40,7 +55,7 @@ protected:
     void paintEvent(QPaintEvent* event) override;
 signals:
     void mouseRelease(QPoint point);
-    void selectedPlotChanged(PlotItemBase* plot);
+    void selectedPlotChanged(const QList<PlotItemBase*>& plots);
 
     void boxZoomed(const QRect& rec);
     // 创建图表
@@ -60,6 +75,8 @@ private:
     void handleMouseMoveWithPan(int offsetX, int offsetY);
 
     void drawMeasureLines();
+
+    static void updateSelectedPlotsBorderVisible(bool visible);
 
 private:
     // 框选缩放辅助矩形框
@@ -84,6 +101,10 @@ private:
     static PlotItemBase* m_pCurWidget;
     // 每种模式有特定光标模式，模式内部涉及到光标切换的，后续需要恢复成这种默认模式
     QCursor m_curCursor;
+    //  编辑锁定是否打开
+    static bool m_isLockingEdit;
+    // stack order锁定是否打开
+    static bool m_isLockingStack;
 };
 
 #endif // TABDRAWWIDGET_H

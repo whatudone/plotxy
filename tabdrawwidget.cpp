@@ -12,6 +12,8 @@
 PlotItemBase* TabDrawWidget::m_pCurWidget = nullptr;
 QList<PlotItemBase*> TabDrawWidget::m_curSelectedPlots = {};
 MouseMode TabDrawWidget::m_mouseMode = MouseMode::SelectPlot;
+bool TabDrawWidget::m_isLockingEdit = false;
+bool TabDrawWidget::m_isLockingStack = false;
 
 TabDrawWidget::TabDrawWidget(QWidget* parent)
     : QWidget(parent)
@@ -40,16 +42,17 @@ void TabDrawWidget::mousePressEvent(QMouseEvent* event)
             if(event->modifiers() & Qt::ControlModifier)
             {
                 m_movePlotMode = MultipleSelect;
+                m_pCurWidget = findPlotByMousePos(mapToGlobal(event->pos()));
             }
             else
             {
                 //根据点击的位置区分是缩放、移动、单选行为
 
-                if(auto plot = findPlotByMousePos(mapToGlobal(event->pos())))
+                if(m_pCurWidget = findPlotByMousePos(mapToGlobal(event->pos())))
                 {
-                    auto plotPoint = plot->mapFromParent(event->pos());
+                    auto plotPoint = m_pCurWidget->mapFromParent(event->pos());
                     // 需要将坐标转化到plot中
-                    if(plot->isContainedInResizeRects(plotPoint))
+                    if(m_pCurWidget->isContainedInResizeRects(plotPoint))
                     {
                         m_movePlotMode = Resize;
                     }
@@ -112,7 +115,7 @@ void TabDrawWidget::mouseMoveEvent(QMouseEvent* event)
             handleMouseMoveWithMovePlot(offsetX, offsetY);
             m_originPoint = event->pos();
         }
-        else if((m_mouseMode == MouseMode::Pan))
+        else if(m_mouseMode == MouseMode::Pan)
         {
             QPoint point = event->pos();
             //根据当前鼠标位置,计算XY轴移动了多少
@@ -130,12 +133,12 @@ void TabDrawWidget::mouseReleaseEvent(QMouseEvent* event)
 
     if(event->button() == Qt::LeftButton)
     {
-        if((m_mouseMode == MouseMode::BoxZoom))
+        if(m_mouseMode == MouseMode::BoxZoom)
         {
             m_pRubberBand->hide();
             handleBoxZoom(m_pRubberBand->geometry());
         }
-        else if((m_mouseMode == MouseMode::CreatePlot))
+        else if(m_mouseMode == MouseMode::CreatePlot)
         {
             // 避免点击事件直接触发CreatePlot逻辑，需要判断橡皮筋的大小
             m_pRubberBand->hide();
@@ -149,41 +152,41 @@ void TabDrawWidget::mouseReleaseEvent(QMouseEvent* event)
                 emit createPlot(dialog.getPlotType(), m_pRubberBand->geometry());
             }
         }
-        else if((m_mouseMode == MouseMode::MeasureDistance))
+        else if(m_mouseMode == MouseMode::MeasureDistance)
         {
             // 重置到无效状态
             m_measureLine.setPoints(QPoint(), QPoint());
             update();
         }
-        else if((m_mouseMode == MouseMode::CenterPlot))
+        else if(m_mouseMode == MouseMode::CenterPlot)
         {
             handleMouseReleaseWithCenterPlot(event->pos());
         }
-        else if((m_mouseMode == MouseMode::SelectPlot))
+        else if(m_mouseMode == MouseMode::SelectPlot)
         {
-            if(auto plot = findPlotByMousePos(event->pos()))
+            if(auto plot = findPlotByMousePos(mapToGlobal(event->pos())))
             {
-                emit selectedPlotChanged(plot);
                 m_curSelectedPlots.clear();
                 m_curSelectedPlots.append(plot);
+                emit selectedPlotChanged(m_curSelectedPlots);
             }
         }
-        else if((m_mouseMode == MouseMode::MovePlot))
+        else if(m_mouseMode == MouseMode::MovePlot)
         {
             // 通过组合键区分是否为多选行为
-            auto plot = findPlotByMousePos(event->pos());
-            if(plot)
+            // m_pCurWidget为mousePress中找到的当前点击的图表，不需要再重新查找一次，该api耗时较长
+            if(m_pCurWidget)
             {
-                emit selectedPlotChanged(plot);
-                if(event->modifiers() & Qt::ControlModifier)
+                if(m_movePlotMode == MultipleSelect)
                 {
-                    m_curSelectedPlots.append(plot);
+                    m_curSelectedPlots.append(m_pCurWidget);
                 }
-                else
+                else if(m_movePlotMode == SingleSelect)
                 {
                     m_curSelectedPlots.clear();
-                    m_curSelectedPlots.append(plot);
+                    m_curSelectedPlots.append(m_pCurWidget);
                 }
+                emit selectedPlotChanged(m_curSelectedPlots);
             }
         }
         QWidget::mouseReleaseEvent(event);
@@ -220,9 +223,9 @@ void TabDrawWidget::handleMouseMoveWithMovePlot(int offsetX, int offsetY)
     }
     else if(m_movePlotMode == Resize)
     {
-        for(auto plot : m_curSelectedPlots)
+        if(m_pCurWidget)
         {
-            plot->updateGeoWithMouseMove(offsetX, offsetY);
+            m_pCurWidget->updateGeoWithMouseMove(offsetX, offsetY);
         }
     }
 }
@@ -238,19 +241,11 @@ void TabDrawWidget::setMouseMode(const MouseMode& mouseMode)
     // 切换光标类型
     if(m_mouseMode == MouseMode::MovePlot)
     {
-        for(auto plot : m_curSelectedPlots)
-        {
-            plot->setIsNeedDrawBorder(true);
-            plot->update();
-        }
+        updateSelectedPlotsBorderVisible(true);
     }
     else
     {
-        for(auto plot : m_curSelectedPlots)
-        {
-            plot->setIsNeedDrawBorder(false);
-            plot->update();
-        }
+        updateSelectedPlotsBorderVisible(false);
     }
 }
 
@@ -334,6 +329,35 @@ void TabDrawWidget::drawMeasureLines()
     painter.drawText(yTextRect, Qt::AlignCenter, QString::number(std::abs(yDistance)));
 }
 
+void TabDrawWidget::updateSelectedPlotsBorderVisible(bool visible)
+{
+    for(auto plot : m_curSelectedPlots)
+    {
+        plot->setIsNeedDrawBorder(visible);
+        plot->update();
+    }
+}
+
+bool TabDrawWidget::getIsLockingStack()
+{
+    return m_isLockingStack;
+}
+
+void TabDrawWidget::setIsLockingStack(bool isLockingStack)
+{
+    m_isLockingStack = isLockingStack;
+}
+
+bool TabDrawWidget::getIsLockingEdit()
+{
+    return m_isLockingEdit;
+}
+
+void TabDrawWidget::setIsLockingEdit(bool isLockingEdit)
+{
+    m_isLockingEdit = isLockingEdit;
+}
+
 QList<PlotItemBase*> TabDrawWidget::getCurSelectedPlots()
 {
     return m_curSelectedPlots;
@@ -343,6 +367,32 @@ void TabDrawWidget::setCurSelectedPlots(const QList<PlotItemBase*>& curSelectedP
 {
     m_curSelectedPlots = curSelectedPlots;
 }
+
+void TabDrawWidget::bringToTop()
+{
+    if(m_curSelectedPlots.size() == 1)
+    {
+        auto plot = m_curSelectedPlots.at(0);
+        plot->raise();
+    }
+}
+
+void TabDrawWidget::sendToBottom()
+{
+    if(m_curSelectedPlots.size() == 1)
+    {
+        auto plot = m_curSelectedPlots.at(0);
+        plot->lower();
+    }
+}
+
+void TabDrawWidget::bringForward() {}
+
+void TabDrawWidget::sendBackward() {}
+
+void TabDrawWidget::horizonAlign() {}
+
+void TabDrawWidget::verticalAlign() {}
 
 QCursor TabDrawWidget::getCurCursor() const
 {
