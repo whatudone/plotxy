@@ -198,37 +198,41 @@ void PlotXYDemo::onStatusBtnClicked(int index)
 {
     MouseMode mode = static_cast<MouseMode>(index);
     m_mouseMode = mode;
+    // 通知已经存在的图表刷新鼠标模式
+    TabDrawWidget::setMouseMode(mode);
+    // 刷新光标
+    auto plot = getCurDrawWidget();
+    if(!plot)
+        return;
     switch(m_mouseMode)
     {
     case MouseMode::SelectPlot:
-        setCursor(Qt::ArrowCursor);
+        plot->setCursor(Qt::ArrowCursor);
         break;
     case MouseMode::Pan:
-        setCursor(Qt::ArrowCursor);
+        plot->setCursor(QCursor(QPixmap(":/pan.svg")));
         break;
     case MouseMode::CenterPlot:
-        setCursor(Qt::ArrowCursor);
+        plot->setCursor(QCursor(QPixmap(":/center.svg")));
         break;
     case MouseMode::Zoom:
-        setCursor(Qt::SizeAllCursor);
+        plot->setCursor(QCursor(QPixmap(":/zoom.svg")));
         break;
     case MouseMode::BoxZoom:
-        setCursor(Qt::ArrowCursor);
+        plot->setCursor(QCursor(QPixmap(":/box_zoom.svg")));
         break;
     case MouseMode::MeasureDistance:
-        setCursor(Qt::ArrowCursor);
+        plot->setCursor(QCursor(QPixmap(":/measure.svg")));
         break;
     case MouseMode::CreatePlot:
-        setCursor(Qt::ArrowCursor);
+        plot->setCursor(QCursor(QPixmap(":/create_plot.svg")));
         break;
     case MouseMode::MovePlot:
-        setCursor(Qt::ArrowCursor);
+        plot->setCursor(QCursor(QPixmap(":/move.svg")));
         break;
     default:
         break;
     }
-    // 通知已经存在的图表刷新鼠标模式
-    TabDrawWidget::setMouseMode(mode);
 }
 
 void PlotXYDemo::onSelectedPlot(const QList<PlotItemBase*> plots)

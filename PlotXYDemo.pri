@@ -99,5 +99,6 @@ FORMS += $$PWD/AddPlotPair.ui \
     choose_plot_type_dialog.ui
 
 RESOURCES += resources/statusbar.qrc \
+    $$PWD/resources/cursor/cursor.qrc \
     $$PWD/resources/qss.qrc \
     resources/toolbar.qrc

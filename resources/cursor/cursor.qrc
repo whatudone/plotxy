@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>center.svg</file>
+        <file>pan.svg</file>
+        <file>zoom.svg</file>
+        <file>box_zoom.svg</file>
+        <file>create_plot.svg</file>
+        <file>measure.svg</file>
+        <file>move.svg</file>
+    </qresource>
+</RCC>

@@ -238,7 +238,6 @@ MouseMode TabDrawWidget::mouseMode()
 void TabDrawWidget::setMouseMode(const MouseMode& mouseMode)
 {
     m_mouseMode = mouseMode;
-    // 切换光标类型
     if(m_mouseMode == MouseMode::MovePlot)
     {
         updateSelectedPlotsBorderVisible(true);
