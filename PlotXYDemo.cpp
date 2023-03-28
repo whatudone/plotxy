@@ -1169,7 +1169,20 @@ void PlotXYDemo::onLoadPML() {}
 
 void PlotXYDemo::onSaveToPML() {}
 
-void PlotXYDemo::onSaveScreenshot() {}
+void PlotXYDemo::onSaveScreenshot()
+{
+    QString filename =
+        QFileDialog::getSaveFileName(nullptr, "保存截图", ".", "JPG (*.jpg);;PNG (*.png)");
+    if(filename.isEmpty())
+    {
+        return;
+    }
+    if(auto plot = getCurDrawWidget())
+    {
+        QPixmap pixmap = plot->grab();
+        pixmap.save(filename);
+    }
+}
 
 void PlotXYDemo::onQuit() {}
 
