@@ -76,7 +76,7 @@ void PlotText::paintEvent(QPaintEvent* event)
 	pen.setWidth(3);
 	pen.setStyle(Qt::SolidLine);
 	painter.setPen(pen);
-    if(!getDataPair().isEmpty())
+    if(!getDataPairs().isEmpty())
 	{
 		drawXYTitle(painter, horiGridWidth, verGridWidth, dataVector, as);
 		//以下为绘制对应的数据，没有调用drawData函数，后期如果需要可以调用下。
@@ -164,7 +164,7 @@ void PlotText::drawData(QSet<QString>& xset,
                         int& horiGridWidth,
                         int& verGridWidth)
 {
-    if(getDataPair().isEmpty())
+    if(getDataPairs().isEmpty())
 	{
 		return;
 	}
@@ -200,9 +200,9 @@ void PlotText::drawData(QSet<QString>& xset,
 void PlotText::onGetCurrentSeconds(double secs)
 {
 	m_secValue = secs;
-    if(getDataPair().isEmpty())
+    if(getDataPairs().isEmpty())
 		return;
-	int isize = getDataPair().size();
+    int isize = getDataPairs().size();
 	int entityNum = 0;
 	int attriNum = 0;
 	m_entityName.clear();
@@ -211,7 +211,7 @@ void PlotText::onGetCurrentSeconds(double secs)
 	m_valueList.clear();
     for(int i = 0; i < isize; i++)
 	{
-		QString getTextData = getDataPair().at(i)->getDataPair().first;
+        QString getTextData = getDataPairs().at(i)->getDataPair().first;
 		QList<QString> textValueList = getTextData.split("+");
         if(m_entityName.isEmpty())
 			m_entityName.push_back(textValueList.front());
@@ -257,7 +257,7 @@ void PlotText::drawXYTitle(QPainter& painter,
 {
 	QRect rectXName, rectYName;
 	int i = 0, j = 0;
-	dataVector = getDataPair();
+    dataVector = getDataPairs();
 	int icount = 0;
 	QFont font;
 	QPen fontPen;
@@ -333,7 +333,7 @@ void PlotText::drawNMCell(QPainter& painter,
                           int& verGridWidth,
                           double& as)
 {
-	dataVector = getDataPair();
+    dataVector = getDataPairs();
     for(int i = 0; i < dataVector.size(); i++)
 	{
 		QString xIncludePlus = dataVector.at(i)->getDataPair().first;

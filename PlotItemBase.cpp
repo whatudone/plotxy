@@ -65,7 +65,7 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     QPushButton* btn = new QPushButton(this);
     btn->setText(QString("关闭"));
     btn->setGeometry(10, 10, 130, 25);
-    connect(btn, &QPushButton::clicked, this, &PlotItemBase::deleteLater);
+    connect(btn, &QPushButton::clicked, this, &PlotItemBase::close);
     updateResizeFocusPos();
 }
 
@@ -344,21 +344,21 @@ void PlotItemBase::setAxisLabelFontSize(int size)
 void PlotItemBase::addPlotPairData(QPair<QString, QString> pair)
 {
     DataPair* data = new DataPair(pair);
-    m_dataPair.append(data);
+    m_dataPairs.append(data);
 
     emit sgn_dataPairChanged(this);
 }
 
 void PlotItemBase::delPlotPairData(QPair<QString, QString> pair)
 {
-    if(m_dataPair.isEmpty())
+    if(m_dataPairs.isEmpty())
         return;
 
-    for(int i = 0; i < m_dataPair.size(); ++i)
+    for(int i = 0; i < m_dataPairs.size(); ++i)
     {
-        if(m_dataPair.at(i)->getDataPair() == pair)
+        if(m_dataPairs.at(i)->getDataPair() == pair)
         {
-            m_dataPair.remove(i);
+            m_dataPairs.remove(i);
 
             emit sgn_dataPairChanged(this);
             break;
@@ -369,14 +369,14 @@ void PlotItemBase::delPlotPairData(QPair<QString, QString> pair)
 void PlotItemBase::updatePlotPairData(QPair<QString, QString> oldPair,
                                       QPair<QString, QString> newPair)
 {
-    if(m_dataPair.isEmpty())
+    if(m_dataPairs.isEmpty())
         return;
 
-    for(int i = 0; i < m_dataPair.size(); ++i)
+    for(int i = 0; i < m_dataPairs.size(); ++i)
     {
-        if(m_dataPair.at(i)->getDataPair() == oldPair)
+        if(m_dataPairs.at(i)->getDataPair() == oldPair)
         {
-            m_dataPair.at(i)->setDataPair(newPair);
+            m_dataPairs.at(i)->setDataPair(newPair);
 
             emit sgn_dataPairChanged(this);
             break;
@@ -386,7 +386,7 @@ void PlotItemBase::updatePlotPairData(QPair<QString, QString> oldPair,
 
 void PlotItemBase::setDataPair(QVector<DataPair*> newVector)
 {
-    m_dataPair.swap(newVector);
+    m_dataPairs.swap(newVector);
 
     emit sgn_dataPairChanged(this);
 }

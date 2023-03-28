@@ -3,50 +3,34 @@
 *  */
 #pragma once
 
-#include <QObject>
 #include "PlotItemBase.h"
+#include <QObject>
 
 class PlotManagerData : public QObject
 {
 	Q_OBJECT
 
 private:
-	PlotManagerData(QObject *parent = nullptr);
+    PlotManagerData(QObject* parent = nullptr);
 	~PlotManagerData();
-	static PlotManagerData *m_pInstance;
-	QMap<QString, QList<PlotItemBase*>> m_plotManager; //tabName
+
+    QMap<QString, QList<PlotItemBase*>> m_plotMgrDataMap; //tabName
 
 public:
-	static PlotManagerData *getInstance()
+    static PlotManagerData* getInstance()
 	{
-		if (nullptr == m_pInstance)
-			m_pInstance = new PlotManagerData();
+        static PlotManagerData instance;
 
-		return m_pInstance;
+        return &instance;
 	}
-
-private:
-	class PlotManagerDataRelease
-	{
-	public:
-		PlotManagerDataRelease() {}
-		~PlotManagerDataRelease() {
-			if (nullptr != m_pInstance)
-			{
-				delete m_pInstance;
-				m_pInstance = nullptr;
-			}
-		}
-	};
-	static PlotManagerDataRelease m_release;
 
 public:
 	void addPlotManagerData(const QString&, PlotItemBase*);
-	QMap<QString, QList<PlotItemBase*>> getPlotManagerData();
+    const QMap<QString, QList<PlotItemBase*>>& getPlotManagerData();
 
 public slots:
 	void slotChangePlotName();
 	void slotChangeTabName(QString oldName, QString newName);
 signals:
-	void sgnUpdatePlotManager();
+    void plotDataChanged(const QMap<QString, QList<PlotItemBase*>>& plotData);
 };

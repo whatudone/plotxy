@@ -26,9 +26,9 @@ PlotManager::PlotManager(QWidget* parent)
 	init();
 
     connect(PlotManagerData::getInstance(),
-            SIGNAL(sgnUpdatePlotManager()),
+            &PlotManagerData::plotDataChanged,
             this,
-            SLOT(onUpdatePlotManager()));
+            &PlotManager::onUpdatePlotManager);
     connect(this,
             SIGNAL(sigChangePlotName()),
             PlotManagerData::getInstance(),
@@ -503,7 +503,7 @@ void PlotManager::refreshAxisGridUI(PlotItemBase* plot)
 void PlotManager::refreshPlotDataUI(PlotItemBase* plot)
 {
 	ui.tableWidget_plotData->setRowCount(0);
-	QVector<DataPair*> dataPair = plot->getDataPair();
+    QVector<DataPair*> dataPair = plot->getDataPairs();
     //	QList<QPair<QString, QString>> plotPairData = plot->getPlotPairData();
     for(int k = 0; k < dataPair.size(); ++k)
 	{
@@ -521,7 +521,7 @@ void PlotManager::refreshLightTextUI(PlotItemBase* plot)
 {
     if(!(plot == nullptr))
 	{
-		auto dataPair = plot->getDataPair();
+        auto dataPair = plot->getDataPairs();
         if(plot->currName().startsWith("Text"))
 		{
 			ui.stackedWidget_LightTextDataSort->setCurrentIndex(0);
@@ -530,7 +530,7 @@ void PlotManager::refreshLightTextUI(PlotItemBase* plot)
 			{
 				ui.tableWidget_TextDataSort->removeRow(ui.tableWidget_TextDataSort->rowCount() - 1);
 			}
-            for(int i = 0; i < plot->getDataPair().size(); i++)
+            for(int i = 0; i < plot->getDataPairs().size(); i++)
 			{
 				QString temFirst = dataPair[i]->getDataPair().first;
 				QString temEntityString = temFirst.split("+").front();
@@ -552,7 +552,7 @@ void PlotManager::refreshLightTextUI(PlotItemBase* plot)
                 ui.tableWidget_LightDataSort->removeRow(ui.tableWidget_LightDataSort->rowCount() -
                                                         1);
 			}
-            for(int i = 0; i < plot->getDataPair().size(); i++)
+            for(int i = 0; i < plot->getDataPairs().size(); i++)
 			{
 				QString temFirst = dataPair[i]->getDataPair().first;
                 QTableWidgetItem* temEntityAndAttri = new QTableWidgetItem(temFirst);
@@ -816,9 +816,9 @@ void PlotManager::onSelectedPlot(PlotItemBase* pBasePlot)
 	}
 }
 
-void PlotManager::onUpdatePlotManager()
+void PlotManager::onUpdatePlotManager(const QMap<QString, QList<PlotItemBase*>>& plotData)
 {
-	m_plotManager = PlotManagerData::getInstance()->getPlotManagerData();
+    m_plotManager = plotData;
     if(m_plotManager.isEmpty())
         return;
 	ui.comboBox_tabName->clear();
@@ -1466,10 +1466,11 @@ void PlotManager::onTableWidget_plotDataItemSelectionChanged()
     if(m_curSelectPlot == nullptr)
 		return;
 
-	ui.lineEdit_24->setText(QString("%1").arg(m_curSelectPlot->getDataPair().at(row)->lineWidth()));
-	ui.pushButton_21->setColor(m_curSelectPlot->getDataPair().at(row)->dataColor());
-	ui.checkBox_11->setChecked(m_curSelectPlot->getDataPair().at(row)->isDraw());
-	ui.checkBox_10->setChecked(m_curSelectPlot->getDataPair().at(row)->isLineMode());
+    auto dataPair = m_curSelectPlot->getDataPairs().at(row);
+    ui.lineEdit_24->setText(QString("%1").arg(dataPair->lineWidth()));
+    ui.pushButton_21->setColor(dataPair->dataColor());
+    ui.checkBox_11->setChecked(dataPair->isDraw());
+    ui.checkBox_10->setChecked(dataPair->isLineMode());
 }
 
 void PlotManager::onLineEdit_24EditingFinished()
@@ -1481,7 +1482,7 @@ void PlotManager::onLineEdit_24EditingFinished()
 		return;
 
 	int width = ui.lineEdit_24->text().toInt();
-	m_curSelectPlot->getDataPair().at(row)->setLineWidth(width);
+    m_curSelectPlot->getDataPairs().at(row)->setLineWidth(width);
 }
 
 void PlotManager::onPushButton_21Clicked()
@@ -1492,7 +1493,7 @@ void PlotManager::onPushButton_21Clicked()
     if(m_curSelectPlot == nullptr)
 		return;
 
-	m_curSelectPlot->getDataPair().at(row)->setColor(ui.pushButton_21->color());
+    m_curSelectPlot->getDataPairs().at(row)->setColor(ui.pushButton_21->color());
 }
 
 void PlotManager::onCheckBox_10StateChanged()
@@ -1503,7 +1504,7 @@ void PlotManager::onCheckBox_10StateChanged()
     if(m_curSelectPlot == nullptr)
 		return;
 
-	m_curSelectPlot->getDataPair().at(row)->setLineMode(ui.checkBox_10->checkState());
+    m_curSelectPlot->getDataPairs().at(row)->setLineMode(ui.checkBox_10->checkState());
 }
 
 void PlotManager::onCheckBox_11StateChanged()
@@ -1514,7 +1515,7 @@ void PlotManager::onCheckBox_11StateChanged()
     if(m_curSelectPlot == nullptr)
 		return;
 
-	m_curSelectPlot->getDataPair().at(row)->setDraw(ui.checkBox_11->checkState());
+    m_curSelectPlot->getDataPairs().at(row)->setDraw(ui.checkBox_11->checkState());
 }
 
 void PlotManager::onPushButton_15Clicked()
@@ -1525,7 +1526,7 @@ void PlotManager::onPushButton_15Clicked()
     if(m_curSelectPlot == nullptr)
 		return;
 
-	QVector<DataPair*> vec = m_curSelectPlot->getDataPair();
+    QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
 	vec.move(row, row - 1);
 	m_curSelectPlot->setDataPair(vec);
 	refreshPlotDataUI(m_curSelectPlot);
@@ -1540,7 +1541,7 @@ void PlotManager::onPushButton_16Clicked()
     if(m_curSelectPlot == nullptr)
 		return;
 
-	QVector<DataPair*> vec = m_curSelectPlot->getDataPair();
+    QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
 	vec.move(row, row + 1);
 	m_curSelectPlot->setDataPair(vec);
 	refreshPlotDataUI(m_curSelectPlot);
@@ -1558,7 +1559,7 @@ void PlotManager::onPushButton_66Clicked()
 			return;
         if(ui.tableWidget_TextDataSort->currentColumn() == 0)
 		{
-			QVector<DataPair*> vec = m_curSelectPlot->getDataPair();
+            QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
 			int temRow = ui.tableWidget_TextDataSort->currentRow();
             DataPair* temNowDataPair = new DataPair(nullptr);
 			temNowDataPair = vec.at(temRow);
@@ -1586,7 +1587,7 @@ void PlotManager::onPushButton_66Clicked()
 		}
         else if(ui.tableWidget_TextDataSort->currentColumn() == 1)
 		{
-			QVector<DataPair*> vec = m_curSelectPlot->getDataPair();
+            QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
 			int temRow = ui.tableWidget_TextDataSort->currentRow();
             DataPair* temNowDataPair = new DataPair(nullptr);
 			temNowDataPair = vec.at(temRow);
@@ -1624,7 +1625,7 @@ void PlotManager::onPushButton_66Clicked()
 			return;
         if(ui.tableWidget_LightDataSort->currentColumn() == 0)
 		{
-			QVector<DataPair*> vec = m_curSelectPlot->getDataPair();
+            QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
 			int temRow = ui.tableWidget_LightDataSort->currentRow();
             DataPair* temNowDataPair = new DataPair(nullptr);
 			temNowDataPair = vec.at(temRow);
@@ -1651,7 +1652,7 @@ void PlotManager::onPushButton_66Clicked()
 	}
 
 	//Light改变的时候可能会用到
-	//QVector<DataPair*> vec = m_curSelectPlot->getDataPair();
+    //QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
 	//vec.move(row, row - 1);
 	//m_curSelectPlot->setDataPair(vec);
 	//refreshLightTextUI(m_curSelectPlot);
@@ -1669,7 +1670,7 @@ void PlotManager::onPushButton_67Clicked()
 			return;
         if(ui.tableWidget_TextDataSort->currentColumn() == 0)
 		{
-			QVector<DataPair*> vec = m_curSelectPlot->getDataPair();
+            QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
 			int temRow = ui.tableWidget_TextDataSort->currentRow();
             DataPair* temNowDataPair = new DataPair(nullptr);
 			temNowDataPair = vec.at(temRow);
@@ -1697,7 +1698,7 @@ void PlotManager::onPushButton_67Clicked()
 		}
         else if(ui.tableWidget_TextDataSort->currentColumn() == 1)
 		{
-			QVector<DataPair*> vec = m_curSelectPlot->getDataPair();
+            QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
 			int temRow = ui.tableWidget_TextDataSort->currentRow();
             DataPair* temNowDataPair = new DataPair(nullptr);
 			temNowDataPair = vec.at(temRow);
@@ -1735,7 +1736,7 @@ void PlotManager::onPushButton_67Clicked()
 			return;
         if(ui.tableWidget_LightDataSort->currentColumn() == 0)
 		{
-			QVector<DataPair*> vec = m_curSelectPlot->getDataPair();
+            QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
 			int temRow = ui.tableWidget_LightDataSort->currentRow();
             DataPair* temNowDataPair = new DataPair(nullptr);
 			temNowDataPair = vec.at(temRow);
@@ -1770,7 +1771,7 @@ void PlotManager::onPushButton_69Clicked()
     if(m_curSelectPlot == nullptr)
 		return;
 
-	QVector<DataPair*> vec = m_curSelectPlot->getDataPair();
+    QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
 	vec.remove(row);
 	m_curSelectPlot->setDataPair(vec);
 	refreshLightTextUI(m_curSelectPlot);
@@ -1786,7 +1787,7 @@ void PlotManager::onPushButton_19Clicked()
     if(m_curSelectPlot == nullptr)
 		return;
 
-	QVector<DataPair*> vec = m_curSelectPlot->getDataPair();
+    QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
 	vec.remove(row);
 	m_curSelectPlot->setDataPair(vec);
 	refreshPlotDataUI(m_curSelectPlot);

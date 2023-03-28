@@ -208,9 +208,9 @@ public:
 	virtual void delPlotPairData(QPair<QString, QString>);
     virtual void updatePlotPairData(QPair<QString, QString> oldPair,
                                     QPair<QString, QString> newPair);
-    QVector<DataPair*> getDataPair()
+    QVector<DataPair*> getDataPairs()
     {
-        return m_dataPair;
+        return m_dataPairs;
     }
 	void setDataPair(QVector<DataPair*> newVector);
 
@@ -237,7 +237,7 @@ protected:
     void paintEvent(QPaintEvent* event) override;
 
 protected:
-    QVector<DataPair*> m_dataPair;
+    QVector<DataPair*> m_dataPairs;
 	//General
 	QColor m_outerFillColor;
 	QColor m_outlineColor;

@@ -1,14 +1,14 @@
 ﻿#ifndef _ADVANCED_DATA_MANAGER_H_
 #define _ADVANCED_DATA_MANAGER_H_
 
-#include <QWidget>
+#include "DataPair.h"
+#include "PlotItemBase.h"
+#include "SubSettingWidgetContainer.h"
+#include "ui_AdvancedDataManager.h"
 #include <QColor>
 #include <QColorDialog>
 #include <QVBoxLayout>
-#include "ui_AdvancedDataManager.h"
-#include "PlotItemBase.h"
-#include "DataPair.h"
-#include "SubSettingWidgetContainer.h"
+#include <QWidget>
 
 class AdvancedDataManager : public QWidget
 {
@@ -67,7 +67,7 @@ public slots:
     void onBtnColorMore();
     void onBtnAdd();
 	void onEventBtnMoreClicked();
-	void onUpdatePlotPair();
+    void onUpdatePlotPair();
 	void onTableWidget_plotpairItemSelectionChanged();
 	void onLineEditChanged();
 	void onPushButton_addClicked();
@@ -126,7 +126,7 @@ private:
 
 private:
     Ui::AdvancedDataManager ui;
-	QMap<QString, QList<PlotItemBase*>> m_plotManager; //tabName
+
 	PlotItemBase* m_curSelectPlot = nullptr;
 	DataPair* m_curSelectDatapair = nullptr;
 	SubSettingWidgetContainer* subSettingWidgetContainer;

@@ -594,12 +594,12 @@ void PlotAttitude::slot_setRollValue(double rollValue)
 
 void PlotAttitude::onGetCurrentSeconds(double secs)
 {
-    if(getDataPair().isEmpty())
+    if(getDataPairs().isEmpty())
 		return;
 
-	int isize = getDataPair().size();
-	QString xcolumn = getDataPair().at(isize - 1)->getDataPair().first;
-	QString ycolumn = getDataPair().at(isize - 1)->getDataPair().second;
+    int isize = getDataPairs().size();
+    QString xcolumn = getDataPairs().at(isize - 1)->getDataPair().first;
+    QString ycolumn = getDataPairs().at(isize - 1)->getDataPair().second;
 	QStringList xlist = xcolumn.split("+");
 	QStringList ylist = ycolumn.split("+");
 

@@ -59,7 +59,7 @@ signals:
 	void sgn_onTextLightBtnClicked();
 
 public slots:
-	void updatePlotTrees();
+    void updatePlotTrees(const QMap<QString, QList<PlotItemBase*>>& plotData);
     void onBtnAddClicked();
 	void onBtnUpdateClicked();
 	void onBtnRemoveClicked();

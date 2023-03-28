@@ -8,6 +8,7 @@
 
 
 HEADERS += $$PWD/TimeClass.h \
+    $$PWD/rename_tab_dialog.h \
     $$PWD/tabdrawwidget.h \
     $$PWD/Utils.h \
     $$PWD/resource.h \
@@ -24,7 +25,6 @@ HEADERS += $$PWD/TimeClass.h \
     $$PWD/PlotAScope.h \
     $$PWD/PlotDial.h \
     $$PWD/PlotScatter.h \
-    $$PWD/renameTab.h \
     $$PWD/DataPair.h \
     $$PWD/PlotManagerData.h \
     $$PWD/TimeControls.h \
@@ -45,6 +45,7 @@ HEADERS += $$PWD/TimeClass.h \
     choose_plot_type_dialog.h \
 
 SOURCES += $$PWD/AddPlotPair.cpp \
+    $$PWD/rename_tab_dialog.cpp \
     $$PWD/tabdrawwidget.cpp \
     $$PWD/AdvancedDataManager.cpp \
     $$PWD/colorbutton.cpp \
@@ -65,7 +66,6 @@ SOURCES += $$PWD/AddPlotPair.cpp \
     $$PWD/PlotText.cpp \
     $$PWD/PlotTrack.cpp \
     $$PWD/qcustomplot.cpp \
-    $$PWD/renameTab.cpp \
     $$PWD/StippleSetting.cpp \
     $$PWD/SubSettingWidgetContainer.cpp \
     $$PWD/PlotBar.cpp \
@@ -91,11 +91,11 @@ FORMS += $$PWD/AddPlotPair.ui \
     $$PWD/PlotItemBase.ui \
     $$PWD/PlotManager.ui \
     $$PWD/PlotXYDemo.ui \
-    $$PWD/renameTab.ui \
     $$PWD/StippleSetting.ui \
     $$PWD/TimeControls.ui \
     $$PWD/ToolBox.ui \
     $$PWD/ToolPage.ui \
+    $$PWD/rename_tab_dialog.ui \
     choose_plot_type_dialog.ui
 
 RESOURCES += resources/statusbar.qrc \

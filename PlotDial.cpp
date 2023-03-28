@@ -1,12 +1,12 @@
 ﻿#include "PlotDial.h"
+#include "DataManager.h"
 #include <QDebug>
 #include <QPainter>
-#include <QtMath>
 #include <QVector2D>
-#include "DataManager.h"
+#include <QtMath>
 
 int PlotDial::m_instanceCount = 1;
-PlotDial::PlotDial(QWidget *parent)
+PlotDial::PlotDial(QWidget* parent)
     : PlotItemBase(parent)
 {
     m_bThinStyle = true;
@@ -33,23 +33,21 @@ PlotDial::PlotDial(QWidget *parent)
 	m_bottomPadding = 20;
 }
 
-PlotDial::~PlotDial()
-{
-
-}
+PlotDial::~PlotDial() {}
 
 //更新表盘指针
 void PlotDial::updatePointer(double secs)
 {
-    if (getDataPair().isEmpty())
+    if(getDataPairs().isEmpty())
         return;
 
-    int isize = getDataPair().size();
-    QString xcolumn = getDataPair().at(isize - 1)->getDataPair().first;
+    int isize = getDataPairs().size();
+    QString xcolumn = getDataPairs().at(isize - 1)->getDataPair().first;
     QStringList list = xcolumn.split("+");
-    QList<double> m_valueList = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(list.at(0), list.at(1), secs);
+    QList<double> m_valueList =
+        DataManager::getInstance()->getEntityAttr_MaxPartValue_List(list.at(0), list.at(1), secs);
 
-    if (m_valueList.isEmpty())
+    if(m_valueList.isEmpty())
         return;
 
     double currValue = m_valueList.last();
@@ -58,11 +56,10 @@ void PlotDial::updatePointer(double secs)
     double angle = (int)currValue % 360;
 
     QPoint endPoint;
-    endPoint.setX( m_circleRadius * cos(qDegreesToRadians(angle)) + m_centerPoint.x());
+    endPoint.setX(m_circleRadius * cos(qDegreesToRadians(angle)) + m_centerPoint.x());
     endPoint.setY(-m_circleRadius * sin(qDegreesToRadians(angle)) + m_centerPoint.y());
 
-    QVector2D vec(endPoint.x() - m_centerPoint.x(),
-                  endPoint.y() - m_centerPoint.y());
+    QVector2D vec(endPoint.x() - m_centerPoint.x(), endPoint.y() - m_centerPoint.y());
     QPoint midPoint;
     midPoint.setX(m_centerPoint.x() + vec.x() * 0.1);
     midPoint.setY(m_centerPoint.y() + vec.y() * 0.1);
@@ -70,17 +67,10 @@ void PlotDial::updatePointer(double secs)
     QVector2D normalVec(-0.1 * ((double)endPoint.y() - (double)m_centerPoint.y()),
                         0.1 * ((double)endPoint.x() - (double)m_centerPoint.x()));
 
-    QPoint endPoint1(midPoint.x() + normalVec.x(),
-                     midPoint.y() + normalVec.y());
-    QPoint endPoint2(midPoint.x() - normalVec.x(),
-                     midPoint.y() - normalVec.y());
+    QPoint endPoint1(midPoint.x() + normalVec.x(), midPoint.y() + normalVec.y());
+    QPoint endPoint2(midPoint.x() - normalVec.x(), midPoint.y() - normalVec.y());
 
-    QPoint points[4] = {
-        m_centerPoint,
-        endPoint1,
-        endPoint,
-        endPoint2
-    };
+    QPoint points[4] = {m_centerPoint, endPoint1, endPoint, endPoint2};
 
     QPainter painter(this);
     QBrush pointerBrush(m_pointColor, Qt::SolidPattern);
@@ -94,7 +84,7 @@ void PlotDial::onGetCurrentSeconds(double secs)
     update();
 }
 
-void PlotDial::paintEvent(QPaintEvent *event)
+void PlotDial::paintEvent(QPaintEvent* event)
 {
     QPainter painter(this);
 	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
@@ -105,14 +95,20 @@ void PlotDial::paintEvent(QPaintEvent *event)
 	double h = fm.size(Qt::TextSingleLine, m_title).height();
 	double as = fm.ascent();
 
-	m_circleRadius = (width() - m_leftPadding - m_rightPadding) < (height() - h - m_topPadding - m_bottomPadding) ? (width() - m_leftPadding - m_rightPadding) / 2 : (height() - h - m_topPadding - m_bottomPadding) / 2;
-	m_centerPoint = QPoint((width() + m_leftPadding - m_rightPadding) / 2, (height() + h + m_topPadding - m_bottomPadding) / 2);
-	
-	if (m_titleShow)
+    m_circleRadius =
+        (width() - m_leftPadding - m_rightPadding) < (height() - h - m_topPadding - m_bottomPadding)
+            ? (width() - m_leftPadding - m_rightPadding) / 2
+            : (height() - h - m_topPadding - m_bottomPadding) / 2;
+    m_centerPoint = QPoint((width() + m_leftPadding - m_rightPadding) / 2,
+                           (height() + h + m_topPadding - m_bottomPadding) / 2);
+
+    if(m_titleShow)
 	{
 		painter.setFont(m_titleFont);
 		painter.setPen(m_titleColor);
-		painter.drawText(QPoint((width() + m_leftPadding - m_rightPadding - w) / 2, m_centerPoint.y() - m_circleRadius + (as - h)), m_title);
+        painter.drawText(QPoint((width() + m_leftPadding - m_rightPadding - w) / 2,
+                                m_centerPoint.y() - m_circleRadius + (as - h)),
+                         m_title);
 	}
 
 	//绘制表盘圆圈
@@ -120,8 +116,7 @@ void PlotDial::paintEvent(QPaintEvent *event)
     pen.setColor(m_dialColor);
     pen.setWidth(2);
     painter.setPen(pen);
-    
-    
+
     painter.drawEllipse(m_centerPoint, m_circleRadius, m_circleRadius);
 
     // 绘制表盘圆弧
@@ -161,21 +156,21 @@ void PlotDial::paintEvent(QPaintEvent *event)
     // 绘制表盘文字
 	painter.setFont(m_axisFont);
 	QFontMetricsF fm1(m_axisFont);
- 	w = fm1.size(Qt::TextSingleLine, QString("-50°")).width();
- 	h = fm1.size(Qt::TextSingleLine, QString("-50°")).height();
-    painter.drawText(-m_circleRadius * 0.93, h/3, QString("-50°"));
+    w = fm1.size(Qt::TextSingleLine, QString("-50°")).width();
+    h = fm1.size(Qt::TextSingleLine, QString("-50°")).height();
+    painter.drawText(-m_circleRadius * 0.93, h / 3, QString("-50°"));
 
 	w = fm1.size(Qt::TextSingleLine, QString("0°")).width();
 	h = fm1.size(Qt::TextSingleLine, QString("0°")).height();
-    painter.drawText(-w/2, -m_circleRadius * 0.95 + h, QString("0°"));
+    painter.drawText(-w / 2, -m_circleRadius * 0.95 + h, QString("0°"));
 
 	w = fm1.size(Qt::TextSingleLine, QString("50°")).width();
 	h = fm1.size(Qt::TextSingleLine, QString("50°")).height();
-    painter.drawText(m_circleRadius*0.93 - w, h/3, QString("50°"));
+    painter.drawText(m_circleRadius * 0.93 - w, h / 3, QString("50°"));
 
 	w = fm1.size(Qt::TextSingleLine, QString("100°")).width();
 	h = fm1.size(Qt::TextSingleLine, QString("100°")).height();
-    painter.drawText(-w/2, m_circleRadius * 0.93, QString("100°"));
+    painter.drawText(-w / 2, m_circleRadius * 0.93, QString("100°"));
 
     updatePointer(m_seconds);
 

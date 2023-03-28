@@ -108,7 +108,7 @@ void PlotScatter::initPlot()
 void PlotScatter::addPlotPairData(QPair<QString, QString> pair)
 {
 	DataPair* data = new DataPair(pair);
-	m_dataPair.append(data);
+    m_dataPairs.append(data);
 
     emit sgn_dataPairChanged(this);
 
@@ -127,14 +127,14 @@ void PlotScatter::addPlotPairData(QPair<QString, QString> pair)
 
 void PlotScatter::delPlotPairData(QPair<QString, QString> pair)
 {
-    if(m_dataPair.isEmpty())
+    if(m_dataPairs.isEmpty())
 		return;
 
-    for(int i = 0; i < m_dataPair.size(); ++i)
+    for(int i = 0; i < m_dataPairs.size(); ++i)
 	{
-        if(m_dataPair.at(i)->getDataPair() == pair)
+        if(m_dataPairs.at(i)->getDataPair() == pair)
 		{
-			m_dataPair.remove(i);
+            m_dataPairs.remove(i);
 
             emit sgn_dataPairChanged(this);
 			break;
@@ -151,14 +151,14 @@ void PlotScatter::delPlotPairData(QPair<QString, QString> pair)
 void PlotScatter::updatePlotPairData(QPair<QString, QString> oldPair,
                                      QPair<QString, QString> newPair)
 {
-    if(m_dataPair.isEmpty())
+    if(m_dataPairs.isEmpty())
 		return;
 
-    for(int i = 0; i < m_dataPair.size(); ++i)
+    for(int i = 0; i < m_dataPairs.size(); ++i)
 	{
-        if(m_dataPair.at(i)->getDataPair() == oldPair)
+        if(m_dataPairs.at(i)->getDataPair() == oldPair)
 		{
-			m_dataPair.at(i)->setDataPair(newPair);
+            m_dataPairs.at(i)->setDataPair(newPair);
 
             emit sgn_dataPairChanged(this);
 			break;
@@ -184,14 +184,14 @@ void PlotScatter::updatePlotPairData(QPair<QString, QString> oldPair,
 
 void PlotScatter::getDataInfo(double secs)
 {
-    if(getDataPair().isEmpty())
+    if(getDataPairs().isEmpty())
 		return;
 
-	int itemCnt = m_dataPair.size();
+    int itemCnt = m_dataPairs.size();
 
     for(int i = 0; i < itemCnt; ++i)
 	{
-		updateData(secs, i, m_dataPair.at(i));
+        updateData(secs, i, m_dataPairs.at(i));
 	}
 	m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 	//	update();

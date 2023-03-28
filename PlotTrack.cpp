@@ -140,10 +140,10 @@ void PlotTrack::paintEvent(QPaintEvent* event)
 
 void PlotTrack::getDataInfo(double secs)
 {
-    if(getDataPair().isEmpty())
+    if(getDataPairs().isEmpty())
         return;
 
-    m_itemCnt = getDataPair().size();
+    m_itemCnt = getDataPairs().size();
     QFontMetricsF fm(m_titleFont);
     double h = fm.size(Qt::TextSingleLine, m_title).height();
     setInterPadding(
@@ -152,7 +152,7 @@ void PlotTrack::getDataInfo(double secs)
 
     for(int i = 0; i < m_itemCnt; i++)
     {
-        QString entityType = getDataPair().at(i)->getDataPair().first;
+        QString entityType = getDataPairs().at(i)->getDataPair().first;
         updateData(i, entityType, secs);
     }
 }
@@ -184,7 +184,7 @@ void PlotTrack::updateData(int itemIndex, QString entityType, double secs)
 
 void PlotTrack::onGetCurrentSeconds(double secs)
 {
-    if(getDataPair().isEmpty())
+    if(getDataPairs().isEmpty())
         return;
 
     m_seconds = secs;

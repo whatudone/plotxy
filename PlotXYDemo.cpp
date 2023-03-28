@@ -23,7 +23,7 @@
 #include "PlotScatter.h"
 #include "PlotText.h"
 #include "PlotTrack.h"
-#include "renameTab.h"
+#include "rename_tab_dialog.h"
 #include "tabdrawwidget.h"
 
 PlotXYDemo::PlotXYDemo(QWidget* parent)
@@ -250,7 +250,7 @@ void PlotXYDemo::onTimeControls()
     m_timeCtrl->activateWindow();
 }
 
-void PlotXYDemo::onCustomContextMenuRequested(const QPoint& point)
+void PlotXYDemo::onCustomContextMenuRequested(const QPoint& /* point*/)
 {
     QMenu menu;
 
@@ -401,18 +401,16 @@ void PlotXYDemo::onOptions() {}
 
 void PlotXYDemo::onRenameTab()
 {
-    renameTab* renameDlg = new renameTab(this);
-    int ret = renameDlg->exec();
-    if(ret == QDialog::Accepted)
+    RenameTabDialog dialog;
+    if(dialog.exec() == QDialog::Accepted)
     {
         int currTabIndex = ui.tabWidget->currentIndex();
         QString oldName = ui.tabWidget->tabText(currTabIndex);
-        QString newName = renameDlg->getNewTabName();
+        QString newName = dialog.getNewTabName();
         ui.tabWidget->setTabText(currTabIndex, newName);
 
         emit sgn_renameTabPage(oldName, newName);
     }
-    renameDlg->deleteLater();
 }
 
 void PlotXYDemo::onSendTabRect()

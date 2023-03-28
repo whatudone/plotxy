@@ -96,15 +96,15 @@ void PlotAScope::initPlot()
 
 void PlotAScope::onGetCurrentSeconds(double secs)
 {
-    if(getDataPair().isEmpty())
+    if(getDataPairs().isEmpty())
 	{
 		return;
 	}
-	int isize = getDataPair().size();
+    int isize = getDataPairs().size();
     for(int i = 0; i < isize; ++i)
 	{
-		QString xcolumn = getDataPair().at(i)->getDataPair().first;
-		QString ycolumn = getDataPair().at(i)->getDataPair().second;
+        QString xcolumn = getDataPairs().at(i)->getDataPair().first;
+        QString ycolumn = getDataPairs().at(i)->getDataPair().second;
 	}
 }
 

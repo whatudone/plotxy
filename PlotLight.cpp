@@ -43,7 +43,7 @@ void PlotLight::paintEvent(QPaintEvent* event)
 	QRect rect;
 	QSet<QString> yset;
 
-	QVector<DataPair*> dataVector = getDataPair();
+    QVector<DataPair*> dataVector = getDataPairs();
 	QFontMetricsF fm(font);
 	double as = fm.ascent();
 	m_axisColor = Qt::white;
@@ -107,7 +107,7 @@ void PlotLight::drawTitle(QPainter& painter, QRect& rect)
 void PlotLight::drawLight(QPainter& painter, double& verGridWidth, double& as)
 {
 	setCircleRadius(as);
-    for(int i = 0; i < getDataPair().size(); ++i)
+    for(int i = 0; i < getDataPairs().size(); ++i)
 	{
 		painter.setBrush(QBrush(Qt::gray));
         if(m_brush.isEmpty())
@@ -136,13 +136,13 @@ void PlotLight::judgeLight()
 	QList<QString> partUserLightData;
 	QStringList docEntityAndAttr;
 	QString temEntityAndAtrr = " ";
-    for(int i = 0; i < getDataPair().size(); i++)
-		docEntityAndAttr.push_back(getDataPair().at(i)->getDataPair().first);
+    for(int i = 0; i < getDataPairs().size(); i++)
+        docEntityAndAttr.push_back(getDataPairs().at(i)->getDataPair().first);
 	int isize = 0;
 	int icount = 0;
     if(m_userLightData.size() > 1)
 	{
-        for(int j = 0; j < getDataPair().size(); j++)
+        for(int j = 0; j < getDataPairs().size(); j++)
 		{
 			iBrush.setColor(Qt::gray);
             for(int i = 0; i < m_userLightData.size(); i++)
@@ -287,16 +287,16 @@ void PlotLight::slot_onAddButtonClicked()
 
 void PlotLight::onGetCurrentSeconds(double secs)
 {
-    if(getDataPair().isEmpty())
+    if(getDataPairs().isEmpty())
 		return;
-	int isize = getDataPair().size();
+    int isize = getDataPairs().size();
 	int entityNum = 0;
 	int attriNum = 0;
 	//m_entityName.clear();
 	//m_attriName.clear();
     for(int i = 0; i < isize; i++)
 	{
-		QString getLightData = getDataPair().at(i)->getDataPair().first;
+        QString getLightData = getDataPairs().at(i)->getDataPair().first;
 		QList<QString> lightValueList = getLightData.split("+");
         m_valueList = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(
             lightValueList.front(), lightValueList.back(), secs);

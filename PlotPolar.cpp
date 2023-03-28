@@ -370,16 +370,16 @@ void PlotPolar::slot_setRangeZoom(bool enabled)
 
 void PlotPolar::onGetCurrentSeconds(double secs)
 {
-    if(getDataPair().isEmpty())
+    if(getDataPairs().isEmpty())
 		return;
 
-	int isize = getDataPair().size();
+    int isize = getDataPairs().size();
 	QVector<QCPPolarGraph*> graph;
 
     for(int i = 0; i < isize; ++i)
 	{
-		QString xcolumn = getDataPair().at(i)->getDataPair().first;
-		QString ycolumn = getDataPair().at(i)->getDataPair().second;
+        QString xcolumn = getDataPairs().at(i)->getDataPair().first;
+        QString ycolumn = getDataPairs().at(i)->getDataPair().second;
 		QStringList xlist = xcolumn.split("+");
 		QStringList ylist = ycolumn.split("+");
 

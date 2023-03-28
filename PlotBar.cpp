@@ -42,7 +42,7 @@ void PlotBar::onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>> targetM
 
 void PlotBar::onGetCurrentSeconds(double secs)
 {
-    if(getDataPair().isEmpty())
+    if(getDataPairs().isEmpty())
         return;
 
     m_seconds = secs;
@@ -50,15 +50,15 @@ void PlotBar::onGetCurrentSeconds(double secs)
 
 void PlotBar::getDataInfo(double secs)
 {
-    if(getDataPair().isEmpty())
+    if(getDataPairs().isEmpty())
 		return;
 
-    int isize = getDataPair().size();
+    int isize = getDataPairs().size();
 
     for(int i = 0; i < isize; i++)
     {
-        QString xColumn = getDataPair().at(i)->getDataPair().first;
-        QString yColumn = getDataPair().at(i)->getDataPair().first;
+        QString xColumn = getDataPairs().at(i)->getDataPair().first;
+        QString yColumn = getDataPairs().at(i)->getDataPair().first;
         updateData(i, xColumn, yColumn, secs);
     }
 }
@@ -204,7 +204,7 @@ void PlotBar::updateData(int itemIndex, QString x, QString y, double secs)
     QList<double> xSecList =
         DataManager::getInstance()->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs);
     //    QList<double> ySecList = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(ylist.at(0), ylist.at(1), secs);
-    int cnt = getDataPair().size();
+    int cnt = getDataPairs().size();
 
     if(xSecList.isEmpty())
         return;

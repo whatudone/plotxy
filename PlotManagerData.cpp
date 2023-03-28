@@ -1,42 +1,37 @@
 ﻿#include "PlotManagerData.h"
 
-PlotManagerData* PlotManagerData::m_pInstance = new PlotManagerData();
-PlotManagerData::PlotManagerDataRelease PlotManagerData::m_release;
-
-PlotManagerData::PlotManagerData(QObject *parent)
+PlotManagerData::PlotManagerData(QObject* parent)
 	: QObject(parent)
-{
-}
+{}
 
-PlotManagerData::~PlotManagerData()
-{
-}
+PlotManagerData::~PlotManagerData() {}
 
 void PlotManagerData::addPlotManagerData(const QString& tabName, PlotItemBase* plotItem)
 {
-	m_plotManager[tabName].append(plotItem);
+    m_plotMgrDataMap[tabName].append(plotItem);
 
-	emit sgnUpdatePlotManager();
+    emit plotDataChanged(m_plotMgrDataMap);
 }
 
-QMap<QString, QList<PlotItemBase*>> PlotManagerData::getPlotManagerData()
+const QMap<QString, QList<PlotItemBase*>>& PlotManagerData::getPlotManagerData()
 {
-	return m_plotManager;
+    return m_plotMgrDataMap;
 }
 
 void PlotManagerData::slotChangeTabName(QString oldName, QString newName)
 {
-	if (m_plotManager.contains(oldName))
+    if(m_plotMgrDataMap.contains(oldName))
 	{
-		QList<PlotItemBase*> plots = m_plotManager.value(oldName);
-		m_plotManager[newName].append(plots);
-		m_plotManager.remove(oldName);
+        QList<PlotItemBase*> plots = m_plotMgrDataMap.value(oldName);
+        m_plotMgrDataMap[newName].append(plots);
+        m_plotMgrDataMap.remove(oldName);
 	}
-	
-	emit sgnUpdatePlotManager();
+
+    emit plotDataChanged(m_plotMgrDataMap);
 }
 
 void PlotManagerData::slotChangePlotName()
 {
-	emit sgnUpdatePlotManager();
+    // TODO
+    emit plotDataChanged(m_plotMgrDataMap);
 }

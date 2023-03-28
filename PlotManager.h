@@ -64,7 +64,7 @@ public slots:
     void onTWSPclicked(QTreeWidgetItem* item, int i);
     void onSelectedPlot(PlotItemBase* pBasePlot); //用于默认点击的Item
 
-	void onUpdatePlotManager();
+    void onUpdatePlotManager(const QMap<QString, QList<PlotItemBase*>>& plotData);
 	void onBtnCloseClicked();
 
 	void spinboxBetweenChanged();

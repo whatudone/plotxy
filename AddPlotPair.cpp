@@ -35,9 +35,9 @@ AddPlotPair::AddPlotPair(QWidget* parent)
     initTreePlot();
 
     connect(PlotManagerData::getInstance(),
-            SIGNAL(sgnUpdatePlotManager()),
+            &PlotManagerData::plotDataChanged,
             this,
-            SLOT(updatePlotTrees()));
+            &AddPlotPair::updatePlotTrees);
 
     connect(ui.pushButton_add, SIGNAL(clicked()), this, SLOT(onBtnAddClicked()));
     connect(ui.pushButton_close, SIGNAL(clicked()), this, SLOT(onBtnCloseClicked()));
@@ -357,9 +357,9 @@ void AddPlotPair::setPlotBaseInfo(PlotItemBase* pBaseItem)
     }
 }
 
-void AddPlotPair::updatePlotTrees()
+void AddPlotPair::updatePlotTrees(const QMap<QString, QList<PlotItemBase*>>& plotData)
 {
-    m_plotManager = PlotManagerData::getInstance()->getPlotManagerData();
+    m_plotManager = plotData;
     if(m_plotManager.isEmpty())
         return;
 
@@ -839,7 +839,7 @@ void AddPlotPair::onAddPlot(const QString& tabName, PlotItemBase* plotItem)
     //数据层更新
     m_plotManager[tabName].append(plotItem);
 
-    updatePlotTrees();
+    updatePlotTrees(m_plotManager);
 }
 
 void AddPlotPair::onDoubleClickedTreeWidgetItem(QTreeWidgetItem* item, int column)
@@ -865,7 +865,7 @@ void AddPlotPair::onDoubleClickedTreeWidgetItem(QTreeWidgetItem* item, int colum
 
                 ui.tableWidget_union->setRowCount(0);
 
-                QVector<DataPair*> dataPair = tempPlot->getDataPair();
+                QVector<DataPair*> dataPair = tempPlot->getDataPairs();
                 for(int k = 0; k < dataPair.size(); ++k)
                 {
                     //界面更新
@@ -1027,13 +1027,13 @@ void AddPlotPair::onBtnLightAddClicked()
     QComboBox* newCount4 = new QComboBox;
     QPair<QString, QString> temPair;
     QString temEntity;
-    QString temAttr;
+    //    QString temAttr;
     QString parent_text = m_curPlotInfo.Base_TabName;
-    QString child_text = m_curPlotInfo.Base_PlotName;
+    //    QString child_text = m_curPlotInfo.Base_PlotName;
     for(int i = 0; i < m_plotManager[parent_text].size(); ++i)
     {
         PlotItemBase* tempPlot = m_plotManager[parent_text].at(i);
-        QVector<DataPair*> temDataPair = tempPlot->getDataPair();
+        QVector<DataPair*> temDataPair = tempPlot->getDataPairs();
         for(int i = 0; i < temDataPair.size(); i++)
         {
             temPair = temDataPair.at(i)->getDataPair();
