@@ -27,7 +27,7 @@ class AddPlotPair : public QWidget
     Q_OBJECT
 
 public:
-    static AddPlotPair* m_getInstance();
+    explicit AddPlotPair(QWidget* parent = 0);
     ~AddPlotPair();
     void init(PlotType index = PlotType::Type_PlotScatter);
 	//int textRowCount();
@@ -81,12 +81,9 @@ public slots:
 
 private:
     Ui::AddPlotPair ui;
-    static AddPlotPair* m_ptr;
-    explicit AddPlotPair(QWidget* parent = 0);
 
 	BaseInfo m_curPlotInfo;
     PlotItemBase* m_pCurSelectedPlot = nullptr;
-	QMap<QString, QList<PlotItemBase*>> m_plotManager; //tabName
 
 	QTreeWidget* m_treePlot;
 	QMenu* m_menuPlot;

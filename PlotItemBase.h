@@ -204,10 +204,10 @@ public:
         return m_axisLabelFontSize;
     }
 
-	virtual void addPlotPairData(QPair<QString, QString>);
-	virtual void delPlotPairData(QPair<QString, QString>);
-    virtual void updatePlotPairData(QPair<QString, QString> oldPair,
-                                    QPair<QString, QString> newPair);
+    virtual void addPlotPairData(const QPair<QString, QString>& pair);
+    virtual void delPlotPairData(const QPair<QString, QString>& pair);
+    virtual void updatePlotPairData(const QPair<QString, QString>& oldPair,
+                                    const QPair<QString, QString>& newPair);
     QVector<DataPair*> getDataPairs()
     {
         return m_dataPairs;

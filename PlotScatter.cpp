@@ -105,12 +105,9 @@ void PlotScatter::initPlot()
 	m_customPlot->replot();
 }
 
-void PlotScatter::addPlotPairData(QPair<QString, QString> pair)
+void PlotScatter::addPlotPairData(const QPair<QString, QString>& pair)
 {
-	DataPair* data = new DataPair(pair);
-    m_dataPairs.append(data);
-
-    emit sgn_dataPairChanged(this);
+    PlotItemBase::addPlotPairData(pair);
 
 	//scatter
 	ScatterInfo info;
@@ -125,7 +122,7 @@ void PlotScatter::addPlotPairData(QPair<QString, QString> pair)
 	m_mapScatter.insertMulti(pair, info);
 }
 
-void PlotScatter::delPlotPairData(QPair<QString, QString> pair)
+void PlotScatter::delPlotPairData(const QPair<QString, QString>& pair)
 {
     if(m_dataPairs.isEmpty())
 		return;
@@ -148,8 +145,8 @@ void PlotScatter::delPlotPairData(QPair<QString, QString> pair)
 	}
 }
 
-void PlotScatter::updatePlotPairData(QPair<QString, QString> oldPair,
-                                     QPair<QString, QString> newPair)
+void PlotScatter::updatePlotPairData(const QPair<QString, QString>& oldPair,
+                                     const QPair<QString, QString>& newPair)
 {
     if(m_dataPairs.isEmpty())
 		return;

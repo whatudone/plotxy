@@ -38,7 +38,7 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
 
     m_AdvancedDataManager = new AdvancedDataManager();
     m_plotManager = new PlotManager();
-    m_addPlotPair = AddPlotPair::m_getInstance();
+    m_addPlotPair = new AddPlotPair();
 
     connect(this, SIGNAL(sgn_loadDataReady()), m_addPlotPair, SLOT(onUpdateData()));
     connect(this, SIGNAL(sgn_loadDataReady()), m_timeCtrl, SLOT(onUpdateData()));
@@ -126,12 +126,6 @@ void PlotXYDemo::onExportToGOG() {}
 
 void PlotXYDemo::onAddPlotPair()
 {
-    if(!m_addPlotPair)
-    {
-        m_addPlotPair = AddPlotPair::m_getInstance();
-        connect(this, SIGNAL(sgn_loadDataReady()), m_addPlotPair, SLOT(onUpdateData()));
-        m_addPlotPair->init(getCurrentFocusPlot());
-    }
     m_addPlotPair->onChangeStackIndex(m_lastSelectedType);
     m_addPlotPair->setPlotBaseInfo(m_pCurSelectedPlot);
     m_addPlotPair->show();
@@ -141,12 +135,6 @@ void PlotXYDemo::onAddPlotPair()
 void PlotXYDemo::onAddPlotPair(const QString& tabName, const QString& plotName)
 {
     // TODO:后续需要确认此处是否是需要当前选中的图表数据，或者是在其他图表列表中任意选择的图表，在后台更新他的数据
-    if(!m_addPlotPair)
-    {
-        m_addPlotPair = AddPlotPair::m_getInstance();
-        connect(this, SIGNAL(sgn_loadDataReady()), m_addPlotPair, SLOT(onUpdateData()));
-        m_addPlotPair->init(getCurrentFocusPlot());
-    }
     if(m_pCurSelectedPlot && (m_pCurSelectedPlot->currTabName() == tabName) &&
        (m_pCurSelectedPlot->currName() == plotName))
     {
@@ -272,18 +260,14 @@ void PlotXYDemo::onCustomContextMenuRequested(const QPoint& /* point*/)
     menu.exec(QCursor::pos());
 }
 
-void PlotXYDemo::onContextMenu(const QPoint& point)
+void PlotXYDemo::onContextMenu(const QPoint& /*point*/)
 {
     getCurrentFocusPlot();
 
-    QWidget* subWidget = QApplication::widgetAt(QCursor::pos().x(), QCursor::pos().y());
-    if(subWidget == nullptr)
-        return;
-
-    QString name = subWidget->objectName();
-    if(name == "PlotItemBase")
+    QString name;
+    if(m_pCurSelectedPlot)
     {
-        name = dynamic_cast<PlotItemBase*>(subWidget)->currName();
+        name = m_pCurSelectedPlot->currName();
     }
     else
     {
@@ -1145,8 +1129,7 @@ PlotType PlotXYDemo::getCurrentFocusPlot()
     if(subWidget == nullptr)
         return m_lastSelectedType;
 
-    QString objname = subWidget->objectName();
-    if(objname == "PlotItemBase")
+    if(subWidget->objectName() == "PlotItemBase")
     {
         m_pCurSelectedPlot = dynamic_cast<PlotItemBase*>(subWidget);
 

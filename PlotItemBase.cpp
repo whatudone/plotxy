@@ -69,7 +69,10 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     updateResizeFocusPos();
 }
 
-PlotItemBase::~PlotItemBase() {}
+PlotItemBase::~PlotItemBase()
+{
+    qDeleteAll(m_dataPairs);
+}
 
 void PlotItemBase::init() {}
 
@@ -341,7 +344,7 @@ void PlotItemBase::setAxisLabelFontSize(int size)
     m_axisLabelFont.setPointSize(size);
 }
 
-void PlotItemBase::addPlotPairData(QPair<QString, QString> pair)
+void PlotItemBase::addPlotPairData(const QPair<QString, QString>& pair)
 {
     DataPair* data = new DataPair(pair);
     m_dataPairs.append(data);
@@ -349,7 +352,7 @@ void PlotItemBase::addPlotPairData(QPair<QString, QString> pair)
     emit sgn_dataPairChanged(this);
 }
 
-void PlotItemBase::delPlotPairData(QPair<QString, QString> pair)
+void PlotItemBase::delPlotPairData(const QPair<QString, QString>& pair)
 {
     if(m_dataPairs.isEmpty())
         return;
@@ -366,8 +369,8 @@ void PlotItemBase::delPlotPairData(QPair<QString, QString> pair)
     }
 }
 
-void PlotItemBase::updatePlotPairData(QPair<QString, QString> oldPair,
-                                      QPair<QString, QString> newPair)
+void PlotItemBase::updatePlotPairData(const QPair<QString, QString>& oldPair,
+                                      const QPair<QString, QString>& newPair)
 {
     if(m_dataPairs.isEmpty())
         return;

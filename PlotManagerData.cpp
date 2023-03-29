@@ -8,6 +8,7 @@ PlotManagerData::~PlotManagerData() {}
 
 void PlotManagerData::addPlotManagerData(const QString& tabName, PlotItemBase* plotItem)
 {
+    // QMap 内部保证[]不存在会插入新的元素，所以不会访问越界
     m_plotMgrDataMap[tabName].append(plotItem);
 
     emit plotDataChanged(m_plotMgrDataMap);

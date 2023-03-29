@@ -55,10 +55,10 @@ public:
 	void rescale_yAxis(bool);
 	void rescaleAxis(bool);
 
-	virtual void addPlotPairData(QPair<QString, QString>);
-	virtual void delPlotPairData(QPair<QString, QString>);
-    virtual void updatePlotPairData(QPair<QString, QString> oldPair,
-                                    QPair<QString, QString> newPair);
+    void addPlotPairData(const QPair<QString, QString>& pair) override;
+    void delPlotPairData(const QPair<QString, QString>&);
+    void updatePlotPairData(const QPair<QString, QString>& oldPair,
+                            const QPair<QString, QString>& newPair);
 
 	virtual void setOuterFillColor(QColor color);
     virtual QColor getOuterFillColor()
