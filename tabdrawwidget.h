@@ -40,6 +40,8 @@ public:
     void horizonAlign();
     // 将所有图表缩放到同一大小垂直排开
     void verticalAlign();
+    // 查找当前
+    QList<PlotItemBase*> findAllPlots();
 
     static bool getIsLockingEdit();
     static void setIsLockingEdit(bool isLockingEdit);
@@ -105,6 +107,8 @@ private:
     static bool m_isLockingEdit;
     // stack order锁定是否打开
     static bool m_isLockingStack;
+    // 平铺展开时固定缩放大小
+    const QSize m_tileSize{400, 400};
 };
 
 #endif // TABDRAWWIDGET_H

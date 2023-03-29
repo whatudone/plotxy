@@ -389,9 +389,34 @@ void TabDrawWidget::bringForward() {}
 
 void TabDrawWidget::sendBackward() {}
 
-void TabDrawWidget::horizonAlign() {}
+void TabDrawWidget::horizonAlign()
+{
+    auto plots = findAllPlots();
+    auto size = plots.size();
+    QPoint startPoint(0, 0);
+    for(int var = 0; var < size; ++var)
+    {
+        plots.at(var)->setGeometry(QRect(startPoint, m_tileSize));
+        startPoint += QPoint(m_tileSize.width(), 0);
+    }
+}
 
-void TabDrawWidget::verticalAlign() {}
+void TabDrawWidget::verticalAlign()
+{
+    auto plots = findAllPlots();
+    auto size = plots.size();
+    QPoint startPoint(0, 0);
+    for(int var = 0; var < size; ++var)
+    {
+        plots.at(var)->setGeometry(QRect(startPoint, m_tileSize));
+        startPoint += QPoint(0, m_tileSize.height());
+    }
+}
+
+QList<PlotItemBase*> TabDrawWidget::findAllPlots()
+{
+    return findChildren<PlotItemBase*>(QString(), Qt::FindDirectChildrenOnly);
+}
 
 QCursor TabDrawWidget::getCurCursor() const
 {

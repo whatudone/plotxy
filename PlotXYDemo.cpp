@@ -513,9 +513,23 @@ void PlotXYDemo::onBringForward() {}
 
 void PlotXYDemo::onSendBackward() {}
 
-void PlotXYDemo::onHorizonAlign() {}
+void PlotXYDemo::onHorizonAlign()
+{
+    auto drawWidget = getCurDrawWidget();
+    if(drawWidget)
+    {
+        drawWidget->horizonAlign();
+    }
+}
 
-void PlotXYDemo::onVerticalAlign() {}
+void PlotXYDemo::onVerticalAlign()
+{
+    auto drawWidget = getCurDrawWidget();
+    if(drawWidget)
+    {
+        drawWidget->verticalAlign();
+    }
+}
 
 void PlotXYDemo::onSetSliderRange(int min, int max, int singleStep)
 {
