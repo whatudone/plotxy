@@ -44,7 +44,7 @@ void PlotText::paintEvent(QPaintEvent* event)
 	QPen pen;
 	QFont font, titleFont;
 	QRect rect;
-	QVector<DataPair*> dataVector;
+    QVector<DataPair*> dataVector = getDataPairs();
 	QSet<QString> xset, yset;
 	int i = 0, j = 0;
 	int horGT = 0;
@@ -252,12 +252,11 @@ void PlotText::onGetCurrentSeconds(double secs)
 void PlotText::drawXYTitle(QPainter& painter,
                            int& horiGridWidth,
                            int& verGridWidth,
-                           QVector<DataPair*>& dataVector,
+                           const QVector<DataPair*>& dataVector,
                            double& as)
 {
-	QRect rectXName, rectYName;
-	int i = 0, j = 0;
-    dataVector = getDataPairs();
+    QRect rectXName;
+
 	int icount = 0;
 	QFont font;
 	QPen fontPen;
@@ -268,8 +267,7 @@ void PlotText::drawXYTitle(QPainter& painter,
 	painter.setPen(fontPen);
     for(int i = 0; i < dataVector.size(); i++)
 	{
-		DataPair* temDataPair = new DataPair(nullptr);
-		temDataPair = dataVector.at(i);
+        DataPair* temDataPair = dataVector.at(i);
 		QPair<QString, QString> temPair = temDataPair->getDataPair();
 		QString xIncludePlus = temPair.first;
 		QString xColumn = xIncludePlus.split("+").front();
@@ -328,12 +326,12 @@ void PlotText::drawXYTitle(QPainter& painter,
 void PlotText::drawNMCell(QPainter& painter,
                           QSet<QString>& xset,
                           QSet<QString>& yset,
-                          QVector<DataPair*> dataVector,
+                          const QVector<DataPair*>& dataVector,
                           int& horiGridWidth,
                           int& verGridWidth,
                           double& as)
 {
-    dataVector = getDataPairs();
+
     for(int i = 0; i < dataVector.size(); i++)
 	{
 		QString xIncludePlus = dataVector.at(i)->getDataPair().first;
@@ -392,7 +390,6 @@ void PlotText::drawNMCell(QPainter& painter,
                                  0.5 * getGridWidth() - 0.5 * getAxisWidth());
 		}
 	}
-	update();
 }
 
 void PlotText::setGridStyle(GridStyle gridStyle)

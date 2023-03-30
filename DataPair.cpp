@@ -2,7 +2,7 @@
 #include <QPainter>
 #include <QTransform>
 
-DataPair::DataPair(QObject *parent)
+DataPair::DataPair(QObject* parent)
 	: QObject(parent)
 {
 	m_lineWidth = 2;
@@ -45,9 +45,9 @@ DataPair::DataPair(QObject *parent)
 	m_unit_show = true;
 }
 
-DataPair::DataPair(QPair<QString, QString> pair)
+DataPair::DataPair(const QPair<QString, QString>& pair)
+    : m_dataPair(pair)
 {
-	m_dataPair = pair;
 	m_lineWidth = 2;
 	m_isDraw = true;
 	m_color = Qt::white;
@@ -85,9 +85,7 @@ DataPair::DataPair(QPair<QString, QString> pair)
 	updatePairText(pair);
 }
 
-DataPair::~DataPair()
-{
-}
+DataPair::~DataPair() {}
 
 void DataPair::updatePairText(QPair<QString, QString> pair)
 {
@@ -100,29 +98,28 @@ void DataPair::updatePairText(QPair<QString, QString> pair)
 	QString yEntityType = pair.second;
 	QStringList xlist = xEntityType.split("+");
 	QStringList ylist = yEntityType.split("+");
-	if (xlist.size() == 1)
+    if(xlist.size() == 1)
 	{
 		m_attr_x = xlist.at(0);
 	}
-	else if (xlist.size() == 2)
+    else if(xlist.size() == 2)
 	{
 		m_object_x = xlist.at(0);
 		m_attr_x = xlist.at(1);
 	}
 
-	if (ylist.size() == 1)
+    if(ylist.size() == 1)
 	{
 		m_attr_y = ylist.at(0);
 	}
-	else if (ylist.size() == 2)
+    else if(ylist.size() == 2)
 	{
 		m_object_y = ylist.at(0);
 		m_attr_y = ylist.at(1);
 	}
-	
 }
 
-void DataPair::setDataPair(QPair<QString, QString> data)
+void DataPair::setDataPair(const QPair<QString, QString>& data)
 {
 	m_dataPair = data;
 	updatePairText(data);
@@ -144,7 +141,7 @@ void DataPair::setDraw(bool on)
 void DataPair::setColor(QColor color)
 {
 	m_color = color;
-	if (m_matchColor)
+    if(m_matchColor)
 	{
 		m_iconColor = m_color;
 		m_labelColor = m_color;
@@ -161,7 +158,7 @@ void DataPair::setLineMode(bool on)
 void DataPair::setMatchColor(bool on)
 {
 	m_matchColor = on;
-	if (m_matchColor)
+    if(m_matchColor)
 	{
 		m_iconColor = m_color;
 		m_labelColor = m_color;
@@ -256,7 +253,7 @@ void DataPair::setLabelTextShow(bool show)
 
 void DataPair::setLabelColor(QColor color)
 {
-	if (!m_matchColor)
+    if(!m_matchColor)
 		m_labelColor = color;
 	emit dataUpdate();
 }
@@ -333,5 +330,3 @@ void DataPair::setUnitShow(bool show)
 	m_unit_show = show;
 	emit dataUpdate();
 }
-
-

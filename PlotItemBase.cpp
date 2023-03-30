@@ -348,6 +348,7 @@ void PlotItemBase::addPlotPairData(const QPair<QString, QString>& pair)
 {
     DataPair* data = new DataPair(pair);
     m_dataPairs.append(data);
+    update();
 
     emit sgn_dataPairChanged(this);
 }
@@ -387,7 +388,7 @@ void PlotItemBase::updatePlotPairData(const QPair<QString, QString>& oldPair,
     }
 }
 
-void PlotItemBase::setDataPair(QVector<DataPair*> newVector)
+void PlotItemBase::setDataPair(QVector<DataPair*>& newVector)
 {
     m_dataPairs.swap(newVector);
 

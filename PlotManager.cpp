@@ -526,39 +526,33 @@ void PlotManager::refreshLightTextUI(PlotItemBase* plot)
 		{
 			ui.stackedWidget_LightTextDataSort->setCurrentIndex(0);
 			ui.groupBox_29->setVisible(false);
-            for(int i = ui.tableWidget_TextDataSort->rowCount(); i > 0; i--)
-			{
-				ui.tableWidget_TextDataSort->removeRow(ui.tableWidget_TextDataSort->rowCount() - 1);
-			}
-            for(int i = 0; i < plot->getDataPairs().size(); i++)
+            ui.tableWidget_TextDataSort->clearContents();
+            auto size = plot->getDataPairs().size();
+            ui.tableWidget_TextDataSort->setRowCount(size);
+            for(int i = 0; i < size; i++)
 			{
 				QString temFirst = dataPair[i]->getDataPair().first;
 				QString temEntityString = temFirst.split("+").front();
 				QString temAttriString = temFirst.split("+").back();
                 QTableWidgetItem* temEntity = new QTableWidgetItem(temEntityString);
                 QTableWidgetItem* temAttri = new QTableWidgetItem(temAttriString);
-				int row = ui.tableWidget_TextDataSort->rowCount();
-				ui.tableWidget_TextDataSort->insertRow(row);
-				ui.tableWidget_TextDataSort->setItem(row, 0, temEntity);
-				ui.tableWidget_TextDataSort->setItem(row, 1, temAttri);
+
+                ui.tableWidget_TextDataSort->setItem(i, 0, temEntity);
+                ui.tableWidget_TextDataSort->setItem(i, 1, temAttri);
 			}
 		}
 		else
 		{
 			ui.stackedWidget_LightTextDataSort->setCurrentIndex(1);
 			ui.groupBox_29->setVisible(true);
-            for(int i = ui.tableWidget_LightDataSort->rowCount(); i > 0; i--)
-			{
-                ui.tableWidget_LightDataSort->removeRow(ui.tableWidget_LightDataSort->rowCount() -
-                                                        1);
-			}
-            for(int i = 0; i < plot->getDataPairs().size(); i++)
+            ui.tableWidget_LightDataSort->clearContents();
+            auto size = plot->getDataPairs().size();
+            ui.tableWidget_LightDataSort->setRowCount(size);
+            for(int i = 0; i < size; i++)
 			{
 				QString temFirst = dataPair[i]->getDataPair().first;
                 QTableWidgetItem* temEntityAndAttri = new QTableWidgetItem(temFirst);
-				int row = ui.tableWidget_LightDataSort->rowCount();
-				ui.tableWidget_LightDataSort->insertRow(row);
-				ui.tableWidget_LightDataSort->setItem(row, 0, temEntityAndAttri);
+                ui.tableWidget_LightDataSort->setItem(i, 0, temEntityAndAttri);
 			}
 		}
 	}
@@ -1547,7 +1541,7 @@ void PlotManager::onPushButton_16Clicked()
 	refreshPlotDataUI(m_curSelectPlot);
 	ui.tableWidget_plotData->setCurrentCell(row + 1, 0);
 }
-
+// move up data pair
 void PlotManager::onPushButton_66Clicked()
 {
     if(m_curSelectPlot->currName().startsWith("Text"))
@@ -1561,27 +1555,24 @@ void PlotManager::onPushButton_66Clicked()
 		{
             QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
 			int temRow = ui.tableWidget_TextDataSort->currentRow();
-            DataPair* temNowDataPair = new DataPair(nullptr);
-			temNowDataPair = vec.at(temRow);
-			QString temNowFirst = temNowDataPair->getDataPair().first;
+
+            DataPair* temNowDataPair = vec.at(temRow);
+            QString temNowFirst = temNowDataPair->getDataPair().first;
 			QString temNowFront = temNowFirst.split("+").front();
 			QString temNowBack = temNowFirst.split("+").back();
-            DataPair* temAboveDataPair = new DataPair(nullptr);
-			temAboveDataPair = vec.at(ui.tableWidget_TextDataSort->currentRow() - 1);
+
+            DataPair* temAboveDataPair = vec.at(ui.tableWidget_TextDataSort->currentRow() - 1);
 			QString temAboveFirst = temAboveDataPair->getDataPair().first;
 			QString temAboveFront = temAboveFirst.split("+").front();
 			QString temAboveBack = temAboveFirst.split("+").back();
+
             QPair<QString, QString> newAbove =
                 qMakePair(temNowFront + "+" + temAboveBack, temAboveDataPair->getDataPair().second);
             QPair<QString, QString> newNow =
                 qMakePair(temAboveFront + "+" + temNowBack, temNowDataPair->getDataPair().second);
-			DataPair* newAboveDataPair = new DataPair(newAbove);
-			DataPair* newNowDataPair = new DataPair(newNow);
-			vec.remove(ui.tableWidget_TextDataSort->currentRow() - 1);
-			vec.insert(ui.tableWidget_TextDataSort->currentRow() - 1, newAboveDataPair);
-			vec.remove(ui.tableWidget_TextDataSort->currentRow());
-			vec.insert(ui.tableWidget_TextDataSort->currentRow(), newNowDataPair);
-			m_curSelectPlot->setDataPair(vec);
+
+            temNowDataPair->setDataPair(newNow);
+            temAboveDataPair->setDataPair(newAbove);
 			refreshLightTextUI(m_curSelectPlot);
 			ui.tableWidget_TextDataSort->setCurrentCell(row - 1, 0);
 		}
@@ -1589,27 +1580,21 @@ void PlotManager::onPushButton_66Clicked()
 		{
             QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
 			int temRow = ui.tableWidget_TextDataSort->currentRow();
-            DataPair* temNowDataPair = new DataPair(nullptr);
-			temNowDataPair = vec.at(temRow);
+            DataPair* temNowDataPair = vec.at(temRow);
 			QString temNowFirst = temNowDataPair->getDataPair().first;
 			QString temNowFront = temNowFirst.split("+").front();
 			QString temNowBack = temNowFirst.split("+").back();
-            DataPair* temAboveDataPair = new DataPair(nullptr);
-			temAboveDataPair = vec.at(ui.tableWidget_TextDataSort->currentRow() - 1);
-			QString temAboveFirst = temAboveDataPair->getDataPair().first;
+            DataPair* temAboveDataPair = vec.at(ui.tableWidget_TextDataSort->currentRow() - 1);
+            QString temAboveFirst = temAboveDataPair->getDataPair().first;
 			QString temAboveFront = temAboveFirst.split("+").front();
 			QString temAboveBack = temAboveFirst.split("+").back();
             QPair<QString, QString> newAbove =
                 qMakePair(temAboveFront + "+" + temNowBack, temAboveDataPair->getDataPair().second);
             QPair<QString, QString> newNow =
                 qMakePair(temNowFront + "+" + temAboveBack, temNowDataPair->getDataPair().second);
-			DataPair* newAboveDataPair = new DataPair(newAbove);
-			DataPair* newNowDataPair = new DataPair(newNow);
-			vec.remove(ui.tableWidget_TextDataSort->currentRow() - 1);
-			vec.insert(ui.tableWidget_TextDataSort->currentRow() - 1, newAboveDataPair);
-			vec.remove(ui.tableWidget_TextDataSort->currentRow());
-			vec.insert(ui.tableWidget_TextDataSort->currentRow(), newNowDataPair);
-			m_curSelectPlot->setDataPair(vec);
+
+            temNowDataPair->setDataPair(newNow);
+            temAboveDataPair->setDataPair(newAbove);
 			refreshLightTextUI(m_curSelectPlot);
 			ui.tableWidget_TextDataSort->setCurrentCell(row - 1, 1);
 		}
@@ -1627,23 +1612,17 @@ void PlotManager::onPushButton_66Clicked()
 		{
             QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
 			int temRow = ui.tableWidget_LightDataSort->currentRow();
-            DataPair* temNowDataPair = new DataPair(nullptr);
-			temNowDataPair = vec.at(temRow);
+            DataPair* temNowDataPair = vec.at(temRow);
 			QString temNowFirst = temNowDataPair->getDataPair().first;
-            DataPair* temAboveDataPair = new DataPair(nullptr);
-			temAboveDataPair = vec.at(ui.tableWidget_LightDataSort->currentRow() - 1);
-			QString temAboveFirst = temAboveDataPair->getDataPair().first;
+            DataPair* temAboveDataPair = vec.at(ui.tableWidget_LightDataSort->currentRow() - 1);
+            QString temAboveFirst = temAboveDataPair->getDataPair().first;
             QPair<QString, QString> newAbove =
                 qMakePair(temNowFirst, temAboveDataPair->getDataPair().second);
             QPair<QString, QString> newNow =
                 qMakePair(temAboveFirst, temNowDataPair->getDataPair().second);
-			DataPair* newAboveDataPair = new DataPair(newAbove);
-			DataPair* newNowDataPair = new DataPair(newNow);
-			vec.remove(ui.tableWidget_LightDataSort->currentRow() - 1);
-			vec.insert(ui.tableWidget_LightDataSort->currentRow() - 1, newAboveDataPair);
-			vec.remove(ui.tableWidget_LightDataSort->currentRow());
-			vec.insert(ui.tableWidget_LightDataSort->currentRow(), newNowDataPair);
-			m_curSelectPlot->setDataPair(vec);
+
+            temNowDataPair->setDataPair(newNow);
+            temAboveDataPair->setDataPair(newAbove);
 			refreshLightTextUI(m_curSelectPlot);
 			ui.tableWidget_LightDataSort->setCurrentCell(row - 1, 0);
 		}
@@ -1658,7 +1637,7 @@ void PlotManager::onPushButton_66Clicked()
 	//refreshLightTextUI(m_curSelectPlot);
 	//ui.tableWidget_TextDataSort->setCurrentCell(row - 1, 0);
 }
-
+// move down data pair
 void PlotManager::onPushButton_67Clicked()
 {
     if(m_curSelectPlot->currName().startsWith("Text"))
@@ -1672,13 +1651,12 @@ void PlotManager::onPushButton_67Clicked()
 		{
             QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
 			int temRow = ui.tableWidget_TextDataSort->currentRow();
-            DataPair* temNowDataPair = new DataPair(nullptr);
-			temNowDataPair = vec.at(temRow);
+            DataPair* temNowDataPair = vec.at(temRow);
 			QString temNowFirst = temNowDataPair->getDataPair().first;
 			QString temNowFront = temNowFirst.split("+").front();
 			QString temNowBack = temNowFirst.split("+").back();
-            DataPair* temAboveDataPair = new DataPair(nullptr);
-			temAboveDataPair = vec.at(ui.tableWidget_TextDataSort->currentRow() + 1);
+
+            DataPair* temAboveDataPair = vec.at(ui.tableWidget_TextDataSort->currentRow() + 1);
 			QString temAboveFirst = temAboveDataPair->getDataPair().first;
 			QString temAboveFront = temAboveFirst.split("+").front();
 			QString temAboveBack = temAboveFirst.split("+").back();
@@ -1686,13 +1664,9 @@ void PlotManager::onPushButton_67Clicked()
                 qMakePair(temNowFront + "+" + temAboveBack, temAboveDataPair->getDataPair().second);
             QPair<QString, QString> newNow =
                 qMakePair(temAboveFront + "+" + temNowBack, temNowDataPair->getDataPair().second);
-			DataPair* newAboveDataPair = new DataPair(newAbove);
-			DataPair* newNowDataPair = new DataPair(newNow);
-			vec.remove(ui.tableWidget_TextDataSort->currentRow() + 1);
-			vec.insert(ui.tableWidget_TextDataSort->currentRow() + 1, newAboveDataPair);
-			vec.remove(ui.tableWidget_TextDataSort->currentRow());
-			vec.insert(ui.tableWidget_TextDataSort->currentRow(), newNowDataPair);
-			m_curSelectPlot->setDataPair(vec);
+
+            temNowDataPair->setDataPair(newNow);
+            temAboveDataPair->setDataPair(newAbove);
 			refreshLightTextUI(m_curSelectPlot);
 			ui.tableWidget_TextDataSort->setCurrentCell(row + 1, 0);
 		}
@@ -1700,13 +1674,11 @@ void PlotManager::onPushButton_67Clicked()
 		{
             QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
 			int temRow = ui.tableWidget_TextDataSort->currentRow();
-            DataPair* temNowDataPair = new DataPair(nullptr);
-			temNowDataPair = vec.at(temRow);
+            DataPair* temNowDataPair = vec.at(temRow);
 			QString temNowFirst = temNowDataPair->getDataPair().first;
 			QString temNowFront = temNowFirst.split("+").front();
 			QString temNowBack = temNowFirst.split("+").back();
-            DataPair* temAboveDataPair = new DataPair(nullptr);
-			temAboveDataPair = vec.at(ui.tableWidget_TextDataSort->currentRow() + 1);
+            DataPair* temAboveDataPair = vec.at(ui.tableWidget_TextDataSort->currentRow() + 1);
 			QString temAboveFirst = temAboveDataPair->getDataPair().first;
 			QString temAboveFront = temAboveFirst.split("+").front();
 			QString temAboveBack = temAboveFirst.split("+").back();
@@ -1714,13 +1686,8 @@ void PlotManager::onPushButton_67Clicked()
                 qMakePair(temAboveFront + "+" + temNowBack, temAboveDataPair->getDataPair().second);
             QPair<QString, QString> newNow =
                 qMakePair(temNowFront + "+" + temAboveBack, temNowDataPair->getDataPair().second);
-			DataPair* newAboveDataPair = new DataPair(newAbove);
-			DataPair* newNowDataPair = new DataPair(newNow);
-			vec.remove(ui.tableWidget_TextDataSort->currentRow() + 1);
-			vec.insert(ui.tableWidget_TextDataSort->currentRow() + 1, newAboveDataPair);
-			vec.remove(ui.tableWidget_TextDataSort->currentRow());
-			vec.insert(ui.tableWidget_TextDataSort->currentRow(), newNowDataPair);
-			m_curSelectPlot->setDataPair(vec);
+            temNowDataPair->setDataPair(newNow);
+            temAboveDataPair->setDataPair(newAbove);
 			refreshLightTextUI(m_curSelectPlot);
 			ui.tableWidget_TextDataSort->setCurrentCell(row + 1, 1);
 		}
@@ -1738,23 +1705,16 @@ void PlotManager::onPushButton_67Clicked()
 		{
             QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
 			int temRow = ui.tableWidget_LightDataSort->currentRow();
-            DataPair* temNowDataPair = new DataPair(nullptr);
-			temNowDataPair = vec.at(temRow);
+            DataPair* temNowDataPair = vec.at(temRow);
 			QString temNowFirst = temNowDataPair->getDataPair().first;
-            DataPair* temAboveDataPair = new DataPair(nullptr);
-			temAboveDataPair = vec.at(ui.tableWidget_LightDataSort->currentRow() + 1);
+            DataPair* temAboveDataPair = vec.at(ui.tableWidget_LightDataSort->currentRow() + 1);
 			QString temAboveFirst = temAboveDataPair->getDataPair().first;
             QPair<QString, QString> newAbove =
                 qMakePair(temNowFirst, temAboveDataPair->getDataPair().second);
             QPair<QString, QString> newNow =
                 qMakePair(temAboveFirst, temNowDataPair->getDataPair().second);
-			DataPair* newAboveDataPair = new DataPair(newAbove);
-			DataPair* newNowDataPair = new DataPair(newNow);
-			vec.remove(ui.tableWidget_LightDataSort->currentRow() + 1);
-			vec.insert(ui.tableWidget_LightDataSort->currentRow() + 1, newAboveDataPair);
-			vec.remove(ui.tableWidget_LightDataSort->currentRow());
-			vec.insert(ui.tableWidget_LightDataSort->currentRow(), newNowDataPair);
-			m_curSelectPlot->setDataPair(vec);
+            temNowDataPair->setDataPair(newNow);
+            temAboveDataPair->setDataPair(newAbove);
 			refreshLightTextUI(m_curSelectPlot);
 			ui.tableWidget_LightDataSort->setCurrentCell(row + 1, 0);
 		}

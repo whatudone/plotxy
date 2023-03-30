@@ -154,7 +154,7 @@ void PlotDoppler::paintEvent(QPaintEvent* event)
 {
 	int width = this->width();
 	int height = this->height();
-	//»­±Ê
+
 	QPainter painter(this);
 	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
 

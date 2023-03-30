@@ -82,12 +82,12 @@ private:
     void drawXYTitle(QPainter& painter,
                      int& horiGridWidth,
                      int& verGridWidth,
-                     QVector<DataPair*>& dataVector,
+                     const QVector<DataPair*>& dataVector,
                      double& as);
     void drawNMCell(QPainter& painter,
                     QSet<QString>& xset,
                     QSet<QString>& yset,
-                    QVector<DataPair*> dataVector,
+                    const QVector<DataPair*>& dataVector,
                     int& horiGridWidth,
                     int& verGridWidth,
                     double& as);

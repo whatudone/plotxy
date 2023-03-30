@@ -208,11 +208,11 @@ public:
     virtual void delPlotPairData(const QPair<QString, QString>& pair);
     virtual void updatePlotPairData(const QPair<QString, QString>& oldPair,
                                     const QPair<QString, QString>& newPair);
-    QVector<DataPair*> getDataPairs()
+    const QVector<DataPair*>& getDataPairs()
     {
         return m_dataPairs;
     }
-	void setDataPair(QVector<DataPair*> newVector);
+    void setDataPair(QVector<DataPair*>& newVector);
 
     virtual PlotType plotType() const
     {
