@@ -286,32 +286,6 @@ void PlotRTI::setAxisTickLabelShow(bool on, AxisType type)
 	m_customPlot->replot();
 }
 
-void PlotRTI::setCoordRangeX(double lower, double upper)
-{
-    if(m_coordBgn_x == lower && m_coordEnd_x == upper)
-	{
-		return;
-	}
-
-	m_coordBgn_x = lower;
-	m_coordEnd_x = upper;
-	m_customPlot->xAxis->setRange(lower, upper);
-    //	m_customPlot->replot();
-}
-
-void PlotRTI::setCoordRangeY(double lower, double upper)
-{
-    if(m_coordBgn_y == lower && m_coordEnd_y == upper)
-	{
-		return;
-	}
-
-	m_coordBgn_y = lower;
-	m_coordEnd_y = upper;
-	m_customPlot->yAxis->setRange(lower, upper);
-    //	m_customPlot->replot();
-}
-
 void PlotRTI::setHorzGrids(uint count)
 {
     if(m_horzGrids == count || count < 0)

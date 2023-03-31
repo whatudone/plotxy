@@ -177,12 +177,24 @@ void PlotItemBase::setCoordRangeX(double lower, double upper)
 {
     m_coordBgn_x = lower;
     m_coordEnd_x = upper;
+    if(m_customPlot)
+    {
+        m_customPlot->xAxis->setRange(lower, upper);
+        m_customPlot->replot();
+    }
+    update();
 }
 
 void PlotItemBase::setCoordRangeY(double lower, double upper)
 {
     m_coordBgn_y = lower;
     m_coordEnd_y = upper;
+    if(m_customPlot)
+    {
+        m_customPlot->yAxis->setRange(lower, upper);
+        m_customPlot->replot();
+    }
+    update();
 }
 
 void PlotItemBase::getCoordRangeX(double& lower, double& upper)

@@ -46,34 +46,31 @@ public:
 	void setAxisTickLabelShow(bool on, AxisType type);
     void setMinimumMargins(const QMargins& margins);
 
-	virtual void setCoordRangeX(double lower, double upper);
-	virtual void setCoordRangeY(double lower, double upper);
+    void setHorzGrids(uint count) override;
+    void setVertGrids(uint count) override;
+    void setAxisColorWidth(QColor color, uint width);
+    void setGridColorWidth(QColor color, uint width);
+    void setGridFillColor(QColor color);
 
-	virtual void setHorzGrids(uint count);
-	virtual void setVertGrids(uint count);
-	virtual void setAxisColorWidth(QColor color, uint width);
-	virtual void setGridColorWidth(QColor color, uint width);
-	virtual void setGridFillColor(QColor color);
+    void setGridVisible(bool enable);
+    void setTickLabelColor(QColor& color);
+    void setTickLabelFont(QFont& font);
+    void setTickLabelFontSize(int size);
+    void setGridStyle(GridStyle style);
+    void setGridDensity(GridDensity density);
 
-	virtual void setGridVisible(bool enable);
-	virtual void setTickLabelColor(QColor& color);
-	virtual void setTickLabelFont(QFont& font);
-	virtual void setTickLabelFontSize(int size);
-	virtual void setGridStyle(GridStyle style);
-	virtual void setGridDensity(GridDensity density);
-
-	virtual void setUnitsShowX(bool on);
-	virtual void setUnitsShowY(bool on);
-	virtual void setUnitsX(const QString& units);
-	virtual void setUnitsY(const QString& units);
+    void setUnitsShowX(bool on);
+    void setUnitsShowY(bool on);
+    void setUnitsX(const QString& units);
+    void setUnitsY(const QString& units);
     void setTitle(const QString& str);
     void setTitleColor(const QColor& color);
     void setTitleFont(const QFont& font);
 	void setTitleVisible(bool show);
-	virtual void setTitleFontSize(int size);
-	virtual void setTitleFillColor(QColor& color);
+    void setTitleFontSize(int size);
+    void setTitleFillColor(QColor& color);
 
-    virtual PlotType plotType() const
+    PlotType plotType() const override
     {
         return Type_PlotAScope;
     }
@@ -82,8 +79,6 @@ public:
     static int m_instanceCount; //实体个数
 
 private:
-    QCustomPlot* m_customPlot;
-
     double m_topPadding; //绘图间隔-top
     double m_bottomPadding; //绘图间隔-bottom
     double m_leftPadding; //绘图间隔-left

@@ -641,32 +641,6 @@ void PlotScatter::rescaleAxis(bool on)
 	m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
-void PlotScatter::setCoordRangeX(double lower, double upper)
-{
-    if(m_coordBgn_x == lower && m_coordEnd_x == upper)
-	{
-		return;
-	}
-
-	m_coordBgn_x = lower;
-	m_coordEnd_x = upper;
-	m_customPlot->xAxis->setRange(m_coordBgn_x, m_coordEnd_x);
-	m_customPlot->replot();
-}
-
-void PlotScatter::setCoordRangeY(double lower, double upper)
-{
-    if(m_coordBgn_y == lower && m_coordEnd_y == upper)
-	{
-		return;
-	}
-
-	m_coordBgn_y = lower;
-	m_coordEnd_y = upper;
-	m_customPlot->yAxis->setRange(m_coordBgn_y, m_coordEnd_y);
-	m_customPlot->replot();
-}
-
 void PlotScatter::setHorzGrids(uint count)
 {
     if(m_horzGrids == count || count < 0)

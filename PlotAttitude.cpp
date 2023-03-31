@@ -344,30 +344,6 @@ QSize PlotAttitude::minimumSizeHint() const
 	return QSize();
 }
 
-void PlotAttitude::setCoordRangeX(double lower, double upper)
-{
-    if(m_coordBgn_x == lower && m_coordEnd_x == upper)
-	{
-		return;
-	}
-
-	m_coordBgn_x = lower;
-	m_coordEnd_x = upper;
-	update();
-}
-
-void PlotAttitude::setCoordRangeY(double lower, double upper)
-{
-    if(m_coordBgn_y == lower && m_coordEnd_y == upper)
-	{
-		return;
-	}
-
-	m_coordBgn_y = lower;
-	m_coordEnd_y = upper;
-	update();
-}
-
 void PlotAttitude::setHorzGrids(uint count)
 {
     if(m_horzGrids == count || count <= 0)

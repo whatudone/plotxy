@@ -45,8 +45,8 @@ public slots:
     void onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>>) override;
 
 	//axis
-	void setCoordRangeX(double lower, double upper);
-	void setCoordRangeY(double lower, double upper);
+    void setCoordRangeX(double lower, double upper) override;
+    void setCoordRangeY(double lower, double upper) override;
 
 	//style
 	void slot_setRangeDrag(bool);
@@ -61,7 +61,6 @@ public slots:
 public:
     static int m_instanceCount; //实体个数
 private:
-    QCustomPlot* m_customPlot;
     QCPPolarAxisAngular* m_angularAxis;
 	QMap<QString, QMap<int, QColor>> m_thresholdColorMap;
 

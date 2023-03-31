@@ -44,35 +44,32 @@ public:
 	void setAxisVisible(bool on, AxisType type);
 	void setAxisTickLabelShow(bool on, AxisType type);
 
-	void setCoordRangeX(double lower, double upper);
-	void setCoordRangeY(double lower, double upper);
+    void setHorzGrids(uint count);
+    void setVertGrids(uint count);
+    void setAxisColorWidth(QColor color, uint width);
+    void setGridColorWidth(QColor color, uint width);
 
-	virtual void setHorzGrids(uint count);
-	virtual void setVertGrids(uint count);
-	virtual void setAxisColorWidth(QColor color, uint width);
-	virtual void setGridColorWidth(QColor color, uint width);
+    void setGridFillColor(QColor color);
 
-	virtual void setGridFillColor(QColor color);
+    void setGridVisible(bool enable);
+    void setTickLabelColor(QColor& color);
+    void setTickLabelFont(QFont& font);
+    void setTickLabelFontSize(int size);
+    void setGridStyle(GridStyle style);
+    void setGridDensity(GridDensity density);
 
-	virtual void setGridVisible(bool enable);
-	virtual void setTickLabelColor(QColor& color);
-	virtual void setTickLabelFont(QFont& font);
-	virtual void setTickLabelFontSize(int size);
-	virtual void setGridStyle(GridStyle style);
-	virtual void setGridDensity(GridDensity density);
+    void setUnitsShowX(bool on);
+    void setUnitsShowY(bool on);
+    void setUnitsX(const QString& units);
+    void setUnitsY(const QString& units);
+    void setTitle(QString& str);
+    void setTitleColor(QColor& color);
+    void setTitleFillColor(QColor& color);
+    void setTitleFontSize(int size);
+    void setTitleFont(QFont& font);
+    void setTitleVisible(bool show);
 
-	virtual void setUnitsShowX(bool on);
-	virtual void setUnitsShowY(bool on);
-	virtual void setUnitsX(const QString& units);
-	virtual void setUnitsY(const QString& units);
-	virtual void setTitle(QString& str);
-	virtual void setTitleColor(QColor& color);
-	virtual void setTitleFillColor(QColor& color);
-	virtual void setTitleFontSize(int size);
-	virtual void setTitleFont(QFont& font);
-	virtual void setTitleVisible(bool show);
-
-    virtual PlotType plotType() const
+    PlotType plotType() const override
     {
         return Type_PlotRTI;
     }
@@ -81,7 +78,6 @@ public:
     static int m_instanceCount; //实体个数
 
 private:
-    QCustomPlot* m_customPlot;
     QCPColorMap* m_colorMap;
     QCPColorScale* m_colorScale;
     QCPMarginGroup* m_marginGroup;

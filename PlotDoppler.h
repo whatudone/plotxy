@@ -47,8 +47,8 @@ public:
 
 	virtual void setOuterFillColor(QColor color);
 
-	void setCoordRangeX(double lower, double upper);
-	void setCoordRangeY(double lower, double upper);
+    void setCoordRangeX(double lower, double upper) override;
+    void setCoordRangeY(double lower, double upper) override;
 
 	virtual void setHorzGrids(uint count);
 	virtual void setVertGrids(uint count);
@@ -87,7 +87,6 @@ public:
     static int m_instanceCount; //实体个数
 
 private:
-    QCustomPlot* m_customPlot;
     QCPColorMap* m_colorMap;
     QCPColorScale* m_colorScale;
     QCPMarginGroup* m_marginGroup;

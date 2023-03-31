@@ -67,9 +67,6 @@ public:
     QSize sizeHint() const;
     QSize minimumSizeHint() const;
 
-	virtual void setCoordRangeX(double lower, double upper);
-	virtual void setCoordRangeY(double lower, double upper);
-
 	virtual void setHorzGrids(uint count);
 	virtual void setVertGrids(uint count);
 	virtual void setAxisColorWidth(QColor color, uint width);

@@ -60,9 +60,6 @@ public:
     void updatePlotPairData(const QPair<QString, QString>& oldPair,
                             const QPair<QString, QString>& newPair);
 
-	virtual void setCoordRangeX(double lower, double upper);
-	virtual void setCoordRangeY(double lower, double upper);
-
 	virtual void setHorzGrids(uint);
 	virtual void setVertGrids(uint);
 
@@ -115,7 +112,6 @@ private:
     double m_leftPadding; //绘图间隔-left
     double m_rightPadding; //绘图间隔-right
 
-    QCustomPlot* m_customPlot;
     struct ScatterInfo
 	{
 		QPointer<QCPGraph> graph;
