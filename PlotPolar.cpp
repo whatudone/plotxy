@@ -341,20 +341,22 @@ void PlotPolar::slot_setRangeZoom(bool enabled)
 	m_customPlot->replot();
 }
 
-void PlotPolar::onGetCurrentSeconds(double secs)
+void PlotPolar::slot_setMouseEventEnable(bool on)
 {
-    if(getDataPairs().isEmpty())
-		return;
+    m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, on);
+}
 
+void PlotPolar::updateDataForDataPairsByTime(double secs)
+{
     int isize = getDataPairs().size();
-	QVector<QCPPolarGraph*> graph;
+    QVector<QCPPolarGraph*> graph;
 
     for(int i = 0; i < isize; ++i)
-	{
+    {
         QString xcolumn = getDataPairs().at(i)->getDataPair().first;
         QString ycolumn = getDataPairs().at(i)->getDataPair().second;
-		QStringList xlist = xcolumn.split("+");
-		QStringList ylist = ycolumn.split("+");
+        QStringList xlist = xcolumn.split("+");
+        QStringList ylist = ycolumn.split("+");
 
         QVector<double> x = DataManager::getInstance()
                                 ->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs)
@@ -363,22 +365,17 @@ void PlotPolar::onGetCurrentSeconds(double secs)
                                 ->getEntityAttr_MaxPartValue_List(ylist.at(0), ylist.at(1), secs)
                                 .toVector();
 
-		QCPPolarGraph* g = new QCPPolarGraph(m_angularAxis, m_angularAxis->radialAxis());
-		g->setScatterStyle(QCPScatterStyle::ssDisc);
-		g->setLineStyle(QCPPolarGraph::lsNone);
-		graph.append(g);
-		graph[i]->setPen(QPen(QColor(255, 0, 0), 2));
-		graph[i]->addData(x, y);
-	}
-	m_customPlot->replot();
+        QCPPolarGraph* g = new QCPPolarGraph(m_angularAxis, m_angularAxis->radialAxis());
+        g->setScatterStyle(QCPScatterStyle::ssDisc);
+        g->setLineStyle(QCPPolarGraph::lsNone);
+        graph.append(g);
+        graph[i]->setPen(QPen(QColor(255, 0, 0), 2));
+        graph[i]->addData(x, y);
+    }
+    m_customPlot->replot();
 
-	qDeleteAll(graph);
-	graph.clear();
-}
-
-void PlotPolar::slot_setMouseEventEnable(bool on)
-{
-	m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, on);
+    qDeleteAll(graph);
+    graph.clear();
 }
 
 void PlotPolar::onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>> targetMap)

@@ -78,12 +78,6 @@ void PlotDial::updatePointer(double secs)
     painter.drawPolygon(points, 4);
 }
 
-void PlotDial::onGetCurrentSeconds(double secs)
-{
-    m_seconds = secs;
-    update();
-}
-
 void PlotDial::paintEvent(QPaintEvent* event)
 {
     QPainter painter(this);
@@ -176,3 +170,5 @@ void PlotDial::paintEvent(QPaintEvent* event)
 
     return PlotItemBase::paintEvent(event);
 }
+
+void PlotDial::updateDataForDataPairsByTime(double secs) {}

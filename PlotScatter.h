@@ -91,15 +91,12 @@ public:
         return Type_PlotScatter;
     }
 
-public slots:
-    void onGetCurrentSeconds(double secs) override;
-
 protected:
     void paintEvent(QPaintEvent* event) override;
 
 private:
 	void initPlot();
-    void getDataInfo(double secs);
+    void updateDataForDataPairsByTime(double secs);
 	void updateData(double secs, int index, DataPair* data);
 
 private:

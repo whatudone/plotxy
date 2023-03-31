@@ -94,20 +94,6 @@ void PlotAScope::initPlot()
 	m_customPlot->replot();
 }
 
-void PlotAScope::onGetCurrentSeconds(double secs)
-{
-    if(getDataPairs().isEmpty())
-	{
-		return;
-	}
-    int isize = getDataPairs().size();
-    for(int i = 0; i < isize; ++i)
-	{
-        QString xcolumn = getDataPairs().at(i)->getDataPair().first;
-        QString ycolumn = getDataPairs().at(i)->getDataPair().second;
-	}
-}
-
 void PlotAScope::paintEvent(QPaintEvent* event)
 {
 	int width = this->width();

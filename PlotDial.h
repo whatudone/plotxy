@@ -22,11 +22,12 @@ public:
     {
         return Type_PlotDial;
     }
-public slots:
-    void onGetCurrentSeconds(double secs) override;
 
 protected:
     void paintEvent(QPaintEvent* event);
+
+private:
+    void updateDataForDataPairsByTime(double secs) override;
 
 private:
     bool m_bThinStyle;

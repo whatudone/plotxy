@@ -102,7 +102,6 @@ public:
         return Type_PlotAttitude;
     }
 
-public slots:
 	//
 	void setTickRadiusPercentage(int);
 	void setTextPercentage(int);
@@ -127,12 +126,13 @@ public slots:
     void setAxisLabelFont(QFont& font);
 	void setAxisLabelFontSize(int size);
 
+public slots:
 	//设置旋转角度值
 	void slot_setPitchValue(double pitchValue);
 
 	//设置前进旋转值
 	void slot_setRollValue(double rollValue);
 
-	//接收当前时间
-	void onGetCurrentSeconds(double);
+private:
+    void updateDataForDataPairsByTime(double secs) override;
 };

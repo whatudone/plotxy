@@ -179,7 +179,7 @@ void PlotScatter::updatePlotPairData(const QPair<QString, QString>& oldPair,
 	}
 }
 
-void PlotScatter::getDataInfo(double secs)
+void PlotScatter::updateDataForDataPairsByTime(double secs)
 {
     if(getDataPairs().isEmpty())
 		return;
@@ -464,13 +464,6 @@ void PlotScatter::updateData(double secs, int index, DataPair* data)
 		m_mapScatter[dataPair].tracer->setVisible(false);
 		m_mapScatter[dataPair].tracerText->setVisible(false);
 	}
-}
-
-void PlotScatter::onGetCurrentSeconds(double secs)
-{
-	m_curSeconds = secs;
-	//    update();
-	getDataInfo(m_curSeconds);
 }
 
 void PlotScatter::paintEvent(QPaintEvent* event)

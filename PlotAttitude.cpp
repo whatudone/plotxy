@@ -556,21 +556,17 @@ void PlotAttitude::slot_setRollValue(double rollValue)
 	update();
 }
 
-void PlotAttitude::onGetCurrentSeconds(double secs)
+void PlotAttitude::updateDataForDataPairsByTime(double secs)
 {
-    if(getDataPairs().isEmpty())
-		return;
 
     int isize = getDataPairs().size();
     QString xcolumn = getDataPairs().at(isize - 1)->getDataPair().first;
     QString ycolumn = getDataPairs().at(isize - 1)->getDataPair().second;
-	QStringList xlist = xcolumn.split("+");
-	QStringList ylist = ycolumn.split("+");
+    QStringList xlist = xcolumn.split("+");
+    QStringList ylist = ycolumn.split("+");
 
     m_xValueList =
         DataManager::getInstance()->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs);
     m_yValueList =
         DataManager::getInstance()->getEntityAttr_MaxPartValue_List(ylist.at(0), ylist.at(1), secs);
-
-	update();
 }

@@ -70,8 +70,10 @@ private:
 
 public slots:
 	void slot_getLightData(QList<QList<QString>>);
-    void onGetCurrentSeconds(double secs) override;
 	//更新后的由base 的sgn_发出
 	void slot_onAddButtonClicked();
+
+private:
+    void updateDataForDataPairsByTime(double secs) override;
 };
 #endif // _PLOT_LIGHT_H_

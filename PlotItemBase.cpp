@@ -430,6 +430,15 @@ void PlotItemBase::slot_setVisible(bool on)
     this->setVisible(on);
 }
 
+void PlotItemBase::onGetCurrentSeconds(double secs)
+{
+    m_seconds = secs;
+    if(getDataPairs().isEmpty())
+        return;
+    updateDataForDataPairsByTime(m_seconds);
+    update();
+}
+
 void PlotItemBase::slot_updateRect(const QRect& rect)
 {
     setRect(rect);
@@ -608,6 +617,8 @@ void PlotItemBase::paintEvent(QPaintEvent* event)
 void PlotItemBase::onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>> /* targetMap*/) {}
 
 void PlotItemBase::onDataPairUpdateData() {}
+
+void PlotItemBase::updateDataForDataPairsByTime(double secs) {}
 
 bool PlotItemBase::getIsNeedDrawBorder() const
 {

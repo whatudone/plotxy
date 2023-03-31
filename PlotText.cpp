@@ -197,56 +197,53 @@ void PlotText::drawData(QSet<QString>& xset,
 	//update();
 }
 
-void PlotText::onGetCurrentSeconds(double secs)
+void PlotText::updateDataForDataPairsByTime(double secs)
 {
-	m_secValue = secs;
-    if(getDataPairs().isEmpty())
-		return;
+
     int isize = getDataPairs().size();
-	int entityNum = 0;
-	int attriNum = 0;
-	m_entityName.clear();
-	m_attriName.clear();
-	m_temValueList.clear();
-	m_valueList.clear();
+    int entityNum = 0;
+    int attriNum = 0;
+    m_entityName.clear();
+    m_attriName.clear();
+    m_temValueList.clear();
+    m_valueList.clear();
     for(int i = 0; i < isize; i++)
-	{
+    {
         QString getTextData = getDataPairs().at(i)->getDataPair().first;
-		QList<QString> textValueList = getTextData.split("+");
+        QList<QString> textValueList = getTextData.split("+");
         if(m_entityName.isEmpty())
-			m_entityName.push_back(textValueList.front());
+            m_entityName.push_back(textValueList.front());
         for(int i = 0; i < m_entityName.size(); i++)
-		{
+        {
             if(textValueList.front() == m_entityName.at(i))
-				entityNum++;
-		}
+                entityNum++;
+        }
         if(entityNum == 0)
-			m_entityName.push_back(textValueList.front());
-		entityNum = 0;
+            m_entityName.push_back(textValueList.front());
+        entityNum = 0;
 
         if(m_attriName.isEmpty())
-			m_attriName.push_back(textValueList.back());
+            m_attriName.push_back(textValueList.back());
         for(int i = 0; i < m_attriName.size(); i++)
-		{
+        {
             if(textValueList.back() == m_attriName.at(i))
-				attriNum++;
-		}
+                attriNum++;
+        }
         if(attriNum == 0)
-			m_attriName.push_back(textValueList.back());
-		attriNum = 0;
-	}
+            m_attriName.push_back(textValueList.back());
+        attriNum = 0;
+    }
     for(auto ite = m_entityName.begin(); ite != m_entityName.end(); ite++)
-	{
+    {
         for(auto ita = m_attriName.begin(); ita != m_attriName.end(); ita++)
-		{
+        {
             m_valueList =
                 DataManager::getInstance()->getEntityAttr_MaxPartValue_List(*ite, *ita, secs);
             if(m_valueList.isEmpty())
-				m_valueList.push_back(0);
-			m_temValueList.push_back(m_valueList);
-		}
-	}
-	update();
+                m_valueList.push_back(0);
+            m_temValueList.push_back(m_valueList);
+        }
+    }
 }
 
 void PlotText::drawXYTitle(QPainter& painter,
@@ -318,8 +315,8 @@ void PlotText::drawXYTitle(QPainter& painter,
 	}
 	m_xColumnList.clear();
 	m_yColumnList.clear();
-    if(!(m_secValue == -1))
-        onGetCurrentSeconds(m_secValue);
+    if(m_secValue != -1)
+        updateDataForDataPairsByTime(m_secValue);
 	update();
 }
 

@@ -40,15 +40,7 @@ void PlotBar::onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>> targetM
     m_thresholdColorMap = targetMap;
 }
 
-void PlotBar::onGetCurrentSeconds(double secs)
-{
-    if(getDataPairs().isEmpty())
-        return;
-
-    m_seconds = secs;
-}
-
-void PlotBar::getDataInfo(double secs)
+void PlotBar::updateDataForDataPairsByTime(double secs)
 {
     if(getDataPairs().isEmpty())
 		return;
@@ -192,7 +184,7 @@ void PlotBar::paintEvent(QPaintEvent* event)
                          verGridWidth);
         painter.drawRect(gridRect);
     }
-    getDataInfo(m_seconds);
+    updateDataForDataPairsByTime(m_seconds);
 
     return PlotItemBase::paintEvent(event);
 }

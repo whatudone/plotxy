@@ -42,11 +42,10 @@ public:
 
 public slots:
     void onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>>) override;
-    void onGetCurrentSeconds(double secs) override;
 
 protected:
     void paintEvent(QPaintEvent* event);
-    void getDataInfo(double secs);
+    void updateDataForDataPairsByTime(double secs);
     void updateData(int itemIndex, QString x, QString y, double secs);
 
 private:

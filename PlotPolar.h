@@ -52,11 +52,11 @@ public slots:
 	void slot_setRangeDrag(bool);
 	void slot_setRangeZoom(bool);
 
-	//接收当前时间
-    void onGetCurrentSeconds(double) override;
-
 	//mouseEvent
 	void slot_setMouseEventEnable(bool);
+
+private:
+    void updateDataForDataPairsByTime(double secs) override;
 
 public:
     static int m_instanceCount; //实体个数

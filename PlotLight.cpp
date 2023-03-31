@@ -282,37 +282,35 @@ void PlotLight::slot_getLightData(QList<QList<QString>> userLightData)
 
 void PlotLight::slot_onAddButtonClicked()
 {
-	update();
+    update();
 }
 
-void PlotLight::onGetCurrentSeconds(double secs)
+void PlotLight::updateDataForDataPairsByTime(double secs)
 {
-    if(getDataPairs().isEmpty())
-		return;
+
     int isize = getDataPairs().size();
-	int entityNum = 0;
-	int attriNum = 0;
-	//m_entityName.clear();
-	//m_attriName.clear();
+    int entityNum = 0;
+    int attriNum = 0;
+    //m_entityName.clear();
+    //m_attriName.clear();
     for(int i = 0; i < isize; i++)
-	{
+    {
         QString getLightData = getDataPairs().at(i)->getDataPair().first;
-		QList<QString> lightValueList = getLightData.split("+");
+        QList<QString> lightValueList = getLightData.split("+");
         m_valueList = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(
             lightValueList.front(), lightValueList.back(), secs);
         if(!m_valueList.isEmpty())
-		{
-			m_lightDataList.push_back(m_valueList.back());
-			m_lightMap.insert(getLightData, m_lightDataList);
-		}
-		else
-		{
+        {
+            m_lightDataList.push_back(m_valueList.back());
+            m_lightMap.insert(getLightData, m_lightDataList);
+        }
+        else
+        {
             QMessageBox* noDataMessageBox = new QMessageBox(nullptr);
-			noDataMessageBox->setWindowTitle(QString("空数据警告"));
-			noDataMessageBox->setText(QString("请检查所选项中是否存在空数据"));
-			noDataMessageBox->show();
-			return;
-		}
-	}
-	update();
+            noDataMessageBox->setWindowTitle(QString("空数据警告"));
+            noDataMessageBox->setText(QString("请检查所选项中是否存在空数据"));
+            noDataMessageBox->show();
+            return;
+        }
+    }
 }

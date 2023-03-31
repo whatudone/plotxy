@@ -29,22 +29,14 @@ public:
     {
         return Type_PlotText;
     }
-public slots:
-	void onGetCurrentSeconds(double secs);
-	//void slot_setValue(double);
-	//void slot_getGridColor();
-	//QColor slot_getGridColor();
+
+private:
+    void updateDataForDataPairsByTime(double secs) override;
+
 protected:
     void paintEvent(QPaintEvent* event);
 
 private:
-	//void updateItems(QPainter*);
-    // void setGridColorWidth(QColor, uint);
-	//QColor m_gridColor;
-	//uint m_gridWidth;
-    // void setAxisColorWidth(QColor, uint);
-	//QColor m_axisColor;
-	//uint m_axisWidth;
     void setGridColorWidth(QColor color, uint width);
     void setGridStyle(GridStyle);
 

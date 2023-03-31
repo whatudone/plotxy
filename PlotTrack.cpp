@@ -133,12 +133,12 @@ void PlotTrack::paintEvent(QPaintEvent* event)
             QPointF(m_leftPadding + horTablePadding * (i + 1), height() - m_bottomPadding));
     }
 
-    getDataInfo(m_seconds);
+    updateDataForDataPairsByTime(m_seconds);
 
     return PlotItemBase::paintEvent(event);
 }
 
-void PlotTrack::getDataInfo(double secs)
+void PlotTrack::updateDataForDataPairsByTime(double secs)
 {
     if(getDataPairs().isEmpty())
         return;
@@ -180,13 +180,4 @@ void PlotTrack::updateData(int itemIndex, QString entityType, double secs)
     }
     drawRect(itemIndex, dataList);
     return;
-}
-
-void PlotTrack::onGetCurrentSeconds(double secs)
-{
-    if(getDataPairs().isEmpty())
-        return;
-
-    m_seconds = secs;
-    update();
 }

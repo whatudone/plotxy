@@ -35,11 +35,10 @@ public:
 
 public slots:
     void onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>>) override;
-    void onGetCurrentSeconds(double secs) override;
 
 protected:
-    void paintEvent(QPaintEvent* event);
-    void getDataInfo(double secs);
+    void paintEvent(QPaintEvent* event) override;
+    void updateDataForDataPairsByTime(double secs) override;
     void updateData(int itemIndex, QString entityType, double secs); //实现核心绘制逻辑
 
 private:
