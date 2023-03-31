@@ -362,7 +362,8 @@ void PlotItemBase::delPlotPairData(const QPair<QString, QString>& pair)
     {
         if(m_dataPairs.at(i)->getDataPair() == pair)
         {
-            m_dataPairs.remove(i);
+            auto data = m_dataPairs.takeAt(i);
+            data->deleteLater();
 
             emit sgn_dataPairChanged(this);
             break;

@@ -1,7 +1,7 @@
 ﻿#include "DataPair.h"
+#include <QDebug>
 #include <QPainter>
 #include <QTransform>
-
 DataPair::DataPair(QObject* parent)
 	: QObject(parent)
 {
@@ -20,8 +20,7 @@ DataPair::DataPair(QObject* parent)
 	m_iconSize = QSize(64, 64);
 
 	m_format = TEXT_FROMAT::format_default;
-	m_labelText = nullptr;
-	m_customText = nullptr;
+
 	m_labelColor = Qt::green;
 	m_labelBackground = Qt::black;
 	m_backTransparent = true;
@@ -33,55 +32,18 @@ DataPair::DataPair(QObject* parent)
 	m_labelPrec_y = 2;
 	m_labelText_show = true;
 	m_prefix_show = true;
-	m_object_x = nullptr;
-	m_object_y = nullptr;
 	m_object_show = true;
-	m_attr_x = nullptr;
-	m_attr_y = nullptr;
+
 	m_attr_show = true;
 	m_data_show = true;
-	m_unit_x = nullptr;
-	m_unit_y = nullptr;
+
 	m_unit_show = true;
 }
 
 DataPair::DataPair(const QPair<QString, QString>& pair)
-    : m_dataPair(pair)
+    : DataPair()
 {
-	m_lineWidth = 2;
-	m_isDraw = true;
-	m_color = Qt::white;
-	m_isLineMode = false;
-	m_matchColor = false;
-
-	m_iconDraw = false;
-	m_iconName = nullptr;
-	m_iconRotation = ICON_ROTATION::no_rotation;
-	m_iconFlipHorz = false;
-	m_iconFlipVert = false;
-	m_iconColor = Qt::white;
-	m_iconSize = QSize(64, 64);
-
-	m_format = TEXT_FROMAT::format_default;
-	m_labelText = nullptr;
-	m_customText = nullptr;
-	m_labelColor = Qt::green;
-	m_labelBackground = Qt::black;
-	m_backTransparent = true;
-	m_labelFontSize = 12;
-	m_labelFont.setFamily("Microsoft YaHei");
-	m_labelFont.setPointSize(m_labelFontSize);
-	m_position = TEXT_POSITION::right;
-	m_labelPrec_x = 2;
-	m_labelPrec_y = 2;
-	m_labelText_show = true;
-	m_prefix_show = true;
-	m_object_show = true;
-	m_attr_show = true;
-	m_data_show = true;
-	m_unit_x = nullptr;
-	m_unit_y = nullptr;
-	m_unit_show = true;
+    m_dataPair = pair;
 	updatePairText(pair);
 }
 

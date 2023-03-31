@@ -11,7 +11,6 @@ class DataPair : public QObject
 	Q_OBJECT
 
 public:
-	DataPair();
     DataPair(QObject* parent = nullptr);
     DataPair(const QPair<QString, QString>& pair);
 	~DataPair();
