@@ -317,18 +317,6 @@ void PlotAScope::setCoordRangeY(double lower, double upper)
 	m_customPlot->replot();
 }
 
-void PlotAScope::getCoordRangeX(double& lower, double& upper)
-{
-	lower = m_coordBgn_x;
-	upper = m_coordEnd_x;
-}
-
-void PlotAScope::getCoordRangeY(double& lower, double& upper)
-{
-	lower = m_coordBgn_y;
-	upper = m_coordEnd_y;
-}
-
 void PlotAScope::setHorzGrids(uint count)
 {
     if(m_horzGrids == count || count < 0)
@@ -455,15 +443,4 @@ void PlotAScope::setGridDensity(GridDensity density) {}
 void PlotAScope::setMinimumMargins(const QMargins& margins)
 {
 	m_customPlot->axisRect()->setMinimumMargins(margins);
-}
-
-void PlotAScope::setOuterFillColor(QColor color)
-{
-	m_outerFillColor = color;
-	QPalette palette = this->palette();
-	palette.setColor(QPalette::Window, m_outerFillColor);
-	this->setPalette(palette);
-
-	m_customPlot->setBackground(color);
-	m_customPlot->replot();
 }

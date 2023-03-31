@@ -12,6 +12,7 @@
 #include "ui_PlotItemBase.h"
 #include <QWidget>
 
+class QCustomPlot;
 class PlotItemBase : public QWidget
 {
 	Q_OBJECT
@@ -49,157 +50,157 @@ public:
 	QString currTabName();
 
 	//setters:
-	virtual void setOuterFillColor(QColor color);
-	virtual void setOutlineColor(QColor color);
-	virtual void setCoordRangeX(double lower, double upper);
-	virtual void setCoordRangeY(double lower, double upper);
-	virtual void setHorzGrids(uint count);
-	virtual void setVertGrids(uint count);
-	virtual void setAxisColorWidth(QColor color, uint width);
-	virtual void setGridColorWidth(QColor color, uint width);
-	virtual void setGridVisible(bool enable);
-    virtual void setTickLabelColor(const QColor& color);
-    virtual void setTickLabelFont(const QFont& font);
-	virtual void setTickLabelFontSize(int size);
-	virtual void setGridStyle(GridStyle style);
-	virtual void setGridDensity(GridDensity density);
-	virtual void setGridFillColor(QColor color);
-	virtual void setUnitsShowX(bool on);
-	virtual void setUnitsShowY(bool on);
-	virtual void setUnitsX(const QString& units);
-	virtual void setUnitsY(const QString& units);
-	virtual void setTitleVisible(bool on);
-    virtual void setTitle(const QString& title);
-    virtual void setTitleColor(const QColor& color);
-    virtual void setTitleFillColor(const QColor& color);
-    virtual void setTitleFont(const QFont& font);
-	virtual void setTitleFontSize(int size);
-    virtual void setxAxisLabel(const QString& label);
-    virtual void setyAxisLabel(const QString& label);
-    virtual void setAxisLabelColor(const QColor& color);
-    virtual void setAxisLabelFont(const QFont& font);
-	virtual void setAxisLabelFontSize(int size);
+    virtual void setOuterFillColor(const QColor& color);
+    void setOutlineColor(const QColor& color);
+    void setCoordRangeX(double lower, double upper);
+    void setCoordRangeY(double lower, double upper);
+    void setHorzGrids(uint count);
+    void setVertGrids(uint count);
+    void setAxisColorWidth(const QColor& color, uint width);
+    void setGridColorWidth(const QColor& color, uint width);
+    void setGridVisible(bool enable);
+    void setTickLabelColor(const QColor& color);
+    void setTickLabelFont(const QFont& font);
+    void setTickLabelFontSize(int size);
+    void setGridStyle(GridStyle style);
+    void setGridDensity(GridDensity density);
+    void setGridFillColor(const QColor& color);
+    void setUnitsShowX(bool on);
+    void setUnitsShowY(bool on);
+    void setUnitsX(const QString& units);
+    void setUnitsY(const QString& units);
+    void setTitleVisible(bool on);
+    void setTitle(const QString& title);
+    void setTitleColor(const QColor& color);
+    void setTitleFillColor(const QColor& color);
+    void setTitleFont(const QFont& font);
+    void setTitleFontSize(int size);
+    void setxAxisLabel(const QString& label);
+    void setyAxisLabel(const QString& label);
+    void setAxisLabelColor(const QColor& color);
+    void setAxisLabelFont(const QFont& font);
+    void setAxisLabelFontSize(int size);
 
 	//getters:
-    virtual QColor getOuterFillColor()
+    QColor getOuterFillColor()
     {
         return m_outerFillColor;
     }
-    virtual QColor getOutlineColor()
+    QColor getOutlineColor()
     {
         return m_outlineColor;
     }
-	virtual void getCoordRangeX(double& lower, double& upper);
-	virtual void getCoordRangeY(double& lower, double& upper);
-    virtual uint getHorzGrids()
+    void getCoordRangeX(double& lower, double& upper);
+    void getCoordRangeY(double& lower, double& upper);
+    uint getHorzGrids()
     {
         return m_horzGrids;
     }
-    virtual uint getVertGrids()
+    uint getVertGrids()
     {
         return m_vertGrids;
     }
-    virtual uint getAxisWidth()
+    uint getAxisWidth()
     {
         return m_axisWidth;
     }
-    virtual uint getGridWidth()
+    uint getGridWidth()
     {
         return m_gridWidth;
     }
-    virtual QColor getAxisColor()
+    QColor getAxisColor()
     {
         return m_axisColor;
     }
-    virtual QColor getGridColor()
+    QColor getGridColor()
     {
         return m_gridColor;
     }
-    virtual bool getGridVisible()
+    bool getGridVisible()
     {
         return m_gridVisible;
     }
-    virtual QColor getTickLabelColor()
+    QColor getTickLabelColor()
     {
         return m_tickLabelColor;
     }
-    virtual QFont getTickLabelFont()
+    QFont getTickLabelFont()
     {
         return m_tickLabelFont;
     }
-    virtual int getTickLabelFontSize()
+    int getTickLabelFontSize()
     {
         return m_tickLabelFontSize;
     }
-    virtual Qt::PenStyle getGridStyle()
+    Qt::PenStyle getGridStyle()
     {
         return m_gridStyle;
     }
-    virtual GridDensity getGridDensity()
+    GridDensity getGridDensity()
     {
         return m_gridDensity;
     }
-    virtual QColor getGridFillColor()
+    QColor getGridFillColor()
     {
         return m_gridFillColor;
     }
-    virtual bool unitsShowX()
+    bool unitsShowX()
     {
         return m_showUnits_x;
     }
-    virtual bool unitsShowY()
+    bool unitsShowY()
     {
         return m_showUnits_y;
     }
-    virtual QString getUnitsX()
+    QString getUnitsX()
     {
         return m_units_x;
     }
-    virtual QString getUnitsY()
+    QString getUnitsY()
     {
         return m_units_y;
     }
-    virtual bool getTitleVisible()
+    bool getTitleVisible()
     {
         return m_titleVisible;
     }
-    virtual QString getTitle()
+    QString getTitle()
     {
         return m_title;
     }
-    virtual QColor getTitleColor()
+    QColor getTitleColor()
     {
         return m_titleColor;
     }
-    virtual QColor getTitleFillColor()
+    QColor getTitleFillColor()
     {
         return m_titleFillColor;
     }
-    virtual QFont getTitleFont()
+    QFont getTitleFont()
     {
         return m_titleFont;
     }
-    virtual int getTitleFontSize()
+    int getTitleFontSize()
     {
         return m_titleFontSize;
     }
-    virtual QString getxAxisLabel()
+    QString getxAxisLabel()
     {
         return m_xAxisLabel;
     }
-    virtual QString getyAxisLabel()
+    QString getyAxisLabel()
     {
         return m_yAxisLabel;
     }
-    virtual QColor getAxisLabelColor()
+    QColor getAxisLabelColor()
     {
         return m_axisLabelColor;
     }
-    virtual QFont getAxisLabelFont()
+    QFont getAxisLabelFont()
     {
         return m_axisLabelFont;
     }
-    virtual int getAxisLabelFontSize()
+    int getAxisLabelFontSize()
     {
         return m_axisLabelFontSize;
     }
@@ -281,11 +282,14 @@ protected:
     int m_axisLabelFontSize; //坐标轴标题字体尺寸
 
 public slots:
-	void slot_updateRect(QRect);
+    void slot_updateRect(const QRect&);
 	void slot_setVisible(bool);
+    // 响应主界面时间滑块时间产生的信号，按照具体时间过滤数据，数据里面都是带有时间
     virtual void onGetCurrentSeconds(double /*secs*/) {}
 
     virtual void onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>>);
+    // 响应内部DataPair数据发送的change信号
+    virtual void onDataPairUpdateData();
 signals:
     void sgn_dataPairChanged(PlotItemBase* pBaseItem); //数据对改变信号,tabName,plotName
 
@@ -301,6 +305,8 @@ private:
     bool m_isNeedDrawBorder = false;
     const int32_t m_resizeFocusSize = 20;
     Ui::PlotItemBase ui;
+    // 部分为自绘，需要的子类自己初始化
+    QCustomPlot* m_customPlot = nullptr;
 };
 
 #endif // !

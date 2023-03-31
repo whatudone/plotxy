@@ -641,18 +641,6 @@ void PlotScatter::rescaleAxis(bool on)
 	m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
-void PlotScatter::setOuterFillColor(QColor color)
-{
-	setAutoFillBackground(true);
-	m_outerFillColor = color;
-	QPalette palette = this->palette();
-	palette.setColor(QPalette::Window, m_outerFillColor);
-	this->setPalette(palette);
-
-	m_customPlot->setBackground(color);
-	m_customPlot->replot();
-}
-
 void PlotScatter::setCoordRangeX(double lower, double upper)
 {
     if(m_coordBgn_x == lower && m_coordEnd_x == upper)
@@ -677,18 +665,6 @@ void PlotScatter::setCoordRangeY(double lower, double upper)
 	m_coordEnd_y = upper;
 	m_customPlot->yAxis->setRange(m_coordBgn_y, m_coordEnd_y);
 	m_customPlot->replot();
-}
-
-void PlotScatter::getCoordRangeX(double& lower, double& upper)
-{
-	lower = m_coordBgn_x;
-	upper = m_coordEnd_x;
-}
-
-void PlotScatter::getCoordRangeY(double& lower, double& upper)
-{
-	lower = m_coordBgn_y;
-	upper = m_coordEnd_y;
 }
 
 void PlotScatter::setHorzGrids(uint count)
@@ -729,16 +705,6 @@ void PlotScatter::setVertGrids(uint count)
 	m_customPlot->replot();
 }
 
-uint PlotScatter::getHorzGrids()
-{
-	return m_horzGrids;
-}
-
-uint PlotScatter::getVertGrids()
-{
-	return m_vertGrids;
-}
-
 void PlotScatter::setAxisColorWidth(QColor color, uint width)
 {
 	m_axisColor = color;
@@ -757,26 +723,6 @@ void PlotScatter::setGridColorWidth(QColor color, uint width)
 	m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
 	m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
 	m_customPlot->replot();
-}
-
-uint PlotScatter::getAxisWidth()
-{
-	return m_axisWidth;
-}
-
-uint PlotScatter::getGridWidth()
-{
-	return m_gridWidth;
-}
-
-QColor PlotScatter::getAxisColor()
-{
-	return m_axisColor;
-}
-
-QColor PlotScatter::getGridColor()
-{
-	return m_gridColor;
 }
 
 void PlotScatter::setGridFillColor(QColor color)

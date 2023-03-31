@@ -1,10 +1,12 @@
 ﻿/* * @filename: PlotItemBase.cpp
-* @brief: PlotBase Plot»ùÀà
+* @brief: PlotItemBase PlotItemBase
 * @author: zhameng
 * @create time: 2022-09-21
 *  */
 
 #include "PlotItemBase.h"
+#include "qcustomplot.h"
+
 #include <QDebug>
 #include <QPainter>
 #include <QPen>
@@ -149,16 +151,24 @@ QString PlotItemBase::currTabName()
     return m_tabName;
 }
 
-void PlotItemBase::setOuterFillColor(QColor color)
+void PlotItemBase::setOuterFillColor(const QColor& color)
 {
+    if(m_outerFillColor == color)
+        return;
     setAutoFillBackground(true);
     m_outerFillColor = color;
     QPalette palette = this->palette();
     palette.setColor(QPalette::Window, m_outerFillColor);
     this->setPalette(palette);
+    if(m_customPlot)
+    {
+        m_customPlot->setBackground(color);
+        m_customPlot->replot();
+    }
+    update();
 }
 
-void PlotItemBase::setOutlineColor(QColor color)
+void PlotItemBase::setOutlineColor(const QColor& color)
 {
     m_outlineColor = color;
 }
@@ -197,13 +207,13 @@ void PlotItemBase::setVertGrids(uint count)
     m_vertGrids = count;
 }
 
-void PlotItemBase::setAxisColorWidth(QColor color, uint width)
+void PlotItemBase::setAxisColorWidth(const QColor& color, uint width)
 {
     m_axisColor = color;
     m_axisWidth = width;
 }
 
-void PlotItemBase::setGridColorWidth(QColor color, uint width)
+void PlotItemBase::setGridColorWidth(const QColor& color, uint width)
 {
     m_gridColor = color;
     m_gridWidth = width;
@@ -262,7 +272,7 @@ void PlotItemBase::setGridDensity(GridDensity density)
     m_gridDensity = density;
 }
 
-void PlotItemBase::setGridFillColor(QColor color)
+void PlotItemBase::setGridFillColor(const QColor& color)
 {
     m_gridFillColor = color;
 }
@@ -344,12 +354,18 @@ void PlotItemBase::setAxisLabelFontSize(int size)
     m_axisLabelFont.setPointSize(size);
 }
 
+// NOTE::其他地方不要直接创建DataPair对象，需要通过本接口创建，不然会导致丢失信号槽逻辑
 void PlotItemBase::addPlotPairData(const QPair<QString, QString>& pair)
 {
     DataPair* data = new DataPair(pair);
     m_dataPairs.append(data);
     update();
-
+    // 目前界面上都是直接修改DataPair内部的数据，这里提供一个集中的入口虚函数处理。
+    connect(data,
+            &DataPair::dataUpdate,
+            this,
+            &PlotItemBase::onDataPairUpdateData,
+            Qt::UniqueConnection);
     emit sgn_dataPairChanged(this);
 }
 
@@ -402,7 +418,7 @@ void PlotItemBase::slot_setVisible(bool on)
     this->setVisible(on);
 }
 
-void PlotItemBase::slot_updateRect(QRect rect)
+void PlotItemBase::slot_updateRect(const QRect& rect)
 {
     setRect(rect);
 }
@@ -578,6 +594,8 @@ void PlotItemBase::paintEvent(QPaintEvent* event)
 }
 
 void PlotItemBase::onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>> /* targetMap*/) {}
+
+void PlotItemBase::onDataPairUpdateData() {}
 
 bool PlotItemBase::getIsNeedDrawBorder() const
 {

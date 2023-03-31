@@ -390,18 +390,6 @@ void PlotDoppler::setCoordRangeY(double lower, double upper)
 	m_customPlot->replot();
 }
 
-void PlotDoppler::getCoordRangeX(double& lower, double& upper)
-{
-	lower = m_coordBgn_x;
-	upper = m_coordEnd_x;
-}
-
-void PlotDoppler::getCoordRangeY(double& lower, double& upper)
-{
-	lower = m_coordBgn_y;
-	upper = m_coordEnd_y;
-}
-
 void PlotDoppler::setHorzGrids(uint count)
 {
     if(m_horzGrids == count || count < 0)

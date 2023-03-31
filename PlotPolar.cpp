@@ -95,33 +95,6 @@ void PlotPolar::initPlot()
 	m_customPlot->replot();
 }
 
-void PlotPolar::setOuterFillColor(QColor color)
-{
-    if(m_outerFillColor == color)
-		return;
-
-	m_outerFillColor = color;
-	QPalette palette = this->palette();
-	palette.setColor(QPalette::Window, color);
-	this->setPalette(palette);
-
-	m_customPlot->setBackground(color);
-	m_customPlot->replot();
-	update();
-}
-
-void PlotPolar::getCoordRangeX(double& lower, double& upper)
-{
-	lower = m_angularRange_lower;
-	upper = m_angularRange_upper;
-}
-
-void PlotPolar::getCoordRangeY(double& lower, double& upper)
-{
-	lower = m_radialRange_lower;
-	upper = m_radialRange_upper;
-}
-
 void PlotPolar::setAxisColorWidth(QColor color, uint width)
 {
     if(m_axisColor == color && m_axisWidth == width)

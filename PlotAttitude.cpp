@@ -368,18 +368,6 @@ void PlotAttitude::setCoordRangeY(double lower, double upper)
 	update();
 }
 
-void PlotAttitude::getCoordRangeX(double& lower, double& upper)
-{
-	lower = m_coordBgn_x;
-	upper = m_coordEnd_x;
-}
-
-void PlotAttitude::getCoordRangeY(double& lower, double& upper)
-{
-	lower = m_coordBgn_y;
-	upper = m_coordEnd_y;
-}
-
 void PlotAttitude::setHorzGrids(uint count)
 {
     if(m_horzGrids == count || count <= 0)

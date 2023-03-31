@@ -46,43 +46,15 @@ public:
 	void setAxisTickLabelShow(bool on, AxisType type);
 
 	virtual void setOuterFillColor(QColor color);
-    virtual QColor getOuterFillColor()
-    {
-        return m_outerFillColor;
-    }
+
 	void setCoordRangeX(double lower, double upper);
 	void setCoordRangeY(double lower, double upper);
-	void getCoordRangeX(double& lower, double& upper);
-	void getCoordRangeY(double& lower, double& upper);
 
 	virtual void setHorzGrids(uint count);
 	virtual void setVertGrids(uint count);
 	virtual void setAxisColorWidth(QColor color, uint width);
 	virtual void setGridColorWidth(QColor color, uint width);
-    virtual uint getHorzGrids()
-    {
-        return m_horzGrids;
-    }
-    virtual uint getVertGrids()
-    {
-        return m_vertGrids;
-    }
-    virtual uint getAxisWidth()
-    {
-        return m_axisWidth;
-    }
-    virtual uint getGridWidth()
-    {
-        return m_gridWidth;
-    }
-    virtual QColor getAxisColor()
-    {
-        return m_axisColor;
-    }
-    virtual QColor getGridColor()
-    {
-        return m_gridColor;
-    }
+
 	virtual void setGridFillColor(QColor color);
     virtual QColor getGridFillColor()
     {
@@ -94,30 +66,6 @@ public:
 	virtual void setTickLabelFontSize(int size);
 	virtual void setGridStyle(GridStyle style);
 	virtual void setGridDensity(GridDensity density);
-    virtual bool getGridVisible()
-    {
-        return m_gridVisible;
-    }
-    virtual QColor getTickLabelColor()
-    {
-        return m_tickLabelColor;
-    }
-    virtual QFont getTickLabelFont()
-    {
-        return m_tickLabelFont;
-    }
-    virtual int getTickLabelFontSize()
-    {
-        return m_tickLabelFontSize;
-    }
-    virtual Qt::PenStyle getGridStyle()
-    {
-        return m_gridStyle;
-    }
-    virtual GridDensity getGridDensity()
-    {
-        return m_gridDensity;
-    }
 
 	virtual void setUnitsShowX(bool on);
 	virtual void setUnitsShowY(bool on);
@@ -129,46 +77,7 @@ public:
 	virtual void setTitleFont(QFont& font);
 	virtual void setTitleFontSize(int size);
 	virtual void setTitleVisible(bool show);
-    virtual bool unitsShowX()
-    {
-        return m_showUnits_x;
-    }
-    virtual bool unitsShowY()
-    {
-        return m_showUnits_y;
-    }
-    virtual QString getUnitsX()
-    {
-        return m_units_x;
-    }
-    virtual QString getUnitsY()
-    {
-        return m_units_y;
-    }
-    virtual bool getTitleVisible()
-    {
-        return m_titleVisible;
-    }
-    virtual QString getTitle()
-    {
-        return m_title;
-    }
-    virtual QColor getTitleColor()
-    {
-        return m_titleColor;
-    }
-    virtual QColor getTitleFillColor()
-    {
-        return m_titleFillColor;
-    }
-    virtual QFont getTitleFont()
-    {
-        return m_titleFont;
-    }
-    virtual int getTitleFontSize()
-    {
-        return m_titleFontSize;
-    }
+
     virtual PlotType plotType() const
     {
         return Type_PlotDoppler;

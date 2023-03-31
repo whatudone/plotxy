@@ -69,45 +69,11 @@ public:
 
 	virtual void setCoordRangeX(double lower, double upper);
 	virtual void setCoordRangeY(double lower, double upper);
-	virtual void getCoordRangeX(double& lower, double& upper);
-	virtual void getCoordRangeY(double& lower, double& upper);
+
 	virtual void setHorzGrids(uint count);
 	virtual void setVertGrids(uint count);
 	virtual void setAxisColorWidth(QColor color, uint width);
 	virtual void setGridColorWidth(QColor color, uint width);
-
-    virtual uint getHorzGrids()
-    {
-        return m_horzGrids;
-    }
-    virtual uint getVertGrids()
-    {
-        return m_vertGrids;
-    }
-    virtual uint getAxisWidth()
-    {
-        return m_axisWidth;
-    }
-    virtual uint getGridWidth()
-    {
-        return m_gridWidth;
-    }
-    virtual QColor getAxisColor()
-    {
-        return m_axisColor;
-    }
-    virtual QColor getGridColor()
-    {
-        return m_gridColor;
-    }
-    virtual QFont getTickLabelFont()
-    {
-        return m_tickLabelFont;
-    }
-    virtual int getTickLabelFontSize()
-    {
-        return m_tickLabelFontSize;
-    }
 
 	virtual void setUnitsShowX(bool on);
 	virtual void setUnitsShowY(bool on);
@@ -119,46 +85,6 @@ public:
 	virtual void setTitleFillColor(QColor& color);
     virtual void setTitleFont(QFont& font);
 	virtual void setTitleFontSize(int size);
-    virtual bool unitsShowX()
-    {
-        return m_showUnits_x;
-    }
-    virtual bool unitsShowY()
-    {
-        return m_showUnits_y;
-    }
-    virtual QString getUnitsX()
-    {
-        return m_units_x;
-    }
-    virtual QString getUnitsY()
-    {
-        return m_units_y;
-    }
-    virtual bool getTitleVisible()
-    {
-        return m_titleVisible;
-    }
-    virtual QString getTitle()
-    {
-        return m_title;
-    }
-    virtual QColor getTitleColor()
-    {
-        return m_titleColor;
-    }
-    virtual QColor getTitleFillColor()
-    {
-        return m_titleFillColor;
-    }
-    virtual QFont getTitleFont()
-    {
-        return m_titleFont;
-    }
-    virtual int getTitleFontSize()
-    {
-        return m_titleFontSize;
-    }
 
     int getTickRadiusPercentage()
     {
