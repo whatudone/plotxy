@@ -10,25 +10,25 @@ public:
 
 	void initPlot();
 
-    virtual void setAxisColorWidth(QColor color, uint width);
-	virtual void setGridColorWidth(QColor color, uint width);
-	virtual void setHorzGrids(uint count);
-	virtual void setVertGrids(uint count);
-	virtual void setGridFillColor(QColor color);
+    void setAxisColorWidth(QColor color, uint width);
+    void setGridColorWidth(QColor color, uint width);
+    void setHorzGrids(uint count);
+    void setVertGrids(uint count);
+    void setGridFillColor(QColor color);
 
-	virtual void setGridVisible(bool enable);
-	virtual void setTickLabelColor(QColor& color);
-	virtual void setTickLabelFont(QFont& font);
-	virtual void setTickLabelFontSize(int size);
-	virtual void setGridStyle(GridStyle style);
-	virtual void setGridDensity(GridDensity density);
+    void setGridVisible(bool enable);
+    void setTickLabelColor(QColor& color);
+    void setTickLabelFont(QFont& font);
+    void setTickLabelFontSize(int size);
+    void setGridStyle(GridStyle style);
+    void setGridDensity(GridDensity density);
 
 	//title
 	void setTitle(QString&);
     void setTitleColor(QColor& color);
-	virtual void setTitleFillColor(QColor& color);
+    void setTitleFillColor(QColor& color);
     void setTitleFont(QFont& font);
-	virtual void setTitleFontSize(int size);
+    void setTitleFontSize(int size);
 	void setTitleVisible(bool show);
 	//unit
 	void setUnitsShowX(bool on);
@@ -36,7 +36,7 @@ public:
 	void setUnitsX(const QString&);
 	void setUnitsY(const QString&);
 
-    virtual PlotType plotType() const
+    PlotType plotType() const override
     {
         return Type_PlotPolar;
     }
@@ -72,5 +72,5 @@ private:
 	QList<double> m_valueList;
 
 protected:
-	virtual void paintEvent(QPaintEvent* event);
+    void paintEvent(QPaintEvent* event);
 };

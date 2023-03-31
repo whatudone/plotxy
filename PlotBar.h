@@ -32,7 +32,7 @@ public:
                   int rightBoundary,
                   QColor color);
 
-    virtual PlotType plotType() const
+    PlotType plotType() const override
     {
         return Type_PlotBar;
     }
@@ -45,7 +45,7 @@ public slots:
     void onGetCurrentSeconds(double secs) override;
 
 protected:
-    virtual void paintEvent(QPaintEvent* event);
+    void paintEvent(QPaintEvent* event);
     void getDataInfo(double secs);
     void updateData(int itemIndex, QString x, QString y, double secs);
 
@@ -74,8 +74,6 @@ private:
 
     int m_horiGridNum;
     int m_verGridNum;
-
-    double m_seconds;
 };
 
 #endif // _PLOT_BAR_H_

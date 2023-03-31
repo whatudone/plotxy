@@ -25,7 +25,7 @@ public:
 
 	bool m_flag;
     static int m_instanceCount; //实体个数
-    virtual PlotType plotType() const
+    PlotType plotType() const override
     {
         return Type_PlotText;
     }
@@ -35,30 +35,19 @@ public slots:
 	//void slot_getGridColor();
 	//QColor slot_getGridColor();
 protected:
-	virtual void paintEvent(QPaintEvent* event);
+    void paintEvent(QPaintEvent* event);
 
 private:
 	//void updateItems(QPainter*);
-	//virtual void setGridColorWidth(QColor, uint);
+    // void setGridColorWidth(QColor, uint);
 	//QColor m_gridColor;
 	//uint m_gridWidth;
-	//virtual void setAxisColorWidth(QColor, uint);
+    // void setAxisColorWidth(QColor, uint);
 	//QColor m_axisColor;
 	//uint m_axisWidth;
-	virtual void setGridColorWidth(QColor color, uint width);
-	virtual void setGridStyle(GridStyle);
-    virtual uint getGridWidth()
-    {
-        return m_gridWidth;
-    }
-    virtual QColor getGridColor()
-    {
-        return m_gridColor;
-    }
-    virtual Qt::PenStyle getGridStyle()
-    {
-        return m_gridStyle;
-    }
+    void setGridColorWidth(QColor color, uint width);
+    void setGridStyle(GridStyle);
+
 	bool m_bHorizontal;
     bool m_started;
 	QStringList m_xColumnList;

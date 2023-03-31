@@ -60,36 +60,33 @@ public:
     void updatePlotPairData(const QPair<QString, QString>& oldPair,
                             const QPair<QString, QString>& newPair);
 
-	virtual void setHorzGrids(uint);
-	virtual void setVertGrids(uint);
+    void setHorzGrids(uint);
+    void setVertGrids(uint);
 
-	virtual void setAxisColorWidth(QColor, uint);
-	virtual void setGridColorWidth(QColor, uint);
+    void setAxisColorWidth(QColor, uint);
+    void setGridColorWidth(QColor, uint);
 
-	virtual void setGridFillColor(QColor color);
-    virtual QColor getGridFillColor()
-    {
-        return m_gridFillColor;
-    }
-	virtual void setGridVisible(bool enable);
-	virtual void setTickLabelColor(QColor& color);
-	virtual void setTickLabelFont(QFont& font);
-	virtual void setTickLabelFontSize(int size);
-	virtual void setGridStyle(GridStyle style);
-	virtual void setGridDensity(GridDensity density);
+    void setGridFillColor(QColor color);
 
-	virtual void setUnitsShowX(bool on);
-	virtual void setUnitsShowY(bool on);
-	virtual void setUnitsX(const QString& units);
-	virtual void setUnitsY(const QString& units);
-	virtual void setTitle(QString& str);
-	virtual void setTitleColor(QColor& color);
-	virtual void setTitleFillColor(QColor& color);
-	virtual void setTitleFont(QFont& font);
-	virtual void setTitleFontSize(int size);
-	virtual void setTitleVisible(bool show);
+    void setGridVisible(bool enable);
+    void setTickLabelColor(QColor& color);
+    void setTickLabelFont(QFont& font);
+    void setTickLabelFontSize(int size);
+    void setGridStyle(GridStyle style);
+    void setGridDensity(GridDensity density);
 
-    virtual PlotType plotType() const
+    void setUnitsShowX(bool on);
+    void setUnitsShowY(bool on);
+    void setUnitsX(const QString& units);
+    void setUnitsY(const QString& units);
+    void setTitle(QString& str);
+    void setTitleColor(QColor& color);
+    void setTitleFillColor(QColor& color);
+    void setTitleFont(QFont& font);
+    void setTitleFontSize(int size);
+    void setTitleVisible(bool show);
+
+    PlotType plotType() const override
     {
         return Type_PlotScatter;
     }
@@ -98,7 +95,7 @@ public slots:
     void onGetCurrentSeconds(double secs) override;
 
 protected:
-    virtual void paintEvent(QPaintEvent* event) override;
+    void paintEvent(QPaintEvent* event) override;
 
 private:
 	void initPlot();

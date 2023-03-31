@@ -15,7 +15,7 @@ public:
 	~PlotAttitude();
 
 protected:
-	virtual void paintEvent(QPaintEvent* event);
+    void paintEvent(QPaintEvent* event);
 
 public:
     void drawTitle(QPainter* painter, int radius);
@@ -67,21 +67,21 @@ public:
     QSize sizeHint() const;
     QSize minimumSizeHint() const;
 
-	virtual void setHorzGrids(uint count);
-	virtual void setVertGrids(uint count);
-	virtual void setAxisColorWidth(QColor color, uint width);
-	virtual void setGridColorWidth(QColor color, uint width);
+    void setHorzGrids(uint count);
+    void setVertGrids(uint count);
+    void setAxisColorWidth(QColor color, uint width);
+    void setGridColorWidth(QColor color, uint width);
 
-	virtual void setUnitsShowX(bool on);
-	virtual void setUnitsShowY(bool on);
-	virtual void setUnitsX(const QString& units);
-	virtual void setUnitsY(const QString& units);
-	virtual void setTitle(QString& title);
-	virtual void setTitleVisible(bool show);
-    virtual void setTitleColor(QColor& titleColor);
-	virtual void setTitleFillColor(QColor& color);
-    virtual void setTitleFont(QFont& font);
-	virtual void setTitleFontSize(int size);
+    void setUnitsShowX(bool on);
+    void setUnitsShowY(bool on);
+    void setUnitsX(const QString& units);
+    void setUnitsY(const QString& units);
+    void setTitle(QString& title);
+    void setTitleVisible(bool show);
+    void setTitleColor(QColor& titleColor);
+    void setTitleFillColor(QColor& color);
+    void setTitleFont(QFont& font);
+    void setTitleFontSize(int size);
 
     int getTickRadiusPercentage()
     {
@@ -97,7 +97,7 @@ public:
     }
 
 	void updateItems();
-    virtual PlotType plotType() const
+    PlotType plotType() const override
     {
         return Type_PlotAttitude;
     }

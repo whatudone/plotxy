@@ -24,13 +24,13 @@ public:
 	void onSwitch(bool bOn);
     static int m_instanceCount; //实体个数
 	//void updateItems();
-    virtual PlotType plotType() const
+    PlotType plotType() const override
     {
         return Type_PlotLight;
     }
 
 protected:
-	virtual void paintEvent(QPaintEvent* event);
+    void paintEvent(QPaintEvent* event);
 
 private:
 	bool m_bHorizontal;
@@ -64,21 +64,10 @@ private:
     void setCircleRadius(double&);
     void drawLight(QPainter&, double&, double&);
     void drawTitle(QPainter&, QRect&);
-	//virtual void dataPairOrder();
-	//virtual void setGridColorWidth(QColor color, uint width);
-	virtual void setGridStyle(GridStyle);
-    virtual uint getGridWidth()
-    {
-        return m_gridWidth;
-    }
-    virtual QColor getGridColor()
-    {
-        return m_gridColor;
-    }
-    virtual Qt::PenStyle getGridStyle()
-    {
-        return m_gridStyle;
-    }
+    // void dataPairOrder();
+    // void setGridColorWidth(QColor color, uint width);
+    void setGridStyle(GridStyle);
+
 public slots:
 	void slot_getLightData(QList<QList<QString>>);
     void onGetCurrentSeconds(double secs) override;

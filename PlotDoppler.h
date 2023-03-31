@@ -45,40 +45,37 @@ public:
 	void setAxisVisible(bool on, AxisType type);
 	void setAxisTickLabelShow(bool on, AxisType type);
 
-	virtual void setOuterFillColor(QColor color);
+    void setOuterFillColor(QColor color);
 
     void setCoordRangeX(double lower, double upper) override;
     void setCoordRangeY(double lower, double upper) override;
 
-	virtual void setHorzGrids(uint count);
-	virtual void setVertGrids(uint count);
-	virtual void setAxisColorWidth(QColor color, uint width);
-	virtual void setGridColorWidth(QColor color, uint width);
+    void setHorzGrids(uint count);
+    void setVertGrids(uint count);
+    void setAxisColorWidth(QColor color, uint width);
+    void setGridColorWidth(QColor color, uint width);
 
-	virtual void setGridFillColor(QColor color);
-    virtual QColor getGridFillColor()
-    {
-        return m_gridFillColor;
-    }
-	virtual void setGridVisible(bool enable);
-	virtual void setTickLabelColor(QColor& color);
-	virtual void setTickLabelFont(QFont& font);
-	virtual void setTickLabelFontSize(int size);
-	virtual void setGridStyle(GridStyle style);
-	virtual void setGridDensity(GridDensity density);
+    void setGridFillColor(QColor color);
 
-	virtual void setUnitsShowX(bool on);
-	virtual void setUnitsShowY(bool on);
-	virtual void setUnitsX(const QString& units);
-	virtual void setUnitsY(const QString& units);
-	virtual void setTitle(QString& str);
-	virtual void setTitleColor(QColor& color);
-	virtual void setTitleFillColor(QColor& color);
-	virtual void setTitleFont(QFont& font);
-	virtual void setTitleFontSize(int size);
-	virtual void setTitleVisible(bool show);
+    void setGridVisible(bool enable);
+    void setTickLabelColor(QColor& color);
+    void setTickLabelFont(QFont& font);
+    void setTickLabelFontSize(int size);
+    void setGridStyle(GridStyle style);
+    void setGridDensity(GridDensity density);
 
-    virtual PlotType plotType() const
+    void setUnitsShowX(bool on);
+    void setUnitsShowY(bool on);
+    void setUnitsX(const QString& units);
+    void setUnitsY(const QString& units);
+    void setTitle(QString& str);
+    void setTitleColor(QColor& color);
+    void setTitleFillColor(QColor& color);
+    void setTitleFont(QFont& font);
+    void setTitleFontSize(int size);
+    void setTitleVisible(bool show);
+
+    PlotType plotType() const override
     {
         return Type_PlotDoppler;
     }
@@ -104,5 +101,5 @@ public slots:
 	void slot_setMouseEventEnable(bool on);
 
 protected:
-	virtual void paintEvent(QPaintEvent* event);
+    void paintEvent(QPaintEvent* event);
 };

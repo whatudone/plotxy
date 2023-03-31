@@ -280,7 +280,7 @@ protected:
     QColor m_axisLabelColor; //坐标轴标题颜色
     QFont m_axisLabelFont; //坐标轴标题字体
     int m_axisLabelFontSize; //坐标轴标题字体尺寸
-
+    double m_seconds; // 时间，用于筛选数据
 public slots:
     void slot_updateRect(const QRect&);
 	void slot_setVisible(bool);

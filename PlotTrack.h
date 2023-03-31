@@ -25,7 +25,7 @@ public:
     void setInterPadding(int);
 
     void drawRect(int itemIndex, QList<QColor> dataList);
-    virtual PlotType plotType() const
+    PlotType plotType() const override
     {
         return Type_PlotTrack;
     }
@@ -38,7 +38,7 @@ public slots:
     void onGetCurrentSeconds(double secs) override;
 
 protected:
-    virtual void paintEvent(QPaintEvent* event);
+    void paintEvent(QPaintEvent* event);
     void getDataInfo(double secs);
     void updateData(int itemIndex, QString entityType, double secs); //实现核心绘制逻辑
 
@@ -60,7 +60,7 @@ private:
 
     int m_horiGridNum;
     int m_verGridNum;
-    double m_seconds;
+
     int m_itemCnt;
 
     bool m_titleShow; //标题是否显示

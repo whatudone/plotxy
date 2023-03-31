@@ -18,7 +18,7 @@ public:
     //更新指针
     void updatePointer(double secs);
     static int m_instanceCount; //实体个数
-    virtual PlotType plotType() const
+    PlotType plotType() const override
     {
         return Type_PlotDial;
     }
@@ -26,7 +26,7 @@ public slots:
     void onGetCurrentSeconds(double secs) override;
 
 protected:
-    virtual void paintEvent(QPaintEvent* event);
+    void paintEvent(QPaintEvent* event);
 
 private:
     bool m_bThinStyle;
@@ -39,8 +39,6 @@ private:
     double m_rightPadding; //绘图间隔-right
 
     QFont m_axisFont; //坐标标题字体
-
-    double m_seconds;
 
     QColor m_dialColor;
     QColor m_pointColor;
