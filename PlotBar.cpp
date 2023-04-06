@@ -45,14 +45,7 @@ void PlotBar::updateDataForDataPairsByTime(double secs)
     if(getDataPairs().isEmpty())
 		return;
 
-    int isize = getDataPairs().size();
-
-    for(int i = 0; i < isize; i++)
-    {
-        QString xColumn = getDataPairs().at(i)->getDataPair().first;
-        QString yColumn = getDataPairs().at(i)->getDataPair().first;
-        updateData(i, xColumn, yColumn, secs);
-    }
+    update();
 }
 
 void PlotBar::setPlotItemExtentionDirec(bool horizontal)
@@ -80,9 +73,9 @@ void PlotBar::drawRect(int itemIndex,
                        int itemLength,
                        int leftBoundary,
                        int rightBoundary,
-                       QColor color)
+                       const QColor& color,
+                       QPainter& painter)
 {
-    QPainter painter(this);
     QPen pen;
     pen.setColor(color);
     QBrush brush;
@@ -91,9 +84,7 @@ void PlotBar::drawRect(int itemIndex,
 
     painter.setPen(pen);
     painter.setBrush(brush);
-
     int height = this->height();
-    int width = this->width();
 
     QRect rect;
     if(bHorizontal)
@@ -114,50 +105,38 @@ void PlotBar::drawRect(int itemIndex,
     painter.drawRect(rect);
 }
 
-void PlotBar::updateData(int itemIndex, QString x, QString y, double secs)
+void PlotBar::drawPairData(
+    int itemIndex, QString x, int32_t perItemLength, double secs, QPainter& painter)
 {
     QStringList xlist = x.split("+");
-    //    QStringList ylist = y.split("+");
     QList<double> xSecList =
         DataManager::getInstance()->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs);
-    //    QList<double> ySecList = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(ylist.at(0), ylist.at(1), secs);
-    int cnt = getDataPairs().size();
 
     if(xSecList.isEmpty())
         return;
-
-    //首先计算每个item的宽度/高度
-	QFontMetricsF fm(m_titleFont);
-	double h = fm.size(Qt::TextSingleLine, m_title).height();
-    int perItemLength = 0;
-    int width = this->width() - m_leftPadding - m_rightPadding;
-    int height = this->height() - m_topPadding - m_bottomPadding - h;
-
-    if(m_bHorizontal)
-    {
-		//item水平方向延展
-		m_horiGridNum = 5;
-		m_verGridNum = 0;
-        perItemLength = (height - (cnt - 1) * m_interPadding) / cnt;
-    }
-    else
-    {
-		//item垂直方向延展
-		m_verGridNum = 5;
-		m_horiGridNum = 0;
-        perItemLength = (width - (cnt - 1) * m_interPadding) / cnt;
-    }
 
     //*获取当前Attr值
     double currValue = xSecList.last();
 
     QString currKey = xlist.at(0) + '_' + xlist.at(1);
-    if(!m_thresholdColorMap.contains(currKey) ||
-       m_thresholdColorMap.value(currKey).keys().isEmpty())
+    /*
+     * 绘制分为两种大类情况：
+     * 1、没有设置颜色阈值，直接从left->lastValue
+     * 2、有阈值设置的，又分为三种情况：
+     * 2.1、lastValue在阈值左侧
+     * 2.2、lastValue在阈值范围内
+     * 2.3、lastValue在阈值右侧
+    */
+    if(!m_thresholdColorMap.contains(currKey) || m_thresholdColorMap.value(currKey).isEmpty())
     {
         //没有设置阈值，则无需分开绘制多个矩形，以默认颜色绘制一个即可
-        drawRect(itemIndex, m_bHorizontal, perItemLength, m_leftPadding, currValue, m_defaultColor);
-        update();
+        drawRect(itemIndex,
+                 m_bHorizontal,
+                 perItemLength,
+                 m_leftPadding,
+                 currValue,
+                 m_defaultColor,
+                 painter);
         return;
     }
 
@@ -166,62 +145,69 @@ void PlotBar::updateData(int itemIndex, QString x, QString y, double secs)
     QList<int> thresholdList = colorMap.keys();
     if(currValue < thresholdList.first())
     {
-        drawRect(itemIndex, m_bHorizontal, perItemLength, m_leftPadding, currValue, m_defaultColor);
-    }
-
-    //以默认颜色绘制第一个矩形
-    drawRect(itemIndex,
-             m_bHorizontal,
-             perItemLength,
-             m_leftPadding,
-             thresholdList.first(),
-             m_defaultColor);
-
-    if(thresholdList.size() == 1)
-    {
         drawRect(itemIndex,
                  m_bHorizontal,
                  perItemLength,
+                 m_leftPadding,
+                 currValue,
+                 m_defaultColor,
+                 painter);
+    }
+    else
+    {
+        //以默认颜色绘制第一个矩形
+        drawRect(itemIndex,
+                 m_bHorizontal,
+                 perItemLength,
+                 m_leftPadding,
                  thresholdList.first(),
-                 currValue,
-                 colorMap.value(thresholdList.first()));
-    }
+                 m_defaultColor,
+                 painter);
 
-    for(int i = 0; i < thresholdList.size() - 1; i++)
-    {
-        QColor currColor = colorMap.value(thresholdList.at(i));
-
-        if(currValue < thresholdList.at(i + 1))
+        auto thresSize = thresholdList.size();
+        for(int i = 0; i < thresSize; ++i)
         {
-            drawRect(itemIndex,
-                     m_bHorizontal,
-                     perItemLength,
-                     thresholdList.at(i),
-                     currValue,
-                     colorMap.value(thresholdList.at(i)));
-            break;
-        }
-        else
-        {
-            drawRect(itemIndex,
-                     m_bHorizontal,
-                     perItemLength,
-                     thresholdList.at(i),
-                     thresholdList.at(i + 1),
-                     colorMap.value(thresholdList.at(i)));
-        }
-    }
+            QColor currColor = colorMap.value(thresholdList.at(i));
 
-    if(currValue > thresholdList.last())
-    {
-        drawRect(itemIndex,
-                 m_bHorizontal,
-                 perItemLength,
-                 thresholdList.last(),
-                 currValue,
-                 colorMap.value(thresholdList.last()));
+            auto curThreshold = thresholdList.at(i);
+            auto nextThreadHold = thresholdList.at(i) + perItemLength;
+            if(i != thresSize - 1)
+            {
+
+                if(currValue < nextThreadHold)
+                {
+                    drawRect(itemIndex,
+                             m_bHorizontal,
+                             perItemLength,
+                             curThreshold,
+                             currValue,
+                             currColor,
+                             painter);
+                    break;
+                }
+                else
+                {
+                    drawRect(itemIndex,
+                             m_bHorizontal,
+                             perItemLength,
+                             curThreshold,
+                             nextThreadHold,
+                             currColor,
+                             painter);
+                }
+            }
+            else
+            {
+                drawRect(itemIndex,
+                         m_bHorizontal,
+                         perItemLength,
+                         curThreshold,
+                         currValue,
+                         currColor,
+                         painter);
+            }
+        }
     }
-    update();
 }
 
 void PlotBar::customPainting(QPainter& painter)
@@ -281,4 +267,48 @@ void PlotBar::customPainting(QPainter& painter)
                          verGridWidth);
         painter.drawRect(gridRect);
     }
+    // 绘制数据块
+    drawPairDatas(painter);
+}
+
+void PlotBar::drawPairDatas(QPainter& painter)
+{
+    int isize = getDataPairs().size();
+    int perItemLength = calculateItemLength();
+    for(int i = 0; i < isize; i++)
+    {
+        QString xColumn = getDataPairs().at(i)->getDataPair().first;
+        drawPairData(i, xColumn, perItemLength, m_seconds, painter);
+    }
+}
+
+int PlotBar::calculateItemLength()
+{
+    //首先计算每个item的宽度/高度
+    int cnt = getDataPairs().size();
+    int perItemLength = 0;
+    if(cnt <= 0)
+    {
+        return perItemLength;
+    }
+    QFontMetricsF fm(m_titleFont);
+    double h = fm.size(Qt::TextSingleLine, m_title).height();
+    int width = this->width() - m_leftPadding - m_rightPadding;
+    int height = this->height() - m_topPadding - m_bottomPadding - h;
+
+    if(m_bHorizontal)
+    {
+        //item水平方向延展
+        m_horiGridNum = 5;
+        m_verGridNum = 0;
+        perItemLength = (height - (cnt - 1) * m_interPadding) / cnt;
+    }
+    else
+    {
+        //item垂直方向延展
+        m_verGridNum = 5;
+        m_horiGridNum = 0;
+        perItemLength = (width - (cnt - 1) * m_interPadding) / cnt;
+    }
+    return perItemLength;
 }

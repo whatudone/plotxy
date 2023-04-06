@@ -30,7 +30,8 @@ public:
                   int itemLength,
                   int leftBoundary,
                   int rightBoundary,
-                  QColor color);
+                  const QColor& color,
+                  QPainter& painter);
 
     PlotType plotType() const override
     {
@@ -45,10 +46,16 @@ public slots:
 
 protected:
     void updateDataForDataPairsByTime(double secs);
-    void updateData(int itemIndex, QString x, QString y, double secs);
 
 private:
     void customPainting(QPainter& painter) override;
+    // 绘制所有数据块
+    void drawPairDatas(QPainter& painter);
+
+    void
+    drawPairData(int itemIndex, QString x, int32_t perItemLength, double secs, QPainter& painter);
+    // 计算每个Bar的绘制长度
+    int calculateItemLength();
 
 private:
     bool m_bHorizontal;
@@ -60,10 +67,6 @@ private:
     int m_interPadding;
 
     int m_currTimeIndex;
-
-    //QMap<QString,QString> m_plotDataPair;   //注：实体类型，实体属性   //这里不能用map
-    //     QStringList m_entityTypeList;
-    //     QStringList m_entityAttrList;
 
     QMap<QString, QMap<int, QColor>>
         m_thresholdColorMap; //key:entityType+entityAttr, threshold,QColor
