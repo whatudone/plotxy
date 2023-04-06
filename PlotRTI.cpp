@@ -11,22 +11,16 @@ PlotRTI::PlotRTI(QWidget* parent)
 	m_outerFillColor = Qt::black;
 	m_gridFillColor = Qt::black;
 	m_title = "RTI Display";
-	m_titleColor = Qt::white;
-	m_titleFillColor = Qt::black;
-	m_titleFontSize = 16;
-	m_titleFont.setFamily("Microsoft YaHei");
-	m_titleFont.setPointSizeF(m_titleFontSize);
-	m_titleVisible = true;
 
 	m_axisLabelFont.setFamily("Microsoft YaHei");
 	m_axisLabelFont.setPointSizeF(10.0);
 	m_xAxisLabel = "Range(m)";
 	m_yAxisLabel = "Time(s)";
 
-	m_leftPadding = 10;
-	m_rightPadding = 30;
-	m_topPadding = 20;
-	m_bottomPadding = 10;
+    //	m_leftPadding = 10;
+    //	m_rightPadding = 30;
+    //	m_topPadding = 20;
+    //	m_bottomPadding = 10;
 
 	m_coordBgn_x = 0;
 
@@ -110,41 +104,6 @@ void PlotRTI::initPlot()
 	m_colorScale->setMarginGroup(QCP::msBottom | QCP::msTop, m_marginGroup);
 
     //	m_customPlot->rescaleAxes();
-}
-
-void PlotRTI::paintEvent(QPaintEvent* event)
-{
-	int width = this->width();
-	int height = this->height();
-	QPainter painter(this);
-	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
-
-	QFontMetricsF fm(m_titleFont);
-	double w = fm.size(Qt::TextSingleLine, m_title).width();
-	double h = fm.size(Qt::TextSingleLine, m_title).height();
-	double as = fm.ascent();
-	QRectF rect = fm.boundingRect(m_title);
-
-    if(m_titleVisible)
-	{
-		painter.setFont(m_titleFont);
-		painter.setPen(m_titleColor);
-        painter.fillRect(
-            (width - w + m_leftPadding - m_rightPadding) / 2, m_topPadding, w, h, m_titleFillColor);
-        painter.drawText(
-            QPoint((width + m_leftPadding - m_rightPadding - w) / 2, as + m_topPadding), m_title);
-	}
-
-    m_customPlot->setGeometry(m_leftPadding,
-                              h + m_topPadding,
-                              width - m_leftPadding - m_rightPadding,
-                              height - h - m_topPadding - m_bottomPadding);
-    PlotItemBase::paintEvent(event);
-}
-
-void PlotRTI::slot_setMouseEventEnable(bool on)
-{
-	m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, on);
 }
 
 void PlotRTI::setUnitsShowX(bool on)

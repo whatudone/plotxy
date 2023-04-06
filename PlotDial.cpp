@@ -27,16 +27,15 @@ PlotDial::PlotDial(QWidget* parent)
 	m_axisFont.setFamily("Microsoft YaHei");
 	m_axisFont.setPointSizeF(12.0);
 
-	m_leftPadding = 20;
-	m_rightPadding = 20;
-	m_topPadding = 0;
-	m_bottomPadding = 20;
+    //	m_leftPadding = 20;
+    //	m_rightPadding = 20;
+    //	m_topPadding = 0;
+    //	m_bottomPadding = 20;
 }
 
 PlotDial::~PlotDial() {}
 
-//更新表盘指针
-void PlotDial::updatePointer(double secs)
+void PlotDial::updateDataForDataPairsByTime(double secs)
 {
     if(getDataPairs().isEmpty())
         return;
@@ -69,25 +68,18 @@ void PlotDial::updatePointer(double secs)
 
     QPoint endPoint1(midPoint.x() + normalVec.x(), midPoint.y() + normalVec.y());
     QPoint endPoint2(midPoint.x() - normalVec.x(), midPoint.y() - normalVec.y());
-
-    QPoint points[4] = {m_centerPoint, endPoint1, endPoint, endPoint2};
-
-    QPainter painter(this);
-    QBrush pointerBrush(m_pointColor, Qt::SolidPattern);
-    painter.setBrush(pointerBrush);
-    painter.drawPolygon(points, 4);
+    m_clockHandPoints[0] = m_centerPoint;
+    m_clockHandPoints[1] = endPoint1;
+    m_clockHandPoints[2] = endPoint;
+    m_clockHandPoints[3] = endPoint2;
 }
 
-void PlotDial::paintEvent(QPaintEvent* event)
+void PlotDial::customPainting(QPainter& painter)
 {
-    QPainter painter(this);
-	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
-
-	//绘制标题
-	QFontMetricsF fm(m_titleFont);
-	double w = fm.size(Qt::TextSingleLine, m_title).width();
-	double h = fm.size(Qt::TextSingleLine, m_title).height();
-	double as = fm.ascent();
+    QFontMetricsF fm(m_titleFont);
+    double w = fm.size(Qt::TextSingleLine, m_title).width();
+    double h = fm.size(Qt::TextSingleLine, m_title).height();
+    double as = fm.ascent();
 
     m_circleRadius =
         (width() - m_leftPadding - m_rightPadding) < (height() - h - m_topPadding - m_bottomPadding)
@@ -96,16 +88,7 @@ void PlotDial::paintEvent(QPaintEvent* event)
     m_centerPoint = QPoint((width() + m_leftPadding - m_rightPadding) / 2,
                            (height() + h + m_topPadding - m_bottomPadding) / 2);
 
-    if(m_titleShow)
-	{
-		painter.setFont(m_titleFont);
-		painter.setPen(m_titleColor);
-        painter.drawText(QPoint((width() + m_leftPadding - m_rightPadding - w) / 2,
-                                m_centerPoint.y() - m_circleRadius + (as - h)),
-                         m_title);
-	}
-
-	//绘制表盘圆圈
+    //绘制表盘圆圈
     QPen pen;
     pen.setColor(m_dialColor);
     pen.setWidth(2);
@@ -148,27 +131,28 @@ void PlotDial::paintEvent(QPaintEvent* event)
     painter.drawLine(QPointF(0, m_circleRadius * 0.95), QPointF(0, m_circleRadius));
 
     // 绘制表盘文字
-	painter.setFont(m_axisFont);
-	QFontMetricsF fm1(m_axisFont);
+    painter.setFont(m_axisFont);
+    QFontMetricsF fm1(m_axisFont);
     w = fm1.size(Qt::TextSingleLine, QString("-50°")).width();
     h = fm1.size(Qt::TextSingleLine, QString("-50°")).height();
     painter.drawText(-m_circleRadius * 0.93, h / 3, QString("-50°"));
 
-	w = fm1.size(Qt::TextSingleLine, QString("0°")).width();
-	h = fm1.size(Qt::TextSingleLine, QString("0°")).height();
+    w = fm1.size(Qt::TextSingleLine, QString("0°")).width();
+    h = fm1.size(Qt::TextSingleLine, QString("0°")).height();
     painter.drawText(-w / 2, -m_circleRadius * 0.95 + h, QString("0°"));
 
-	w = fm1.size(Qt::TextSingleLine, QString("50°")).width();
-	h = fm1.size(Qt::TextSingleLine, QString("50°")).height();
+    w = fm1.size(Qt::TextSingleLine, QString("50°")).width();
+    h = fm1.size(Qt::TextSingleLine, QString("50°")).height();
     painter.drawText(m_circleRadius * 0.93 - w, h / 3, QString("50°"));
 
-	w = fm1.size(Qt::TextSingleLine, QString("100°")).width();
-	h = fm1.size(Qt::TextSingleLine, QString("100°")).height();
+    w = fm1.size(Qt::TextSingleLine, QString("100°")).width();
+    h = fm1.size(Qt::TextSingleLine, QString("100°")).height();
     painter.drawText(-w / 2, m_circleRadius * 0.93, QString("100°"));
-
-    updatePointer(m_seconds);
-
-    return PlotItemBase::paintEvent(event);
+    // 绘制图表的指针
+    if(!getDataPairs().isEmpty())
+    {
+        QBrush pointerBrush(m_pointColor, Qt::SolidPattern);
+        painter.setBrush(pointerBrush);
+        painter.drawPolygon(m_clockHandPoints, 4);
+    }
 }
-
-void PlotDial::updateDataForDataPairsByTime(double secs) {}

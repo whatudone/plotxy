@@ -9,10 +9,10 @@ PlotBar::PlotBar(QWidget* parent)
     m_bHorizontal = true;
 	m_titleShow = true;
 
-    m_leftPadding = 50;
-    m_rightPadding = 50;
-	m_topPadding = 0;
-	m_bottomPadding = 50;
+    //    m_leftPadding = 50;
+    //    m_rightPadding = 50;
+    //	m_topPadding = 0;
+    //	m_bottomPadding = 50;
     m_interPadding = 20;
 
     m_currTimeIndex = 0;
@@ -112,81 +112,6 @@ void PlotBar::drawRect(int itemIndex,
                      rightBoundary - leftBoundary);
     }
     painter.drawRect(rect);
-}
-
-void PlotBar::paintEvent(QPaintEvent* event)
-{
-	int width = this->width();
-	int height = this->height();
-
-    QPainter painter(this);
-	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
-    QPen pen;
-	//绘制标题
-	QFontMetricsF fm(m_titleFont);
-	double w = fm.size(Qt::TextSingleLine, m_title).width();
-	double h = fm.size(Qt::TextSingleLine, m_title).height();
-	double as = fm.ascent();
-    if(m_titleShow)
-	{
-		painter.setFont(m_titleFont);
-		painter.setPen(m_titleColor);
-        painter.drawText(
-            QPoint((width + m_leftPadding - m_rightPadding - w) / 2, as + m_topPadding), m_title);
-	}
-
-	//绘制x轴和y轴
-    pen.setColor(m_axisColor);
-    pen.setWidth(2);
-    painter.setPen(pen);
-    painter.drawLine(QPoint(m_leftPadding, height - m_bottomPadding),
-                     QPoint(width - m_rightPadding, height - m_bottomPadding)); //x轴
-    painter.drawLine(QPoint(m_leftPadding, height - m_bottomPadding),
-                     QPoint(m_leftPadding, m_topPadding + h)); //y轴
-
-    //绘制网格
-    pen.setColor(m_gridColor);
-    painter.setPen(pen);
-
-    QBrush brush; //画刷。填充几何图形的调色板，由颜色和填充风格组成
-    brush.setColor(m_gridFillColor);
-    brush.setStyle(Qt::SolidPattern);
-    //painter.setBrush(brush);
-
-    int horiGridWidth = 0;
-    if(m_horiGridNum)
-    { //item水平方向延展
-        horiGridWidth = (width - m_leftPadding - m_rightPadding) / m_horiGridNum;
-    }
-
-    for(int i = 0; i < m_horiGridNum; i++)
-    {
-        QRect gridRect;
-        gridRect.setRect(i * horiGridWidth + m_leftPadding,
-                         m_topPadding + h,
-                         horiGridWidth,
-                         height - m_topPadding - m_bottomPadding - h);
-        painter.drawRect(gridRect);
-    }
-
-    int verGridWidth = 0;
-    if(m_verGridNum)
-    { //item水平方向延展
-        verGridWidth = (height - m_topPadding - m_bottomPadding - h) / m_verGridNum;
-    }
-
-    for(int i = 0; i < m_verGridNum; i++)
-    {
-        QRect gridRect;
-        gridRect.setRect(m_leftPadding,
-                         i * verGridWidth + m_topPadding + h,
-                         width - m_leftPadding - m_rightPadding,
-                         verGridWidth);
-        painter.drawRect(gridRect);
-    }
-    updateDataForDataPairsByTime(m_seconds);
-
-    return PlotItemBase::paintEvent(event);
 }
 
 void PlotBar::updateData(int itemIndex, QString x, QString y, double secs)
@@ -297,4 +222,63 @@ void PlotBar::updateData(int itemIndex, QString x, QString y, double secs)
                  colorMap.value(thresholdList.last()));
     }
     update();
+}
+
+void PlotBar::customPainting(QPainter& painter)
+{
+    int width = this->width();
+    int height = this->height();
+    QFontMetricsF fm(m_titleFont);
+    double h = fm.size(Qt::TextSingleLine, m_title).height();
+
+    QPen pen;
+    //绘制x轴和y轴
+    pen.setColor(m_axisColor);
+    pen.setWidth(2);
+    painter.setPen(pen);
+    painter.drawLine(QPoint(m_leftPadding, height - m_bottomPadding),
+                     QPoint(width - m_rightPadding, height - m_bottomPadding)); //x轴
+    painter.drawLine(QPoint(m_leftPadding, height - m_bottomPadding),
+                     QPoint(m_leftPadding, m_topPadding + h)); //y轴
+
+    //绘制网格
+    pen.setColor(m_gridColor);
+    painter.setPen(pen);
+
+    QBrush brush; //画刷。填充几何图形的调色板，由颜色和填充风格组成
+    brush.setColor(m_gridFillColor);
+    brush.setStyle(Qt::SolidPattern);
+    //painter.setBrush(brush);
+
+    int horiGridWidth = 0;
+    if(m_horiGridNum)
+    { //item水平方向延展
+        horiGridWidth = (width - m_leftPadding - m_rightPadding) / m_horiGridNum;
+    }
+
+    for(int i = 0; i < m_horiGridNum; i++)
+    {
+        QRect gridRect;
+        gridRect.setRect(i * horiGridWidth + m_leftPadding,
+                         m_topPadding + h,
+                         horiGridWidth,
+                         height - m_topPadding - m_bottomPadding - h);
+        painter.drawRect(gridRect);
+    }
+
+    int verGridWidth = 0;
+    if(m_verGridNum)
+    { //item水平方向延展
+        verGridWidth = (height - m_topPadding - m_bottomPadding - h) / m_verGridNum;
+    }
+
+    for(int i = 0; i < m_verGridNum; i++)
+    {
+        QRect gridRect;
+        gridRect.setRect(m_leftPadding,
+                         i * verGridWidth + m_topPadding + h,
+                         width - m_leftPadding - m_rightPadding,
+                         verGridWidth);
+        painter.drawRect(gridRect);
+    }
 }

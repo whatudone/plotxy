@@ -29,9 +29,6 @@ public:
         return Type_PlotLight;
     }
 
-protected:
-    void paintEvent(QPaintEvent* event);
-
 private:
 	bool m_bHorizontal;
 	bool m_started;
@@ -55,8 +52,7 @@ private:
 	QList<QList<QString>> m_userLightData;
 	int m_horiGridNum;
 	int m_verGridNum;
-	int m_leftPadding;
-	int m_rightPadding;
+
 	int m_interPadding;
 	int m_currTimeIndex;
 	int m_circleRadius;
@@ -75,5 +71,6 @@ public slots:
 
 private:
     void updateDataForDataPairsByTime(double secs) override;
+    void customPainting(QPainter& painter) override;
 };
 #endif // _PLOT_LIGHT_H_

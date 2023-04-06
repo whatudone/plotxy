@@ -31,10 +31,22 @@ public:
     }
 
 private:
+    void drawTitleText(QPainter& painter, QRect& rect);
+    void drawXYTitle(QPainter& painter,
+                     int& horiGridWidth,
+                     int& verGridWidth,
+                     const QVector<DataPair*>& dataVector,
+                     double& as);
+    void drawNMCell(QPainter& painter,
+                    QSet<QString>& xset,
+                    QSet<QString>& yset,
+                    const QVector<DataPair*>& dataVector,
+                    int& horiGridWidth,
+                    int& verGridWidth,
+                    double& as);
+    void drawData(QSet<QString>& xset, QSet<QString>& yset, int& horiGridWidth, int& verGridWidth);
     void updateDataForDataPairsByTime(double secs) override;
-
-protected:
-    void paintEvent(QPaintEvent* event);
+    void customPainting(QPainter& painter) override;
 
 private:
     void setGridColorWidth(QColor color, uint width);
@@ -59,20 +71,6 @@ private:
 	QList<QList<double>> m_temValueList;
 	QList<QString> m_entityName, m_attriName;
 	double m_secValue;
-    void drawTitleText(QPainter& painter, QRect& rect);
-    void drawXYTitle(QPainter& painter,
-                     int& horiGridWidth,
-                     int& verGridWidth,
-                     const QVector<DataPair*>& dataVector,
-                     double& as);
-    void drawNMCell(QPainter& painter,
-                    QSet<QString>& xset,
-                    QSet<QString>& yset,
-                    const QVector<DataPair*>& dataVector,
-                    int& horiGridWidth,
-                    int& verGridWidth,
-                    double& as);
-	void drawData(QSet<QString>& xset, QSet<QString>& yset, int& horiGridWidth, int& verGridWidth);
 };
 
 #endif // _PLOT_TEXT_H_

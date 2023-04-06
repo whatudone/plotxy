@@ -14,9 +14,6 @@ public:
 	PlotAttitude(QWidget* parent = Q_NULLPTR);
 	~PlotAttitude();
 
-protected:
-    void paintEvent(QPaintEvent* event);
-
 public:
     void drawTitle(QPainter* painter, int radius);
 	void drawBorder(QPainter* painted, int radius);
@@ -40,11 +37,6 @@ private:
     int m_decision_roll; //roll小数点精度
 
     int m_decision_pitch; //pitch小数点精度
-
-    double m_topPadding; //绘图间隔-top
-    double m_bottomPadding; //绘图间隔-bottom
-    double m_leftPadding; //绘图间隔-left
-    double m_rightPadding; //绘图间隔-right
 
     int m_tickRadiusPercentage; //刻度半径百分比
     int m_textPercentage; //文本半径百分比
@@ -135,4 +127,6 @@ public slots:
 
 private:
     void updateDataForDataPairsByTime(double secs) override;
+    void onDataPairUpdateData() override;
+    void customPainting(QPainter& painter) override;
 };

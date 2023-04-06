@@ -52,6 +52,11 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     m_titleFont.setFamily("Microsoft YaHei");
     m_titleFont.setPointSizeF(m_titleFontSize);
 
+    m_leftPadding = 10;
+    m_rightPadding = 10;
+    m_topPadding = 10;
+    m_bottomPadding = 10;
+
     //设置无边框属性
     setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Widget);
 
@@ -606,6 +611,40 @@ void PlotItemBase::paintEvent(QPaintEvent* event)
 {
     // 绘制本身
     QWidget::paintEvent(event);
+    // 绘制通用的属性
+    int width = this->width();
+    int height = this->height();
+    QPainter painter(this);
+    painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+
+    QFontMetricsF fm(m_titleFont);
+    double w = fm.size(Qt::TextSingleLine, m_title).width();
+    double h = fm.size(Qt::TextSingleLine, m_title).height();
+    double as = fm.ascent();
+    // 通用标题属性
+    if(m_titleVisible)
+    {
+        painter.setFont(m_titleFont);
+        painter.setPen(m_titleColor);
+        painter.fillRect(
+            (width - w + m_leftPadding - m_rightPadding) / 2, m_topPadding, w, h, m_titleFillColor);
+        painter.drawText(
+            QPoint((width + m_leftPadding - m_rightPadding - w) / 2, as + m_topPadding), m_title);
+    }
+    if(m_customPlot)
+    {
+        if(plotType() != PlotType::Type_PlotDoppler)
+        {
+            m_customPlot->setGeometry(m_leftPadding,
+                                      h + m_topPadding,
+                                      width - m_leftPadding - m_rightPadding,
+                                      height - h - m_topPadding - m_bottomPadding);
+        }
+    }
+    else
+    {
+        customPainting(painter);
+    }
     // 根据场景绘制外边框和控制点
     if(m_isNeedDrawBorder)
     {
@@ -616,9 +655,28 @@ void PlotItemBase::paintEvent(QPaintEvent* event)
 
 void PlotItemBase::onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>> /* targetMap*/) {}
 
-void PlotItemBase::onDataPairUpdateData() {}
+void PlotItemBase::onDataPairUpdateData()
+{
+    // 高级管理界面或者其他界面直接修改DataPair里面的数据时，此时会触发
+    // 因为没有封装独立的刷新接口，此处调用总的数据刷新入口
+    updateDataForDataPairsByTime(m_seconds);
+}
 
-void PlotItemBase::updateDataForDataPairsByTime(double secs) {}
+void PlotItemBase::onPlotMouseEventEnable(bool on)
+{
+    if(m_customPlot)
+    {
+        m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, on);
+    }
+    else
+    {
+        // TODO
+    }
+}
+
+void PlotItemBase::updateDataForDataPairsByTime(double) {}
+
+void PlotItemBase::customPainting(QPainter& /*painter*/) {}
 
 bool PlotItemBase::getIsNeedDrawBorder() const
 {

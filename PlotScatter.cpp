@@ -18,12 +18,6 @@ PlotScatter::PlotScatter(QWidget* parent)
 	m_outerFillColor = Qt::black;
 	m_gridFillColor = Qt::black;
 	m_title = "Scatter Plot";
-	m_titleColor = Qt::white;
-	m_titleFillColor = Qt::black;
-	m_titleFontSize = 16;
-	m_titleFont.setFamily("Microsoft YaHei");
-	m_titleFont.setPointSizeF(m_titleFontSize);
-	m_titleVisible = true;
 
 	m_axisLabelColor = Qt::white;
 	m_axisLabelFont.setFamily("Microsoft YaHei");
@@ -31,10 +25,10 @@ PlotScatter::PlotScatter(QWidget* parent)
 	m_xAxisLabel = "X Axis";
 	m_yAxisLabel = "Y Axis";
 
-	m_leftPadding = 10;
-	m_rightPadding = 10;
-	m_topPadding = 10;
-	m_bottomPadding = 10;
+    //	m_leftPadding = 10;
+    //	m_rightPadding = 10;
+    //	m_topPadding = 10;
+    //	m_bottomPadding = 10;
 
 	m_coordBgn_x = 0;
 	m_coordEnd_x = 2000;
@@ -191,7 +185,6 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
         updateData(secs, i, m_dataPairs.at(i));
 	}
 	m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
-	//	update();
 }
 
 void PlotScatter::updateData(double secs, int index, DataPair* data)
@@ -464,37 +457,6 @@ void PlotScatter::updateData(double secs, int index, DataPair* data)
 		m_mapScatter[dataPair].tracer->setVisible(false);
 		m_mapScatter[dataPair].tracerText->setVisible(false);
 	}
-}
-
-void PlotScatter::paintEvent(QPaintEvent* event)
-{
-	int width = this->width();
-	int height = this->height();
-
-	QPainter painter(this);
-	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
-
-	QFontMetricsF fm(m_titleFont);
-	double w = fm.size(Qt::TextSingleLine, m_title).width();
-	double h = fm.size(Qt::TextSingleLine, m_title).height();
-	double as = fm.ascent();
-	//绘制标题
-    if(m_titleVisible)
-	{
-		painter.setFont(m_titleFont);
-		painter.setPen(m_titleColor);
-        painter.fillRect(
-            (width - w + m_leftPadding - m_rightPadding) / 2, m_topPadding, w, h, m_titleFillColor);
-        painter.drawText(
-            QPoint((width - w + m_leftPadding - m_rightPadding) / 2, as + m_topPadding), m_title);
-	}
-
-    m_customPlot->setGeometry(m_leftPadding,
-                              h + m_topPadding,
-                              width - m_leftPadding - m_rightPadding,
-                              height - h - m_topPadding - m_bottomPadding);
-
-    PlotItemBase::paintEvent(event);
 }
 
 void PlotScatter::setPaddings(double top, double bottom, double left, double right)

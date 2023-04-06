@@ -8,8 +8,7 @@ int PlotAttitude::m_instanceCount = 1;
 PlotAttitude::PlotAttitude(QWidget* parent)
 	: PlotItemBase(parent)
 {
-	m_titleColor = Qt::white;
-	m_titleFillColor = Qt::black;
+
 	m_axisColor = Qt::white;
 	m_gridColor = QColor(200, 200, 200);
 	m_border_ColorStart = Qt::white;
@@ -39,16 +38,6 @@ PlotAttitude::PlotAttitude(QWidget* parent)
 	m_decision_roll = 0;
 	m_decision_pitch = 0;
 	m_title = "Attitude";
-	m_titleVisible = true;
-
-	m_leftPadding = 40;
-	m_rightPadding = 40;
-	m_topPadding = 50;
-	m_bottomPadding = 40;
-
-	m_titleFontSize = 16;
-	m_titleFont.setFamily("Microsoft YaHei");
-	m_titleFont.setPointSizeF(m_titleFontSize);
 
 	m_tickLabelFontSize = 10;
 	m_tickLabelFont.setFamily("Microsoft YaHei");
@@ -67,42 +56,6 @@ PlotAttitude::PlotAttitude(QWidget* parent)
 }
 
 PlotAttitude::~PlotAttitude() {}
-
-void PlotAttitude::paintEvent(QPaintEvent* event)
-{
-	int width = this->width();
-	int height = this->height();
-
-	QFontMetricsF fm(m_titleFont);
-	double topPadding = fm.size(Qt::TextSingleLine, m_title).height() + m_topPadding;
-    int radius =
-        qMin(width - m_leftPadding - m_rightPadding, height - topPadding - m_bottomPadding) / 2;
-	radius = radius * m_dialPercentage / 100;
-
-	//画笔
-	QPainter painter(this);
-	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
-	painter.translate(width / 2, height / 2);
-
-	//绘制标题
-	drawTitle(&painter, radius);
-	//绘制背景
-	drawBg(&painter, radius);
-	//绘制刻度尺
-	drawScale_roll(&painter, radius);
-	drawScale_pitch(&painter, radius);
-	//绘制外边框
-	drawBorder(&painter, radius);
-	//绘制线条
-	drawLine_roll(&painter, radius);
-	drawLine_pitch(&painter, radius);
-	//绘制文本
-	drawText_roll(&painter, radius);
-	drawText_pitch(&painter, radius);
-
-	updateItems();
-    PlotItemBase::paintEvent(event);
-}
 
 void PlotAttitude::drawTitle(QPainter* painter, int radius)
 {
@@ -129,10 +82,7 @@ void PlotAttitude::drawBorder(QPainter* painter, int radius)
 {
 	painter->save();
 	painter->setPen(QPen(m_axisColor, m_axisWidth, Qt::SolidLine));
-    // 	QLinearGradient borderGradient(0, -radius, 0, radius);
-    // 	borderGradient.setColorAt(0, m_border_ColorStart);
-    // 	borderGradient.setColorAt(1, m_border_ColorEnd);
-    // 	painter->setBrush(borderGradient);
+
 	painter->drawEllipse(-radius, -radius, radius * 2, radius * 2);
 	painter->drawLine(0, -radius, 0, radius);
 	painter->restore();
@@ -569,4 +519,43 @@ void PlotAttitude::updateDataForDataPairsByTime(double secs)
         DataManager::getInstance()->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs);
     m_yValueList =
         DataManager::getInstance()->getEntityAttr_MaxPartValue_List(ylist.at(0), ylist.at(1), secs);
+}
+
+void PlotAttitude::onDataPairUpdateData() {}
+
+void PlotAttitude::customPainting(QPainter& painter)
+{
+    int width = this->width();
+    int height = this->height();
+
+    QFontMetricsF titleFm(m_titleFont);
+    double titleFontHeight = titleFm.size(Qt::TextSingleLine, m_title).height();
+    double titleAscent = titleFm.ascent();
+    QFontMetricsF tickLabelFm(m_tickLabelFont);
+
+    double tickFontHeight = tickLabelFm.size(Qt::TextSingleLine, m_title).height();
+    // 半径要减去（上下pad+上下文字的高度）
+
+    int radius = qMin(width - m_leftPadding - m_rightPadding,
+                      height - m_topPadding - m_bottomPadding - titleFontHeight - titleAscent -
+                          tickFontHeight * 2) /
+                 2;
+    radius = radius * m_dialPercentage / 100;
+
+    //画笔
+    painter.translate(width / 2, height / 2);
+
+    //绘制背景
+    drawBg(&painter, radius);
+    //绘制刻度尺
+    drawScale_roll(&painter, radius);
+    drawScale_pitch(&painter, radius);
+    //绘制外边框
+    drawBorder(&painter, radius);
+    //绘制线条
+    drawLine_roll(&painter, radius);
+    drawLine_pitch(&painter, radius);
+    //绘制文本
+    drawText_roll(&painter, radius);
+    drawText_pitch(&painter, radius);
 }

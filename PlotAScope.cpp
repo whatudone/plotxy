@@ -11,22 +11,16 @@ PlotAScope::PlotAScope(QWidget* parent)
 	m_outerFillColor = Qt::black;
 	m_gridFillColor = Qt::black;
 	m_title = "A-Scope";
-	m_titleColor = Qt::white;
-	m_titleFillColor = Qt::black;
-	m_titleFontSize = 16;
-	m_titleFont.setFamily("Microsoft YaHei");
-	m_titleFont.setPointSizeF(m_titleFontSize);
-	m_titleVisible = true;
 
 	m_axisLabelFont.setFamily("Microsoft YaHei");
 	m_axisLabelFont.setPointSizeF(10.0);
 	m_xAxisLabel = "Range(m)";
 	m_yAxisLabel = "Voltage(V)";
 
-	m_leftPadding = 10;
-	m_rightPadding = 20;
-	m_topPadding = 0;
-	m_bottomPadding = 20;
+    //	m_leftPadding = 10;
+    //	m_rightPadding = 20;
+    //	m_topPadding = 0;
+    //	m_bottomPadding = 20;
 
 	m_coordBgn_x = 0;
 	m_coordEnd_x = 100;
@@ -61,7 +55,7 @@ void PlotAScope::initPlot()
     QHBoxLayout* pLayout = new QHBoxLayout(this);
     pLayout->addWidget(m_customPlot);
     setLayout(pLayout);
-	m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 	m_customPlot->axisRect()->setupFullAxesBox(true);
 
 	m_customPlot->xAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
@@ -92,41 +86,6 @@ void PlotAScope::initPlot()
 	m_customPlot->yAxis->setLabelFont(m_axisLabelFont);
 
 	m_customPlot->replot();
-}
-
-void PlotAScope::paintEvent(QPaintEvent* event)
-{
-	int width = this->width();
-	int height = this->height();
-	//»­±Ê
-	QPainter painter(this);
-	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
-
-	QFontMetricsF fm(m_titleFont);
-	double w = fm.size(Qt::TextSingleLine, m_title).width();
-	double h = fm.size(Qt::TextSingleLine, m_title).height();
-	double as = fm.ascent();
-
-    if(m_titleVisible)
-	{
-		painter.setFont(m_titleFont);
-		painter.setPen(m_titleColor);
-        painter.fillRect(
-            (width - w + m_leftPadding - m_rightPadding) / 2, m_topPadding, w, h, m_titleFillColor);
-        painter.drawText(
-            QPoint((width + m_leftPadding - m_rightPadding - w) / 2, as + m_topPadding), m_title);
-	}
-
-    m_customPlot->setGeometry(m_leftPadding,
-                              h + m_topPadding,
-                              width - m_leftPadding - m_rightPadding,
-                              height - h - m_topPadding - m_bottomPadding);
-    PlotItemBase::paintEvent(event);
-}
-
-void PlotAScope::slot_setMouseEventEnable(bool on)
-{
-	m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, on);
 }
 
 void PlotAScope::setPaddings(double top, double bottom, double left, double right)

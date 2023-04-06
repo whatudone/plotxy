@@ -17,9 +17,14 @@ PlotText::PlotText(QWidget* parent)
     : PlotItemBase(parent)
 {
 	m_bHorizontal = true;
+    m_title = "Text";
 
-	m_leftPadding = 50;
-	m_rightPadding = 50;
+    //	m_leftPadding = 50;
+    //	m_rightPadding = 50;
+    //    m_leftPadding = 40;
+    //    m_rightPadding = 40;
+    //    m_topPadding = 50;
+    //    m_bottomPadding = 40;
 	m_interPadding = 20;
 	m_horiGridNum = m_verGridNum = 1;
 	m_currTimeIndex = 0;
@@ -33,90 +38,9 @@ PlotText::PlotText(QWidget* parent)
 	QString name = QString("Text%1").arg(m_instanceCount);
 	this->setName(name);
 	m_instanceCount += 1;
-	//connect(m_timer, &QTimer::timeout, this, &PlotText::onTimeout);
 }
 
 PlotText::~PlotText() {}
-
-void PlotText::paintEvent(QPaintEvent* event)
-{
-	QPainter painter(this);
-	QPen pen;
-	QFont font, titleFont;
-	QRect rect;
-    QVector<DataPair*> dataVector = getDataPairs();
-	QSet<QString> xset, yset;
-	int i = 0, j = 0;
-	int horGT = 0;
-	int verGT = 0;
-	pen.setColor(Qt::white);
-	painter.setPen(pen);
-	font.setPointSize(20);
-	titleFont.setPointSize(getTitleFontSize());
-	painter.setFont(font);
-	QFontMetricsF fm(titleFont);
-	double as = fm.ascent();
-	rect.setRect(0, 0, width(), as);
-	int horiGridWidth = 0;
-    if(m_horiGridNum) //item水平方向延展
-	{
-        horiGridWidth = 0.9 * width() / m_horiGridNum;
-	}
-	int verGridWidth = 0;
-    if(m_verGridNum) //item水平方向延展
-	{
-        verGridWidth = (0.93 * height() - as) / m_verGridNum;
-	}
-	//以下为绘制表格title名字
-    drawTitleText(painter, rect);
-	//以下绘制n×m的格子
-	drawNMCell(painter, xset, yset, dataVector, horiGridWidth, verGridWidth, as);
-	//以下为绘制X/Y轴item名字
-	pen.setColor(Qt::white);
-	pen.setWidth(3);
-	pen.setStyle(Qt::SolidLine);
-	painter.setPen(pen);
-    if(!getDataPairs().isEmpty())
-	{
-		drawXYTitle(painter, horiGridWidth, verGridWidth, dataVector, as);
-		//以下为绘制对应的数据，没有调用drawData函数，后期如果需要可以调用下。
-        if(m_temValueList.isEmpty())
-			return;
-		else
-		{
-            painter.drawText(0.05 * width(),
-                             as + 0.02 * height(),
-                             horiGridWidth,
-                             verGridWidth,
-                             Qt::AlignCenter | Qt::TextWrapAnywhere,
-                             QString("0表示0或无数据"));
-            for(int i = m_entityName.size() - 1; i != -1; i--)
-			{
-                for(int j = m_attriName.size() - 1; j != -1; j--)
-				{
-                    rect.setRect(0.05 * width() + (1 + horGT) * horiGridWidth,
-                                 as + 0.02 * height() + (1 + verGT) * verGridWidth,
-                                 horiGridWidth,
-                                 verGridWidth);
-					//painter.drawText(rect, QString::number(*(m_valueListVector.at(j).end()),'f',2));
-                    painter.drawText(rect,
-                                     Qt::AlignCenter | Qt::TextWrapAnywhere,
-                                     QString::number(m_temValueList
-                                                         .at(m_temValueList.size() - 1 - j -
-                                                             i * m_attriName.size())
-                                                         .back(),
-                                                     'f',
-                                                     6));
-					update();
-					verGT++;
-				}
-				horGT++;
-				verGT = 0;
-			}
-		}
-	}
-    PlotItemBase::paintEvent(event);
-}
 
 //以下为用户自定义数据
 //QList<textUserData> list1;
@@ -242,6 +166,83 @@ void PlotText::updateDataForDataPairsByTime(double secs)
             if(m_valueList.isEmpty())
                 m_valueList.push_back(0);
             m_temValueList.push_back(m_valueList);
+        }
+    }
+}
+
+void PlotText::customPainting(QPainter& painter)
+{
+    QPen pen;
+    QFont font, titleFont;
+    QRect rect;
+    QVector<DataPair*> dataVector = getDataPairs();
+    QSet<QString> xset, yset;
+
+    int horGT = 0;
+    int verGT = 0;
+    pen.setColor(Qt::white);
+    painter.setPen(pen);
+    font.setPointSize(20);
+    titleFont.setPointSize(getTitleFontSize());
+    painter.setFont(font);
+    QFontMetricsF fm(titleFont);
+    double as = fm.ascent();
+    rect.setRect(0, 0, width(), as);
+    int horiGridWidth = 0;
+    if(m_horiGridNum) //item水平方向延展
+    {
+        horiGridWidth = 0.9 * width() / m_horiGridNum;
+    }
+    int verGridWidth = 0;
+    if(m_verGridNum) //item水平方向延展
+    {
+        verGridWidth = (0.93 * height() - as) / m_verGridNum;
+    }
+
+    //以下绘制n×m的格子
+    drawNMCell(painter, xset, yset, dataVector, horiGridWidth, verGridWidth, as);
+    //以下为绘制X/Y轴item名字
+    pen.setColor(Qt::white);
+    pen.setWidth(3);
+    pen.setStyle(Qt::SolidLine);
+    painter.setPen(pen);
+    if(!getDataPairs().isEmpty())
+    {
+        drawXYTitle(painter, horiGridWidth, verGridWidth, dataVector, as);
+        //以下为绘制对应的数据，没有调用drawData函数，后期如果需要可以调用下。
+        if(m_temValueList.isEmpty())
+            return;
+        else
+        {
+            painter.drawText(0.05 * width(),
+                             as + 0.02 * height(),
+                             horiGridWidth,
+                             verGridWidth,
+                             Qt::AlignCenter | Qt::TextWrapAnywhere,
+                             QString("0表示0或无数据"));
+            for(int i = m_entityName.size() - 1; i != -1; i--)
+            {
+                for(int j = m_attriName.size() - 1; j != -1; j--)
+                {
+                    rect.setRect(0.05 * width() + (1 + horGT) * horiGridWidth,
+                                 as + 0.02 * height() + (1 + verGT) * verGridWidth,
+                                 horiGridWidth,
+                                 verGridWidth);
+                    //painter.drawText(rect, QString::number(*(m_valueListVector.at(j).end()),'f',2));
+                    painter.drawText(rect,
+                                     Qt::AlignCenter | Qt::TextWrapAnywhere,
+                                     QString::number(m_temValueList
+                                                         .at(m_temValueList.size() - 1 - j -
+                                                             i * m_attriName.size())
+                                                         .back(),
+                                                     'f',
+                                                     6));
+
+                    verGT++;
+                }
+                horGT++;
+                verGT = 0;
+            }
         }
     }
 }

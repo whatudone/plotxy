@@ -44,9 +44,11 @@ public slots:
     void onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>>) override;
 
 protected:
-    void paintEvent(QPaintEvent* event);
     void updateDataForDataPairsByTime(double secs);
     void updateData(int itemIndex, QString x, QString y, double secs);
+
+private:
+    void customPainting(QPainter& painter) override;
 
 private:
     bool m_bHorizontal;
@@ -55,11 +57,7 @@ private:
     QLine m_xAxis;
     QLine m_yAxis;
 
-    int m_leftPadding;
-    int m_rightPadding;
     int m_interPadding;
-	int m_topPadding;
-	int m_bottomPadding;
 
     int m_currTimeIndex;
 

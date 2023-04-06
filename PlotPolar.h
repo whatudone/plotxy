@@ -52,9 +52,6 @@ public slots:
 	void slot_setRangeDrag(bool);
 	void slot_setRangeZoom(bool);
 
-	//mouseEvent
-	void slot_setMouseEventEnable(bool);
-
 private:
     void updateDataForDataPairsByTime(double secs) override;
 
@@ -70,7 +67,4 @@ private:
 	double m_radialRange_upper;
 
 	QList<double> m_valueList;
-
-protected:
-    void paintEvent(QPaintEvent* event);
 };

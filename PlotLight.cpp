@@ -18,8 +18,8 @@ PlotLight::PlotLight(QWidget* parent)
 {
 	m_bHorizontal = true;
 	m_circleRadius = 0;
-	m_leftPadding = 50;
-	m_rightPadding = 50;
+    //	m_leftPadding = 50;
+    //	m_rightPadding = 50;
 	m_interPadding = 20;
 	m_currTimeIndex = 0;
 	m_started = false;
@@ -29,62 +29,10 @@ PlotLight::PlotLight(QWidget* parent)
 	m_instanceCount += 1;
 	m_temBrush.setColor(Qt::gray);
 	m_defaultColor = Qt::gray;
+    m_title = "Events";
 }
 
 PlotLight::~PlotLight() {}
-
-void PlotLight::paintEvent(QPaintEvent* event)
-{
-	//以下为绘制表头
-	QPainter painter(this);
-	painter.setRenderHint(QPainter::Antialiasing, true);
-	QPen pen;
-	QFont font;
-	QRect rect;
-	QSet<QString> yset;
-
-    QVector<DataPair*> dataVector = getDataPairs();
-	QFontMetricsF fm(font);
-	double as = fm.ascent();
-	m_axisColor = Qt::white;
-	pen.setColor(m_axisColor);
-	font.setPointSize(20);
-    rect.setRect(0, 0, width(), 0.1 * height() + as);
-	painter.setPen(pen);
-	painter.setFont(font);
-    drawTitle(painter, rect);
-	//以下为绘制文字的内容和框框
-	double verGridWidth = 0;
-	double horGridWidth = 0;
-	m_horiGridNum = 1;
-    if(!dataVector.empty())
-	{
-		pen.setStyle(getGridStyle());
-		painter.setPen(pen);
-        rect.setRect(0.05 * width(), 0.1 * height() + as, 0.9 * width(), 0.85 * height() - as);
-		painter.drawRect(rect);
-	}
-    for(int i = 0; i < dataVector.size(); i++)
-	{
-		painter.setBrush(QBrush(Qt::gray));
-		yset.insert(dataVector.at(i)->getDataPair().first);
-		m_verGridNum = dataVector.size();
-        verGridWidth = (0.85 * height() - as) / m_verGridNum;
-        horGridWidth =
-            (0.8 * width() - 2 * m_circleRadius) / m_horiGridNum; //整个宽减去框框宽，减去圆圈占宽
-        rect.setRect(0.15 * width() + 2 * m_circleRadius,
-                     as + 0.1 * height() + i * verGridWidth,
-                     horGridWidth,
-                     verGridWidth);
-        painter.drawText(
-            rect, Qt::AlignCenter | Qt::TextWordWrap, dataVector.at(i)->getDataPair().first);
-		judgeLight();
-	}
-    drawLight(painter, verGridWidth, as);
-    if(!m_brush.isEmpty())
-		m_brush.clear();
-    PlotItemBase::paintEvent(event);
-}
 
 void PlotLight::drawTitle(QPainter& painter, QRect& rect)
 {
@@ -289,10 +237,7 @@ void PlotLight::updateDataForDataPairsByTime(double secs)
 {
 
     int isize = getDataPairs().size();
-    int entityNum = 0;
-    int attriNum = 0;
-    //m_entityName.clear();
-    //m_attriName.clear();
+
     for(int i = 0; i < isize; i++)
     {
         QString getLightData = getDataPairs().at(i)->getDataPair().first;
@@ -306,11 +251,57 @@ void PlotLight::updateDataForDataPairsByTime(double secs)
         }
         else
         {
-            QMessageBox* noDataMessageBox = new QMessageBox(nullptr);
-            noDataMessageBox->setWindowTitle(QString("空数据警告"));
-            noDataMessageBox->setText(QString("请检查所选项中是否存在空数据"));
-            noDataMessageBox->show();
+            QMessageBox::warning(nullptr, "警告", QString("数据为空:%1").arg(getLightData));
             return;
         }
     }
+}
+
+void PlotLight::customPainting(QPainter& painter)
+{
+    //以下为绘制表头
+
+    QPen pen;
+    QFont font;
+    QRect rect;
+    QSet<QString> yset;
+
+    QVector<DataPair*> dataVector = getDataPairs();
+    QFontMetricsF fm(font);
+    double as = fm.ascent();
+    m_axisColor = Qt::white;
+    pen.setColor(m_axisColor);
+    font.setPointSize(20);
+    rect.setRect(0, 0, width(), 0.1 * height() + as);
+    painter.setPen(pen);
+    painter.setFont(font);
+
+    //以下为绘制文字的内容和框框
+    double verGridWidth = 0;
+    double horGridWidth = 0;
+    m_horiGridNum = 1;
+    if(!dataVector.empty())
+    {
+        pen.setStyle(getGridStyle());
+        painter.setPen(pen);
+        rect.setRect(0.05 * width(), 0.1 * height() + as, 0.9 * width(), 0.85 * height() - as);
+        painter.drawRect(rect);
+    }
+    for(int i = 0; i < dataVector.size(); i++)
+    {
+        painter.setBrush(QBrush(Qt::gray));
+        yset.insert(dataVector.at(i)->getDataPair().first);
+        m_verGridNum = dataVector.size();
+        verGridWidth = (0.85 * height() - as) / m_verGridNum;
+        horGridWidth =
+            (0.8 * width() - 2 * m_circleRadius) / m_horiGridNum; //整个宽减去框框宽，减去圆圈占宽
+        rect.setRect(0.15 * width() + 2 * m_circleRadius,
+                     as + 0.1 * height() + i * verGridWidth,
+                     horGridWidth,
+                     verGridWidth);
+        painter.drawText(
+            rect, Qt::AlignCenter | Qt::TextWordWrap, dataVector.at(i)->getDataPair().first);
+        judgeLight();
+    }
+    drawLight(painter, verGridWidth, as);
 }

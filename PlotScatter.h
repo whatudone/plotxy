@@ -91,9 +91,6 @@ public:
         return Type_PlotScatter;
     }
 
-protected:
-    void paintEvent(QPaintEvent* event) override;
-
 private:
 	void initPlot();
     void updateDataForDataPairsByTime(double secs);
@@ -101,10 +98,6 @@ private:
 
 private:
     double m_curSeconds;
-    double m_topPadding; //绘图间隔-top
-    double m_bottomPadding; //绘图间隔-bottom
-    double m_leftPadding; //绘图间隔-left
-    double m_rightPadding; //绘图间隔-right
 
     struct ScatterInfo
 	{

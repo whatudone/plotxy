@@ -20,23 +20,6 @@ public:
 
 	void initPlot();
 
-    QString getxAxisLabel() const
-    {
-        return m_xAxisLabel;
-    }
-    QString getyAxisLabel() const
-    {
-        return m_yAxisLabel;
-    }
-    QColor getAxisLabelColor() const
-    {
-        return m_axisLabelColor;
-    }
-    QFont getAxisLabelFont() const
-    {
-        return m_axisLabelFont;
-    }
-
 	void setxAxisLabel(QString& str);
 	void setyAxisLabel(QString& str);
 	void setAxisLabelColor(QColor& color);
@@ -83,6 +66,9 @@ public:
 public:
     static int m_instanceCount; //实体个数
 
+public slots:
+    void onPlotMouseEventEnable(bool on) override;
+
 private:
     QCPColorMap* m_colorMap;
     QCPColorScale* m_colorScale;
@@ -91,15 +77,6 @@ private:
 	PlotAScope* m_horizon_AScope;
 	PlotAScope* m_vertical_AScope;
 
-    double m_topPadding; //绘图间隔-top
-    double m_bottomPadding; //绘图间隔-bottom
-    double m_leftPadding; //绘图间隔-left
-    double m_rightPadding; //绘图间隔-right
-
-public slots:
-	//mouseEvent
-	void slot_setMouseEventEnable(bool on);
-
-protected:
-    void paintEvent(QPaintEvent* event);
+private:
+    void customPainting(QPainter& painter) override;
 };

@@ -79,20 +79,8 @@ public:
     static int m_instanceCount; //实体个数
 
 private:
-    double m_topPadding; //绘图间隔-top
-    double m_bottomPadding; //绘图间隔-bottom
-    double m_leftPadding; //绘图间隔-left
-    double m_rightPadding; //绘图间隔-right
-
     QColor m_axisLabelColor; //坐标标题颜色
     QFont m_axisLabelFont; //坐标标题字体
 	QString m_xAxisLabel;
 	QString m_yAxisLabel;
-
-public slots:
-	//mouseEvent
-    void slot_setMouseEventEnable(bool on);
-
-protected:
-	virtual void paintEvent(QPaintEvent* event);
 };

@@ -281,6 +281,11 @@ protected:
     QFont m_axisLabelFont; //坐标轴标题字体
     int m_axisLabelFontSize; //坐标轴标题字体尺寸
     double m_seconds; // 时间，用于筛选数据
+
+    double m_topPadding; //绘图间隔-top
+    double m_bottomPadding; //绘图间隔-bottom
+    double m_leftPadding; //绘图间隔-left
+    double m_rightPadding; //绘图间隔-right
 public slots:
     void slot_updateRect(const QRect&);
 	void slot_setVisible(bool);
@@ -290,10 +295,14 @@ public slots:
     virtual void onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>>);
     // 响应内部DataPair数据发送的change信号
     virtual void onDataPairUpdateData();
+    // 控制图表本身是否可以响应鼠标事件，比如可以拖拽图表的坐标轴等，因为部分是自绘。所以处理方式不同
+    virtual void onPlotMouseEventEnable(bool on);
 
 private:
     // 滑块时间变化时，处理的虚函数，各个图表根据需求实现自己的逻辑
-    virtual void updateDataForDataPairsByTime(double secs);
+    virtual void updateDataForDataPairsByTime(double);
+    // 自绘图表需要填充此虚函数实现自己的绘制逻辑
+    virtual void customPainting(QPainter&);
 signals:
     void sgn_dataPairChanged(PlotItemBase* pBaseItem); //数据对改变信号,tabName,plotName
 protected:

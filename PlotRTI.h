@@ -81,16 +81,4 @@ private:
     QCPColorMap* m_colorMap;
     QCPColorScale* m_colorScale;
     QCPMarginGroup* m_marginGroup;
-
-    double m_topPadding; //绘图间隔-top
-    double m_bottomPadding; //绘图间隔-bottom
-    double m_leftPadding; //绘图间隔-left
-    double m_rightPadding; //绘图间隔-right
-
-public slots:
-	//mouseEvent
-	void slot_setMouseEventEnable(bool on);
-
-protected:
-	virtual void paintEvent(QPaintEvent* event);
 };

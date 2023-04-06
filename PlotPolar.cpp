@@ -13,12 +13,6 @@ PlotPolar::PlotPolar(QWidget* parent)
 	m_outerFillColor = Qt::black;
 	m_gridFillColor = Qt::black;
 	m_title = "Polar";
-	m_titleColor = Qt::white;
-	m_titleFontSize = 16;
-	m_titleFillColor = Qt::black;
-	m_titleFont.setFamily("Microsoft YaHei");
-	m_titleFont.setPointSizeF(m_titleFontSize);
-	m_titleVisible = true;
 
     m_units_x = QString("X");
     m_units_y = QString("Y");
@@ -215,43 +209,6 @@ void PlotPolar::setGridStyle(GridStyle style)
 
 void PlotPolar::setGridDensity(GridDensity density) {}
 
-void PlotPolar::paintEvent(QPaintEvent* event)
-{
-	int width = this->width();
-	int height = this->height();
-	QPainter painter(this);
-	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
-
-	QFontMetricsF fm(m_titleFont);
-	double w = fm.size(Qt::TextSingleLine, m_title).width();
-	double h = fm.size(Qt::TextSingleLine, m_title).height();
-	double as = fm.ascent();
-    int radius = qMin(width, int(height - 1.25 * h));
-
-	painter.setFont(m_titleFont);
-	painter.setPen(m_titleColor);
-    if(width > (height - h))
-	{
-        m_customPlot->setGeometry((width - radius) / 2, 1.25 * h, radius, radius);
-        if(m_titleVisible)
-		{
-            painter.fillRect((width - w) / 2, h * 0.25, w, h, m_titleFillColor);
-			painter.drawText(QPoint((width - w) / 2, h), m_title);
-		}
-    }
-	else
-	{
-        m_customPlot->setGeometry(0, (height + h - radius) / 2 + 0.25 * h, radius, radius);
-        if(m_titleVisible)
-		{
-            painter.fillRect(
-                (width - w) / 2, (height + h - radius) / 2 - 0.75 * h, w, h, m_titleFillColor);
-			painter.drawText(QPoint((width - w) / 2, (height + h - radius) / 2), m_title);
-		}
-	}
-    PlotItemBase::paintEvent(event);
-}
-
 void PlotPolar::setTitle(QString& title)
 {
 	m_title = title;
@@ -339,11 +296,6 @@ void PlotPolar::slot_setRangeZoom(bool enabled)
 {
 	m_customPlot->setInteraction(QCP::iRangeZoom, enabled);
 	m_customPlot->replot();
-}
-
-void PlotPolar::slot_setMouseEventEnable(bool on)
-{
-    m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, on);
 }
 
 void PlotPolar::updateDataForDataPairsByTime(double secs)

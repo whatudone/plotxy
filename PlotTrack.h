@@ -37,18 +37,15 @@ public slots:
     void onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>>) override;
 
 protected:
-    void paintEvent(QPaintEvent* event) override;
     void updateDataForDataPairsByTime(double secs) override;
     void updateData(int itemIndex, QString entityType, double secs); //实现核心绘制逻辑
+private:
+    void customPainting(QPainter& painter) override;
 
 private:
     QLine m_xAxis;
     QLine m_yAxis;
 
-    double m_topPadding; //绘图间隔-top
-    double m_bottomPadding; //绘图间隔-bottom
-    double m_leftPadding; //绘图间隔-left
-    double m_rightPadding; //绘图间隔-right
     int m_interPadding;
 
     QMap<QString, QMap<int, QColor>>
@@ -61,8 +58,6 @@ private:
     int m_verGridNum;
 
     int m_itemCnt;
-
-    bool m_titleShow; //标题是否显示
 };
 
 #endif // _PLOT_TRACK_H_

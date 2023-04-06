@@ -15,29 +15,20 @@ public:
     PlotDial(QWidget* parent = Q_NULLPTR);
     ~PlotDial();
 
-    //更新指针
-    void updatePointer(double secs);
     static int m_instanceCount; //实体个数
     PlotType plotType() const override
     {
         return Type_PlotDial;
     }
 
-protected:
-    void paintEvent(QPaintEvent* event);
-
 private:
     void updateDataForDataPairsByTime(double secs) override;
+    void customPainting(QPainter& painter) override;
 
 private:
     bool m_bThinStyle;
 
     bool m_titleShow; //标题是否显示
-
-    double m_topPadding; //绘图间隔-top
-    double m_bottomPadding; //绘图间隔-bottom
-    double m_leftPadding; //绘图间隔-left
-    double m_rightPadding; //绘图间隔-right
 
     QFont m_axisFont; //坐标标题字体
 
@@ -48,6 +39,8 @@ private:
     int m_circleRadius;
     int m_startAngle;
     int m_endAngle;
+    // 四个点形成的钟表指针
+    QPoint m_clockHandPoints[4];
 };
 
 #endif // PLOTDIAL_H

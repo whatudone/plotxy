@@ -11,22 +11,16 @@ PlotDoppler::PlotDoppler(QWidget* parent)
 	m_outerFillColor = Qt::black;
 	m_gridFillColor = Qt::black;
 	m_title = "Range Doppler";
-	m_titleColor = Qt::white;
-	m_titleFillColor = Qt::black;
-	m_titleFontSize = 16;
-	m_titleFont.setFamily("Microsoft YaHei");
-	m_titleFont.setPointSizeF(m_titleFontSize);
-	m_titleVisible = true;
 
 	m_axisLabelFont.setFamily("Microsoft YaHei");
 	m_axisLabelFont.setPointSizeF(10.0);
 	m_xAxisLabel = "Range(m)";
 	m_yAxisLabel = "Voltage(V)";
 
-	m_leftPadding = 10;
-	m_rightPadding = 20;
-	m_topPadding = 0;
-	m_bottomPadding = 10;
+    //	m_leftPadding = 10;
+    //	m_rightPadding = 20;
+    //	m_topPadding = 0;
+    //	m_bottomPadding = 10;
 
 	m_coordBgn_x = 0;
 	m_coordEnd_x = 100;
@@ -61,7 +55,7 @@ void PlotDoppler::initPlot()
     QHBoxLayout* pLayout = new QHBoxLayout(this);
     pLayout->addWidget(m_customPlot);
     setLayout(pLayout);
-	m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 	m_customPlot->axisRect()->setupFullAxesBox(true);
 
 	m_customPlot->xAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
@@ -150,50 +144,31 @@ void PlotDoppler::initPlot()
 	setCoordRangeY(m_coordBgn_y, m_coordEnd_y);
 }
 
-void PlotDoppler::paintEvent(QPaintEvent* event)
+void PlotDoppler::customPainting(QPainter& painter)
 {
-	int width = this->width();
-	int height = this->height();
+    int width = this->width();
+    int height = this->height();
 
-	QPainter painter(this);
-	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
-
-	QFontMetricsF fm(m_titleFont);
-	double w = fm.size(Qt::TextSingleLine, m_title).width();
-	double h = fm.size(Qt::TextSingleLine, m_title).height();
-	double as = fm.ascent();
-
-    if(m_titleVisible)
-	{
-		painter.setFont(m_titleFont);
-		painter.setPen(m_titleColor);
-        painter.fillRect(
-            (width - w + m_leftPadding - m_rightPadding) / 2, m_topPadding, w, h, m_titleFillColor);
-        painter.drawText(
-            QPoint((width + m_leftPadding - m_rightPadding - w) / 2, as + m_topPadding), m_title);
-	}
+    QFontMetricsF fm(m_titleFont);
+    //	double w = fm.size(Qt::TextSingleLine, m_title).width();
+    double h = fm.size(Qt::TextSingleLine, m_title).height();
+    //	double as = fm.ascent();
 
     int verWidth = (width - m_leftPadding - m_rightPadding) * 0.2;
     int horHeight = (height - h - m_topPadding - m_bottomPadding) * 0.2;
-	int plotWidth = width - m_leftPadding - m_rightPadding - verWidth;
-	int plotHeight = height - h - m_topPadding - m_bottomPadding - horHeight;
+    int plotWidth = width - m_leftPadding - m_rightPadding - verWidth;
+    int plotHeight = height - h - m_topPadding - m_bottomPadding - horHeight;
 
-	m_vertical_AScope->resize(verWidth, plotHeight + 15);
+    m_vertical_AScope->resize(verWidth, plotHeight + 15);
     m_vertical_AScope->setGeometry(m_leftPadding, h + m_topPadding, verWidth, plotHeight + 15);
 
-	m_horizon_AScope->resize(plotWidth - m_colorScale->barWidth() + 15, horHeight);
+    m_horizon_AScope->resize(plotWidth - m_colorScale->barWidth() + 15, horHeight);
     m_horizon_AScope->setGeometry(m_leftPadding + verWidth - 15,
                                   h + m_topPadding + plotHeight,
                                   plotWidth - m_colorScale->barWidth() + 15,
                                   horHeight);
 
     m_customPlot->setGeometry(m_leftPadding + verWidth, h + m_topPadding, plotWidth, plotHeight);
-    PlotItemBase::paintEvent(event);
-}
-
-void PlotDoppler::slot_setMouseEventEnable(bool on)
-{
-	m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, on);
 }
 
 void PlotDoppler::setUnitsShowX(bool on)
@@ -258,7 +233,14 @@ void PlotDoppler::setTitleFontSize(int size)
 void PlotDoppler::setTitleVisible(bool show)
 {
 	m_titleVisible = show;
-	update();
+    update();
+}
+
+void PlotDoppler::onPlotMouseEventEnable(bool on)
+{
+    m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, on);
+    m_horizon_AScope->onPlotMouseEventEnable(on);
+    m_vertical_AScope->onPlotMouseEventEnable(on);
 }
 
 void PlotDoppler::setxAxisLabel(QString& str)
