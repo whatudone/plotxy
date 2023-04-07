@@ -24,6 +24,7 @@ public:
 private:
     void updateDataForDataPairsByTime(double secs) override;
     void customPainting(QPainter& painter) override;
+    void updateCenterPoint();
 
 private:
     bool m_bThinStyle;

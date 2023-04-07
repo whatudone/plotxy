@@ -31,6 +31,7 @@ PlotDial::PlotDial(QWidget* parent)
     //	m_rightPadding = 20;
     //	m_topPadding = 0;
     //	m_bottomPadding = 20;
+    updateCenterPoint();
 }
 
 PlotDial::~PlotDial() {}
@@ -76,18 +77,9 @@ void PlotDial::updateDataForDataPairsByTime(double secs)
 
 void PlotDial::customPainting(QPainter& painter)
 {
-    QFontMetricsF fm(m_titleFont);
-    double w = fm.size(Qt::TextSingleLine, m_title).width();
-    double h = fm.size(Qt::TextSingleLine, m_title).height();
-    double as = fm.ascent();
-
-    m_circleRadius =
-        (width() - m_leftPadding - m_rightPadding) < (height() - h - m_topPadding - m_bottomPadding)
-            ? (width() - m_leftPadding - m_rightPadding) / 2
-            : (height() - h - m_topPadding - m_bottomPadding) / 2;
-    m_centerPoint = QPoint((width() + m_leftPadding - m_rightPadding) / 2,
-                           (height() + h + m_topPadding - m_bottomPadding) / 2);
-
+    // TODO:理论上是在控件尺寸上发生变换时才需要调用updateCenterPoint
+    updateCenterPoint();
+    painter.save();
     //绘制表盘圆圈
     QPen pen;
     pen.setColor(m_dialColor);
@@ -133,8 +125,8 @@ void PlotDial::customPainting(QPainter& painter)
     // 绘制表盘文字
     painter.setFont(m_axisFont);
     QFontMetricsF fm1(m_axisFont);
-    w = fm1.size(Qt::TextSingleLine, QString("-50°")).width();
-    h = fm1.size(Qt::TextSingleLine, QString("-50°")).height();
+    double w = fm1.size(Qt::TextSingleLine, QString("-50°")).width();
+    double h = fm1.size(Qt::TextSingleLine, QString("-50°")).height();
     painter.drawText(-m_circleRadius * 0.93, h / 3, QString("-50°"));
 
     w = fm1.size(Qt::TextSingleLine, QString("0°")).width();
@@ -148,6 +140,8 @@ void PlotDial::customPainting(QPainter& painter)
     w = fm1.size(Qt::TextSingleLine, QString("100°")).width();
     h = fm1.size(Qt::TextSingleLine, QString("100°")).height();
     painter.drawText(-w / 2, m_circleRadius * 0.93, QString("100°"));
+    // 绘制上面的图形坐标轴是基于平移之后的，需要还原，指针的坐标是没有平移过的
+    painter.restore();
     // 绘制图表的指针
     if(!getDataPairs().isEmpty())
     {
@@ -155,4 +149,17 @@ void PlotDial::customPainting(QPainter& painter)
         painter.setBrush(pointerBrush);
         painter.drawPolygon(m_clockHandPoints, 4);
     }
+}
+
+void PlotDial::updateCenterPoint()
+{
+    QFontMetricsF fm(m_titleFont);
+    double h = fm.size(Qt::TextSingleLine, m_title).height();
+
+    m_circleRadius =
+        (width() - m_leftPadding - m_rightPadding) < (height() - h - m_topPadding - m_bottomPadding)
+            ? (width() - m_leftPadding - m_rightPadding) / 2
+            : (height() - h - m_topPadding - m_bottomPadding) / 2;
+    m_centerPoint = QPoint((width() + m_leftPadding - m_rightPadding) / 2,
+                           (height() + h + m_topPadding - m_bottomPadding) / 2);
 }

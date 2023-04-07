@@ -320,7 +320,6 @@ void PlotText::drawXYTitle(QPainter& painter,
     {
         updateDataForDataPairsByTime(m_secValue);
     }
-	update();
 }
 
 void PlotText::drawNMCell(QPainter& painter,
