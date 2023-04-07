@@ -247,7 +247,7 @@ void PlotRTI::setAxisTickLabelShow(bool on, AxisType type)
 
 void PlotRTI::setHorzGrids(uint count)
 {
-    if(m_horzGrids == count || count < 0)
+    if(m_horzGrids == count)
 	{
 		return;
 	}
@@ -266,7 +266,7 @@ void PlotRTI::setHorzGrids(uint count)
 
 void PlotRTI::setVertGrids(uint count)
 {
-    if(m_vertGrids == count || count < 0)
+    if(m_vertGrids == count)
 	{
 		return;
 	}

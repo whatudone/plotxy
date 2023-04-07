@@ -52,8 +52,8 @@ private:
     // 绘制所有数据块
     void drawPairDatas(QPainter& painter);
 
-    void
-    drawPairData(int itemIndex, QString x, int32_t perItemLength, double secs, QPainter& painter);
+    void drawPairData(
+        int itemIndex, QString currKey, int32_t perItemLength, double currValue, QPainter& painter);
     // 计算每个Bar的绘制长度
     int calculateItemLength();
 
@@ -74,6 +74,8 @@ private:
 
     int m_horiGridNum;
     int m_verGridNum;
+    // 从数据管理器采集的临时数据，用于绘图，每次更新数据只需要更新这个临时数据即可《value,key》
+    QList<QPair<double, QString>> m_dataList;
 };
 
 #endif // _PLOT_BAR_H_

@@ -697,14 +697,11 @@ void PlotXYDemo::addPlotWidget(PlotType type, const QRect& geo)
     plotItem->setTabName(currTabText);
     connect(
         this, &PlotXYDemo::sgn_sendCurrentSeconds, plotItem, &PlotItemBase::onGetCurrentSeconds);
-    connect(plotItem,
-            &PlotItemBase::sgn_dataPairChanged,
-            m_addPlotPair,
-            &AddPlotPair::onUpdatePlotPair);
     connect(
-        plotItem, &PlotItemBase::sgn_dataPairChanged, m_plotManager, &PlotManager::onSelectedPlot);
+        plotItem, &PlotItemBase::dataPairsChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
+    connect(plotItem, &PlotItemBase::dataPairsChanged, m_plotManager, &PlotManager::onSelectedPlot);
     connect(plotItem,
-            &PlotItemBase::sgn_dataPairChanged,
+            &PlotItemBase::dataPairsChanged,
             m_AdvancedDataManager,
             &AdvancedDataManager::onUpdatePlotPair);
     connect(m_AdvancedDataManager,

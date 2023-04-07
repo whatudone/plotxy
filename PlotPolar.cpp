@@ -128,7 +128,7 @@ void PlotPolar::setHorzGrids(uint count)
 
 void PlotPolar::setVertGrids(uint count)
 {
-    if(m_vertGrids == count || count < 0)
+    if(m_vertGrids == count)
 	{
 		return;
 	}

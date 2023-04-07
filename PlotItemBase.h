@@ -217,7 +217,7 @@ public:
 
     virtual PlotType plotType() const
     {
-        return Type_PlotUnknown;
+        return PlotType::Type_PlotUnknown;
     }
 
     bool getIsNeedDrawBorder() const;
@@ -233,6 +233,10 @@ private:
     void setCursorByDirection();
 
     void drawBorderAndControls();
+
+private slots:
+    // 响应整体数据变化
+    void onDataPairsChanged();
 
 protected:
     void paintEvent(QPaintEvent* event) override;
@@ -304,7 +308,7 @@ private:
     // 自绘图表需要填充此虚函数实现自己的绘制逻辑
     virtual void customPainting(QPainter&);
 signals:
-    void sgn_dataPairChanged(PlotItemBase* pBaseItem); //数据对改变信号,tabName,plotName
+    void dataPairsChanged(PlotItemBase* pBaseItem); //整体数据发生变化
 protected:
     // 部分为自绘,不需要这个控件就不需要创建，需要的子类自己初始化
     QCustomPlot* m_customPlot = nullptr;

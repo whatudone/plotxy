@@ -85,7 +85,9 @@ void PlotLight::judgeLight()
 	QStringList docEntityAndAttr;
 	QString temEntityAndAtrr = " ";
     for(int i = 0; i < getDataPairs().size(); i++)
+    {
         docEntityAndAttr.push_back(getDataPairs().at(i)->getDataPair().first);
+    }
 	int isize = 0;
 	int icount = 0;
     if(m_userLightData.size() > 1)

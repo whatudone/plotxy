@@ -114,7 +114,7 @@ void PlotAttitude::drawScale_roll(QPainter* painter, int radius)
 	double x, y, w, h;
     QString str, strNum;
 
-    for(int i = 0; i < m_horzGrids; ++i)
+    for(uint i = 0; i < m_horzGrids; ++i)
 	{
 		strNum = QString::number(eachMajor_roll * i + m_coordBgn_x, 'f', m_decision_roll);
         if(m_showUnits_x)
@@ -150,7 +150,7 @@ void PlotAttitude::drawScale_pitch(QPainter* painter, int radius)
 	double x, y, w, h;
 	QString str, strNum;
 	double eachMajor_pitch = (m_coordEnd_y - m_coordBgn_y) / (double)(m_vertGrids - 1);
-    for(int i = 0; i < m_vertGrids; ++i)
+    for(uint i = 0; i < m_vertGrids; ++i)
 	{
 		strNum = QString::number(eachMajor_pitch * i + m_coordBgn_y, 'f', m_decision_pitch);
 		if(m_showUnits_y)

@@ -505,7 +505,7 @@ void AdvancedDataManager::onLabelSettings_position(int pos)
     if(m_curSelectDatapair == nullptr)
 		return;
 
-	m_curSelectDatapair->setLabelPosition(pos);
+    m_curSelectDatapair->setLabelPosition(DataPair::TEXT_POSITION(pos));
 }
 
 void AdvancedDataManager::onLabelSettings_precision_x(int prec)
@@ -533,7 +533,7 @@ void AdvancedDataManager::onLabelText_format(int format)
     if(m_curSelectDatapair == nullptr)
 		return;
 
-	m_curSelectDatapair->setTextFormat(format);
+    m_curSelectDatapair->setTextFormat(DataPair::TEXT_FROMAT(format));
 }
 
 void AdvancedDataManager::onLabelText_prefix(bool on)
@@ -605,7 +605,7 @@ void AdvancedDataManager::onIconSetting_rotation(int rotation)
     if(m_curSelectDatapair == nullptr)
 		return;
 
-	m_curSelectDatapair->setIconRotation(rotation);
+    m_curSelectDatapair->setIconRotation(DataPair::ICON_ROTATION(rotation));
 }
 
 void AdvancedDataManager::onIconSetting_flipHorz(bool on)

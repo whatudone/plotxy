@@ -11,6 +11,33 @@ class DataPair : public QObject
 	Q_OBJECT
 
 public:
+    enum TEXT_POSITION
+    {
+        left_top = 0,
+        top,
+        right_top,
+        left,
+        center,
+        right,
+        left_bottom,
+        bottom,
+        right_bottom
+    };
+
+    enum TEXT_FROMAT
+    {
+        format_default = 0,
+        format_custom,
+        format_script
+    };
+
+    enum ICON_ROTATION
+    {
+        no_rotation = 0,
+        rotation_90,
+        rotation_180,
+        rotation_270
+    };
     DataPair(QObject* parent = nullptr);
     DataPair(const QPair<QString, QString>& pair);
 	~DataPair();
@@ -37,7 +64,7 @@ public:
     {
         return m_color;
     }
-	void setColor(QColor color);
+    void setColor(const QColor& color);
 
     bool isLineMode()
     {
@@ -86,7 +113,7 @@ public:
     {
         return m_iconRotation;
     }
-	void setIconRotation(int);
+    void setIconRotation(ICON_ROTATION);
 
     bool iconFlipHorz()
     {
@@ -104,28 +131,28 @@ public:
     {
         return m_iconColor;
     }
-	void setIconColor(QColor);
+    void setIconColor(const QColor&);
 
-	QPixmap rotateIcon(QPixmap pix, float angle);
+    QPixmap rotateIcon(const QPixmap& pix, float angle);
 
 	//Label Text
     QString getLabelText()
     {
         return m_labelText;
     }
-	void setLabelText(QString);
+    void setLabelText(const QString&);
 
     int getTextFormat()
     {
         return (int)m_format;
     }
-	void setTextFormat(int);
+    void setTextFormat(TEXT_FROMAT);
 
     QString getCustomText()
     {
         return m_customText;
     }
-	void setCustomText(QString);
+    void setCustomText(const QString&);
 
     bool isLabelTextShow()
     {
@@ -137,13 +164,13 @@ public:
     {
         return m_labelColor;
     }
-	void setLabelColor(QColor);
+    void setLabelColor(const QColor&);
 
     QColor getLabelBackground()
     {
         return m_labelBackground;
     }
-	void setLabelBackground(QColor);
+    void setLabelBackground(const QColor&);
 
     bool getLabelBackTransparent()
     {
@@ -155,7 +182,7 @@ public:
     {
         return m_labelFont;
     }
-	void setLabelFont(QFont);
+    void setLabelFont(const QFont&);
 
     int getLabelFontSize()
     {
@@ -165,9 +192,9 @@ public:
 
     int getLabelPosition()
     {
-        return (int)m_position;
+        return (int)m_textPosition;
     }
-	void setLabelPosition(int);
+    void setLabelPosition(TEXT_POSITION);
 
     int getLabelPrecision_x()
     {
@@ -242,35 +269,6 @@ public:
         return this->m_dataPair == other.m_dataPair;
     }
 
-public:
-    enum TEXT_POSITION
-    {
-		left_top = 0,
-		top,
-		right_top,
-		left,
-		center,
-		right,
-		left_bottom,
-		bottom,
-		right_bottom
-	};
-
-    enum TEXT_FROMAT
-    {
-		format_default = 0,
-		format_custom,
-		format_script
-	};
-
-    enum ICON_ROTATION
-    {
-		no_rotation = 0,
-		rotation_90,
-		rotation_180,
-		rotation_270
-	};
-
 private:
     QPair<QString, QString> m_dataPair; //数据对
     int m_lineWidth; //线宽
@@ -300,7 +298,7 @@ private:
     int m_labelPrec_y; //y轴显示精度
     QString m_unit_x; //x轴单位
     QString m_unit_y; //y轴单位
-    TEXT_POSITION m_position; //文本位置
+    TEXT_POSITION m_textPosition; //文本位置
     bool m_labelText_show; //文本是否显示
     bool m_prefix_show; //前缀是否显示
     QString m_object_x; //x轴实体名

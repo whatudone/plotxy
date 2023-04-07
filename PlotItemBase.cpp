@@ -74,6 +74,11 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     btn->setGeometry(10, 10, 130, 25);
     connect(btn, &QPushButton::clicked, this, &PlotItemBase::close);
     updateResizeFocusPos();
+    connect(this,
+            &PlotItemBase::dataPairsChanged,
+            this,
+            &PlotItemBase::onDataPairsChanged,
+            Qt::UniqueConnection);
 }
 
 PlotItemBase::~PlotItemBase()
@@ -383,7 +388,7 @@ void PlotItemBase::addPlotPairData(const QPair<QString, QString>& pair)
             this,
             &PlotItemBase::onDataPairUpdateData,
             Qt::UniqueConnection);
-    emit sgn_dataPairChanged(this);
+    emit dataPairsChanged(this);
 }
 
 void PlotItemBase::delPlotPairData(const QPair<QString, QString>& pair)
@@ -398,7 +403,7 @@ void PlotItemBase::delPlotPairData(const QPair<QString, QString>& pair)
             auto data = m_dataPairs.takeAt(i);
             data->deleteLater();
 
-            emit sgn_dataPairChanged(this);
+            emit dataPairsChanged(this);
             break;
         }
     }
@@ -416,7 +421,7 @@ void PlotItemBase::updatePlotPairData(const QPair<QString, QString>& oldPair,
         {
             m_dataPairs.at(i)->setDataPair(newPair);
 
-            emit sgn_dataPairChanged(this);
+            emit dataPairsChanged(this);
             break;
         }
     }
@@ -426,7 +431,7 @@ void PlotItemBase::setDataPair(QVector<DataPair*>& newVector)
 {
     m_dataPairs.swap(newVector);
 
-    emit sgn_dataPairChanged(this);
+    emit dataPairsChanged(this);
 }
 
 void PlotItemBase::slot_setVisible(bool on)
@@ -607,6 +612,11 @@ void PlotItemBase::drawBorderAndControls()
     painter.drawRects(m_resizeRectMap.values().toVector());
 }
 
+void PlotItemBase::onDataPairsChanged()
+{
+    updateDataForDataPairsByTime(m_seconds);
+}
+
 void PlotItemBase::paintEvent(QPaintEvent* event)
 {
     // 绘制本身
@@ -657,8 +667,10 @@ void PlotItemBase::onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>> /*
 
 void PlotItemBase::onDataPairUpdateData()
 {
-    // 高级管理界面或者其他界面直接修改DataPair里面的数据时，此时会触发
-    // 因为没有封装独立的刷新接口，此处调用总的数据刷新入口
+    /*  高级管理界面或者其他界面直接修改DataPair里面的数据时，
+     *  此时会触发因为没有封装独立的刷新接口，此处调用总的数据刷新入口
+     * TODO:提供一个针对某个DataPair发生变化的刷新接口
+    */
     updateDataForDataPairsByTime(m_seconds);
 }
 

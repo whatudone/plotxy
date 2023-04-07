@@ -127,7 +127,7 @@ void PlotScatter::delPlotPairData(const QPair<QString, QString>& pair)
 		{
             m_dataPairs.remove(i);
 
-            emit sgn_dataPairChanged(this);
+            emit dataPairsChanged(this);
 			break;
 		}
 	}
@@ -151,7 +151,7 @@ void PlotScatter::updatePlotPairData(const QPair<QString, QString>& oldPair,
 		{
             m_dataPairs.at(i)->setDataPair(newPair);
 
-            emit sgn_dataPairChanged(this);
+            emit dataPairsChanged(this);
 			break;
 		}
 	}
@@ -598,7 +598,7 @@ void PlotScatter::rescaleAxis(bool on)
 
 void PlotScatter::setHorzGrids(uint count)
 {
-    if(m_horzGrids == count || count < 0)
+    if(m_horzGrids == count)
 	{
 		return;
 	}
@@ -617,7 +617,7 @@ void PlotScatter::setHorzGrids(uint count)
 
 void PlotScatter::setVertGrids(uint count)
 {
-    if(m_vertGrids == count || count < 0)
+    if(m_vertGrids == count)
 	{
 		return;
 	}

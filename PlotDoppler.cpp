@@ -374,7 +374,7 @@ void PlotDoppler::setCoordRangeY(double lower, double upper)
 
 void PlotDoppler::setHorzGrids(uint count)
 {
-    if(m_horzGrids == count || count < 0)
+    if(m_horzGrids == count)
 	{
 		return;
 	}
@@ -395,7 +395,7 @@ void PlotDoppler::setHorzGrids(uint count)
 
 void PlotDoppler::setVertGrids(uint count)
 {
-    if(m_vertGrids == count || count < 0)
+    if(m_vertGrids == count)
 	{
 		return;
 	}

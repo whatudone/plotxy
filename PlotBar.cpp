@@ -44,7 +44,23 @@ void PlotBar::updateDataForDataPairsByTime(double secs)
 {
     if(getDataPairs().isEmpty())
 		return;
+    m_dataList.clear();
+    int isize = getDataPairs().size();
+    for(int i = 0; i < isize; i++)
+    {
+        QString xColumn = getDataPairs().at(i)->getDataPair().first;
+        QStringList xlist = xColumn.split("+");
+        QList<double> xSecList = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(
+            xlist.at(0), xlist.at(1), secs);
 
+        if(xSecList.isEmpty())
+            continue;
+
+        //*获取当前Attr值
+        double currValue = xSecList.last();
+        QString currKey = xlist.at(0) + '_' + xlist.at(1);
+        m_dataList.append({currValue, currKey});
+    }
     update();
 }
 
@@ -106,19 +122,19 @@ void PlotBar::drawRect(int itemIndex,
 }
 
 void PlotBar::drawPairData(
-    int itemIndex, QString x, int32_t perItemLength, double secs, QPainter& painter)
+    int itemIndex, QString currKey, int32_t perItemLength, double currValue, QPainter& painter)
 {
-    QStringList xlist = x.split("+");
-    QList<double> xSecList =
-        DataManager::getInstance()->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs);
+    //    QStringList xlist = x.split("+");
+    //    QList<double> xSecList =
+    //        DataManager::getInstance()->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs);
 
-    if(xSecList.isEmpty())
-        return;
+    //    if(xSecList.isEmpty())
+    //        return;
 
-    //*获取当前Attr值
-    double currValue = xSecList.last();
+    //    //*获取当前Attr值
+    //    double currValue = xSecList.last();
 
-    QString currKey = xlist.at(0) + '_' + xlist.at(1);
+    //    QString currKey = xlist.at(0) + '_' + xlist.at(1);
     /*
      * 绘制分为两种大类情况：
      * 1、没有设置颜色阈值，直接从left->lastValue
@@ -273,12 +289,16 @@ void PlotBar::customPainting(QPainter& painter)
 
 void PlotBar::drawPairDatas(QPainter& painter)
 {
-    int isize = getDataPairs().size();
-    int perItemLength = calculateItemLength();
-    for(int i = 0; i < isize; i++)
+    int isize = m_dataList.size();
+    if(isize <= 0)
     {
-        QString xColumn = getDataPairs().at(i)->getDataPair().first;
-        drawPairData(i, xColumn, perItemLength, m_seconds, painter);
+        return;
+    }
+    int perItemLength = calculateItemLength();
+    for(int i = 0; i < isize; ++i)
+    {
+        auto pair = m_dataList.at(i);
+        drawPairData(i, pair.second, perItemLength, pair.first, painter);
     }
 }
 

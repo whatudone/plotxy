@@ -27,7 +27,7 @@ DataPair::DataPair(QObject* parent)
 	m_labelFontSize = 12;
 	m_labelFont.setFamily("Microsoft YaHei");
 	m_labelFont.setPointSize(m_labelFontSize);
-	m_position = TEXT_POSITION::right;
+    m_textPosition = TEXT_POSITION::right;
 	m_labelPrec_x = 2;
 	m_labelPrec_y = 2;
 	m_labelText_show = true;
@@ -83,212 +83,307 @@ void DataPair::updatePairText(QPair<QString, QString> pair)
 
 void DataPair::setDataPair(const QPair<QString, QString>& data)
 {
-	m_dataPair = data;
-	updatePairText(data);
-	emit dataUpdate();
+    if(m_dataPair != data)
+    {
+        m_dataPair = data;
+        updatePairText(data);
+        emit dataUpdate();
+    }
 }
 
 void DataPair::setLineWidth(int width)
 {
-	m_lineWidth = width;
-	emit dataUpdate();
+    if(m_lineWidth != width)
+    {
+        m_lineWidth = width;
+        emit dataUpdate();
+    }
 }
 
 void DataPair::setDraw(bool on)
 {
-	m_isDraw = on;
-	emit dataUpdate();
+    if(m_isDraw != on)
+    {
+        m_isDraw = on;
+        emit dataUpdate();
+    }
 }
 
-void DataPair::setColor(QColor color)
+void DataPair::setColor(const QColor& color)
 {
-	m_color = color;
-    if(m_matchColor)
+    if(m_color != color)
 	{
-		m_iconColor = m_color;
-		m_labelColor = m_color;
+
+        m_color = color;
+        if(m_matchColor)
+        {
+            m_iconColor = m_color;
+            m_labelColor = m_color;
+        }
+        emit dataUpdate();
 	}
-	emit dataUpdate();
 }
 
 void DataPair::setLineMode(bool on)
 {
-	m_isLineMode = on;
-	emit dataUpdate();
+    if(m_isLineMode != on)
+    {
+        m_isLineMode = on;
+        emit dataUpdate();
+    }
 }
 
 void DataPair::setMatchColor(bool on)
 {
-	m_matchColor = on;
-    if(m_matchColor)
+    if(m_matchColor != on)
 	{
-		m_iconColor = m_color;
-		m_labelColor = m_color;
+        m_matchColor = on;
+        if(m_matchColor)
+        {
+            m_iconColor = m_color;
+            m_labelColor = m_color;
+        }
 	}
 }
 
 void DataPair::setIconDraw(bool on)
 {
-	m_iconDraw = on;
-	emit dataUpdate();
+    if(m_iconDraw != on)
+    {
+        m_iconDraw = on;
+        emit dataUpdate();
+    }
 }
 
 void DataPair::setIconName(QString name)
 {
-	m_iconName = name;
-	emit dataUpdate();
+    if(m_iconName != name)
+    {
+        m_iconName = name;
+        emit dataUpdate();
+    }
 }
 
 void DataPair::setIconSize(QSize size)
 {
-	m_iconSize = size;
-	emit dataUpdate();
+    if(m_iconSize != size)
+    {
+        m_iconSize = size;
+        emit dataUpdate();
+    }
 }
 
 void DataPair::setIconWidth(int w)
 {
-	m_iconSize.setWidth(w);
-	emit dataUpdate();
+    if(m_iconSize.width() != w)
+    {
+        m_iconSize.setWidth(w);
+        emit dataUpdate();
+    }
 }
 
 void DataPair::setIconHeight(int h)
 {
-	m_iconSize.setHeight(h);
-	emit dataUpdate();
+    if(m_iconSize.height() != h)
+    {
+        m_iconSize.setHeight(h);
+        emit dataUpdate();
+    }
 }
 
-void DataPair::setIconRotation(int rotate)
+void DataPair::setIconRotation(ICON_ROTATION rotate)
 {
-	m_iconRotation = ICON_ROTATION(rotate);
-	emit dataUpdate();
+    if(m_iconRotation != rotate)
+    {
+        m_iconRotation = rotate;
+        emit dataUpdate();
+    }
 }
 
 void DataPair::setIconFlipHorz(bool on)
 {
-	m_iconFlipHorz = on;
-	emit dataUpdate();
+    if(m_iconFlipHorz != on)
+    {
+        m_iconFlipHorz = on;
+        emit dataUpdate();
+    }
 }
 
 void DataPair::setIconFlipVert(bool on)
 {
-	m_iconFlipVert = on;
-	emit dataUpdate();
+    if(m_iconFlipVert != on)
+    {
+        m_iconFlipVert = on;
+        emit dataUpdate();
+    }
 }
 
-void DataPair::setIconColor(QColor color)
+void DataPair::setIconColor(const QColor& color)
 {
-	if(!m_matchColor)
+    if(!m_matchColor && m_iconColor != color)
+    {
 		m_iconColor = color;
-	emit dataUpdate();
+        emit dataUpdate();
+    }
 }
 
-QPixmap DataPair::rotateIcon(QPixmap pix, float angle)
+QPixmap DataPair::rotateIcon(const QPixmap& pix, float angle)
 {
 	QTransform trans;
 	trans.rotate(angle);
 	return pix.transformed(trans);
 }
 
-void DataPair::setLabelText(QString text)
+void DataPair::setLabelText(const QString& text)
 {
-	m_labelText = text;
-	emit dataUpdate();
+    if(m_labelText != text)
+    {
+        m_labelText = text;
+        emit dataUpdate();
+    }
 }
 
-void DataPair::setTextFormat(int format)
+void DataPair::setTextFormat(TEXT_FROMAT format)
 {
-	m_format = TEXT_FROMAT(format);
-	emit dataUpdate();
+    if(m_format != format)
+    {
+        m_format = format;
+        emit dataUpdate();
+    }
 }
 
-void DataPair::setCustomText(QString text)
+void DataPair::setCustomText(const QString& text)
 {
-	m_customText = text;
-	emit dataUpdate();
+    if(m_customText != text)
+    {
+        m_customText = text;
+        emit dataUpdate();
+    }
 }
 
 void DataPair::setLabelTextShow(bool show)
 {
-	m_labelText_show = show;
-	emit dataUpdate();
+    if(m_labelText_show != show)
+    {
+        m_labelText_show = show;
+        emit dataUpdate();
+    }
 }
 
-void DataPair::setLabelColor(QColor color)
+void DataPair::setLabelColor(const QColor& color)
 {
-    if(!m_matchColor)
+    if(!m_matchColor && m_labelColor != color)
+    {
 		m_labelColor = color;
-	emit dataUpdate();
+        emit dataUpdate();
+    }
 }
 
-void DataPair::setLabelBackground(QColor color)
+void DataPair::setLabelBackground(const QColor& color)
 {
-	m_labelBackground = color;
-	emit dataUpdate();
+    if(m_labelBackground != color)
+    {
+        m_labelBackground = color;
+        emit dataUpdate();
+    }
 }
 
 void DataPair::setLabelBackTransparent(bool on)
 {
-	m_backTransparent = on;
-	emit dataUpdate();
+    if(m_backTransparent != on)
+    {
+        m_backTransparent = on;
+        emit dataUpdate();
+    }
 }
 
-void DataPair::setLabelFont(QFont font)
+void DataPair::setLabelFont(const QFont& font)
 {
-	m_labelFont = font;
-	emit dataUpdate();
+    if(m_labelFont != font)
+    {
+        m_labelFont = font;
+        emit dataUpdate();
+    }
 }
 
 void DataPair::setLabelFontSize(int size)
 {
-	m_labelFontSize = size;
-	m_labelFont.setPointSize(size);
-	emit dataUpdate();
+    if(m_labelFontSize != size)
+    {
+        m_labelFontSize = size;
+        m_labelFont.setPointSize(size);
+        emit dataUpdate();
+    }
 }
 
-void DataPair::setLabelPosition(int pos)
+void DataPair::setLabelPosition(TEXT_POSITION pos)
 {
-	m_position = TEXT_POSITION(pos);
-	emit dataUpdate();
+    if(m_textPosition != pos)
+    {
+        m_textPosition = pos;
+        emit dataUpdate();
+    }
 }
 
 void DataPair::setLabelPrecision_x(int prec)
 {
-	m_labelPrec_x = prec;
-	emit dataUpdate();
+    if(m_labelPrec_x != prec)
+    {
+        m_labelPrec_x = prec;
+        emit dataUpdate();
+    }
 }
 
 void DataPair::setLabelPrecision_y(int prec)
 {
-	m_labelPrec_y = prec;
-	emit dataUpdate();
+    if(m_labelPrec_y != prec)
+    {
+        m_labelPrec_y = prec;
+        emit dataUpdate();
+    }
 }
 
 void DataPair::setPrefixShow(bool show)
 {
-	m_prefix_show = show;
-	emit dataUpdate();
+    if(m_prefix_show != show)
+    {
+        m_prefix_show = show;
+        emit dataUpdate();
+    }
 }
 
 void DataPair::setObjectShow(bool show)
 {
-	m_object_show = show;
-	emit dataUpdate();
+    if(m_object_show != show)
+    {
+        m_object_show = show;
+        emit dataUpdate();
+    }
 }
 
 void DataPair::setAttrShow(bool show)
 {
-	m_attr_show = show;
-	emit dataUpdate();
+    if(m_attr_show != show)
+    {
+        m_attr_show = show;
+        emit dataUpdate();
+    }
 }
 
 void DataPair::setDataShow(bool show)
 {
-	m_data_show = show;
-	emit dataUpdate();
+    if(m_data_show != show)
+    {
+        m_data_show = show;
+        emit dataUpdate();
+    }
 }
 
 void DataPair::setUnitShow(bool show)
 {
-	m_unit_show = show;
-	emit dataUpdate();
+    if(m_unit_show != show)
+    {
+        m_unit_show = show;
+        emit dataUpdate();
+    }
 }

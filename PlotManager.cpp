@@ -814,7 +814,9 @@ void PlotManager::onUpdatePlotManager(const QMap<QString, QList<PlotItemBase*>>&
 {
     m_plotManager = plotData;
     if(m_plotManager.isEmpty())
+    {
         return;
+    }
 	ui.comboBox_tabName->clear();
 	ui.treeWidget_selectedPlots->clear();
 
@@ -1235,7 +1237,7 @@ void PlotManager::onLineEdit_horzGridsEditingFinished()
 	}
 	bool on;
 	uint count = ui.lineEdit_hrozGrids->text().toUInt(&on);
-    if(!on || count < 0)
+    if(!on)
 	{
 		return;
 	}
@@ -1251,7 +1253,7 @@ void PlotManager::onLineEdit_vertGridsEditingFinished()
 	}
 	bool on;
 	uint count = ui.lineEdit_vertGrids->text().toUInt(&on);
-    if(!on || count < 0)
+    if(!on)
 	{
 		return;
 	}

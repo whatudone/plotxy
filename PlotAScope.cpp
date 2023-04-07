@@ -238,7 +238,7 @@ void PlotAScope::setAxisTickLabelShow(bool on, AxisType type)
 
 void PlotAScope::setHorzGrids(uint count)
 {
-    if(m_horzGrids == count || count < 0)
+    if(m_horzGrids == count)
 	{
 		return;
 	}
@@ -257,7 +257,7 @@ void PlotAScope::setHorzGrids(uint count)
 
 void PlotAScope::setVertGrids(uint count)
 {
-    if(m_vertGrids == count || count < 0)
+    if(m_vertGrids == count)
 	{
 		return;
 	}

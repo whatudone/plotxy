@@ -2,7 +2,7 @@
 #define CONST_DEF_H_
 #include <QString>
 
-enum PlotType
+enum PlotType : int32_t
 {
     Type_PlotUnknown = -1,
     Type_PlotScatter,

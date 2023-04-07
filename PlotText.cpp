@@ -316,8 +316,10 @@ void PlotText::drawXYTitle(QPainter& painter,
 	}
 	m_xColumnList.clear();
 	m_yColumnList.clear();
-    if(m_secValue != -1)
+    if(static_cast<int32_t>(m_secValue) != -1)
+    {
         updateDataForDataPairsByTime(m_secValue);
+    }
 	update();
 }
 
