@@ -519,6 +519,7 @@ void PlotAttitude::updateDataForDataPairsByTime(double secs)
         DataManager::getInstance()->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs);
     m_yValueList =
         DataManager::getInstance()->getEntityAttr_MaxPartValue_List(ylist.at(0), ylist.at(1), secs);
+    updateItems();
 }
 
 void PlotAttitude::onDataPairUpdateData() {}

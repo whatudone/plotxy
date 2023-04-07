@@ -58,6 +58,7 @@ private:
     int m_verGridNum;
 
     int m_itemCnt;
+    QMap<int, QList<QColor>> m_trackDrawDataMap;
 };
 
 #endif // _PLOT_TRACK_H_

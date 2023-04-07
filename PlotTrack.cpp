@@ -97,7 +97,7 @@ void PlotTrack::updateDataForDataPairsByTime(double secs)
     setInterPadding(
         (height() - m_topPadding - m_bottomPadding - h - this->height() / 25 * 1.5 * m_itemCnt) /
         (m_itemCnt + 1));
-
+    m_trackDrawDataMap.clear();
     for(int i = 0; i < m_itemCnt; i++)
     {
         QString entityType = getDataPairs().at(i)->getDataPair().first;
@@ -117,7 +117,7 @@ void PlotTrack::updateData(int itemIndex, QString entityType, double secs)
     QList<QColor> dataList;
     for(int i = 0; i < valueList.size(); i++)
     {
-        if(valueList.at(i) == 0)
+        if(static_cast<int32_t>(valueList.at(i)) == 0)
         { // 当前时间有跟踪数据
             dataList.push_back(Qt::gray);
         }
@@ -126,8 +126,7 @@ void PlotTrack::updateData(int itemIndex, QString entityType, double secs)
             dataList.push_back(Qt::green);
         }
     }
-    drawRect(itemIndex, dataList);
-    return;
+    m_trackDrawDataMap.insert(itemIndex, dataList);
 }
 
 void PlotTrack::customPainting(QPainter& painter)
@@ -164,5 +163,10 @@ void PlotTrack::customPainting(QPainter& painter)
         painter.drawLine(
             QPointF(m_leftPadding + horTablePadding * (i + 1), m_topPadding + h),
             QPointF(m_leftPadding + horTablePadding * (i + 1), height() - m_bottomPadding));
+    }
+    // 绘制数据块
+    for(int index : m_trackDrawDataMap.keys())
+    {
+        drawRect(index, m_trackDrawDataMap.value(index));
     }
 }
