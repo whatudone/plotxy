@@ -24,23 +24,6 @@ public:
 
     static int m_instanceCount; //Plot实体个数
 
-    QString getxAxisLabel() const
-    {
-        return m_xAxisLabel;
-    }
-    QString getyAxisLabel() const
-    {
-        return m_yAxisLabel;
-    }
-    QColor getAxisLabelColor() const
-    {
-        return m_axisLabelColor;
-    }
-    QFont getAxisLabelFont() const
-    {
-        return m_axisLabelFont;
-    }
-
 	void setPaddings(double top, double bottom, double left, double right);
 
 	void setxAxisLabel(QString& str);
@@ -91,14 +74,14 @@ public:
         return Type_PlotScatter;
     }
 
+    void exportDataToFile(const QString& filename) const override;
+
 private:
 	void initPlot();
     void updateDataForDataPairsByTime(double secs);
 	void updateData(double secs, int index, DataPair* data);
 
 private:
-    double m_curSeconds;
-
     struct ScatterInfo
 	{
 		QPointer<QCPGraph> graph;

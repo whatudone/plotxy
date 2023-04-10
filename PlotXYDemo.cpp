@@ -122,7 +122,20 @@ void PlotXYDemo::onPlotManager()
 
 void PlotXYDemo::onWidgetEditor() {}
 
-void PlotXYDemo::onExportToGOG() {}
+void PlotXYDemo::onExportToGOG()
+{
+    // 导出的DataPair需要是绘制在界面上的数据，而不是所有数据
+    QString gogFilePath =
+        QFileDialog::getSaveFileName(nullptr, "导出GOG格式数据", ".", "GOG (*.gog)");
+    if(gogFilePath.isEmpty())
+    {
+        return;
+    }
+    if(m_pCurSelectedPlot)
+    {
+        m_pCurSelectedPlot->exportDataToFile(gogFilePath);
+    }
+}
 
 void PlotXYDemo::onAddPlotPair()
 {
@@ -306,8 +319,12 @@ void PlotXYDemo::onContextMenu(const QPoint& /*point*/)
     pMenu.addAction(ui.actionAdd_Plot_Pair_Ctrl_A);
     pMenu.addAction(ui.actionSave_Screenshot);
     pMenu.addSeparator();
-    pMenu.addAction(ui.actionExport_to_GOG);
-    pMenu.addSeparator();
+    if(m_pCurSelectedPlot && m_pCurSelectedPlot->plotType() == Type_PlotScatter)
+    {
+        // 只有针对散点图才能导出GOG格式的数据
+        pMenu.addAction(ui.actionExport_to_GOG);
+        pMenu.addSeparator();
+    }
     pMenu.addMenu(ui.menuOrder);
     pMenu.addMenu(ViewMenu);
     pMenu.addMenu(ui.menuSelect_Plot);

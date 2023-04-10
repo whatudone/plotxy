@@ -320,9 +320,9 @@ void PlotPolar::updateDataForDataPairsByTime(double secs)
         QCPPolarGraph* g = new QCPPolarGraph(m_angularAxis, m_angularAxis->radialAxis());
         g->setScatterStyle(QCPScatterStyle::ssDisc);
         g->setLineStyle(QCPPolarGraph::lsNone);
+        g->setPen(QPen(QColor(255, 0, 0), 2));
+        g->addData(x, y);
         graph.append(g);
-        graph[i]->setPen(QPen(QColor(255, 0, 0), 2));
-        graph[i]->addData(x, y);
     }
     m_customPlot->replot();
 

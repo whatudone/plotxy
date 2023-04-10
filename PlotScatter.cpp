@@ -101,7 +101,6 @@ void PlotScatter::initPlot()
 
 void PlotScatter::addPlotPairData(const QPair<QString, QString>& pair)
 {
-    PlotItemBase::addPlotPairData(pair);
 
 	//scatter
 	ScatterInfo info;
@@ -114,6 +113,8 @@ void PlotScatter::addPlotPairData(const QPair<QString, QString>& pair)
 	info.tracerText->position->setType(QCPItemPosition::ptPlotCoords);
 	info.tracerText->position->setParentAnchor(info.tracer->position);
 	m_mapScatter.insertMulti(pair, info);
+    // 先创建map数据，后续基类中发送的信号会触发更新，使用到结构体中的指针。所以需要最后调用基类接口
+    PlotItemBase::addPlotPairData(pair);
 }
 
 void PlotScatter::delPlotPairData(const QPair<QString, QString>& pair)
@@ -189,6 +190,10 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
 
 void PlotScatter::updateData(double secs, int index, DataPair* data)
 {
+    if(!data)
+    {
+        return;
+    }
 	QPair<QString, QString> dataPair = data->getDataPair();
     if(data->isDraw())
 	{
@@ -252,7 +257,6 @@ void PlotScatter::updateData(double secs, int index, DataPair* data)
 		{
 			//test
 			QPixmap pix(data->iconName());
-			//QPixmap pix(":/statusbar/centerPlot.bmp");
 			pix = pix.scaled(data->iconSize(), Qt::IgnoreAspectRatio);
 			QTransform trans;
 			int rotationIndex = data->iconRotation();
@@ -313,10 +317,9 @@ void PlotScatter::updateData(double secs, int index, DataPair* data)
 
             if(0 == data->getTextFormat()) //default
 			{
-				QString labelText = nullptr, prefix_x = nullptr, prefix_y = nullptr;
-				QString object_x = nullptr, object_y = nullptr, attr_x = nullptr, attr_y = nullptr;
-                QString data_x = nullptr, data_y = nullptr, unit_x = nullptr, unit_y = nullptr,
-                        Left_bracket = nullptr, right_bracket = nullptr;
+                QString labelText, prefix_x, prefix_y;
+                QString object_x, object_y, attr_x, attr_y;
+                QString data_x, data_y, unit_x, unit_y, Left_bracket, right_bracket;
 
 				//考虑仅显示实体名时的操作
                 if(data->isObjectShow() && !data->isPrefixShow() && !data->isAttrShow() &&
@@ -325,12 +328,12 @@ void PlotScatter::updateData(double secs, int index, DataPair* data)
 					object_x = data->getObjectName_x();
 					object_y = data->getObjectName_y();
 					//实体名相同时，仅显示一个实体名
-                    if(0 == object_x.compare(object_y) && object_x != nullptr &&
-                       object_y != nullptr)
+                    if(0 == object_x.compare(object_y) && !object_x.isEmpty() &&
+                       !object_y.isEmpty())
 					{
 						labelText = object_x;
 					}
-                    else if(object_x == nullptr && object_y == nullptr)
+                    else if(object_x.isEmpty() && object_y.isEmpty())
 					{
 						labelText = "Time";
 					}
@@ -502,7 +505,37 @@ void PlotScatter::setTitleFontSize(int size)
 void PlotScatter::setTitleVisible(bool show)
 {
 	m_titleVisible = show;
-	update();
+    update();
+}
+
+void PlotScatter::exportDataToFile(const QString& filename) const
+{
+    QFile file(filename);
+    if(file.open(QFile::WriteOnly | QFile::Truncate))
+    {
+        QTextStream out(&file); //创建写入流
+        for(const auto& info : m_mapScatter)
+        {
+            if(info.graph && info.graph->visible())
+            {
+                out << "[" << info.tracerText->text() << "]"
+                    << "\r\n";
+                out << "Title=" << info.tracerText->text() << "\r\n";
+                out << "Data="
+                    << "\r\n";
+                auto dataContainer = info.graph->data().get();
+                auto size = dataContainer->size();
+                for(int var = 0; var < size; ++var)
+                {
+                    double x = dataContainer->at(var)->key;
+                    double y = dataContainer->at(var)->value;
+                    out << x << "       " << y << "\r\n";
+                }
+                out << "\r\n";
+            }
+        }
+    }
+    file.close();
 }
 
 void PlotScatter::setxAxisLabel(QString& str)

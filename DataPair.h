@@ -109,7 +109,7 @@ public:
     }
 	void setIconHeight(int);
 
-    int iconRotation()
+    ICON_ROTATION iconRotation()
     {
         return m_iconRotation;
     }

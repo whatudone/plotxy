@@ -227,6 +227,8 @@ public:
 
     void updateGeoWithMouseMove(int offsetX, int offsetY);
 
+    virtual void exportDataToFile(const QString& /*filename*/) const {}
+
 private:
     void updateResizeFocusPos();
     QRect getRectByDirection(ResizeDirection direction);
