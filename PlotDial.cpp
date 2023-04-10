@@ -22,7 +22,6 @@ PlotDial::PlotDial(QWidget* parent)
 	m_titleColor = Qt::white;
 	m_titleFont.setFamily("Microsoft YaHei");
 	m_titleFont.setPointSizeF(16.0);
-	m_titleShow = true;
 
 	m_axisFont.setFamily("Microsoft YaHei");
 	m_axisFont.setPointSizeF(12.0);

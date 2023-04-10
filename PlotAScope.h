@@ -19,23 +19,6 @@ public:
 
 	void initPlot();
 
-    QString getxAxisLabel() const
-    {
-        return m_xAxisLabel;
-    }
-    QString getyAxisLabel() const
-    {
-        return m_yAxisLabel;
-    }
-    QColor getAxisLabelColor() const
-    {
-        return m_axisLabelColor;
-    }
-    QFont getAxisLabelFont() const
-    {
-        return m_axisLabelFont;
-    }
-
 	void setPaddings(double top, double bottom, double left, double right);
     void setxAxisLabel(const QString& str);
     void setyAxisLabel(const QString& str);
@@ -77,10 +60,4 @@ public:
 
 public:
     static int m_instanceCount; //实体个数
-
-private:
-    QColor m_axisLabelColor; //坐标标题颜色
-    QFont m_axisLabelFont; //坐标标题字体
-	QString m_xAxisLabel;
-	QString m_yAxisLabel;
 };

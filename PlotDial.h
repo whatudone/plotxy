@@ -29,8 +29,6 @@ private:
 private:
     bool m_bThinStyle;
 
-    bool m_titleShow; //标题是否显示
-
     QFont m_axisFont; //坐标标题字体
 
     QColor m_dialColor;

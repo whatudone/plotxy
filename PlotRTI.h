@@ -19,23 +19,6 @@ public:
 
 	void initPlot();
 
-    QString getxAxisLabel() const
-    {
-        return m_xAxisLabel;
-    }
-    QString getyAxisLabel() const
-    {
-        return m_yAxisLabel;
-    }
-    QColor getAxisLabelColor() const
-    {
-        return m_axisLabelColor;
-    }
-    QFont getAxisLabelFont() const
-    {
-        return m_axisLabelFont;
-    }
-
 	void setxAxisLabel(QString& str);
 	void setyAxisLabel(QString& str);
 	void setAxisLabelColor(QColor& color);
