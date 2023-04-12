@@ -304,9 +304,9 @@ void AddPlotPair::onChangeStackIndex(PlotType index)
         ui.stackedWidget->setCurrentIndex(1);
         break;
     case Type_PlotAScope:
-        ui.label_XAxis->setText(QString("X轴：Range(m)"));
-        ui.label_YAxis->setText(QString("Y轴：Voltage(v)"));
-        ui.stackedWidget->setCurrentIndex(5);
+        ui.groupBox_3->setTitle(QString("X轴数据源"));
+        ui.groupBox_2->setTitle(QString("Y轴数据源"));
+        ui.stackedWidget->setCurrentIndex(1);
         break;
     case Type_PlotRTI:
         ui.label_XAxis->setText(QString("X轴：Range(m)"));

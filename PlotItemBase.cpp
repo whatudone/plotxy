@@ -379,6 +379,11 @@ void PlotItemBase::setAxisLabelFontSize(int size)
 // NOTE::其他地方不要直接创建DataPair对象，需要通过本接口创建，不然会导致丢失信号槽逻辑
 void PlotItemBase::addPlotPairData(const QPair<QString, QString>& pair)
 {
+    if(isAlreadyAdded(pair))
+    {
+        qWarning() << "数据对重复添加";
+        return;
+    }
     DataPair* data = new DataPair(pair);
     m_dataPairs.append(data);
     update();
@@ -612,6 +617,18 @@ void PlotItemBase::drawBorderAndControls()
     painter.drawRects(m_resizeRectMap.values().toVector());
 }
 
+bool PlotItemBase::isAlreadyAdded(const QPair<QString, QString>& pair)
+{
+    for(auto data : m_dataPairs)
+    {
+        if(data->getDataPair() == pair)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 void PlotItemBase::onDataPairsChanged()
 {
     updateDataForDataPairsByTime(m_seconds);
@@ -689,6 +706,26 @@ void PlotItemBase::onPlotMouseEventEnable(bool on)
 void PlotItemBase::updateDataForDataPairsByTime(double) {}
 
 void PlotItemBase::customPainting(QPainter& /*painter*/) {}
+
+bool PlotItemBase::getYIsAdaptive() const
+{
+    return m_yIsAdaptive;
+}
+
+void PlotItemBase::setYIsAdaptive(bool yIsAdaptive)
+{
+    m_yIsAdaptive = yIsAdaptive;
+}
+
+bool PlotItemBase::getXIsAdaptive() const
+{
+    return m_xIsAdaptive;
+}
+
+void PlotItemBase::setXIsAdaptive(bool xIsAdaptive)
+{
+    m_xIsAdaptive = xIsAdaptive;
+}
 
 bool PlotItemBase::getIsNeedDrawBorder() const
 {

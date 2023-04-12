@@ -522,8 +522,6 @@ void PlotAttitude::updateDataForDataPairsByTime(double secs)
     updateItems();
 }
 
-void PlotAttitude::onDataPairUpdateData() {}
-
 void PlotAttitude::customPainting(QPainter& painter)
 {
     int width = this->width();

@@ -105,14 +105,14 @@ void PlotScatter::addPlotPairData(const QPair<QString, QString>& pair)
 	//scatter
 	ScatterInfo info;
 	info.graph = m_customPlot->addGraph();
-	info.tracer = new QCPItemTracer(m_customPlot);
+    info.tracer = new QCPItemTracer(m_customPlot);
 	info.tracerText = new QCPItemText(m_customPlot);
 	info.tracer->setGraph(info.graph);
-	info.tracer->setInterpolating(true);
+    info.tracer->setInterpolating(false);
 	info.tracer->setStyle(QCPItemTracer::tsNone);
 	info.tracerText->position->setType(QCPItemPosition::ptPlotCoords);
 	info.tracerText->position->setParentAnchor(info.tracer->position);
-	m_mapScatter.insertMulti(pair, info);
+    m_mapScatter.insert(pair, info);
     // 先创建map数据，后续基类中发送的信号会触发更新，使用到结构体中的指针。所以需要最后调用基类接口
     PlotItemBase::addPlotPairData(pair);
 }
@@ -121,23 +121,13 @@ void PlotScatter::delPlotPairData(const QPair<QString, QString>& pair)
 {
     if(m_dataPairs.isEmpty())
 		return;
-
-    for(int i = 0; i < m_dataPairs.size(); ++i)
-	{
-        if(m_dataPairs.at(i)->getDataPair() == pair)
-		{
-            m_dataPairs.remove(i);
-
-            emit dataPairsChanged(this);
-			break;
-		}
-	}
-
-	//scatter
+    //scatter
     if(m_mapScatter.contains(pair))
-	{
-		m_mapScatter.remove(pair);
-	}
+    {
+        m_mapScatter.remove(pair);
+    }
+
+    PlotItemBase::delPlotPairData(pair);
 }
 
 void PlotScatter::updatePlotPairData(const QPair<QString, QString>& oldPair,
@@ -145,33 +135,23 @@ void PlotScatter::updatePlotPairData(const QPair<QString, QString>& oldPair,
 {
     if(m_dataPairs.isEmpty())
 		return;
-
-    for(int i = 0; i < m_dataPairs.size(); ++i)
-	{
-        if(m_dataPairs.at(i)->getDataPair() == oldPair)
-		{
-            m_dataPairs.at(i)->setDataPair(newPair);
-
-            emit dataPairsChanged(this);
-			break;
-		}
-	}
-
-	//scatter
+    //scatter
     if(m_mapScatter.contains(oldPair))
-	{
-		m_mapScatter.remove(oldPair);
-		ScatterInfo info;
-		info.graph = m_customPlot->addGraph();
-		info.tracer = new QCPItemTracer(m_customPlot);
-		info.tracerText = new QCPItemText(m_customPlot);
-		info.tracer->setGraph(info.graph);
-		info.tracer->setInterpolating(true);
-		info.tracer->setStyle(QCPItemTracer::tsNone);
-		info.tracerText->position->setType(QCPItemPosition::ptPlotCoords);
-		info.tracerText->position->setParentAnchor(info.tracer->position);
-		m_mapScatter.insertMulti(newPair, info);
-	}
+    {
+        m_mapScatter.remove(oldPair);
+        ScatterInfo info;
+        info.graph = m_customPlot->addGraph();
+        info.tracer = new QCPItemTracer(m_customPlot);
+        info.tracerText = new QCPItemText(m_customPlot);
+        info.tracer->setGraph(info.graph);
+        info.tracer->setInterpolating(true);
+        info.tracer->setStyle(QCPItemTracer::tsNone);
+        info.tracerText->position->setType(QCPItemPosition::ptPlotCoords);
+        info.tracerText->position->setParentAnchor(info.tracer->position);
+        m_mapScatter.insert(newPair, info);
+    }
+
+    PlotItemBase::updatePlotPairData(oldPair, newPair);
 }
 
 void PlotScatter::updateDataForDataPairsByTime(double secs)
@@ -183,12 +163,12 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
 
     for(int i = 0; i < itemCnt; ++i)
 	{
-        updateData(secs, i, m_dataPairs.at(i));
+        updateGraph(secs, i, m_dataPairs.at(i));
 	}
 	m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
-void PlotScatter::updateData(double secs, int index, DataPair* data)
+void PlotScatter::updateGraph(double secs, int index, DataPair* data)
 {
     if(!data)
     {
@@ -301,19 +281,12 @@ void PlotScatter::updateData(double secs, int index, DataPair* data)
 		//Label Text
         if(data->isLabelTextShow())
 		{
-			//设置锚点
-			m_mapScatter[dataPair].tracer->setGraphKey(x.last());
-			// 			m_mapScatter[dataPair].tracer->setInterpolating(true);
-			// 			m_mapScatter[dataPair].tracer->setStyle(QCPItemTracer::tsNone);
 
-            // add label
-            //m_mapScatter[dataPair].tracerText->position->setType(QCPItemPosition::ptPlotCoords);
-            //m_mapScatter[dataPair].tracerText->position->setParentAnchor(m_mapScatter[dataPair].tracer->position);
-
-			m_mapScatter[dataPair].tracer->setVisible(true);
+            // 游标功能先注释掉
+            //			m_mapScatter[dataPair].tracer->setVisible(true);
 			m_mapScatter[dataPair].tracerText->setVisible(true);
 			//设置锚点
-			m_mapScatter[dataPair].tracer->setGraphKey(x.last());
+            //			m_mapScatter[dataPair].tracer->setGraphKey(x.last());
 
             if(0 == data->getTextFormat()) //default
 			{
@@ -450,14 +423,14 @@ void PlotScatter::updateData(double secs, int index, DataPair* data)
 		}
 		else
 		{
-			m_mapScatter[dataPair].tracer->setVisible(false);
+            //			m_mapScatter[dataPair].tracer->setVisible(false);
 			m_mapScatter[dataPair].tracerText->setVisible(false);
 		}
 	}
 	else
 	{
 		m_mapScatter[dataPair].graph->setVisible(false);
-		m_mapScatter[dataPair].tracer->setVisible(false);
+        //		m_mapScatter[dataPair].tracer->setVisible(false);
 		m_mapScatter[dataPair].tracerText->setVisible(false);
 	}
 }

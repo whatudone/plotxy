@@ -1,4 +1,5 @@
 ﻿#include "PlotAScope.h"
+#include "DataManager.h"
 
 int PlotAScope::m_instanceCount = 1;
 PlotAScope::PlotAScope(QWidget* parent)
@@ -159,7 +160,313 @@ void PlotAScope::setTitleFontSize(int size)
 void PlotAScope::setTitleFillColor(QColor& color)
 {
 	m_titleFillColor = color;
-	update();
+    update();
+}
+
+void PlotAScope::addPlotPairData(const QPair<QString, QString>& pair)
+{
+    auto graph = m_customPlot->addGraph();
+    m_graphMap.insert(pair, graph);
+    // 先创建map数据，后续基类中发送的信号会触发更新，使用到结构体中的指针。所以需要最后调用基类接口
+    PlotItemBase::addPlotPairData(pair);
+}
+
+void PlotAScope::delPlotPairData(const QPair<QString, QString>& pair)
+{
+    if(m_dataPairs.isEmpty())
+        return;
+    if(m_graphMap.contains(pair))
+    {
+        auto graph = m_graphMap.take(pair);
+        m_customPlot->removeGraph(graph);
+    }
+
+    PlotItemBase::delPlotPairData(pair);
+}
+
+void PlotAScope::updatePlotPairData(const QPair<QString, QString>& oldPair,
+                                    const QPair<QString, QString>& newPair)
+{
+    if(m_dataPairs.isEmpty())
+        return;
+    if(m_graphMap.contains(oldPair))
+    {
+        auto oldGraph = m_graphMap.take(oldPair);
+        m_customPlot->removeGraph(oldGraph);
+        auto newGraph = m_customPlot->addGraph();
+        m_graphMap.insert(newPair, newGraph);
+    }
+
+    PlotItemBase::updatePlotPairData(oldPair, newPair);
+}
+
+void PlotAScope::updateDataForDataPairsByTime(double secs)
+{
+    if(getDataPairs().isEmpty())
+        return;
+
+    int itemCnt = m_dataPairs.size();
+
+    for(int i = 0; i < itemCnt; ++i)
+    {
+        updateGraph(secs, i, m_dataPairs.at(i));
+    }
+    m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
+}
+
+void PlotAScope::updateGraph(double secs, int index, DataPair* data)
+{
+    if(!data)
+    {
+        return;
+    }
+    QPair<QString, QString> dataPair = data->getDataPair();
+    auto graph = m_graphMap.value(dataPair);
+    if(!graph)
+    {
+        return;
+    }
+    if(data->isDraw())
+    {
+        QVector<double> x, y;
+        QString xEntityType = dataPair.first;
+        QString yEntityType = dataPair.second;
+        QStringList xlist = xEntityType.split("+");
+        QStringList ylist = yEntityType.split("+");
+        if(xlist.size() == 1 && ylist.size() == 1)
+        {
+            x = DataManager::getInstance()->getTimeData_vector();
+            y = DataManager::getInstance()->getTimeData_vector();
+        }
+        else if(xlist.size() == 1 && ylist.size() == 2)
+        {
+            x = DataManager::getInstance()
+                    ->getEntityAttr_MaxPartValue_List(ylist.at(0), xlist.at(0), secs)
+                    .toVector();
+            y = DataManager::getInstance()
+                    ->getEntityAttr_MaxPartValue_List(ylist.at(0), ylist.at(1), secs)
+                    .toVector();
+        }
+        else if(xlist.size() == 2 && ylist.size() == 1)
+        {
+            x = DataManager::getInstance()
+                    ->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs)
+                    .toVector();
+            y = DataManager::getInstance()
+                    ->getEntityAttr_MaxPartValue_List(xlist.at(0), ylist.at(0), secs)
+                    .toVector();
+        }
+        else
+        {
+            x = DataManager::getInstance()
+                    ->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs)
+                    .toVector();
+            y = DataManager::getInstance()
+                    ->getEntityAttr_MaxPartValue_List(ylist.at(0), ylist.at(1), secs)
+                    .toVector();
+        }
+
+        if(x.isEmpty() || y.isEmpty())
+            return;
+        graph->setVisible(true);
+        graph->setPen(QPen(data->dataColor(), data->lineWidth()));
+
+        //icon
+        if(data->isIconDraw())
+        {
+            //test
+            QPixmap pix(data->iconName());
+            pix = pix.scaled(data->iconSize(), Qt::IgnoreAspectRatio);
+            QTransform trans;
+            int rotationIndex = data->iconRotation();
+            switch(rotationIndex)
+            {
+            case 0:
+                trans.rotate(0);
+                break;
+            case 1:
+                trans.rotate(90);
+                break;
+            case 2:
+                trans.rotate(180);
+                break;
+            case 3:
+                trans.rotate(270);
+                break;
+            default:
+                trans.rotate(45);
+                break;
+            }
+            pix = pix.transformed(trans);
+            //水平镜像
+            if(data->iconFlipHorz() == true)
+            {
+                QImage oldImage = pix.toImage();
+                QImage newImage = oldImage.mirrored(true, false);
+                pix = QPixmap::fromImage(newImage);
+            }
+            //垂直镜像
+            if(data->iconFlipVert() == true)
+            {
+                QImage oldImage = pix.toImage();
+                QImage newImage = oldImage.mirrored(false, true);
+                pix = QPixmap::fromImage(newImage);
+            }
+            //            QCPScatterStyle style(pix);
+            //            graph->setScatterStyle(style);
+        }
+        graph->setData(x, y);
+        m_customPlot->xAxis->setRange(x.first(), x.last());
+        m_customPlot->yAxis->setRange(y.first(), y.last());
+        //Label Text
+        if(data->isLabelTextShow())
+        {
+
+            if(0 == data->getTextFormat()) //default
+            {
+                QString labelText, prefix_x, prefix_y;
+                QString object_x, object_y, attr_x, attr_y;
+                QString data_x, data_y, unit_x, unit_y, Left_bracket, right_bracket;
+
+                //考虑仅显示实体名时的操作
+                if(data->isObjectShow() && !data->isPrefixShow() && !data->isAttrShow() &&
+                   !data->isDataShow() && !data->isUnitShow())
+                {
+                    object_x = data->getObjectName_x();
+                    object_y = data->getObjectName_y();
+                    //实体名相同时，仅显示一个实体名
+                    if(0 == object_x.compare(object_y) && !object_x.isEmpty() &&
+                       !object_y.isEmpty())
+                    {
+                        labelText = object_x;
+                    }
+                    else if(object_x.isEmpty() && object_y.isEmpty())
+                    {
+                        labelText = "Time";
+                    }
+                    else
+                    {
+                        labelText = QString("%1\n%2").arg(object_x).arg(object_y);
+                    }
+                }
+                else
+                {
+                    if(data->isPrefixShow())
+                    {
+                        prefix_x = "X:";
+                        prefix_y = "Y:";
+                    }
+
+                    if(data->isObjectShow())
+                    {
+                        object_x = data->getObjectName_x();
+                        object_y = data->getObjectName_y();
+                    }
+
+                    if(data->isAttrShow())
+                    {
+                        attr_x = data->getAttrName_x();
+                        attr_y = data->getAttrName_y();
+                    }
+
+                    if(data->isDataShow())
+                    {
+                        data_x = QString::number(x.last(), 10, data->getLabelPrecision_x());
+                        data_y = QString::number(y.last(), 10, data->getLabelPrecision_y());
+                        Left_bracket = "(";
+                        right_bracket = ")";
+                    }
+
+                    if(data->isUnitShow())
+                    {
+                        unit_x = data->getUnit_x();
+                        unit_y = data->getUnit_y();
+                        Left_bracket = "(";
+                        right_bracket = ")";
+                    }
+                    labelText = QString("%1%2 %3%4%5 %6%7\n%8%9 %10%11%12 %13%14")
+                                    .arg(prefix_x)
+                                    .arg(object_x)
+                                    .arg(attr_x)
+                                    .arg(Left_bracket)
+                                    .arg(data_x)
+                                    .arg(unit_x)
+                                    .arg(right_bracket)
+                                    .arg(prefix_y)
+                                    .arg(object_y)
+                                    .arg(attr_y)
+                                    .arg(Left_bracket)
+                                    .arg(data_y)
+                                    .arg(unit_y)
+                                    .arg(right_bracket);
+                }
+                data->setLabelText(labelText);
+            }
+            else if(1 == data->getTextFormat()) //custom
+            {
+                data->setLabelText(data->getCustomText());
+            }
+            else if(2 == data->getTextFormat()) //script
+            {}
+            //            m_graphMap[dataPair].tracerText->setText(data->getLabelText());
+
+            //            QFontMetricsF fm(data->getLabelFont());
+            //            double wd = (fm.size(Qt::TextSingleLine, data->getLabelText()).width()) / 3.0;
+            //            double ht = fm.size(Qt::TextSingleLine, data->getLabelText()).height() / 1.0;
+            //            switch(data->getLabelPosition())
+            //            {
+            //            case 0: //left-top
+            //                m_graphMap[dataPair].tracerText->position->setCoords(-wd, -ht);
+            //                break;
+            //            case 1: //top
+            //                m_graphMap[dataPair].tracerText->position->setCoords(0, -ht);
+            //                break;
+            //            case 2: //right-top
+            //                m_graphMap[dataPair].tracerText->position->setCoords(wd, -ht);
+            //                break;
+            //            case 3: //left
+            //                m_graphMap[dataPair].tracerText->position->setCoords(-wd, 0);
+            //                break;
+            //            case 4: //center
+            //                m_graphMap[dataPair].tracerText->position->setCoords(0, 0);
+            //                break;
+            //            case 5: //right
+            //                m_graphMap[dataPair].tracerText->position->setCoords(wd, 0);
+            //                break;
+            //            case 6: //left-bottom
+            //                m_graphMap[dataPair].tracerText->position->setCoords(-wd, ht);
+            //                break;
+            //            case 7: //bottom
+            //                m_graphMap[dataPair].tracerText->position->setCoords(0, ht);
+            //                break;
+            //            case 8: //right-bottom
+            //                m_graphMap[dataPair].tracerText->position->setCoords(wd, ht);
+            //                break;
+            //            default: //right
+            //                m_graphMap[dataPair].tracerText->position->setCoords(wd, 0);
+            //                break;
+            //            }
+            //            m_graphMap[dataPair].tracerText->setPositionAlignment(Qt::AlignCenter);
+            //            m_graphMap[dataPair].tracerText->setTextAlignment(Qt::AlignLeft);
+            //            m_graphMap[dataPair].tracerText->setFont(data->getLabelFont());
+            //            m_graphMap[dataPair].tracerText->setColor(data->getLabelColor());
+            //            if(data->getLabelBackTransparent())
+            //                m_graphMap[dataPair].tracerText->setBrush(Qt::transparent);
+            //            else
+            //                m_graphMap[dataPair].tracerText->setBrush(data->getLabelBackground());
+        }
+        else
+        {
+            //            m_graphMap[dataPair].tracer->setVisible(false);
+            //            m_graphMap[dataPair].tracerText->setVisible(false);
+        }
+    }
+    else
+    {
+        graph->setVisible(false);
+        //        m_graphMap[dataPair].tracer->setVisible(false);
+        //        m_graphMap[dataPair].tracerText->setVisible(false);
+    }
 }
 
 void PlotAScope::setxAxisLabel(const QString& str)

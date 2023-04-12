@@ -4,6 +4,7 @@
 #include "BaseData.h"
 #include "PlotItemBase.h"
 #include "qcustomplot.h"
+
 #include <QMap>
 #include <QString>
 
@@ -21,6 +22,20 @@ public:
 		xAxis2,
 		yAxis2
 	};
+
+    struct ScatterInfo
+    {
+        QPointer<QCPGraph> graph;
+        QPointer<QCPItemTracer> tracer;
+        QPointer<QCPItemText> tracerText;
+
+        ScatterInfo()
+        {
+            graph = nullptr;
+            tracer = nullptr;
+            tracerText = nullptr;
+        }
+    };
 
     static int m_instanceCount; //Plot实体个数
 
@@ -79,24 +94,10 @@ public:
 private:
 	void initPlot();
     void updateDataForDataPairsByTime(double secs);
-	void updateData(double secs, int index, DataPair* data);
+    void updateGraph(double secs, int index, DataPair* data);
 
 private:
-    struct ScatterInfo
-	{
-		QPointer<QCPGraph> graph;
-		QPointer<QCPItemTracer> tracer;
-		QPointer<QCPItemText> tracerText;
-
-        ScatterInfo()
-        {
-            graph = nullptr;
-            tracer = nullptr;
-            tracerText = nullptr;
-        }
-	};
-
-	QMap<QPair<QString, QString>, ScatterInfo> m_mapScatter;
+    QMap<QPair<QString, QString>, ScatterInfo> m_mapScatter;
 };
 
 #endif // PLOTSCATTER_H

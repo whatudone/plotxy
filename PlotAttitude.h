@@ -127,6 +127,5 @@ public slots:
 
 private:
     void updateDataForDataPairsByTime(double secs) override;
-    void onDataPairUpdateData() override;
     void customPainting(QPainter& painter) override;
 };

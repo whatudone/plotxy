@@ -10,6 +10,7 @@
 #include "DataPair.h"
 #include "constdef.h"
 #include "ui_PlotItemBase.h"
+
 #include <QWidget>
 
 class QCustomPlot;
@@ -229,12 +230,20 @@ public:
 
     virtual void exportDataToFile(const QString& /*filename*/) const {}
 
+    bool getXIsAdaptive() const;
+    void setXIsAdaptive(bool xIsAdaptive);
+
+    bool getYIsAdaptive() const;
+    void setYIsAdaptive(bool yIsAdaptive);
+
 private:
     void updateResizeFocusPos();
     QRect getRectByDirection(ResizeDirection direction);
     void setCursorByDirection();
 
     void drawBorderAndControls();
+    // 判断数据对是否已经被添加，避免添加重复的数据对
+    bool isAlreadyAdded(const QPair<QString, QString>& pair);
 
 private slots:
     // 响应整体数据变化
@@ -327,6 +336,9 @@ private:
     bool m_isNeedDrawBorder = false;
     const int32_t m_resizeFocusSize = 20;
     Ui::PlotItemBase ui;
+    // 默认自适应缩放关闭
+    bool m_xIsAdaptive = false;
+    bool m_yIsAdaptive = false;
 };
 
 #endif // !
