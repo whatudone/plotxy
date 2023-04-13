@@ -146,7 +146,7 @@ enum class MouseMode : uint8_t
     BoxZoom, //框选缩放
     MeasureDistance, //测距
     CreatePlot, // 创建
-    MovePlot // 移动+移动
+    MovePlot // 移动+缩放
 
 };
 #endif // _CONST_DEF_H_

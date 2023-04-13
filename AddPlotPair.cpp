@@ -304,13 +304,18 @@ void AddPlotPair::onChangeStackIndex(PlotType index)
         ui.stackedWidget->setCurrentIndex(1);
         break;
     case Type_PlotAScope:
-        ui.groupBox_3->setTitle(QString("X轴数据源"));
-        ui.groupBox_2->setTitle(QString("Y轴数据源"));
-        ui.stackedWidget->setCurrentIndex(1);
+        ui.label_XAxis->setText(QString("X轴：Range(m)"));
+        ui.label_YAxis->setText(QString("Y轴：Time(s)"));
+        ui.stackedWidget->setCurrentIndex(5);
         break;
     case Type_PlotRTI:
         ui.label_XAxis->setText(QString("X轴：Range(m)"));
         ui.label_YAxis->setText(QString("Y轴：Time(s)"));
+        ui.stackedWidget->setCurrentIndex(5);
+        break;
+    case Type_PlotDoppler:
+        ui.label_XAxis->setText(QString("X轴：Range(m)"));
+        ui.label_YAxis->setText(QString("Y轴：Range(m)"));
         ui.stackedWidget->setCurrentIndex(5);
         break;
     case Type_PlotText:
@@ -326,11 +331,6 @@ void AddPlotPair::onChangeStackIndex(PlotType index)
         break;
     case Type_PlotAttitude:
         ui.stackedWidget->setCurrentIndex(2);
-        break;
-    case Type_PlotDoppler:
-        ui.label_XAxis->setText(QString("X轴：Range(m)"));
-        ui.label_YAxis->setText(QString("Y轴：Range(m)"));
-        ui.stackedWidget->setCurrentIndex(5);
         break;
     default:
         ui.stackedWidget->setCurrentIndex(0);

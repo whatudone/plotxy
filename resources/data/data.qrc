@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>AScope类型数据.csv</file>
+    </qresource>
+</RCC>

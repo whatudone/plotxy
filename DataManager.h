@@ -9,13 +9,12 @@
 
 #include "BaseData.h"
 #include <QMap>
-#include <QMutex>
-#include <memory>
 
 class OrdinalTimeFormatter;
 
-class DataManager
+class DataManager : public QObject
 {
+    Q_OBJECT
 private:
     DataManager();
     DataManager(const DataManager&) = delete;
@@ -55,6 +54,9 @@ public:
                                  int minIndex,
                                  int maxIndex); //获取minIndex到maxIndex内的实体-属性数据list
 	QVector<double> getTimeData_vector();
+
+signals:
+    void loadDataReady();
 };
 
 #endif // !

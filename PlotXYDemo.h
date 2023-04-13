@@ -166,7 +166,7 @@ public slots:
     void onTabDrawWidgetCreatePlot(PlotType type, const QRect& rect);
 
 signals:
-    void sgn_loadDataReady();
+
     void sgn_sliderValueChanged(int);
     void sgn_sendCurrentSeconds(double);
     void sgn_enableActionStop(bool);

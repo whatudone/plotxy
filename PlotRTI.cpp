@@ -50,6 +50,10 @@ PlotRTI::PlotRTI(QWidget* parent)
 	m_showUnits_y = false;
 
 	initPlot();
+
+#ifdef TEST_SCOPE_DATA
+    loadCustomData();
+#endif
 }
 
 PlotRTI::~PlotRTI() {}
@@ -90,20 +94,17 @@ void PlotRTI::initPlot()
 	m_customPlot->yAxis->setLabelFont(m_axisLabelFont);
 
 	m_colorMap = new QCPColorMap(m_customPlot->xAxis, m_customPlot->yAxis);
+
 	m_colorScale = new QCPColorScale(m_customPlot);
-	//m_customPlot->plotLayout()->addElement(0, 1, m_colorScale);
-	//m_customPlot->plotLayout()->setColumnSpacing(0);
-	//m_colorScale->setType(QCPAxis::atRight);
+    // 设置在图例的右侧
+    m_colorScale->setType(QCPAxis::atRight);
 	m_colorMap->setColorScale(m_colorScale);
+    // 设置预定义的颜色渐变，也可以自定义
 	m_colorMap->setGradient(QCPColorGradient::gpJet);
-	m_colorMap->rescaleDataRange();
 
-	m_marginGroup = new QCPMarginGroup(m_customPlot);
-    //	m_customPlot->axisRect()->setMinimumMargins(QMargins(2, 2, 2, 2));
-	m_customPlot->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, m_marginGroup);
-	m_colorScale->setMarginGroup(QCP::msBottom | QCP::msTop, m_marginGroup);
-
-    //	m_customPlot->rescaleAxes();
+    auto marginGroup = new QCPMarginGroup(m_customPlot);
+    m_customPlot->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
+    m_colorScale->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
 }
 
 void PlotRTI::setUnitsShowX(bool on)
@@ -168,7 +169,75 @@ void PlotRTI::setTitleFont(QFont& font)
 void PlotRTI::setTitleVisible(bool show)
 {
 	m_titleVisible = show;
-	update();
+    update();
+}
+
+void PlotRTI::loadCustomData()
+{
+    QString dataFileName = ":/AScope类型数据.csv";
+    QFile file(dataFileName);
+
+    QVector<double> rangeDatas;
+    QVector<int64_t> timeDatas;
+
+    if(file.open(QFile::Text | QFile::ReadOnly))
+    {
+        do
+        {
+            QString data = file.readLine();
+            if(data.isEmpty())
+            {
+                break;
+            }
+
+            QStringList dataList = data.split(",", QString::SkipEmptyParts);
+            if(dataList.size() != 3)
+            {
+                break;
+            }
+
+            if(dataList.at(0) == "Time")
+            {
+                continue;
+            }
+            int64_t time =
+                QDateTime::fromString(dataList.at(0), "yyyy/MM/dd hh:mm:ss").toSecsSinceEpoch();
+            double range = dataList.at(1).toDouble();
+            double voltage = dataList.at(2).toDouble();
+            if(!timeDatas.contains(time))
+            {
+                timeDatas.append(time);
+            }
+            if(!rangeDatas.contains(range))
+            {
+                rangeDatas.append(range);
+            }
+
+            m_dataMap.insert(qMakePair(range, time), voltage);
+        } while(true);
+    }
+    file.close();
+    std::sort(rangeDatas.begin(), rangeDatas.end());
+    std::sort(timeDatas.begin(), timeDatas.end());
+    int nx = rangeDatas.size();
+    int ny = timeDatas.size();
+    m_colorMap->data()->setSize(nx, ny);
+    m_colorMap->data()->setRange(QCPRange(rangeDatas.first(), rangeDatas.last()),
+                                 QCPRange(timeDatas.first(), timeDatas.last()));
+
+    for(int xIndex = 0; xIndex < nx; ++xIndex)
+    {
+        for(int yIndex = 0; yIndex < ny; ++yIndex)
+        {
+            auto coord = qMakePair(rangeDatas.at(xIndex), timeDatas.at(yIndex));
+            double voltage = m_dataMap.value(coord);
+            m_colorMap->data()->setCell(xIndex, yIndex, voltage);
+        }
+    }
+
+    m_colorMap->rescaleDataRange();
+
+    m_customPlot->rescaleAxes();
 }
 
 void PlotRTI::setxAxisLabel(QString& str)

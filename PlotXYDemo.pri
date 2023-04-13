@@ -100,5 +100,6 @@ FORMS += $$PWD/AddPlotPair.ui \
 
 RESOURCES += resources/statusbar.qrc \
     $$PWD/resources/cursor/cursor.qrc \
+    $$PWD/resources/data/data.qrc \
     $$PWD/resources/qss.qrc \
     resources/toolbar.qrc

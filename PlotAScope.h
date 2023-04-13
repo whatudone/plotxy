@@ -66,7 +66,7 @@ public:
                             const QPair<QString, QString>& newPair) override;
 
 private:
-    void updateDataForDataPairsByTime(double secs);
+    void updateDataForDataPairsByTime(double secs) override;
 
     void updateGraph(double secs, int index, DataPair* data);
 

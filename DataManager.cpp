@@ -128,21 +128,19 @@ void DataManager::loadCSV_stringTime(const QString& filePath)
 	m_minTime = SECPERDAY * 365;
 	m_maxTime = -1;
 	m_refYear = -1;
-
-    for(int i = 0; i < allLines.size(); i++)
+    auto lineCount = allLines.size();
+    for(int i = 0; i < lineCount; ++i)
 	{
-		QStringList currEntityAttrValues;
 
 		QStringList currLineItems = allLines.at(i).split(",");
 
-        if(currLineItems.size() <= 0)
+        if(currLineItems.size() <= 1)
 			continue;
-        if(currLineItems.size() == 1)
-			continue;
-		QString firstItem = currLineItems.at(0);
+        QStringList currEntityAttrValues;
 
-        if(firstItem.at(0) ==
-           '#') //判断首字符是否为#	entityType entityAttr1 entityAttr2 entityAttr3 entityAttr4
+		QString firstItem = currLineItems.at(0);
+        //判断首字符是否为#	entityType entityAttr1 entityAttr2 entityAttr3 entityAttr4
+        if(firstItem.at(0) == '#')
 		{
             if(!currEntityType.isEmpty()) //标志着上一组数据处理完毕，需要将上一组数据添加进map
 			{
@@ -229,7 +227,17 @@ void DataManager::loadCSV_stringTime(const QString& filePath)
 	m_timeDataVector.erase(it, m_timeDataVector.end());
 
 	file.close();
-	QMessageBox::information(NULL, QString("提示信息"), QString("已成功加载数据"));
+    if(m_entityDataMap.isEmpty())
+    {
+        QMessageBox::information(
+            nullptr, QString("提示信息"), QString("数据加载失败,当前数据为空"));
+    }
+    else
+    {
+
+        QMessageBox::information(NULL, QString("提示信息"), QString("已成功加载数据"));
+        emit loadDataReady();
+    }
 }
 
 QMap<QString, QMap<QString, QList<double>>>& DataManager::getDataMap()

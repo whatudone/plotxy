@@ -14,3 +14,6 @@ msvc {
     DEFINES += NOMINMAX
 }
 include(PlotXYDemo.pri)
+# AScope RTI Doppler 三种图表都是一类数据，目前数据格式未知，暂时直接在代码中生成模拟数据
+# 此宏定义用于打开测试数据开关，后续有真实数据需要关闭这个开关
+DEFINES += TEST_SCOPE_DATA
