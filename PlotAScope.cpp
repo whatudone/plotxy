@@ -18,11 +18,6 @@ PlotAScope::PlotAScope(QWidget* parent)
 	m_xAxisLabel = "Range(m)";
 	m_yAxisLabel = "Voltage(V)";
 
-    //	m_leftPadding = 10;
-    //	m_rightPadding = 20;
-    //	m_topPadding = 0;
-    //	m_bottomPadding = 20;
-
 	m_coordBgn_x = 0;
 	m_coordEnd_x = 100;
 	m_coordBgn_y = 0;

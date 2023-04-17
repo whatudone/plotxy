@@ -658,6 +658,7 @@ void PlotItemBase::paintEvent(QPaintEvent* event)
         painter.drawText(
             QPoint((width + m_leftPadding - m_rightPadding - w) / 2, as + m_topPadding), m_title);
     }
+    // 绘图分为两种，一种是qcustomplot绘制，一种是自绘
     if(m_customPlot)
     {
         if(plotType() != PlotType::Type_PlotDoppler)

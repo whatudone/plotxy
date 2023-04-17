@@ -1,5 +1,6 @@
 ﻿#include "PlotDoppler.h"
-
+#include "Utils.h"
+#include <QGridLayout>
 int PlotDoppler::m_instanceCount = 1;
 PlotDoppler::PlotDoppler(QWidget* parent)
     : PlotItemBase(parent)
@@ -16,11 +17,6 @@ PlotDoppler::PlotDoppler(QWidget* parent)
 	m_axisLabelFont.setPointSizeF(10.0);
 	m_xAxisLabel = "Range(m)";
 	m_yAxisLabel = "Voltage(V)";
-
-    //	m_leftPadding = 10;
-    //	m_rightPadding = 20;
-    //	m_topPadding = 0;
-    //	m_bottomPadding = 10;
 
 	m_coordBgn_x = 0;
 	m_coordEnd_x = 100;
@@ -45,6 +41,9 @@ PlotDoppler::PlotDoppler(QWidget* parent)
 	m_showUnits_y = false;
 
 	initPlot();
+#ifdef TEST_SCOPE_DATA
+    loadCustomData();
+#endif
 }
 
 PlotDoppler::~PlotDoppler() {}
@@ -52,9 +51,7 @@ PlotDoppler::~PlotDoppler() {}
 void PlotDoppler::initPlot()
 {
 	m_customPlot = new QCustomPlot(this);
-    QHBoxLayout* pLayout = new QHBoxLayout(this);
-    pLayout->addWidget(m_customPlot);
-    setLayout(pLayout);
+
     m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 	m_customPlot->axisRect()->setupFullAxesBox(true);
 
@@ -86,116 +83,184 @@ void PlotDoppler::initPlot()
 
 	m_colorMap = new QCPColorMap(m_customPlot->xAxis, m_customPlot->yAxis);
 	m_colorScale = new QCPColorScale(m_customPlot);
-	m_customPlot->plotLayout()->addElement(0, 1, m_colorScale);
+    m_customPlot->plotLayout()->insertColumn(0);
+    m_customPlot->plotLayout()->addElement(0, 0, m_colorScale);
 	m_customPlot->plotLayout()->setColumnSpacing(0);
-	m_colorScale->setType(QCPAxis::atRight);
+    m_colorScale->setType(QCPAxis::atLeft);
 	m_colorMap->setColorScale(m_colorScale);
 	m_colorMap->setGradient(QCPColorGradient::gpJet);
 	m_colorMap->rescaleDataRange();
 
-	m_marginGroup = new QCPMarginGroup(m_customPlot);
+    auto marginGroup = new QCPMarginGroup(m_customPlot);
 	m_customPlot->axisRect()->setMinimumMargins(QMargins(0, 15, 0, 0));
-	m_customPlot->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, m_marginGroup);
-	m_colorScale->setMarginGroup(QCP::msBottom | QCP::msTop, m_marginGroup);
+    // 图表内部布局
+    m_customPlot->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
+    m_colorScale->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
 
-    //	m_customPlot->rescaleAxes();
+    m_verticalAScope = new QCustomPlot(this);
+    m_verticalAScope->yAxis->setVisible(false);
+    m_verticalAScope->yAxis2->setVisible(true);
+    m_verticalAScope->xAxis->setTickLabels(false);
+    // Doppler图表无法同时显示多个数据对，所以每个图表默认一个图例
+    m_verticalAScope->addGraph(m_verticalAScope->yAxis2, m_verticalAScope->xAxis);
 
-	m_horizon_AScope = new PlotAScope(this);
-    m_horizon_AScope->setTitle(QString(""));
-	m_horizon_AScope->setTitleFont(QFont("Microsoft YaHei", 1));
-	m_horizon_AScope->setPaddings(0, 0, 0, 0);
-	m_horizon_AScope->setTitleVisible(false);
-	m_horizon_AScope->setxAxisLabel(QString(""));
-	m_horizon_AScope->setyAxisLabel(QString(""));
-	m_horizon_AScope->setAxisTickLabelShow(false, PlotAScope::yAxis);
-    m_horizon_AScope->setMinimumMargins(QMargins(15, 1, 15, 15));
-	m_horizon_AScope->setVertGrids(m_vertGrids);
-    //	m_horizon_AScope->setHorzGrids(m_horzGrids);
-	m_horizon_AScope->setOuterFillColor(m_outerFillColor);
-	m_horizon_AScope->setAxisColorWidth(m_axisColor, m_axisWidth);
-	m_horizon_AScope->setGridColorWidth(m_gridColor, m_gridWidth);
-	m_horizon_AScope->setGridFillColor(m_gridFillColor);
-	m_horizon_AScope->setGridStyle(GridStyle(m_gridStyle - 1));
-	m_horizon_AScope->setTickLabelColor(m_tickLabelColor);
-	m_horizon_AScope->setTickLabelFont(m_tickLabelFont);
-	m_horizon_AScope->setTickLabelFontSize(m_tickLabelFontSize);
-
-	m_vertical_AScope = new PlotAScope(this);
-	m_vertical_AScope->setTitle(QString(""));
-	m_vertical_AScope->setTitleFont(QFont("Microsoft YaHei", 1));
-	m_vertical_AScope->setPaddings(0, 0, 0, 0);
-	m_vertical_AScope->setTitleVisible(false);
-	m_vertical_AScope->setxAxisLabel(QString(""));
-	m_vertical_AScope->setyAxisLabel(QString(""));
-	m_vertical_AScope->setAxisTickLabelShow(false, PlotAScope::xAxis);
-	m_vertical_AScope->setMinimumMargins(QMargins(15, 15, 1, 15));
-    //	m_vertical_AScope->setVertGrids(m_vertGrids);
-	m_vertical_AScope->setHorzGrids(m_horzGrids);
-	m_vertical_AScope->setOuterFillColor(m_outerFillColor);
-	m_vertical_AScope->setAxisColorWidth(m_axisColor, m_axisWidth);
-	m_vertical_AScope->setGridColorWidth(m_gridColor, m_gridWidth);
-	m_vertical_AScope->setGridFillColor(m_gridFillColor);
-	m_vertical_AScope->setGridStyle(GridStyle(m_gridStyle - 1));
-	m_vertical_AScope->setTickLabelColor(m_tickLabelColor);
-	m_vertical_AScope->setTickLabelFont(m_tickLabelFont);
-	m_vertical_AScope->setTickLabelFontSize(m_tickLabelFontSize);
+    m_horizonAScope = new QCustomPlot(this);
+    m_horizonAScope->yAxis->setTickLabels(false);
+    m_horizonAScope->addGraph(m_horizonAScope->xAxis, m_horizonAScope->yAxis);
+    // 图表之间的布局
+    QGridLayout* pLayout = new QGridLayout(this);
+    pLayout->addWidget(m_customPlot, 0, 0);
+    pLayout->addWidget(m_verticalAScope, 0, 1);
+    pLayout->addWidget(m_horizonAScope, 1, 0);
+    pLayout->setColumnStretch(0, 4);
+    pLayout->setColumnStretch(1, 1);
+    pLayout->setRowStretch(0, 4);
+    pLayout->setRowStretch(1, 1);
+    // top需要考虑标题栏的字体高度，先用60
+    pLayout->setContentsMargins(m_leftPadding, 60, m_rightPadding, m_bottomPadding);
+    setLayout(pLayout);
 
 	setCoordRangeX(m_coordBgn_x, m_coordEnd_x);
 	setCoordRangeY(m_coordBgn_y, m_coordEnd_y);
 }
 
-void PlotDoppler::customPainting(QPainter& painter)
+void PlotDoppler::loadCustomData()
 {
-    int width = this->width();
-    int height = this->height();
+    QString dataFileName = ":/AScope类型数据.csv";
+    QFile file(dataFileName);
 
-    QFontMetricsF fm(m_titleFont);
-    //	double w = fm.size(Qt::TextSingleLine, m_title).width();
-    double h = fm.size(Qt::TextSingleLine, m_title).height();
-    //	double as = fm.ascent();
+    QVector<double> rangeDatas;
+    QVector<double> timeDatas;
 
-    int verWidth = (width - m_leftPadding - m_rightPadding) * 0.2;
-    int horHeight = (height - h - m_topPadding - m_bottomPadding) * 0.2;
-    int plotWidth = width - m_leftPadding - m_rightPadding - verWidth;
-    int plotHeight = height - h - m_topPadding - m_bottomPadding - horHeight;
+    if(file.open(QFile::Text | QFile::ReadOnly))
+    {
+        do
+        {
+            QString data = file.readLine();
+            if(data.isEmpty())
+            {
+                break;
+            }
 
-    m_vertical_AScope->resize(verWidth, plotHeight + 15);
-    m_vertical_AScope->setGeometry(m_leftPadding, h + m_topPadding, verWidth, plotHeight + 15);
+            QStringList dataList = data.split(",", QString::SkipEmptyParts);
+            if(dataList.size() != 3)
+            {
+                break;
+            }
 
-    m_horizon_AScope->resize(plotWidth - m_colorScale->barWidth() + 15, horHeight);
-    m_horizon_AScope->setGeometry(m_leftPadding + verWidth - 15,
-                                  h + m_topPadding + plotHeight,
-                                  plotWidth - m_colorScale->barWidth() + 15,
-                                  horHeight);
+            if(dataList.at(0) == "Time")
+            {
+                continue;
+            }
+            double time = static_cast<double>(
+                QDateTime::fromString(dataList.at(0), "yyyy/MM/dd hh:mm:ss").toSecsSinceEpoch());
+            double range = dataList.at(1).toDouble();
+            double voltage = dataList.at(2).toDouble();
+            if(!timeDatas.contains(time))
+            {
+                timeDatas.append(time);
+            }
+            if(!rangeDatas.contains(range))
+            {
+                rangeDatas.append(range);
+            }
 
-    m_customPlot->setGeometry(m_leftPadding + verWidth, h + m_topPadding, plotWidth, plotHeight);
+            m_dataMap.insert(qMakePair(range, time), voltage);
+            // 对于同一键值，会插入多个
+            m_horizonDataMap.insert(time, qMakePair(range, voltage));
+            m_verticalDataMap.insert(range, qMakePair(time, voltage));
+        } while(true);
+    }
+    file.close();
+    std::sort(rangeDatas.begin(), rangeDatas.end());
+    std::sort(timeDatas.begin(), timeDatas.end());
+
+    int nx = rangeDatas.size();
+    int ny = timeDatas.size();
+    // 中间主图加载数据
+    m_colorMap->data()->setSize(nx, ny);
+    m_colorMap->data()->setRange(QCPRange(rangeDatas.first(), rangeDatas.last()),
+                                 QCPRange(timeDatas.first(), timeDatas.last()));
+
+    for(int xIndex = 0; xIndex < nx; ++xIndex)
+    {
+        for(int yIndex = 0; yIndex < ny; ++yIndex)
+        {
+            auto coord = qMakePair(rangeDatas.at(xIndex), timeDatas.at(yIndex));
+            double voltage = m_dataMap.value(coord);
+            m_colorMap->data()->setCell(xIndex, yIndex, voltage);
+        }
+    }
+
+    m_colorMap->rescaleDataRange();
+    m_customPlot->rescaleAxes();
+    // 默认用第一个数据的切片显示水平、垂直图表
+    const auto& pair = m_dataMap.firstKey();
+    // 水平曲线图加载数据
+    QVector<double> hXDatas;
+    QVector<double> hValues;
+    getXToValueVecByY(pair.second, hXDatas, hValues);
+    m_horizonAScope->graph(0)->setData(hXDatas, hValues);
+    m_horizonAScope->rescaleAxes();
+    m_horizonAScope->replot();
+    // 垂直曲线图加载数据
+    QVector<double> vYDatas;
+    QVector<double> vValues;
+    getYToValueVecByX(pair.first, vYDatas, vValues);
+    m_verticalAScope->graph(0)->setData(vYDatas, vValues);
+    m_verticalAScope->rescaleAxes();
+    m_verticalAScope->replot();
+}
+
+void PlotDoppler::getYToValueVecByX(double x, QVector<double>& yVec, QVector<double>& dataVec)
+{
+    const auto& pairList = m_verticalDataMap.values(x);
+    yVec.clear();
+    dataVec.clear();
+    for(const auto& pair : pairList)
+    {
+        yVec.append(pair.first);
+        dataVec.append(pair.second);
+    }
+}
+
+void PlotDoppler::getXToValueVecByY(double y, QVector<double>& xVec, QVector<double>& dataVec)
+{
+    const auto& pairList = m_horizonDataMap.values(y);
+    xVec.clear();
+    dataVec.clear();
+    for(const auto& pair : pairList)
+    {
+        xVec.append(pair.first);
+        dataVec.append(pair.second);
+    }
 }
 
 void PlotDoppler::setUnitsShowX(bool on)
 {
 	m_showUnits_x = on;
-	m_horizon_AScope->setUnitsShowX(on);
+    m_horizonAScope->xAxis->setAxisFormatShow(on);
 	m_customPlot->replot();
 }
 
 void PlotDoppler::setUnitsShowY(bool on)
 {
 	m_showUnits_y = on;
-	m_vertical_AScope->setUnitsShowY(on);
+    m_verticalAScope->xAxis->setAxisFormatShow(on);
 	m_customPlot->replot();
 }
 
 void PlotDoppler::setUnitsX(const QString& units)
 {
 	m_units_x = units;
-	m_horizon_AScope->setUnitsX(units);
+    m_horizonAScope->xAxis->setAxisFormat(units);
 	m_customPlot->replot();
 }
 
 void PlotDoppler::setUnitsY(const QString& units)
 {
 	m_units_y = units;
-	m_vertical_AScope->setUnitsY(units);
+    m_verticalAScope->xAxis->setAxisFormat(units);
 	m_customPlot->replot();
 }
 
@@ -239,8 +304,8 @@ void PlotDoppler::setTitleVisible(bool show)
 void PlotDoppler::onPlotMouseEventEnable(bool on)
 {
     m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, on);
-    m_horizon_AScope->onPlotMouseEventEnable(on);
-    m_vertical_AScope->onPlotMouseEventEnable(on);
+    m_horizonAScope->setAttribute(Qt::WA_TransparentForMouseEvents, on);
+    m_verticalAScope->setAttribute(Qt::WA_TransparentForMouseEvents, on);
 }
 
 void PlotDoppler::setxAxisLabel(QString& str)
@@ -325,8 +390,8 @@ void PlotDoppler::setOuterFillColor(QColor color)
 	this->setPalette(palette);
 
 	m_customPlot->setBackground(color);
-	m_horizon_AScope->setOuterFillColor(color);
-	m_vertical_AScope->setOuterFillColor(color);
+    m_horizonAScope->setBackground(color);
+    m_verticalAScope->setBackground(color);
 	m_customPlot->replot();
 }
 
@@ -340,14 +405,9 @@ void PlotDoppler::setCoordRangeX(double lower, double upper)
 	m_coordBgn_x = lower;
 	m_coordEnd_x = upper;
 	m_customPlot->xAxis->setRange(lower, upper);
-	m_horizon_AScope->setCoordRangeX(lower, upper);
+    m_horizonAScope->xAxis->setRange(lower, upper);
 
-	m_coordBgn_x = lower;
-	m_coordEnd_x = upper;
-	m_customPlot->xAxis->setRange(lower, upper);
-	m_horizon_AScope->setCoordRangeX(lower, upper);
-
-    //	m_customPlot->rescaleAxes();
+    m_customPlot->rescaleAxes();
     m_customPlot->replot();
 }
 
@@ -361,14 +421,9 @@ void PlotDoppler::setCoordRangeY(double lower, double upper)
 	m_coordBgn_y = lower;
 	m_coordEnd_y = upper;
 	m_customPlot->yAxis->setRange(lower, upper);
-	m_vertical_AScope->setCoordRangeY(lower, upper);
+    m_verticalAScope->xAxis->setRange(lower, upper);
 
-	m_coordBgn_y = lower;
-	m_coordEnd_y = upper;
-	m_customPlot->yAxis->setRange(lower, upper);
-	m_vertical_AScope->setCoordRangeY(lower, upper);
-
-    //	m_customPlot->rescaleAxes();
+    m_customPlot->rescaleAxes();
 	m_customPlot->replot();
 }
 
@@ -388,8 +443,7 @@ void PlotDoppler::setHorzGrids(uint count)
 		m_customPlot->yAxis->grid()->setVisible(true);
 		m_customPlot->yAxis->ticker()->setTickCount(m_horzGrids);
 	}
-    //	m_horizon_AScope->setHorzGrids(m_horzGrids);
-	m_vertical_AScope->setHorzGrids(m_horzGrids);
+
 	m_customPlot->replot();
 }
 
@@ -409,8 +463,7 @@ void PlotDoppler::setVertGrids(uint count)
 		m_customPlot->xAxis->grid()->setVisible(true);
 		m_customPlot->xAxis->ticker()->setTickCount(m_vertGrids);
 	}
-	m_horizon_AScope->setVertGrids(m_vertGrids);
-    //	m_vertical_AScope->setVertGrids(m_vertGrids);
+
 	m_customPlot->replot();
 }
 
@@ -423,8 +476,11 @@ void PlotDoppler::setAxisColorWidth(QColor color, uint width)
 	m_customPlot->xAxis2->setBasePen(QPen(m_axisColor, m_axisWidth));
 	m_customPlot->yAxis2->setBasePen(QPen(m_axisColor, m_axisWidth));
 
-	m_horizon_AScope->setAxisColorWidth(m_axisColor, m_axisWidth);
-	m_vertical_AScope->setAxisColorWidth(m_axisColor, m_axisWidth);
+    m_horizonAScope->xAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
+    m_horizonAScope->yAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
+
+    m_verticalAScope->xAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
+    m_verticalAScope->yAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
 	m_customPlot->replot();
 }
 
@@ -434,17 +490,16 @@ void PlotDoppler::setGridColorWidth(QColor color, uint width)
 	m_gridWidth = width;
 	m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
 	m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
-
-	m_horizon_AScope->setGridColorWidth(m_gridColor, m_gridWidth);
-	m_vertical_AScope->setGridColorWidth(m_gridColor, m_gridWidth);
+    m_horizonAScope->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+    m_horizonAScope->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+    m_verticalAScope->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+    m_verticalAScope->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
 	m_customPlot->replot();
 }
 
 void PlotDoppler::setGridFillColor(QColor color)
 {
 	m_gridFillColor = color;
-	m_horizon_AScope->setGridFillColor(color);
-	m_vertical_AScope->setGridFillColor(color);
 }
 
 void PlotDoppler::setGridVisible(bool enable)
@@ -453,8 +508,6 @@ void PlotDoppler::setGridVisible(bool enable)
 	m_customPlot->xAxis->grid()->setVisible(enable);
 	m_customPlot->yAxis->grid()->setVisible(enable);
 
-	m_horizon_AScope->setGridVisible(enable);
-	m_vertical_AScope->setGridVisible(enable);
 	m_customPlot->replot();
 }
 
@@ -464,8 +517,6 @@ void PlotDoppler::setTickLabelColor(QColor& color)
 	m_customPlot->xAxis->setTickLabelColor(m_tickLabelColor);
 	m_customPlot->yAxis->setTickLabelColor(m_tickLabelColor);
 
-	m_horizon_AScope->setTickLabelColor(color);
-	m_vertical_AScope->setTickLabelColor(color);
 	m_customPlot->replot();
 }
 
@@ -475,8 +526,6 @@ void PlotDoppler::setTickLabelFont(QFont& font)
 	m_customPlot->xAxis->setTickLabelFont(m_tickLabelFont);
 	m_customPlot->yAxis->setTickLabelFont(m_tickLabelFont);
 
-	m_horizon_AScope->setTickLabelFont(font);
-	m_vertical_AScope->setTickLabelFont(font);
 	m_customPlot->replot();
 }
 
@@ -485,9 +534,6 @@ void PlotDoppler::setTickLabelFontSize(int size)
 	m_tickLabelFontSize = size;
 	m_tickLabelFont.setPointSize(size);
 	setTickLabelFont(m_tickLabelFont);
-
-	m_horizon_AScope->setTickLabelFontSize(size);
-	m_vertical_AScope->setTickLabelFontSize(size);
 }
 
 void PlotDoppler::setGridStyle(GridStyle style)
@@ -513,8 +559,6 @@ void PlotDoppler::setGridStyle(GridStyle style)
 	m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
 	m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
 
-	m_horizon_AScope->setGridStyle(style);
-	m_vertical_AScope->setGridStyle(style);
 	m_customPlot->replot();
 }
 

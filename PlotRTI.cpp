@@ -17,11 +17,6 @@ PlotRTI::PlotRTI(QWidget* parent)
 	m_xAxisLabel = "Range(m)";
 	m_yAxisLabel = "Time(s)";
 
-    //	m_leftPadding = 10;
-    //	m_rightPadding = 30;
-    //	m_topPadding = 20;
-    //	m_bottomPadding = 10;
-
 	m_coordBgn_x = 0;
 
 	m_coordEnd_x = 100;
@@ -94,8 +89,8 @@ void PlotRTI::initPlot()
 	m_customPlot->yAxis->setLabelFont(m_axisLabelFont);
 
 	m_colorMap = new QCPColorMap(m_customPlot->xAxis, m_customPlot->yAxis);
-
 	m_colorScale = new QCPColorScale(m_customPlot);
+    m_customPlot->plotLayout()->addElement(0, 1, m_colorScale);
     // 设置在图例的右侧
     m_colorScale->setType(QCPAxis::atRight);
 	m_colorMap->setColorScale(m_colorScale);
@@ -103,6 +98,7 @@ void PlotRTI::initPlot()
 	m_colorMap->setGradient(QCPColorGradient::gpJet);
 
     auto marginGroup = new QCPMarginGroup(m_customPlot);
+    // 保证上下对齐
     m_customPlot->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
     m_colorScale->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
 }
