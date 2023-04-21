@@ -1207,5 +1207,13 @@ void PlotXYDemo::onCut() {}
 void PlotXYDemo::onCopy() {}
 
 void PlotXYDemo::onPaste() {}
-
-void PlotXYDemo::onDelete() {}
+// 删除选中图表
+void PlotXYDemo::onDelete()
+{
+    if(m_pCurSelectedPlot)
+    {
+        m_pCurSelectedPlot->deleteLater();
+        m_pCurSelectedPlot = nullptr;
+        updateStatusBarInfo();
+    }
+}

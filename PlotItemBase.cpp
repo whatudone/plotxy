@@ -69,11 +69,8 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     palette.setColor(QPalette::Window, getOuterFillColor());
     setPalette(palette);
 
-    QPushButton* btn = new QPushButton(this);
-    btn->setText(QString("关闭"));
-    btn->setGeometry(10, 10, 130, 25);
-    connect(btn, &QPushButton::clicked, this, &PlotItemBase::close);
     updateResizeFocusPos();
+    // 数据对整体发生变化时，更新界面
     connect(this,
             &PlotItemBase::dataPairsChanged,
             this,
