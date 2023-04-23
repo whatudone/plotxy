@@ -81,7 +81,7 @@ void PlotManager::addPlot(const QString& tabName, PlotItemBase* plotItem)
         if(topWidget.size() != 0)
 		{
             QTreeWidgetItem* itemselPlotI =
-                new QTreeWidgetItem(QStringList() << plotItem->currName());
+                new QTreeWidgetItem(QStringList() << plotItem->getName());
 			topWidget[0]->addChild(itemselPlotI);
 		}
 	}
@@ -91,7 +91,7 @@ void PlotManager::addPlot(const QString& tabName, PlotItemBase* plotItem)
 		ui.treeWidget_selectedPlots->addTopLevelItem(itemselPlotH);
 		ui.treeWidget_selectedPlots->expandAll();
 
-		QTreeWidgetItem* itemselPlotI = new QTreeWidgetItem(QStringList() << plotItem->currName());
+		QTreeWidgetItem* itemselPlotI = new QTreeWidgetItem(QStringList() << plotItem->getName());
 		itemselPlotH->addChild(itemselPlotI);
 
 		//comboBox_tabName
@@ -441,7 +441,7 @@ void PlotManager::refreshGeneralUI(PlotItemBase* plot)
 {
 	emit sigGetTabRect();
 
-	ui.lineEdit_plotName->setText(plot->currName());
+	ui.lineEdit_plotName->setText(plot->getName());
 	ui.comboBox_tabName->setCurrentText(plot->currTabName());
 	ui.pushButton_outerFillColor->setColor(plot->getOuterFillColor());
 	ui.pushButton_outlineColor->setColor(plot->getOutlineColor());
@@ -522,7 +522,7 @@ void PlotManager::refreshLightTextUI(PlotItemBase* plot)
     if(!(plot == nullptr))
 	{
         auto dataPair = plot->getDataPairs();
-        if(plot->currName().startsWith("Text"))
+        if(plot->getName().startsWith("Text"))
 		{
 			ui.stackedWidget_LightTextDataSort->setCurrentIndex(0);
 			ui.groupBox_29->setVisible(false);
@@ -748,7 +748,7 @@ void PlotManager::onTWSPclicked(QTreeWidgetItem* item, int column)
         for(int i = 0; i < m_plotManager[parent_text].size(); ++i)
 		{
             PlotItemBase* tempPlot = m_plotManager[parent_text].at(i);
-            if(child_text == tempPlot->currName())
+            if(child_text == tempPlot->getName())
 			{
 				m_curSelectPlot = tempPlot;
 				//刷新treeWidgetSetting的使能状态
@@ -789,7 +789,7 @@ void PlotManager::onSelectedPlot(PlotItemBase* pBasePlot)
 		return;
 
     QList<QTreeWidgetItem*> items = ui.treeWidget_selectedPlots->findItems(
-        pBasePlot->currName(), Qt::MatchExactly | Qt::MatchRecursive);
+        pBasePlot->getName(), Qt::MatchExactly | Qt::MatchRecursive);
     if(items.size() != 0)
 	{
         foreach(QTreeWidgetItem* item, items)
@@ -829,7 +829,7 @@ void PlotManager::onUpdatePlotManager(const QMap<QString, QList<PlotItemBase*>>&
         for(int k = 0; k < m_plotManager[tabName].size(); ++k)
 		{
             QTreeWidgetItem* itemselPlotI =
-                new QTreeWidgetItem(QStringList() << m_plotManager[tabName].at(k)->currName());
+                new QTreeWidgetItem(QStringList() << m_plotManager[tabName].at(k)->getName());
 			itemselPlotH->addChild(itemselPlotI);
 		}
 		//comboBox_tabName
@@ -1088,7 +1088,7 @@ void PlotManager::onLineEditPlotNameEditingFinished()
 {
     if(m_curSelectPlot != nullptr)
 	{
-		QString oldName = m_curSelectPlot->currName();
+		QString oldName = m_curSelectPlot->getName();
 		QString newName = ui.lineEdit_plotName->text();
         if(newName.compare(oldName) != 0)
 		{
@@ -1366,7 +1366,7 @@ void PlotManager::onComboBox_3CurrentIndexChanged(int index)
 
 void PlotManager::onTableWidget_textLightDataSortItemSelectionChanged()
 {
-    if(m_curSelectPlot->currName().startsWith("Text"))
+    if(m_curSelectPlot->getName().startsWith("Text"))
 	{
 		//设置Move Up/Move Down的enable
         if(ui.tableWidget_TextDataSort->currentRow() < 0)
@@ -1546,7 +1546,7 @@ void PlotManager::onPushButton_16Clicked()
 // move up data pair
 void PlotManager::onPushButton_66Clicked()
 {
-    if(m_curSelectPlot->currName().startsWith("Text"))
+    if(m_curSelectPlot->getName().startsWith("Text"))
 	{
 		int row = ui.tableWidget_TextDataSort->currentRow();
         if(row < 0)
@@ -1603,7 +1603,7 @@ void PlotManager::onPushButton_66Clicked()
 		else
 			return;
 	}
-    else if(m_curSelectPlot->currName().startsWith("Light"))
+    else if(m_curSelectPlot->getName().startsWith("Light"))
 	{
 		int row = ui.tableWidget_LightDataSort->currentRow();
         if(row < 0)
@@ -1642,7 +1642,7 @@ void PlotManager::onPushButton_66Clicked()
 // move down data pair
 void PlotManager::onPushButton_67Clicked()
 {
-    if(m_curSelectPlot->currName().startsWith("Text"))
+    if(m_curSelectPlot->getName().startsWith("Text"))
 	{
 		int row = ui.tableWidget_TextDataSort->currentRow();
         if(row < 0 || row >= (ui.tableWidget_TextDataSort->rowCount() - 1))
@@ -1696,7 +1696,7 @@ void PlotManager::onPushButton_67Clicked()
 		else
 			return;
 	}
-    else if(m_curSelectPlot->currName().startsWith("Light"))
+    else if(m_curSelectPlot->getName().startsWith("Light"))
 	{
 		int row = ui.tableWidget_LightDataSort->currentRow();
         if(row < 0 || row >= (ui.tableWidget_LightDataSort->rowCount() - 1))

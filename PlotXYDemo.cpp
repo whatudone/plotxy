@@ -150,7 +150,7 @@ void PlotXYDemo::onAddPlotPair(const QString& tabName, const QString& plotName)
 {
     // TODO:后续需要确认此处是否是需要当前选中的图表数据，或者是在其他图表列表中任意选择的图表，在后台更新他的数据
     if(m_pCurSelectedPlot && (m_pCurSelectedPlot->currTabName() == tabName) &&
-       (m_pCurSelectedPlot->currName() == plotName))
+       (m_pCurSelectedPlot->getName() == plotName))
     {
         m_addPlotPair->onChangeStackIndex(m_lastSelectedType);
         m_addPlotPair->setPlotBaseInfo(m_pCurSelectedPlot);
@@ -278,12 +278,10 @@ void PlotXYDemo::onCustomContextMenuRequested(const QPoint& /* point*/)
 
 void PlotXYDemo::onContextMenu(const QPoint& /*point*/)
 {
-    getCurrentFocusPlot();
-
     QString name;
     if(m_pCurSelectedPlot)
     {
-        name = m_pCurSelectedPlot->currName();
+        name = m_pCurSelectedPlot->getName();
     }
     else
     {
@@ -1146,7 +1144,7 @@ void PlotXYDemo::updateStatusBarInfo()
     {
         m_statusBar_info->setText(QString("当前选择的Plot：%1-%2")
                                       .arg(m_pCurSelectedPlot->currTabName())
-                                      .arg(m_pCurSelectedPlot->currName()));
+                                      .arg(m_pCurSelectedPlot->getName()));
     }
     else
     {

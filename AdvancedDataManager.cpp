@@ -342,7 +342,7 @@ void AdvancedDataManager::onTableWidget_plotpairItemSelectionChanged()
         for(int i = 0; i < plotDataMap[tabName].size(); ++i)
 		{
             PlotItemBase* tempPlot = plotDataMap[tabName].at(i);
-            if(plotName == tempPlot->currName())
+            if(plotName == tempPlot->getName())
 			{
 				m_curSelectPlot = tempPlot;
                 auto dataPair = m_curSelectPlot->getDataPairs();
@@ -775,7 +775,7 @@ void AdvancedDataManager::onUpdatePlotPair()
 				//界面更新
 				QTableWidgetItem* data1 = new QTableWidgetItem(dataPair[k]->getDataPair().first);
 				QTableWidgetItem* data2 = new QTableWidgetItem(dataPair[k]->getDataPair().second);
-				QTableWidgetItem* data3 = new QTableWidgetItem(tempPlot->currName());
+				QTableWidgetItem* data3 = new QTableWidgetItem(tempPlot->getName());
 				QTableWidgetItem* data4 = new QTableWidgetItem(tempPlot->currTabName());
 				int row = ui.tableWidget_plotpair->rowCount();
 				ui.tableWidget_plotpair->insertRow(row);

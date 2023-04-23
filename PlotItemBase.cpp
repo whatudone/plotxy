@@ -148,7 +148,7 @@ void PlotItemBase::setTabName(const QString& tabName)
     m_tabName = tabName;
 }
 
-QString PlotItemBase::currName()
+QString PlotItemBase::getName()
 {
     return m_plotItemName;
 }

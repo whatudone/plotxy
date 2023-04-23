@@ -343,7 +343,7 @@ void AddPlotPair::setPlotBaseInfo(PlotItemBase* pBaseItem)
     if(!pBaseItem)
         return;
     QList<QTreeWidgetItem*> plotItems = m_treePlot->findItems(
-        pBaseItem->currName(), Qt::MatchCaseSensitive | Qt::MatchRecursive, 0);
+        pBaseItem->getName(), Qt::MatchCaseSensitive | Qt::MatchRecursive, 0);
     if(plotItems.size() > 0)
     {
         m_treePlot->itemDoubleClicked(plotItems[0], 0);
@@ -367,7 +367,7 @@ void AddPlotPair::updatePlotTrees(const QMap<QString, QList<PlotItemBase*>>& plo
 
         for(int j = 0; j < plotData[tabString].size(); ++j)
         {
-            QString plotString = plotData[tabString].at(j)->currName();
+            QString plotString = plotData[tabString].at(j)->getName();
             QTreeWidgetItem* itemselPlotI = new QTreeWidgetItem(QStringList() << plotString);
             itemselPlotH->addChild(itemselPlotI);
         }
@@ -607,7 +607,7 @@ void AddPlotPair::onBtnAddClicked()
         for(int i = 0; i < plotData[m_curPlotInfo.Base_TabName].size(); ++i)
         {
             PlotItemBase* tempPlot = plotData[m_curPlotInfo.Base_TabName].at(i);
-            if(m_curPlotInfo.Base_PlotName == tempPlot->currName())
+            if(m_curPlotInfo.Base_PlotName == tempPlot->getName())
             {
                 tempPlot->addPlotPairData(p1);
                 break;
@@ -847,7 +847,7 @@ void AddPlotPair::onDoubleClickedTreeWidgetItem(QTreeWidgetItem* item, int colum
         for(int i = 0; i < plotData[parent_text].size(); ++i)
         {
             PlotItemBase* tempPlot = plotData[parent_text].at(i);
-            if(child_text == tempPlot->currName())
+            if(child_text == tempPlot->getName())
             {
                 onChangeStackIndex(getPlotType(tempPlot));
                 m_curPlotInfo.Base_TabName = parent_text;
@@ -899,7 +899,7 @@ void AddPlotPair::onBtnUpdateClicked()
             for(int i = 0; i < plotData[m_curPlotInfo.Base_TabName].size(); ++i)
             {
                 PlotItemBase* tempPlot = plotData[m_curPlotInfo.Base_TabName].at(i);
-                if(m_curPlotInfo.Base_PlotName == tempPlot->currName())
+                if(m_curPlotInfo.Base_PlotName == tempPlot->getName())
                 {
                     tempPlot->updatePlotPairData(pOld, pNew);
                     break;
@@ -925,7 +925,7 @@ void AddPlotPair::onBtnRemoveClicked()
             for(int i = 0; i < plotData[m_curPlotInfo.Base_TabName].size(); ++i)
             {
                 PlotItemBase* tempPlot = plotData[m_curPlotInfo.Base_TabName].at(i);
-                if(m_curPlotInfo.Base_PlotName == tempPlot->currName())
+                if(m_curPlotInfo.Base_PlotName == tempPlot->getName())
                 {
                     tempPlot->delPlotPairData(pair);
                     break;
@@ -989,7 +989,7 @@ void AddPlotPair::onUpdatePlotPair(PlotItemBase* pBaseItem)
         return;
 
     QList<QTreeWidgetItem*> items =
-        m_treePlot->findItems(pBaseItem->currName(), Qt::MatchExactly | Qt::MatchRecursive);
+        m_treePlot->findItems(pBaseItem->getName(), Qt::MatchExactly | Qt::MatchRecursive);
     if(items.size() != 0)
     {
         foreach(QTreeWidgetItem* item, items)

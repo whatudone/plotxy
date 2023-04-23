@@ -40,7 +40,7 @@ public:
     void horizonAlign();
     // 将所有图表缩放到同一大小垂直排开
     void verticalAlign();
-    // 查找当前
+    // 查找当前tab页上所有的plot控件列表
     QList<PlotItemBase*> findAllPlots();
 
     static bool getIsLockingEdit();
@@ -67,11 +67,11 @@ signals:
 public slots:
 
 private:
-    PlotItemBase* findPlotByMousePos(const QPoint& point);
+    PlotItemBase* findPlotByMousePos(const QPoint& mouseEventPoint);
 
     void handleMouseMoveWithMovePlot(int offsetX, int offsetY);
     void handleMouseReleaseWithCenterPlot(const QPoint& centerPoint);
-
+    void handleMouseReleaseWithSelectPlot(const QPoint& mouseEventPoint);
     void handleBoxZoom(const QRect& rect);
     void handleZoomInOut(double factor);
     void handleMouseMoveWithPan(int offsetX, int offsetY);

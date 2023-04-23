@@ -5,6 +5,7 @@
 
 #include <QApplication>
 #include <QDebug>
+#include <QMenu>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QRubberBand>
@@ -42,13 +43,13 @@ void TabDrawWidget::mousePressEvent(QMouseEvent* event)
             if(event->modifiers() & Qt::ControlModifier)
             {
                 m_movePlotMode = MultipleSelect;
-                m_pCurWidget = findPlotByMousePos(mapToGlobal(event->pos()));
+                m_pCurWidget = findPlotByMousePos(event->pos());
             }
             else
             {
                 //根据点击的位置区分是缩放、移动、单选行为
 
-                if(m_pCurWidget = findPlotByMousePos(mapToGlobal(event->pos())))
+                if(m_pCurWidget = findPlotByMousePos(event->pos()))
                 {
                     auto plotPoint = m_pCurWidget->mapFromParent(event->pos());
                     // 需要将坐标转化到plot中
@@ -133,6 +134,13 @@ void TabDrawWidget::mouseReleaseEvent(QMouseEvent* event)
 
     if(event->button() == Qt::LeftButton)
     {
+        // 所有的模式下点击鼠标都会切换当当前选中图表
+        if(auto plot = findPlotByMousePos(event->pos()))
+        {
+            m_curSelectedPlots.clear();
+            m_curSelectedPlots.append(plot);
+            emit selectedPlotChanged(m_curSelectedPlots);
+        }
         if(m_mouseMode == MouseMode::BoxZoom)
         {
             m_pRubberBand->hide();
@@ -164,12 +172,7 @@ void TabDrawWidget::mouseReleaseEvent(QMouseEvent* event)
         }
         else if(m_mouseMode == MouseMode::SelectPlot)
         {
-            if(auto plot = findPlotByMousePos(mapToGlobal(event->pos())))
-            {
-                m_curSelectedPlots.clear();
-                m_curSelectedPlots.append(plot);
-                emit selectedPlotChanged(m_curSelectedPlots);
-            }
+            handleMouseReleaseWithSelectPlot(event->pos());
         }
         else if(m_mouseMode == MouseMode::MovePlot)
         {
@@ -206,10 +209,10 @@ void TabDrawWidget::paintEvent(QPaintEvent* event)
     QWidget::paintEvent(event);
 }
 
-PlotItemBase* TabDrawWidget::findPlotByMousePos(const QPoint& point)
+PlotItemBase* TabDrawWidget::findPlotByMousePos(const QPoint& mouseEventPoint)
 {
-    // 获取最上层的控件
-    return dynamic_cast<PlotItemBase*>(qApp->widgetAt(point));
+    // 获取最上层的控件,需要将坐标转化为全局坐标
+    return dynamic_cast<PlotItemBase*>(qApp->widgetAt(mapToGlobal(mouseEventPoint)));
 }
 
 void TabDrawWidget::handleMouseMoveWithMovePlot(int offsetX, int offsetY)
@@ -259,6 +262,36 @@ void TabDrawWidget::handleMouseReleaseWithCenterPlot(const QPoint& centerPoint)
         int height = plot->height();
         plot->move(centerPoint.x() - width / 2, centerPoint.y() - height / 2);
     }
+}
+/*
+ * 获取所有当前鼠标点击坐标下的图表，形成一个菜单显示出来，
+ * 选中的图表会移动到最上层显示
+*/
+void TabDrawWidget::handleMouseReleaseWithSelectPlot(const QPoint& mouseEventPoint)
+{
+    auto allPlotList = findAllPlots();
+    QList<PlotItemBase*> selectedPlotList;
+    foreach(auto plot, allPlotList)
+    {
+        // 判断是否plot在鼠标坐标下
+        QPoint localPos = plot->mapFromGlobal(mouseEventPoint);
+        if(plot->rect().contains(localPos))
+        {
+            selectedPlotList.append(plot);
+        }
+    }
+    // 超过两个才需要将菜单显示出来供用户选择
+    if(selectedPlotList.size() <= 1)
+    {
+        return;
+    }
+
+    QMenu menu;
+    foreach(auto plot, selectedPlotList)
+    {
+        menu.addAction(plot->getName(), [plot]() { plot->raise(); });
+    }
+    menu.exec(mouseEventPoint);
 }
 
 void TabDrawWidget::handleBoxZoom(const QRect& rect)

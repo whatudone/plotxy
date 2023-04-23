@@ -47,7 +47,7 @@ public:
 	int currWidth();
 	int currHeight();
 	QRect currRect();
-	QString currName();
+    QString getName();
 	QString currTabName();
 
 	//setters:
