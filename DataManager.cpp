@@ -6,8 +6,11 @@
 
 #include "DataManager.h"
 #include <QDebug>
+#include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QMessageBox>
+#include <QRegularExpression>
 
 #include "TimeClass.h"
 
@@ -15,100 +18,43 @@ DataManager::DataManager() {}
 
 DataManager::~DataManager() {}
 
-void DataManager::loadCSV(const QString& filePath)
+void DataManager::loadFileData(const QString& filename)
 {
-    if(filePath.isEmpty())
-	{
-		qDebug() << "DataManager::loadCSV filePath is empty." << endl;
-		return;
-	}
+    QFileInfo info(filename);
+    if(!info.exists())
+    {
+        QMessageBox::warning(nullptr, "警告", "文件路径不存在");
+        return;
+    }
+    QString suffix = info.suffix().toLower();
+    if(suffix == "csv")
+    {
+        loadCSVData(filename);
+    }
+    else if(suffix == "asi")
+    {
+        loadASIData(filename);
+    }
+    else
+    {
+        QMessageBox::warning(nullptr, "警告", "不支持的文件类型");
+        return;
+    }
+    if(m_newEntityDataMap.isEmpty())
+    {
+        QMessageBox::information(
+            nullptr, QString("提示信息"), QString("数据加载失败,当前数据为空"));
+    }
+    else
+    {
 
-	QFile file(filePath);
-    if(!file.open(QIODevice::ReadOnly))
-	{
-		qDebug() << "DataManager::loadCSV read file failure." << endl;
-		return;
-	}
-
-	QTextStream source(&file);
-	QStringList allLines = source.readAll().split("\n");
-
-	QString currEntityType;
-	QStringList currEntityAttrs;
-	QVector<QList<double>> currEntityAttrValuesVec;
-
-    for(int i = 0; i < allLines.size(); i++)
-	{
-		QList<double> currEntityAttrValues;
-
-		QStringList currLineItems = allLines.at(i).split(",");
-
-        if(currLineItems.size() <= 0)
-			continue;
-        if(currLineItems.size() == 1)
-			continue;
-		QString firstItem = currLineItems.at(0);
-
-        if(firstItem.at(0) ==
-           '#') //判断首字符是否为#	entityType entityAttr1 entityAttr2 entityAttr3 entityAttr4
-		{
-            if(!currEntityType.isEmpty()) //标志着上一组数据处理完毕，需要将上一组数据添加进map
-			{
-				QMap<QString, QList<double>> lastGroupDataMap;
-
-				//遍历数据行，并按列组装数据，Rows->Columns
-                for(int k = 0; k < currEntityAttrValuesVec.size(); k++)
-				{
-                    for(int t = 0; t < currEntityAttrValuesVec[k].size(); t++)
-					{
-						double currEntityAttrValue = currEntityAttrValuesVec.at(k).at(t);
-
-						QString currEntityAttr;
-						if(t < currEntityAttrs.size())
-							currEntityAttr = currEntityAttrs.at(t);
-
-                        if(!currEntityAttr.isEmpty())
-						{
-							lastGroupDataMap[currEntityAttr].push_back(currEntityAttrValue);
-						}
-					}
-				}
-				currEntityAttrValuesVec.clear();
-				m_entityDataMap.insert(currEntityType, lastGroupDataMap);
-			}
-
-			//开始处理新一组数据
-			currEntityType = firstItem.remove('#');
-
-			currEntityAttrs.clear();
-            for(int j = 1; j < currLineItems.size(); j++)
-			{
-				QString currEntityAttr = currLineItems.at(j);
-				currEntityAttrs.push_back(currEntityAttr);
-			}
-		}
-		else
-		{
-            for(int j = 1; j < currLineItems.size(); j++)
-			{
-				double currEntityAttrValue = currLineItems.at(j).toDouble();
-				currEntityAttrValues.push_back(currEntityAttrValue);
-			}
-			currEntityAttrValuesVec.push_back(currEntityAttrValues);
-		}
-	}
-
-	file.close();
-	QMessageBox::information(NULL, QString("提示信息"), QString("已成功加载数据"));
+        QMessageBox::information(NULL, QString("提示信息"), QString("已成功加载数据"));
+        emit loadDataReady();
+    }
 }
 
-void DataManager::loadCSV_stringTime(const QString& filePath)
+void DataManager::loadCSVData(const QString& filePath)
 {
-    if(filePath.isEmpty())
-	{
-		qDebug() << "DataManager::loadCSV filePath is empty." << endl;
-		return;
-	}
 
 	QFile file(filePath);
     if(!file.open(QIODevice::ReadOnly))
@@ -116,6 +62,8 @@ void DataManager::loadCSV_stringTime(const QString& filePath)
 		qDebug() << "DataManager::loadCSV read file failure." << endl;
 		return;
 	}
+    m_entityDataMap.clear();
+    m_timeDataVector.clear();
 
 	QTextStream source(&file);
 	QStringList allLines = source.readAll().split("\n");
@@ -142,7 +90,8 @@ void DataManager::loadCSV_stringTime(const QString& filePath)
         //判断首字符是否为#	entityType entityAttr1 entityAttr2 entityAttr3 entityAttr4
         if(firstItem.at(0) == '#')
 		{
-            if(!currEntityType.isEmpty()) //标志着上一组数据处理完毕，需要将上一组数据添加进map
+            //标志着上一组数据处理完毕，需要将上一组数据添加进map
+            if(!currEntityType.isEmpty())
 			{
 				QMap<QString, QList<double>> lastGroupDataMap;
 
@@ -168,12 +117,14 @@ void DataManager::loadCSV_stringTime(const QString& filePath)
 								OrdinalTimeFormatter timeFormat;
                                 if(timeFormat.canConvert(timeString, timeStringList))
 								{
+                                    // 目前csv中没有参考年份的独立字段，所以参考年份默认从数据中读取，立面上不正确。
                                     if(m_refYear == -1)
 									{
 										m_refYear = timeStringList.at(1).toInt();
 									}
                                     currEntityAttrValue =
                                         timeFormat.convertToSeconds(timeString, m_refYear);
+                                    // 实时更新整个数据文件中的最大和最小时间，用于时间轴中设置起始和终止时间
                                     m_minTime = (currEntityAttrValue < m_minTime)
                                                     ? currEntityAttrValue
                                                     : m_minTime;
@@ -227,17 +178,192 @@ void DataManager::loadCSV_stringTime(const QString& filePath)
 	m_timeDataVector.erase(it, m_timeDataVector.end());
 
 	file.close();
-    if(m_entityDataMap.isEmpty())
-    {
-        QMessageBox::information(
-            nullptr, QString("提示信息"), QString("数据加载失败,当前数据为空"));
-    }
-    else
-    {
+}
 
-        QMessageBox::information(NULL, QString("提示信息"), QString("已成功加载数据"));
-        emit loadDataReady();
+void DataManager::loadASIData(const QString& asiFileName)
+{
+    QFile file(asiFileName);
+    if(!file.open(QIODevice::ReadOnly))
+    {
+        qDebug() << "DataManager::loadCSV read file failure.";
+        return;
     }
+    m_newEntityDataMap.clear();
+    m_platformMap.clear();
+    m_eventMap.clear();
+    m_gogFileList.clear();
+
+    // 循环读取每一行，避免一次性读取内存占用过大
+    while(!file.atEnd())
+    {
+        QString lineData = file.readLine();
+        // 通用属性
+        if(lineData.startsWith("RefLLA"))
+        {
+            QStringList list = lineData.split(" ", QString::SkipEmptyParts);
+            if(list.size() == 4)
+            {
+                m_refLLAPoint.setX(list.at(1).toDouble());
+                m_refLLAPoint.setY(list.at(2).toDouble());
+                m_refLLAPoint.setZ(list.at(3).toDouble());
+            }
+        }
+        if(lineData.startsWith("ReferenceYear"))
+        {
+            QStringList list = lineData.split(" ", QString::SkipEmptyParts);
+            if(list.size() == 2)
+            {
+                m_refYear = list.at(1).toInt();
+            }
+        }
+        if(lineData.startsWith("GOGFile"))
+        {
+            QStringList list = lineData.split(" ", QString::SkipEmptyParts);
+            if(list.size() == 2)
+            {
+                QDir dir(asiFileName);
+                // 将相对路径转化为绝对路径
+                auto absFilePath = dir.absoluteFilePath(list.at(1));
+                m_gogFileList.append(absFilePath);
+            }
+        }
+
+        // Platform属性起点
+        if(lineData.startsWith("# Platform Keywords"))
+        {
+            Platform p;
+
+            while(!file.atEnd())
+            {
+                lineData = file.readLine();
+                // 当再次读取这个标签时，说明上个Platform数据解析完成，需要退出此循环进入下个Platform读取周期
+                if(lineData.startsWith("# Platform Keywords"))
+                {
+                    // 将文件指针回溯到改行读取之前
+                    file.seek(file.pos() - lineData.length());
+                    break;
+                }
+                // Platform通用属性
+                if(lineData.startsWith("PlatformID"))
+                {
+                    QStringList list = lineData.split(" ", QString::SkipEmptyParts);
+                    if(list.size() == 2)
+                    {
+                        p.m_platformDataID = list.at(1).toInt();
+                    }
+                }
+                if(lineData.startsWith("PlatformName"))
+                {
+                    QStringList list = lineData.split(" ", QString::SkipEmptyParts);
+                    if(list.size() == 3)
+                    {
+                        p.m_platformName = list.at(2);
+                    }
+                }
+                if(lineData.startsWith("PlatformIcon"))
+                {
+                    QStringList list = lineData.split(" ", QString::SkipEmptyParts);
+                    if(list.size() == 3)
+                    {
+                        p.m_platformIcon = list.at(2);
+                    }
+                }
+                // Platform数据
+                if(lineData.startsWith("#Keyword"))
+                {
+                    QMap<QPair<QString, QString>, QList<double>> attrDataMap;
+                    // 属性名称
+                    QStringList attrNameList = lineData.split(",", QString::SkipEmptyParts);
+                    // 方便后续往属性里面添加数据，得到对应的pair
+                    QList<QPair<QString, QString>> attrPairList;
+                    for(const auto& attr : attrNameList)
+                    {
+                        QString tmpAttr = attr.trimmed();
+                        if(tmpAttr == "#Keyword" || tmpAttr == "PlatformID")
+                        {
+                            continue;
+                        }
+                        QStringList attrList = tmpAttr.remove(")").split("(");
+                        if(attrList.size() == 2)
+                        {
+                            auto pair = qMakePair(attrList.at(0), attrList.at(1));
+                            attrDataMap.insert(pair, QList<double>());
+                            attrPairList.append(pair);
+                        }
+                    }
+                    while(!file.atEnd())
+                    {
+                        lineData = file.readLine();
+                        if(lineData.startsWith("PlatformData"))
+                        {
+                            // 时间字符串中包含空格，无法直接按照空格分割数据，先分离出时间字符串
+                            QStringList attrValueList = parsePlatformData(lineData);
+
+                            auto valueSize = attrValueList.size();
+                            // 从2开始，去掉前面无用的数据
+                            for(int32_t i = 2; i < valueSize; ++i)
+                            {
+                                QString tmpAttrValue = attrValueList.at(i).trimmed();
+                                auto pair = attrPairList.at(i - 2);
+                                double value = 0.0;
+                                /*
+                                 * 常规数据直接转为double类型
+                                 * Time数据有两种情况:
+                                 * 1、直接就是double型的相对时间，无需转化
+                                 * 2、001 2000 00:00:00 这种形式的数据，需要根据偏移时间转化为
+                                */
+                                if(pair.first == "Time")
+                                {
+                                    value = OrdinalTimeFormatter::getSecondsFromTimeStr(
+                                        tmpAttrValue, m_refYear);
+                                }
+                                else
+                                {
+                                    value = tmpAttrValue.toDouble();
+                                }
+                                attrDataMap[pair].append(value);
+                            }
+                        }
+                        else
+                        {
+                            m_newEntityDataMap.insert(p.m_platformDataID, attrDataMap);
+                            m_platformMap.insert(p.m_platformDataID, p);
+                            // 结束本Platform的数据读取
+                            break;
+                        }
+                    }
+                }
+                // 事件(Event)等其他类型数据
+                if(lineData.startsWith("GenericData"))
+                {
+                    if(lineData.contains("Event"))
+                    {
+                        // 时间数据中可能存在空格无法直接按照空格来分割数据
+                        QStringList eventDataList = parsePlatformData(lineData);
+                        if(eventDataList.size() != 6)
+                        {
+                            continue;
+                        }
+                        Event e;
+                        e.m_name = eventDataList.at(3).trimmed();
+                        e.m_relativeTime = OrdinalTimeFormatter::getSecondsFromTimeStr(
+                            eventDataList.at(4).trimmed(), m_refYear);
+                        e.m_timeOffset = eventDataList.at(5).trimmed().toInt();
+                        if(m_eventMap.contains(p.m_platformDataID))
+                        {
+                            // 直接通过引用修改值
+                            m_eventMap[p.m_platformDataID].append(e);
+                        }
+                        else
+                        {
+                            m_eventMap.insert(p.m_platformDataID, QList<Event>() << e);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    file.close();
 }
 
 QMap<QString, QMap<QString, QList<double>>>& DataManager::getDataMap()
@@ -327,4 +453,21 @@ int DataManager::getEntityAttr_MaxIndex_List(QString entity, QString attr, doubl
 		}
 	}
     return (index - 1);
+}
+
+QStringList DataManager::parsePlatformData(const QString& data)
+{
+    QStringList list;
+    // 定义正则表达式
+    QRegularExpression re("\".*?\"|\\S+");
+
+    // 在字符串中查找匹配项
+    QRegularExpressionMatchIterator matchIterator = re.globalMatch(data);
+    while(matchIterator.hasNext())
+    {
+        QRegularExpressionMatch match = matchIterator.next();
+        QString element = match.captured(0).trimmed();
+        list.append(element);
+    }
+    return list;
 }

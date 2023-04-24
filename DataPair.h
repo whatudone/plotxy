@@ -270,7 +270,7 @@ public:
     }
 
 private:
-    QPair<QString, QString> m_dataPair; //数据对
+    QPair<QString, QString> m_dataPair; //数据对，X和Y对应的属性名称
     int m_lineWidth; //线宽
     bool m_isDraw; //是否绘制
     QColor m_color; //数据颜色

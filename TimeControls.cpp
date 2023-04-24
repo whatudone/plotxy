@@ -1,10 +1,10 @@
 ﻿#include "TimeControls.h"
-#include <windows.h>
 #include "DataManager.h"
 #include <QDebug>
 #include <QDoubleValidator>
+#include <windows.h>
 
-TimeControls::TimeControls(QWidget *parent)
+TimeControls::TimeControls(QWidget* parent)
 	: QWidget(parent)
 {
 	ui.setupUi(this);
@@ -20,48 +20,72 @@ TimeControls::TimeControls(QWidget *parent)
 
 	QDoubleValidator* doubleValid = new QDoubleValidator(0, 100, 3);
 	ui.lineEdit_stepFactor->setValidator(doubleValid);
-	connect(ui.lineEdit_stepFactor, &QLineEdit::editingFinished, this, &TimeControls::onLineEdit_stepFactor_EditingFinished);
+    connect(ui.lineEdit_stepFactor,
+            &QLineEdit::editingFinished,
+            this,
+            &TimeControls::onLineEdit_stepFactor_EditingFinished);
 
 	connect(ui.pushButton_2, &QPushButton::clicked, this, &TimeControls::onClose);
 	connect(ui.horizontalSlider, &QSlider::valueChanged, this, &TimeControls::onSliderValueChanged);
 	connect(ui.pushButton_beginNow, &QPushButton::clicked, this, &TimeControls::onBeginNowClicked);
-	connect(ui.pushButton_beginReset, &QPushButton::clicked, this, &TimeControls::onBeginResetClicked);
+    connect(
+        ui.pushButton_beginReset, &QPushButton::clicked, this, &TimeControls::onBeginResetClicked);
 	connect(ui.pushButton_endNow, &QPushButton::clicked, this, &TimeControls::onEndNowClicked);
 	connect(ui.pushButton_endReset, &QPushButton::clicked, this, &TimeControls::onEndResetClicked);
 
-	connect(ui.checkBox_loopTime, &QCheckBox::clicked, this, &TimeControls::onCheckBox_LoopTimeClicked);
+    connect(
+        ui.checkBox_loopTime, &QCheckBox::clicked, this, &TimeControls::onCheckBox_LoopTimeClicked);
 
 	connect(ui.toolButton_playForward, &QToolButton::clicked, this, &TimeControls::onActionPlay);
-	connect(ui.toolButton_playBackwards, &QToolButton::clicked, this, &TimeControls::onActionReverse);
+    connect(
+        ui.toolButton_playBackwards, &QToolButton::clicked, this, &TimeControls::onActionReverse);
 	connect(ui.toolButton_stop, &QToolButton::clicked, this, &TimeControls::onActionStop);
-	connect(ui.toolButton_stepForward, &QToolButton::clicked, this, &TimeControls::onActionFrameForward);
-	connect(ui.toolButton_stepBack, &QToolButton::clicked, this, &TimeControls::onActionFrameReverse);
-	connect(ui.toolButton_Increase, &QToolButton::clicked, this, &TimeControls::onActionIncreaseStep);
-	connect(ui.toolButton_Decrease, &QToolButton::clicked, this, &TimeControls::onActionDecreseStep);
+    connect(ui.toolButton_stepForward,
+            &QToolButton::clicked,
+            this,
+            &TimeControls::onActionFrameForward);
+    connect(
+        ui.toolButton_stepBack, &QToolButton::clicked, this, &TimeControls::onActionFrameReverse);
+    connect(
+        ui.toolButton_Increase, &QToolButton::clicked, this, &TimeControls::onActionIncreaseStep);
+    connect(
+        ui.toolButton_Decrease, &QToolButton::clicked, this, &TimeControls::onActionDecreseStep);
 	connect(ui.toolButton_TS, &QToolButton::clicked, this, &TimeControls::onActionTimeServer);
 	connect(ui.toolButton_TC, &QToolButton::clicked, this, &TimeControls::onActionTimeClient);
 	connect(ui.toolButton_RealTime, &QToolButton::clicked, this, &TimeControls::onActionRealTime);
+
+    connect(this, &TimeControls::sgn_setSliderRange, this, &TimeControls::onSetSliderRange);
 }
 
-TimeControls::~TimeControls()
-{
-}
+TimeControls::~TimeControls() {}
 
 void TimeControls::onAlwaysOnTop()
 {
 	HWND hwnd = (HWND)this->winId();
 	DWORD dwstyle = ::GetWindowLong(hwnd, GWL_EXSTYLE);
-	if (ui.checkBox->isChecked())
+    if(ui.checkBox->isChecked())
 	{
 		dwstyle &= ~WS_EX_TOPMOST;
 		::SetWindowLong(hwnd, GWL_EXSTYLE, dwstyle);
-		::SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOREPOSITION | SWP_NOSIZE | SWP_SHOWWINDOW);
+        ::SetWindowPos(hwnd,
+                       HWND_TOPMOST,
+                       0,
+                       0,
+                       0,
+                       0,
+                       SWP_NOMOVE | SWP_NOREPOSITION | SWP_NOSIZE | SWP_SHOWWINDOW);
 	}
 	else
 	{
 		dwstyle |= WS_EX_TOPMOST;
 		::SetWindowLong(hwnd, GWL_EXSTYLE, dwstyle);
-		::SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOREPOSITION | SWP_NOSIZE | SWP_SHOWWINDOW);
+        ::SetWindowPos(hwnd,
+                       HWND_NOTOPMOST,
+                       0,
+                       0,
+                       0,
+                       0,
+                       SWP_NOMOVE | SWP_NOREPOSITION | SWP_NOSIZE | SWP_SHOWWINDOW);
 	}
 }
 
@@ -121,7 +145,7 @@ double TimeControls::getBeginTime(int refYear)
 {
 	unsigned int day, hour, minute, year;
 	float second;
-	
+
 	day = ui.spinBox_beginTimeD->value();
 	year = ui.spinBox_beginTimeY->value();
 	hour = ui.spinBox_beginTimeH->value();
@@ -171,7 +195,7 @@ double TimeControls::getEndTime(int refYear)
 void TimeControls::onUpdateData()
 {
 	auto dataMap = DataManager::getInstance()->getDataMap();
-	if (dataMap.isEmpty())
+    if(dataMap.isEmpty())
 		return;
 
 	DataManager::getInstance()->getMinMaxTime(m_minTime, m_maxTime);
@@ -182,7 +206,8 @@ void TimeControls::onUpdateData()
 	setEndTime(m_maxTime, m_refYear);
 	setRefTime(m_refYear);
 
-	emit sgn_setSliderRange(m_minTime * m_Multiplier, m_maxTime *m_Multiplier, m_stepFactor * m_Multiplier);
+    emit sgn_setSliderRange(
+        m_minTime * m_Multiplier, m_maxTime * m_Multiplier, m_stepFactor * m_Multiplier);
 }
 
 void TimeControls::onClose()
@@ -192,7 +217,7 @@ void TimeControls::onClose()
 
 void TimeControls::onSetSliderRange(int min, int max, int singleStep)
 {
-	
+
 	ui.horizontalSlider->setMinimum(min);
 	ui.horizontalSlider->setMaximum(max);
 	ui.horizontalSlider->setPageStep(singleStep);
@@ -201,7 +226,7 @@ void TimeControls::onSetSliderRange(int min, int max, int singleStep)
 void TimeControls::onRemoteSliderValueChanged(int value)
 {
 	ui.horizontalSlider->setValue(value);
-	setCurTime(value/m_Multiplier, m_refYear);
+    setCurTime(value / m_Multiplier, m_refYear);
 }
 
 void TimeControls::onSliderValueChanged(int value)
@@ -214,14 +239,17 @@ void TimeControls::onBeginNowClicked()
 	double curSecs = getCurTime(m_refYear);
 	setBeginTime(curSecs, m_refYear);
 
-	emit sgn_setSliderRange(curSecs * m_Multiplier, getEndTime(m_refYear) *m_Multiplier, m_stepFactor * m_Multiplier);
+    emit sgn_setSliderRange(
+        curSecs * m_Multiplier, getEndTime(m_refYear) * m_Multiplier, m_stepFactor * m_Multiplier);
 }
 
 void TimeControls::onBeginResetClicked()
 {
 	setBeginTime(m_minTime, m_refYear);
 
-	emit sgn_setSliderRange(m_minTime * m_Multiplier, getEndTime(m_refYear) *m_Multiplier, m_stepFactor * m_Multiplier);
+    emit sgn_setSliderRange(m_minTime * m_Multiplier,
+                            getEndTime(m_refYear) * m_Multiplier,
+                            m_stepFactor * m_Multiplier);
 }
 
 void TimeControls::onEndNowClicked()
@@ -229,14 +257,18 @@ void TimeControls::onEndNowClicked()
 	double curSecs = getCurTime(m_refYear);
 	setEndTime(curSecs, m_refYear);
 
-	emit sgn_setSliderRange(getBeginTime(m_refYear) * m_Multiplier, curSecs *m_Multiplier, m_stepFactor * m_Multiplier);
+    emit sgn_setSliderRange(getBeginTime(m_refYear) * m_Multiplier,
+                            curSecs * m_Multiplier,
+                            m_stepFactor * m_Multiplier);
 }
 
 void TimeControls::onEndResetClicked()
 {
 	setEndTime(m_maxTime, m_refYear);
 
-	emit sgn_setSliderRange(getBeginTime(m_refYear) * m_Multiplier, m_maxTime *m_Multiplier, m_stepFactor * m_Multiplier);
+    emit sgn_setSliderRange(getBeginTime(m_refYear) * m_Multiplier,
+                            m_maxTime * m_Multiplier,
+                            m_stepFactor * m_Multiplier);
 }
 
 void TimeControls::onEnableActionStop(bool enabled)
@@ -303,4 +335,3 @@ void TimeControls::onLineEdit_stepFactor_EditingFinished()
 {
 	m_stepFactor = ui.lineEdit_stepFactor->text().toDouble();
 }
-

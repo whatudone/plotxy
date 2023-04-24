@@ -43,8 +43,7 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
     connect(
         DataManager::getInstance(), SIGNAL(loadDataReady()), m_addPlotPair, SLOT(onUpdateData()));
     connect(DataManager::getInstance(), SIGNAL(loadDataReady()), m_timeCtrl, SLOT(onUpdateData()));
-    connect(
-        m_timeCtrl, &TimeControls::sgn_setSliderRange, m_timeCtrl, &TimeControls::onSetSliderRange);
+
     connect(m_timeCtrl, &TimeControls::sgn_setSliderRange, this, &PlotXYDemo::onSetSliderRange);
 
     connect(this,
@@ -171,13 +170,14 @@ void PlotXYDemo::onClassification() {}
 
 void PlotXYDemo::onOpenFile()
 {
-    QString path = QFileDialog::getOpenFileName(this, "Open File", ".", tr("Microsoft CSV(*.csv)"));
+    QString path = QFileDialog::getOpenFileName(
+        this, "Open File", ".", tr("ASI(*.asi) ;; Microsoft CSV(*.csv)"));
     if(path.isEmpty())
     {
         return;
     }
 
-    DataManager::getInstance()->loadCSV_stringTime(path);
+    DataManager::getInstance()->loadFileData(path);
 }
 
 void PlotXYDemo::onUserManual() {}
