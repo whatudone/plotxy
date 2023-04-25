@@ -5,7 +5,6 @@
 *  */
 
 #include "PlotItemBase.h"
-#include "qcustomplot.h"
 
 #include <QDebug>
 #include <QPainter>
@@ -705,6 +704,84 @@ void PlotItemBase::updateDataForDataPairsByTime(double) {}
 
 void PlotItemBase::customPainting(QPainter& /*painter*/) {}
 
+void PlotItemBase::mousePressEvent(QMouseEvent* event)
+{
+    if((event->button() == Qt::LeftButton))
+    {
+        m_originPoint = m_customPlot->mapFromParent(event->pos());
+        if(m_isDrawMeasureLine)
+        {
+            if(m_customPlot && m_measureLineItem && m_measureTextItem)
+            {
+                m_measureLineItem->start->setCoords(
+                    QPointF(m_customPlot->xAxis->pixelToCoord(m_originPoint.x()),
+                            m_customPlot->yAxis->pixelToCoord(m_originPoint.y())));
+
+                m_measureLineItem->end->setCoords(
+                    QPointF(m_customPlot->xAxis->pixelToCoord(m_originPoint.x()),
+                            m_customPlot->yAxis->pixelToCoord(m_originPoint.y())));
+                m_measureLineItem->setVisible(true);
+                m_measureTextItem->setText(QString());
+                m_measureTextItem->setVisible(true);
+                m_customPlot->replot();
+            }
+        }
+    }
+    QWidget::mousePressEvent(event);
+}
+
+void PlotItemBase::mouseReleaseEvent(QMouseEvent* event)
+{
+    if(event->button() == Qt::LeftButton)
+    {
+        if(m_isDrawMeasureLine)
+        {
+            // 重置到无效状态
+            if(m_customPlot && m_measureLineItem && m_measureTextItem)
+            {
+                m_measureLineItem->setVisible(false);
+                m_measureTextItem->setVisible(false);
+                m_customPlot->replot();
+            }
+        }
+        QWidget::mouseReleaseEvent(event);
+    }
+}
+
+void PlotItemBase::mouseMoveEvent(QMouseEvent* event)
+{
+    if(event->buttons() & Qt::LeftButton)
+    {
+        auto point = m_customPlot->mapFromParent(event->pos());
+        double dx = 0.0;
+        double dy = 0.0;
+        double l = 0.0;
+        if(m_isDrawMeasureLine)
+        {
+            if(m_customPlot && m_measureLineItem && m_measureTextItem)
+            {
+                m_measureLineItem->end->setCoords(
+                    QPointF(m_customPlot->xAxis->pixelToCoord(point.x()),
+                            m_customPlot->yAxis->pixelToCoord(point.y())));
+
+                m_measureTextItem->position->setCoords(QPointF(
+                    m_customPlot->xAxis->pixelToCoord((point.x() + m_originPoint.x()) / 2),
+                    m_customPlot->yAxis->pixelToCoord((point.y() + m_originPoint.y()) / 2)));
+
+                dx = m_customPlot->xAxis->pixelToCoord(point.x()) -
+                     m_customPlot->xAxis->pixelToCoord(m_originPoint.x());
+                dy = m_customPlot->yAxis->pixelToCoord(point.y()) -
+                     m_customPlot->yAxis->pixelToCoord(m_originPoint.y());
+                l = sqrt(pow(dx, 2) + pow(dy, 2));
+                m_measureTextItem->setText(
+                    QString("dx = %1\ndy = %2\nl = %3").arg(dx).arg(dy).arg(l));
+                m_customPlot->replot();
+            }
+        }
+    }
+    QWidget::mouseMoveEvent(event);
+}
+
 bool PlotItemBase::getYIsAdaptive() const
 {
     return m_yIsAdaptive;
@@ -713,6 +790,81 @@ bool PlotItemBase::getYIsAdaptive() const
 void PlotItemBase::setYIsAdaptive(bool yIsAdaptive)
 {
     m_yIsAdaptive = yIsAdaptive;
+}
+
+void PlotItemBase::setInteract(QCP::Interaction inter)
+{
+    if(m_customPlot)
+    {
+        m_customPlot->setInteractions(inter);
+    }
+}
+
+void PlotItemBase::setZoom(uint mode)
+{
+    if(m_customPlot)
+    {
+        // 1表示zoom，2表示boxzoom
+        if(mode == 1)
+            m_customPlot->setInteractions(QCP::iRangeZoom);
+        else if(mode == 2)
+        {
+            m_customPlot->setSelectionRectMode(QCP::srmZoom);
+        }
+    }
+}
+
+void PlotItemBase::clearInter()
+{
+    if(m_customPlot)
+    {
+        m_customPlot->setInteractions(QCP::iNone);
+        m_customPlot->setSelectionRectMode(QCP::srmNone);
+        m_isDrawMeasureLine = false;
+    }
+}
+
+void PlotItemBase::setNewTickOrigin(const QPoint& point)
+{
+    if(m_customPlot)
+    {
+        auto plotPoint = m_customPlot->mapFromParent(point);
+        m_customPlot->xAxis->setRange(m_customPlot->xAxis->pixelToCoord(plotPoint.x()) -
+                                          m_customPlot->xAxis->range().size() / 2,
+                                      m_customPlot->xAxis->pixelToCoord(plotPoint.x()) +
+                                          m_customPlot->xAxis->range().size() / 2);
+        m_customPlot->yAxis->setRange(m_customPlot->yAxis->pixelToCoord(plotPoint.y()) -
+                                          m_customPlot->yAxis->range().size() / 2,
+                                      m_customPlot->yAxis->pixelToCoord(plotPoint.y()) +
+                                          m_customPlot->yAxis->range().size() / 2);
+        m_customPlot->replot();
+    }
+}
+
+void PlotItemBase::setIsDrawMeasureLine(bool isDraw)
+{
+    m_isDrawMeasureLine = isDraw;
+
+    if(m_customPlot && isDraw)
+    {
+        m_measureLineItem = new QCPItemLine(m_customPlot);
+        QPen linePen(Qt::red);
+        linePen.setWidth(2);
+        m_measureLineItem->setPen(linePen);
+
+        m_measureTextItem = new QCPItemText(m_customPlot);
+        m_measureTextItem->setPositionAlignment(Qt::AlignCenter | Qt::AlignTop);
+        m_measureTextItem->setColor(Qt::white);
+    }
+}
+
+void PlotItemBase::setCustomPlotMouseTransparent(bool on)
+{
+    if(m_customPlot)
+    {
+        m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, on);
+        this->setAttribute(Qt::WA_TransparentForMouseEvents, on);
+    }
 }
 
 bool PlotItemBase::getXIsAdaptive() const

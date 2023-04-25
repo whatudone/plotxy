@@ -33,10 +33,6 @@ void TabDrawWidget::mousePressEvent(QMouseEvent* event)
             m_pRubberBand->setGeometry(QRect(m_originPoint, QSize()));
             m_pRubberBand->show();
         }
-        else if(m_mouseMode == MouseMode::MeasureDistance)
-        {
-            m_measureLine.setPoints(m_originPoint, m_originPoint);
-        }
         else if(m_mouseMode == MouseMode::MovePlot)
         {
             // 如果此时是CTRL组合键，那么肯定是多选功能
@@ -76,35 +72,9 @@ void TabDrawWidget::mouseMoveEvent(QMouseEvent* event)
 {
     if(event->buttons() & Qt::LeftButton)
     {
-        if((m_mouseMode == MouseMode::BoxZoom) || (m_mouseMode == MouseMode::CreatePlot))
+        if(m_mouseMode == MouseMode::CreatePlot)
         {
             m_pRubberBand->setGeometry(QRect(m_originPoint, event->pos()).normalized());
-        }
-        else if(m_mouseMode == MouseMode::MeasureDistance)
-        {
-            m_measureLine.setP2(event->pos());
-            update();
-        }
-        else if(m_mouseMode == MouseMode::Zoom)
-        {
-            /*
-             * 实时等比缩放图表的大小
-             * 向下表示缩小，此时delta为负值，facor范围为0<factor<1.0
-             * 向上表示放大，此时delta为正值，facor范围为1.0<factor<正无穷大
-            */
-            constexpr double step = 100.0;
-            auto delta = m_originPoint.y() - event->pos().y();
-            double factor = 1.0;
-            if(delta > 0)
-            {
-                factor = delta / step + 1;
-            }
-            else
-            {
-                factor = 1 - std::abs(delta) / step;
-            }
-            handleZoomInOut(factor);
-            m_originPoint = event->pos();
         }
         else if(m_mouseMode == MouseMode::MovePlot)
         {
@@ -114,15 +84,6 @@ void TabDrawWidget::mouseMoveEvent(QMouseEvent* event)
             int offsetY = point.y() - m_originPoint.y();
             //本模式有两种行为，一种是移动，一种是缩放
             handleMouseMoveWithMovePlot(offsetX, offsetY);
-            m_originPoint = event->pos();
-        }
-        else if(m_mouseMode == MouseMode::Pan)
-        {
-            QPoint point = event->pos();
-            //根据当前鼠标位置,计算XY轴移动了多少
-            int offsetX = point.x() - m_originPoint.x();
-            int offsetY = point.y() - m_originPoint.y();
-            handleMouseMoveWithPan(offsetX, offsetY);
             m_originPoint = event->pos();
         }
     }
@@ -141,11 +102,6 @@ void TabDrawWidget::mouseReleaseEvent(QMouseEvent* event)
             m_curSelectedPlots.append(plot);
             emit selectedPlotChanged(m_curSelectedPlots);
         }
-        if(m_mouseMode == MouseMode::BoxZoom)
-        {
-            m_pRubberBand->hide();
-            handleBoxZoom(m_pRubberBand->geometry());
-        }
         else if(m_mouseMode == MouseMode::CreatePlot)
         {
             // 避免点击事件直接触发CreatePlot逻辑，需要判断橡皮筋的大小
@@ -159,12 +115,6 @@ void TabDrawWidget::mouseReleaseEvent(QMouseEvent* event)
             {
                 emit createPlot(dialog.getPlotType(), m_pRubberBand->geometry());
             }
-        }
-        else if(m_mouseMode == MouseMode::MeasureDistance)
-        {
-            // 重置到无效状态
-            m_measureLine.setPoints(QPoint(), QPoint());
-            update();
         }
         else if(m_mouseMode == MouseMode::CenterPlot)
         {
@@ -198,14 +148,6 @@ void TabDrawWidget::mouseReleaseEvent(QMouseEvent* event)
 
 void TabDrawWidget::paintEvent(QPaintEvent* event)
 {
-    if(m_mouseMode == MouseMode::MeasureDistance)
-    {
-        if(!m_measureLine.isNull())
-        {
-            drawMeasureLines();
-        }
-    }
-
     QWidget::paintEvent(event);
 }
 
@@ -258,9 +200,8 @@ void TabDrawWidget::handleMouseReleaseWithCenterPlot(const QPoint& centerPoint)
 {
     for(auto plot : m_curSelectedPlots)
     {
-        int width = plot->width();
-        int height = plot->height();
-        plot->move(centerPoint.x() - width / 2, centerPoint.y() - height / 2);
+        auto point = plot->mapFromParent(centerPoint);
+        plot->setNewTickOrigin(point);
     }
 }
 /*
@@ -328,37 +269,6 @@ void TabDrawWidget::handleMouseMoveWithPan(int offsetX, int offsetY)
     {
         plot->move(plot->x() + offsetX, plot->y() + offsetY);
     }
-}
-
-void TabDrawWidget::drawMeasureLines()
-{
-    constexpr int textRectSize = 30;
-    QPainter painter(this);
-    painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
-    QPen pen;
-    pen.setColor(Qt::red);
-    pen.setWidth(4);
-    pen.setStyle(Qt::SolidLine);
-    painter.setPen(pen);
-    painter.drawLine(m_measureLine);
-    pen.setStyle(Qt::DashLine);
-    painter.setPen(pen);
-    int xDistance = m_measureLine.x2() - m_originPoint.x();
-    int yDistance = m_measureLine.y2() - m_originPoint.y();
-    QLine xLine(m_originPoint, QPoint(m_measureLine.p2().x(), m_originPoint.y()));
-    painter.drawLine(xLine);
-    auto xHeightOffset = (m_measureLine.y1() > m_measureLine.y2()) ? textRectSize : -textRectSize;
-    QRect xTextRect = QRect(m_originPoint, QSize(xDistance, xHeightOffset));
-    painter.drawText(xTextRect, Qt::AlignCenter, QString::number(std::abs(xDistance)));
-    QLine yLine(m_originPoint, QPoint(m_originPoint.x(), m_measureLine.p2().y()));
-    painter.drawLine(yLine);
-    auto yWidthOffset = (m_measureLine.x1() < m_measureLine.x2()) ? -textRectSize : 0;
-    auto yHeightOffset = (m_measureLine.y1() > m_measureLine.y2()) ? yDistance : 0;
-    auto yWidthSizeOffset = (m_measureLine.y1() > m_measureLine.y2()) ? -yDistance : yDistance;
-    QRect yTextRect =
-        QRect(QPoint(m_originPoint.x() + yWidthOffset, m_originPoint.y() + yHeightOffset),
-              QSize(textRectSize, yWidthSizeOffset));
-    painter.drawText(yTextRect, Qt::AlignCenter, QString::number(std::abs(yDistance)));
 }
 
 void TabDrawWidget::updateSelectedPlotsBorderVisible(bool visible)
