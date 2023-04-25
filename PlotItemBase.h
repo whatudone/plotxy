@@ -9,6 +9,7 @@
 
 #include "DataPair.h"
 #include "constdef.h"
+#include "qcustomplot.h"
 #include "ui_PlotItemBase.h"
 
 #include <QWidget>
@@ -16,11 +17,11 @@
 class QCustomPlot;
 class PlotItemBase : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
     explicit PlotItemBase(QWidget* parent = nullptr);
-	~PlotItemBase();
+    ~PlotItemBase() override;
     enum ResizeDirection
     {
         NORTH_MIDDLE,
@@ -39,18 +40,18 @@ public:
     void setPosition(int x, int y); //设置包围盒左上角位置
     void setWidth(int width); //设置宽度
     void setHeight(int height); //设置包围盒高度
-	void setRect(QRect rect);
-	void setName(const QString&);
-	void setTabName(const QString&);
+    void setRect(QRect rect);
+    void setName(const QString&);
+    void setTabName(const QString&);
 
-	QPoint currPosition();
-	int currWidth();
-	int currHeight();
-	QRect currRect();
+    QPoint currPosition();
+    int currWidth();
+    int currHeight();
+    QRect currRect();
     QString getName();
-	QString currTabName();
+    QString currTabName();
 
-	//setters:
+    //setters:
     virtual void setOuterFillColor(const QColor& color);
     void setOutlineColor(const QColor& color);
     virtual void setCoordRangeX(double lower, double upper);
@@ -82,7 +83,7 @@ public:
     virtual void setAxisLabelFont(const QFont& font);
     virtual void setAxisLabelFontSize(int size);
 
-	//getters:
+    //getters:
     QColor getOuterFillColor()
     {
         return m_outerFillColor;
@@ -236,6 +237,14 @@ public:
     bool getYIsAdaptive() const;
     void setYIsAdaptive(bool yIsAdaptive);
 
+    void setInteract(QCP::Interaction inter);
+    void setZoom(uint mode);
+    void clearInter();
+    void setNewTickOrigin(const QPoint& point);
+    void setIsDrawMeasureLine(bool isDraw);
+
+    void setCustomPlotMouseTransparent(bool on);
+
 private:
     void updateResizeFocusPos();
     QRect getRectByDirection(ResizeDirection direction);
@@ -252,13 +261,17 @@ private slots:
 protected:
     void paintEvent(QPaintEvent* event) override;
 
+    virtual void mousePressEvent(QMouseEvent* event) override;
+    virtual void mouseReleaseEvent(QMouseEvent* event) override;
+    virtual void mouseMoveEvent(QMouseEvent* event) override;
+
 protected:
     QVector<DataPair*> m_dataPairs;
-	//General
-	QColor m_outerFillColor;
-	QColor m_outlineColor;
+    //General
+    QColor m_outerFillColor;
+    QColor m_outlineColor;
 
-	//Axis and Grid
+    //Axis and Grid
     double m_coordBgn_x; //x坐标起始值
     double m_coordEnd_x; //x坐标结束值
     double m_coordBgn_y; //y坐标起始值
@@ -277,7 +290,7 @@ protected:
     GridDensity m_gridDensity; //grid密度
     QColor m_gridFillColor; //grid填充色，即背景色
 
-	//Text
+    //Text
     QString m_units_x; //x轴单位
     QString m_units_y; //y轴单位
     bool m_showUnits_x; //是否显示x轴单位
@@ -303,7 +316,7 @@ protected:
     double m_rightPadding; //绘图间隔-right
 public slots:
     void slot_updateRect(const QRect&);
-	void slot_setVisible(bool);
+    void slot_setVisible(bool);
     // 响应主界面时间滑块时间产生的信号，按照具体时间过滤数据，数据里面都是带有时间
     void onGetCurrentSeconds(double secs);
 
@@ -339,6 +352,12 @@ private:
     // 默认自适应缩放关闭
     bool m_xIsAdaptive = false;
     bool m_yIsAdaptive = false;
+    bool m_isDrawMeasureLine = false;
+
+    // 测距辅助线段
+    QPoint m_originPoint;
+    QCPItemLine* m_measureLineItem = nullptr;
+    QCPItemText* m_measureTextItem = nullptr;
 };
 
 #endif // !

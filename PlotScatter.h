@@ -13,15 +13,15 @@ class PlotScatter : public PlotItemBase
     Q_OBJECT
 public:
     PlotScatter(QWidget* parent = nullptr);
-    ~PlotScatter();
+    ~PlotScatter() override;
 
     enum AxisType
     {
-		xAxis = 0,
-		yAxis,
-		xAxis2,
-		yAxis2
-	};
+        xAxis = 0,
+        yAxis,
+        xAxis2,
+        yAxis2
+    };
 
     struct ScatterInfo
     {
@@ -39,19 +39,19 @@ public:
 
     static int m_instanceCount; //Plot实体个数
 
-	void setPaddings(double top, double bottom, double left, double right);
+    void setPaddings(double top, double bottom, double left, double right);
 
-	void setxAxisLabel(QString& str);
-	void setyAxisLabel(QString& str);
-	void setAxisLabelColor(QColor& color);
-	void setAxisLabelFont(QFont& font);
+    void setxAxisLabel(QString& str);
+    void setyAxisLabel(QString& str);
+    void setAxisLabelColor(QColor& color);
+    void setAxisLabelFont(QFont& font);
 
-	void setAxisVisible(bool on, AxisType type);
-	void setAxisTickLabelShow(bool on, AxisType type);
+    void setAxisVisible(bool on, AxisType type);
+    void setAxisTickLabelShow(bool on, AxisType type);
 
-	void rescale_xAxis(bool);
-	void rescale_yAxis(bool);
-	void rescaleAxis(bool);
+    void rescale_xAxis(bool);
+    void rescale_yAxis(bool);
+    void rescaleAxis(bool);
 
     void addPlotPairData(const QPair<QString, QString>& pair) override;
     void delPlotPairData(const QPair<QString, QString>&);
@@ -92,9 +92,11 @@ public:
     void exportDataToFile(const QString& filename) const override;
 
 private:
-	void initPlot();
+    void initPlot();
     void updateDataForDataPairsByTime(double secs);
     void updateGraph(double secs, int index, DataPair* data);
+
+    virtual void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
     QMap<QPair<QString, QString>, ScatterInfo> m_mapScatter;

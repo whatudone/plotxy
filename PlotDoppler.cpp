@@ -5,42 +5,42 @@ int PlotDoppler::m_instanceCount = 1;
 PlotDoppler::PlotDoppler(QWidget* parent)
     : PlotItemBase(parent)
 {
-	QString name = QString("Doppler%1").arg(m_instanceCount);
-	this->setName(name);
-	m_instanceCount += 1;
+    QString name = QString("Doppler%1").arg(m_instanceCount);
+    this->setName(name);
+    m_instanceCount += 1;
 
-	m_outerFillColor = Qt::black;
-	m_gridFillColor = Qt::black;
-	m_title = "Range Doppler";
+    m_outerFillColor = Qt::black;
+    m_gridFillColor = Qt::black;
+    m_title = "Range Doppler";
 
-	m_axisLabelFont.setFamily("Microsoft YaHei");
-	m_axisLabelFont.setPointSizeF(10.0);
-	m_xAxisLabel = "Range(m)";
-	m_yAxisLabel = "Voltage(V)";
+    m_axisLabelFont.setFamily("Microsoft YaHei");
+    m_axisLabelFont.setPointSizeF(10.0);
+    m_xAxisLabel = "Range(m)";
+    m_yAxisLabel = "Voltage(V)";
 
-	m_coordBgn_x = 0;
-	m_coordEnd_x = 100;
-	m_coordBgn_y = 0;
-	m_coordEnd_y = 100;
+    m_coordBgn_x = 0;
+    m_coordEnd_x = 100;
+    m_coordBgn_y = 0;
+    m_coordEnd_y = 100;
 
-	m_horzGrids = 5;
-	m_vertGrids = 5;
-	m_axisWidth = 1;
-	m_gridWidth = 1;
-	m_axisColor = Qt::white;
-	m_gridColor = QColor(200, 200, 200);
-	m_gridVisible = true;
-	m_tickLabelColor = Qt::white;
-	m_tickLabelFontSize = 8;
-	m_tickLabelFont.setFamily("Microsoft YaHei");
-	m_tickLabelFont.setPointSizeF(m_tickLabelFontSize);
-	m_gridStyle = Qt::DotLine;
-	m_gridDensity = GridDensity::LESS;
+    m_horzGrids = 5;
+    m_vertGrids = 5;
+    m_axisWidth = 1;
+    m_gridWidth = 1;
+    m_axisColor = Qt::white;
+    m_gridColor = QColor(200, 200, 200);
+    m_gridVisible = true;
+    m_tickLabelColor = Qt::white;
+    m_tickLabelFontSize = 8;
+    m_tickLabelFont.setFamily("Microsoft YaHei");
+    m_tickLabelFont.setPointSizeF(m_tickLabelFontSize);
+    m_gridStyle = Qt::DotLine;
+    m_gridDensity = GridDensity::LESS;
 
-	m_showUnits_x = false;
-	m_showUnits_y = false;
+    m_showUnits_x = false;
+    m_showUnits_y = false;
 
-	initPlot();
+    initPlot();
 #ifdef TEST_SCOPE_DATA
     loadCustomData();
 #endif
@@ -50,49 +50,48 @@ PlotDoppler::~PlotDoppler() {}
 
 void PlotDoppler::initPlot()
 {
-	m_customPlot = new QCustomPlot(this);
+    m_customPlot = new QCustomPlot(this);
 
-    m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-	m_customPlot->axisRect()->setupFullAxesBox(true);
+    m_customPlot->axisRect()->setupFullAxesBox(true);
 
-	m_customPlot->xAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
-	m_customPlot->yAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
-	m_customPlot->xAxis->ticker()->setTickCount(m_vertGrids);
-	m_customPlot->yAxis->ticker()->setTickCount(m_horzGrids);
-	m_customPlot->xAxis->setTickLabelColor(m_tickLabelColor);
-	m_customPlot->yAxis->setTickLabelColor(m_tickLabelColor);
-	m_customPlot->xAxis->setTickLabelFont(m_tickLabelFont);
-	m_customPlot->yAxis->setTickLabelFont(m_tickLabelFont);
-	m_customPlot->xAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
-	m_customPlot->yAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
-	m_customPlot->xAxis2->setBasePen(QPen(m_axisColor, m_axisWidth));
-	m_customPlot->yAxis2->setBasePen(QPen(m_axisColor, m_axisWidth));
-	m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, Qt::DotLine));
-	m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, Qt::DotLine));
+    m_customPlot->xAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
+    m_customPlot->yAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
+    m_customPlot->xAxis->ticker()->setTickCount(m_vertGrids);
+    m_customPlot->yAxis->ticker()->setTickCount(m_horzGrids);
+    m_customPlot->xAxis->setTickLabelColor(m_tickLabelColor);
+    m_customPlot->yAxis->setTickLabelColor(m_tickLabelColor);
+    m_customPlot->xAxis->setTickLabelFont(m_tickLabelFont);
+    m_customPlot->yAxis->setTickLabelFont(m_tickLabelFont);
+    m_customPlot->xAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
+    m_customPlot->yAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
+    m_customPlot->xAxis2->setBasePen(QPen(m_axisColor, m_axisWidth));
+    m_customPlot->yAxis2->setBasePen(QPen(m_axisColor, m_axisWidth));
+    m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, Qt::DotLine));
+    m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, Qt::DotLine));
 
-	m_customPlot->xAxis->setTickLabels(false);
-	m_customPlot->yAxis->setTickLabels(false);
-	m_customPlot->xAxis->setVisible(false);
-	m_customPlot->yAxis->setVisible(false);
+    m_customPlot->xAxis->setTickLabels(false);
+    m_customPlot->yAxis->setTickLabels(false);
+    m_customPlot->xAxis->setVisible(false);
+    m_customPlot->yAxis->setVisible(false);
 
-	m_customPlot->setBackground(m_outerFillColor);
-	m_customPlot->xAxis->setLabelColor(m_axisLabelColor);
-	m_customPlot->yAxis->setLabelColor(m_axisLabelColor);
-	m_customPlot->xAxis->setLabelFont(m_axisLabelFont);
-	m_customPlot->yAxis->setLabelFont(m_axisLabelFont);
+    m_customPlot->setBackground(m_outerFillColor);
+    m_customPlot->xAxis->setLabelColor(m_axisLabelColor);
+    m_customPlot->yAxis->setLabelColor(m_axisLabelColor);
+    m_customPlot->xAxis->setLabelFont(m_axisLabelFont);
+    m_customPlot->yAxis->setLabelFont(m_axisLabelFont);
 
-	m_colorMap = new QCPColorMap(m_customPlot->xAxis, m_customPlot->yAxis);
-	m_colorScale = new QCPColorScale(m_customPlot);
+    m_colorMap = new QCPColorMap(m_customPlot->xAxis, m_customPlot->yAxis);
+    m_colorScale = new QCPColorScale(m_customPlot);
     m_customPlot->plotLayout()->insertColumn(0);
     m_customPlot->plotLayout()->addElement(0, 0, m_colorScale);
-	m_customPlot->plotLayout()->setColumnSpacing(0);
+    m_customPlot->plotLayout()->setColumnSpacing(0);
     m_colorScale->setType(QCPAxis::atLeft);
-	m_colorMap->setColorScale(m_colorScale);
-	m_colorMap->setGradient(QCPColorGradient::gpJet);
-	m_colorMap->rescaleDataRange();
+    m_colorMap->setColorScale(m_colorScale);
+    m_colorMap->setGradient(QCPColorGradient::gpJet);
+    m_colorMap->rescaleDataRange();
 
     auto marginGroup = new QCPMarginGroup(m_customPlot);
-	m_customPlot->axisRect()->setMinimumMargins(QMargins(0, 15, 0, 0));
+    m_customPlot->axisRect()->setMinimumMargins(QMargins(0, 15, 0, 0));
     // 图表内部布局
     m_customPlot->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
     m_colorScale->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
@@ -120,8 +119,8 @@ void PlotDoppler::initPlot()
     pLayout->setContentsMargins(m_leftPadding, 60, m_rightPadding, m_bottomPadding);
     setLayout(pLayout);
 
-	setCoordRangeX(m_coordBgn_x, m_coordEnd_x);
-	setCoordRangeY(m_coordBgn_y, m_coordEnd_y);
+    setCoordRangeX(m_coordBgn_x, m_coordEnd_x);
+    setCoordRangeY(m_coordBgn_y, m_coordEnd_y);
 }
 
 void PlotDoppler::loadCustomData()
@@ -238,66 +237,66 @@ void PlotDoppler::getXToValueVecByY(double y, QVector<double>& xVec, QVector<dou
 
 void PlotDoppler::setUnitsShowX(bool on)
 {
-	m_showUnits_x = on;
+    m_showUnits_x = on;
     m_horizonAScope->xAxis->setAxisFormatShow(on);
-	m_customPlot->replot();
+    m_customPlot->replot();
 }
 
 void PlotDoppler::setUnitsShowY(bool on)
 {
-	m_showUnits_y = on;
+    m_showUnits_y = on;
     m_verticalAScope->xAxis->setAxisFormatShow(on);
-	m_customPlot->replot();
+    m_customPlot->replot();
 }
 
 void PlotDoppler::setUnitsX(const QString& units)
 {
-	m_units_x = units;
+    m_units_x = units;
     m_horizonAScope->xAxis->setAxisFormat(units);
-	m_customPlot->replot();
+    m_customPlot->replot();
 }
 
 void PlotDoppler::setUnitsY(const QString& units)
 {
-	m_units_y = units;
+    m_units_y = units;
     m_verticalAScope->xAxis->setAxisFormat(units);
-	m_customPlot->replot();
+    m_customPlot->replot();
 }
 
 void PlotDoppler::setTitle(QString& str)
 {
-	m_title = str;
-	update();
+    m_title = str;
+    update();
 }
 
 void PlotDoppler::setTitleColor(QColor& color)
 {
-	m_titleColor = color;
-	update();
+    m_titleColor = color;
+    update();
 }
 
 void PlotDoppler::setTitleFillColor(QColor& color)
 {
-	m_titleFillColor = color;
-	update();
+    m_titleFillColor = color;
+    update();
 }
 
 void PlotDoppler::setTitleFont(QFont& font)
 {
-	m_titleFont = font;
-	update();
+    m_titleFont = font;
+    update();
 }
 
 void PlotDoppler::setTitleFontSize(int size)
 {
-	m_titleFontSize = size;
-	m_titleFont.setPointSize(size);
-	update();
+    m_titleFontSize = size;
+    m_titleFont.setPointSize(size);
+    update();
 }
 
 void PlotDoppler::setTitleVisible(bool show)
 {
-	m_titleVisible = show;
+    m_titleVisible = show;
     update();
 }
 
@@ -310,101 +309,101 @@ void PlotDoppler::onPlotMouseEventEnable(bool on)
 
 void PlotDoppler::setxAxisLabel(QString& str)
 {
-	m_xAxisLabel = str;
-	m_customPlot->xAxis->setLabel(m_xAxisLabel);
-	m_customPlot->replot();
+    m_xAxisLabel = str;
+    m_customPlot->xAxis->setLabel(m_xAxisLabel);
+    m_customPlot->replot();
 }
 
 void PlotDoppler::setyAxisLabel(QString& str)
 {
-	m_yAxisLabel = str;
-	m_customPlot->yAxis->setLabel(m_yAxisLabel);
-	m_customPlot->replot();
+    m_yAxisLabel = str;
+    m_customPlot->yAxis->setLabel(m_yAxisLabel);
+    m_customPlot->replot();
 }
 
 void PlotDoppler::setAxisLabelColor(QColor& color)
 {
-	m_axisColor = color;
-	m_customPlot->xAxis->setLabelColor(m_axisLabelColor);
-	m_customPlot->yAxis->setLabelColor(m_axisLabelColor);
-	m_customPlot->replot();
+    m_axisColor = color;
+    m_customPlot->xAxis->setLabelColor(m_axisLabelColor);
+    m_customPlot->yAxis->setLabelColor(m_axisLabelColor);
+    m_customPlot->replot();
 }
 
 void PlotDoppler::setAxisLabelFont(QFont& font)
 {
-	m_axisLabelFont = font;
-	m_customPlot->xAxis->setLabelFont(m_axisLabelFont);
-	m_customPlot->yAxis->setLabelFont(m_axisLabelFont);
-	m_customPlot->replot();
+    m_axisLabelFont = font;
+    m_customPlot->xAxis->setLabelFont(m_axisLabelFont);
+    m_customPlot->yAxis->setLabelFont(m_axisLabelFont);
+    m_customPlot->replot();
 }
 
 void PlotDoppler::setAxisVisible(bool on, AxisType type)
 {
     switch(type)
-	{
-	case AxisType::xAxis:
-		m_customPlot->xAxis->setVisible(on);
-		break;
-	case AxisType::yAxis:
-		m_customPlot->yAxis->setVisible(on);
-		break;
-	case AxisType::xAxis2:
-		m_customPlot->xAxis2->setVisible(on);
-		break;
-	case AxisType::yAxis2:
-		m_customPlot->yAxis2->setVisible(on);
-		break;
-	default:
-		break;
-	}
-	m_customPlot->replot();
+    {
+    case AxisType::xAxis:
+        m_customPlot->xAxis->setVisible(on);
+        break;
+    case AxisType::yAxis:
+        m_customPlot->yAxis->setVisible(on);
+        break;
+    case AxisType::xAxis2:
+        m_customPlot->xAxis2->setVisible(on);
+        break;
+    case AxisType::yAxis2:
+        m_customPlot->yAxis2->setVisible(on);
+        break;
+    default:
+        break;
+    }
+    m_customPlot->replot();
 }
 
 void PlotDoppler::setAxisTickLabelShow(bool on, AxisType type)
 {
     switch(type)
-	{
-	case AxisType::xAxis:
-		m_customPlot->xAxis->setTickLabels(on);
-		break;
-	case AxisType::yAxis:
-		m_customPlot->yAxis->setTickLabels(on);
-		break;
-	case AxisType::xAxis2:
-		m_customPlot->xAxis2->setTickLabels(on);
-		break;
-	case AxisType::yAxis2:
-		m_customPlot->yAxis2->setTickLabels(on);
-		break;
-	default:
-		break;
-	}
-	m_customPlot->replot();
+    {
+    case AxisType::xAxis:
+        m_customPlot->xAxis->setTickLabels(on);
+        break;
+    case AxisType::yAxis:
+        m_customPlot->yAxis->setTickLabels(on);
+        break;
+    case AxisType::xAxis2:
+        m_customPlot->xAxis2->setTickLabels(on);
+        break;
+    case AxisType::yAxis2:
+        m_customPlot->yAxis2->setTickLabels(on);
+        break;
+    default:
+        break;
+    }
+    m_customPlot->replot();
 }
 
 void PlotDoppler::setOuterFillColor(QColor color)
 {
-	m_outerFillColor = color;
-	QPalette palette = this->palette();
-	palette.setColor(QPalette::Window, m_outerFillColor);
-	this->setPalette(palette);
+    m_outerFillColor = color;
+    QPalette palette = this->palette();
+    palette.setColor(QPalette::Window, m_outerFillColor);
+    this->setPalette(palette);
 
-	m_customPlot->setBackground(color);
+    m_customPlot->setBackground(color);
     m_horizonAScope->setBackground(color);
     m_verticalAScope->setBackground(color);
-	m_customPlot->replot();
+    m_customPlot->replot();
 }
 
 void PlotDoppler::setCoordRangeX(double lower, double upper)
 {
     if(m_coordBgn_x == lower && m_coordEnd_x == upper)
-	{
-		return;
-	}
+    {
+        return;
+    }
 
-	m_coordBgn_x = lower;
-	m_coordEnd_x = upper;
-	m_customPlot->xAxis->setRange(lower, upper);
+    m_coordBgn_x = lower;
+    m_coordEnd_x = upper;
+    m_customPlot->xAxis->setRange(lower, upper);
     m_horizonAScope->xAxis->setRange(lower, upper);
 
     m_customPlot->rescaleAxes();
@@ -414,152 +413,152 @@ void PlotDoppler::setCoordRangeX(double lower, double upper)
 void PlotDoppler::setCoordRangeY(double lower, double upper)
 {
     if(m_coordBgn_y == lower && m_coordEnd_y == upper)
-	{
-		return;
-	}
+    {
+        return;
+    }
 
-	m_coordBgn_y = lower;
-	m_coordEnd_y = upper;
-	m_customPlot->yAxis->setRange(lower, upper);
+    m_coordBgn_y = lower;
+    m_coordEnd_y = upper;
+    m_customPlot->yAxis->setRange(lower, upper);
     m_verticalAScope->xAxis->setRange(lower, upper);
 
     m_customPlot->rescaleAxes();
-	m_customPlot->replot();
+    m_customPlot->replot();
 }
 
 void PlotDoppler::setHorzGrids(uint count)
 {
     if(m_horzGrids == count)
-	{
-		return;
-	}
-	m_horzGrids = count;
+    {
+        return;
+    }
+    m_horzGrids = count;
     if(count == 0)
-	{
-		m_customPlot->yAxis->grid()->setVisible(false);
-	}
-	else
-	{
-		m_customPlot->yAxis->grid()->setVisible(true);
-		m_customPlot->yAxis->ticker()->setTickCount(m_horzGrids);
-	}
+    {
+        m_customPlot->yAxis->grid()->setVisible(false);
+    }
+    else
+    {
+        m_customPlot->yAxis->grid()->setVisible(true);
+        m_customPlot->yAxis->ticker()->setTickCount(m_horzGrids);
+    }
 
-	m_customPlot->replot();
+    m_customPlot->replot();
 }
 
 void PlotDoppler::setVertGrids(uint count)
 {
     if(m_vertGrids == count)
-	{
-		return;
-	}
-	m_vertGrids = count;
+    {
+        return;
+    }
+    m_vertGrids = count;
     if(count == 0)
-	{
-		m_customPlot->xAxis->grid()->setVisible(false);
-	}
-	else
-	{
-		m_customPlot->xAxis->grid()->setVisible(true);
-		m_customPlot->xAxis->ticker()->setTickCount(m_vertGrids);
-	}
+    {
+        m_customPlot->xAxis->grid()->setVisible(false);
+    }
+    else
+    {
+        m_customPlot->xAxis->grid()->setVisible(true);
+        m_customPlot->xAxis->ticker()->setTickCount(m_vertGrids);
+    }
 
-	m_customPlot->replot();
+    m_customPlot->replot();
 }
 
 void PlotDoppler::setAxisColorWidth(QColor color, uint width)
 {
-	m_axisColor = color;
-	m_axisWidth = width;
-	m_customPlot->xAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
-	m_customPlot->yAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
-	m_customPlot->xAxis2->setBasePen(QPen(m_axisColor, m_axisWidth));
-	m_customPlot->yAxis2->setBasePen(QPen(m_axisColor, m_axisWidth));
+    m_axisColor = color;
+    m_axisWidth = width;
+    m_customPlot->xAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
+    m_customPlot->yAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
+    m_customPlot->xAxis2->setBasePen(QPen(m_axisColor, m_axisWidth));
+    m_customPlot->yAxis2->setBasePen(QPen(m_axisColor, m_axisWidth));
 
     m_horizonAScope->xAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
     m_horizonAScope->yAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
 
     m_verticalAScope->xAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
     m_verticalAScope->yAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
-	m_customPlot->replot();
+    m_customPlot->replot();
 }
 
 void PlotDoppler::setGridColorWidth(QColor color, uint width)
 {
-	m_gridColor = color;
-	m_gridWidth = width;
-	m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
-	m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+    m_gridColor = color;
+    m_gridWidth = width;
+    m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+    m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
     m_horizonAScope->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
     m_horizonAScope->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
     m_verticalAScope->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
     m_verticalAScope->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
-	m_customPlot->replot();
+    m_customPlot->replot();
 }
 
 void PlotDoppler::setGridFillColor(QColor color)
 {
-	m_gridFillColor = color;
+    m_gridFillColor = color;
 }
 
 void PlotDoppler::setGridVisible(bool enable)
 {
-	m_gridVisible = enable;
-	m_customPlot->xAxis->grid()->setVisible(enable);
-	m_customPlot->yAxis->grid()->setVisible(enable);
+    m_gridVisible = enable;
+    m_customPlot->xAxis->grid()->setVisible(enable);
+    m_customPlot->yAxis->grid()->setVisible(enable);
 
-	m_customPlot->replot();
+    m_customPlot->replot();
 }
 
 void PlotDoppler::setTickLabelColor(QColor& color)
 {
-	m_tickLabelColor = color;
-	m_customPlot->xAxis->setTickLabelColor(m_tickLabelColor);
-	m_customPlot->yAxis->setTickLabelColor(m_tickLabelColor);
+    m_tickLabelColor = color;
+    m_customPlot->xAxis->setTickLabelColor(m_tickLabelColor);
+    m_customPlot->yAxis->setTickLabelColor(m_tickLabelColor);
 
-	m_customPlot->replot();
+    m_customPlot->replot();
 }
 
 void PlotDoppler::setTickLabelFont(QFont& font)
 {
     m_tickLabelFont = font;
     m_customPlot->xAxis->setTickLabelFont(m_tickLabelFont);
-	m_customPlot->yAxis->setTickLabelFont(m_tickLabelFont);
+    m_customPlot->yAxis->setTickLabelFont(m_tickLabelFont);
 
-	m_customPlot->replot();
+    m_customPlot->replot();
 }
 
 void PlotDoppler::setTickLabelFontSize(int size)
 {
-	m_tickLabelFontSize = size;
-	m_tickLabelFont.setPointSize(size);
-	setTickLabelFont(m_tickLabelFont);
+    m_tickLabelFontSize = size;
+    m_tickLabelFont.setPointSize(size);
+    setTickLabelFont(m_tickLabelFont);
 }
 
 void PlotDoppler::setGridStyle(GridStyle style)
 {
     switch(style)
-	{
-	case GridStyle::SOLIDLINE:
-		m_gridStyle = Qt::SolidLine;
-		break;
-	case GridStyle::DASHLINE:
-		m_gridStyle = Qt::DashLine;
-		break;
-	case GridStyle::DOTLINE:
-		m_gridStyle = Qt::DotLine;
-		break;
-	case GridStyle::DASHDOTLINE:
-		m_gridStyle = Qt::DashDotLine;
-		break;
-	default:
-		m_gridStyle = Qt::SolidLine;
-		break;
-	}
-	m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
-	m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+    {
+    case GridStyle::SOLIDLINE:
+        m_gridStyle = Qt::SolidLine;
+        break;
+    case GridStyle::DASHLINE:
+        m_gridStyle = Qt::DashLine;
+        break;
+    case GridStyle::DOTLINE:
+        m_gridStyle = Qt::DotLine;
+        break;
+    case GridStyle::DASHDOTLINE:
+        m_gridStyle = Qt::DashDotLine;
+        break;
+    default:
+        m_gridStyle = Qt::SolidLine;
+        break;
+    }
+    m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+    m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
 
-	m_customPlot->replot();
+    m_customPlot->replot();
 }
 
 void PlotDoppler::setGridDensity(GridDensity density) {}

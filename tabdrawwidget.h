@@ -76,8 +76,6 @@ private:
     void handleZoomInOut(double factor);
     void handleMouseMoveWithPan(int offsetX, int offsetY);
 
-    void drawMeasureLines();
-
     static void updateSelectedPlotsBorderVisible(bool visible);
 
 private:
@@ -86,8 +84,6 @@ private:
     QPoint m_originPoint;
     static MouseMode m_mouseMode;
     MovePlotMode m_movePlotMode;
-    // 测距辅助线段
-    QLine m_measureLine;
 
     /*
      * 当前选中绘图控件，可能多选
