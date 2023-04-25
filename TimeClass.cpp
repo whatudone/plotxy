@@ -427,17 +427,18 @@ void OrdinalTimeFormatter::secondsConvertToTime(double secSinceRefYear,
     timestamp.getTimeComponents(days, hour, minute, fsec);
 }
 
-double OrdinalTimeFormatter::getSecondsFromTimeStr(QString& str, int32_t refYear)
+double OrdinalTimeFormatter::getSecondsFromTimeStr(const QString& str, int32_t refYear)
 {
     double value = 0.0;
-    str.remove(QChar('\"'));
-    if(OrdinalTimeFormatter::isValidDoubleNumber(str))
+    auto tmp = str;
+    tmp.remove(QChar('\"'));
+    if(OrdinalTimeFormatter::isValidDoubleNumber(tmp))
     {
-        value = str.toDouble();
+        value = tmp.toDouble();
     }
     else
     {
-        value = OrdinalTimeFormatter::convertToSeconds(str, refYear);
+        value = OrdinalTimeFormatter::convertToSeconds(tmp, refYear);
     }
     return value;
 }

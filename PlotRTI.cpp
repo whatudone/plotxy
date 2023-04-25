@@ -170,7 +170,7 @@ void PlotRTI::setTitleVisible(bool show)
 
 void PlotRTI::loadCustomData()
 {
-    QString dataFileName = ":/AScope类型数据.csv";
+    QString dataFileName = ":/AScope.csv";
     QFile file(dataFileName);
 
     QVector<double> rangeDatas;

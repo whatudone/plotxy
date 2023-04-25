@@ -227,5 +227,5 @@ public:
                                      unsigned int& hour,
                                      unsigned int& minute,
                                      float& fsec);
-    static double getSecondsFromTimeStr(QString& str, int32_t refYear);
+    static double getSecondsFromTimeStr(const QString& str, int32_t refYear);
 };

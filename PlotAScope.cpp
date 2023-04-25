@@ -230,8 +230,8 @@ void PlotAScope::updateGraph(double secs, int index, DataPair* data)
         QStringList ylist = yEntityType.split("+");
         if(xlist.size() == 1 && ylist.size() == 1)
         {
-            x = DataManager::getInstance()->getTimeData_vector();
-            y = DataManager::getInstance()->getTimeData_vector();
+            x = DataManager::getInstance()->getTimeDataSet();
+            y = DataManager::getInstance()->getTimeDataSet();
         }
         else if(xlist.size() == 1 && ylist.size() == 2)
         {

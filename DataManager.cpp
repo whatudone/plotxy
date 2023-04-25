@@ -189,6 +189,7 @@ void DataManager::loadASIData(const QString& asiFileName)
         return;
     }
     m_newEntityDataMap.clear();
+    m_timeDataSet.clear();
     m_platformMap.clear();
     m_eventMap.clear();
     m_gogFileList.clear();
@@ -316,6 +317,8 @@ void DataManager::loadASIData(const QString& asiFileName)
                                 {
                                     value = OrdinalTimeFormatter::getSecondsFromTimeStr(
                                         tmpAttrValue, m_refYear);
+                                    // set自动去重和排序
+                                    m_timeDataSet.insert(value);
                                 }
                                 else
                                 {
@@ -364,6 +367,11 @@ void DataManager::loadASIData(const QString& asiFileName)
         }
     }
     file.close();
+    if(m_timeDataSet.size() >= 1)
+    {
+        m_minTime = *m_timeDataSet.cbegin();
+        m_maxTime = *m_timeDataSet.rbegin();
+    }
 }
 
 QMap<QString, QMap<QString, QList<double>>>& DataManager::getDataMap()
@@ -382,7 +390,7 @@ int DataManager::getRefYear()
 	return m_refYear;
 }
 
-QList<double> DataManager::getEntityAttr_Value_List(QString entity, QString attr)
+QList<double> DataManager::getEntityAttr_Value_List(const QString& entity, const QString& attr)
 {
 	QList<double> valueList;
     if(!m_entityDataMap.isEmpty())
@@ -398,8 +406,9 @@ QList<double> DataManager::getEntityAttr_Value_List(QString entity, QString attr
 	return valueList;
 }
 
-QList<double>
-DataManager::getEntityAttr_MaxPartValue_List(QString entity, QString attr, double secs)
+QList<double> DataManager::getEntityAttr_MaxPartValue_List(const QString& entity,
+                                                           const QString& attr,
+                                                           double secs)
 {
 	int index = getEntityAttr_MaxIndex_List(entity, attr, secs);
 	QList<double> valueList;
@@ -418,8 +427,10 @@ DataManager::getEntityAttr_MaxPartValue_List(QString entity, QString attr, doubl
 	return valueList;
 }
 
-QList<double>
-DataManager::getEntityAttr_PartValue_List(QString entity, QString attr, int minIndex, int maxIndex)
+QList<double> DataManager::getEntityAttr_PartValue_List(const QString& entity,
+                                                        const QString& attr,
+                                                        int minIndex,
+                                                        int maxIndex)
 {
 	QList<double> valueList;
     if(minIndex < 0 || maxIndex < 0)
@@ -433,12 +444,17 @@ DataManager::getEntityAttr_PartValue_List(QString entity, QString attr, int minI
 	return valueList;
 }
 
-QVector<double> DataManager::getTimeData_vector()
+QVector<double> DataManager::getTimeDataSet()
 {
-	return m_timeDataVector;
+    // 为了方便外部使用，统一转成QVector返回值
+    std::vector<double> vec(m_timeDataSet.begin(), m_timeDataSet.end());
+
+    return QVector<double>::fromStdVector(vec);
 }
 
-int DataManager::getEntityAttr_MaxIndex_List(QString entity, QString attr, double secs)
+int DataManager::getEntityAttr_MaxIndex_List(const QString& entity,
+                                             const QString& attr,
+                                             double secs)
 {
 	int index = 0;
 	QList<double> timeList = getEntityAttr_Value_List(entity);

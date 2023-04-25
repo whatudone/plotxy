@@ -4,12 +4,14 @@
 * @create time: 2022-09-27
 *  */
 
-#ifndef DATA_MANAGER_H_
-#define DATA_MANAGER_H_
+#ifndef DATA_MANAGER_H
+#define DATA_MANAGER_H
 
 #include "BaseData.h"
 #include <QMap>
 #include <QVector3D>
+
+#include <set>
 
 class DataManager : public QObject
 {
@@ -49,15 +51,18 @@ private:
     ~DataManager();
     // 旧的数据结构待迁移之后替换成新的
     QMap<QString, QMap<QString, QList<double>>> m_entityDataMap;
+    QVector<double> m_timeDataVector;
     // 新的数据存储结构 <PID,<<Attr,Unit>,DataList>>
     QMap<int32_t, QMap<QPair<QString, QString>, QList<double>>> m_newEntityDataMap;
     // 平台map数据
     QMap<int32_t, Platform> m_platformMap;
     // 事件map数据
     QMap<int32_t, QList<Event>> m_eventMap;
-    QVector<double> m_timeDataVector;
     // 时间以s为计算单位，小数位表示ms
-	double m_minTime, m_maxTime;
+    double m_minTime = 0.0;
+    double m_maxTime = 0.0;
+    // 用于确定时间轴范围的时间信息
+    std::set<double> m_timeDataSet;
     // 参考年份，作为相对时间的计算基准
     int m_refYear = 1970;
     // 参考点 LLA坐标
@@ -76,20 +81,22 @@ public:
     QMap<QString, QMap<QString, QList<double>>>& getDataMap();
     void getMinMaxTime(double& minTime, double& maxTime);
 	int getRefYear();
-    int getEntityAttr_MaxIndex_List(QString entity,
-                                    QString attr,
+    int getEntityAttr_MaxIndex_List(const QString& entity,
+                                    const QString& attr,
                                     double secs); //获取secs时间内的实体-属性的最大index
     QList<double>
-    getEntityAttr_Value_List(QString entity,
-                             QString attr = "Time"); //获取实体-属性的全数据，属性默认为Time
-    QList<double> getEntityAttr_MaxPartValue_List(
-        QString entity, QString attr, double secs); //获取最小时间到secs时间内的实体-属性数据list
+    getEntityAttr_Value_List(const QString& entity,
+                             const QString& attr = "Time"); //获取实体-属性的全数据，属性默认为Time
     QList<double>
-    getEntityAttr_PartValue_List(QString entity,
-                                 QString attr,
+    getEntityAttr_MaxPartValue_List(const QString& entity,
+                                    const QString& attr,
+                                    double secs); //获取最小时间到secs时间内的实体-属性数据list
+    QList<double>
+    getEntityAttr_PartValue_List(const QString& entity,
+                                 const QString& attr,
                                  int minIndex,
                                  int maxIndex); //获取minIndex到maxIndex内的实体-属性数据list
-	QVector<double> getTimeData_vector();
+    QVector<double> getTimeDataSet();
 
 private:
     // 加载带时间信息的csv数据
