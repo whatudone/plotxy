@@ -78,7 +78,7 @@ public:
     }
     // 自动根据文件扩展名称解析对应格式数据
     void loadFileData(const QString& filename);
-    QMap<QString, QMap<QString, QList<double>>>& getDataMap();
+    const QMap<int32_t, QMap<QPair<QString, QString>, QList<double>>>& getDataMap();
     void getMinMaxTime(double& minTime, double& maxTime);
 	int getRefYear();
     int getEntityAttr_MaxIndex_List(const QString& entity,
@@ -97,6 +97,10 @@ public:
                                  int minIndex,
                                  int maxIndex); //获取minIndex到maxIndex内的实体-属性数据list
     QVector<double> getTimeDataSet();
+    // 根据id获取实例(数据里面称为Platform)名称
+    QString getEntityNameByID(int32_t id);
+    // 根据id获取实例对应的属性和单位列表
+    QList<QPair<QString, QString>> getAttrAndUnitPairList(int32_t id);
 
 private:
     // 加载带时间信息的csv数据
@@ -109,4 +113,5 @@ signals:
     void loadDataReady();
 };
 
+#define DataManagerInstance DataManager::getInstance()
 #endif // !

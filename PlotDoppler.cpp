@@ -522,8 +522,8 @@ void PlotDoppler::setTickLabelColor(QColor& color)
 
 void PlotDoppler::setTickLabelFont(QFont& font)
 {
-	m_tickLabelFont = font;
-	m_customPlot->xAxis->setTickLabelFont(m_tickLabelFont);
+    m_tickLabelFont = font;
+    m_customPlot->xAxis->setTickLabelFont(m_tickLabelFont);
 	m_customPlot->yAxis->setTickLabelFont(m_tickLabelFont);
 
 	m_customPlot->replot();

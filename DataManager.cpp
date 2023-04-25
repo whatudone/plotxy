@@ -374,9 +374,9 @@ void DataManager::loadASIData(const QString& asiFileName)
     }
 }
 
-QMap<QString, QMap<QString, QList<double>>>& DataManager::getDataMap()
+const QMap<int32_t, QMap<QPair<QString, QString>, QList<double>>>& DataManager::getDataMap()
 {
-	return m_entityDataMap;
+    return m_newEntityDataMap;
 }
 
 void DataManager::getMinMaxTime(double& minTime, double& maxTime)
@@ -450,6 +450,34 @@ QVector<double> DataManager::getTimeDataSet()
     std::vector<double> vec(m_timeDataSet.begin(), m_timeDataSet.end());
 
     return QVector<double>::fromStdVector(vec);
+}
+
+QString DataManager::getEntityNameByID(int32_t id)
+{
+    if(m_platformMap.contains(id))
+    {
+        return m_platformMap.value(id).m_platformName;
+    }
+    return "";
+}
+
+QList<QPair<QString, QString>> DataManager::getAttrAndUnitPairList(int32_t id)
+{
+    QList<QPair<QString, QString>> list;
+    if(m_newEntityDataMap.contains(id))
+    {
+        auto attrMap = m_newEntityDataMap.value(id);
+        for(const auto& keyPair : attrMap.keys())
+        {
+            // 去掉Time属性
+            if(keyPair.first == "Time")
+            {
+                continue;
+            }
+            list.append(keyPair);
+        }
+    }
+    return list;
 }
 
 int DataManager::getEntityAttr_MaxIndex_List(const QString& entity,

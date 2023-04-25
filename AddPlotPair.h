@@ -52,6 +52,10 @@ private:
 	PlotType getPlotType(PlotItemBase*);
     bool getCurrentSelectParam(QString&, QString&);
 
+    // 根据点击的实体选项切换对应表格里面的属性列表
+    void updateAttrTableWidgetOnEntityChanged(QTableWidgetItem* entityItem,
+                                              QTableWidget* attrTableWidget);
+
 signals:
 	void sgn_addPlotPair(QString, QString, QString, QString);
     void sgn_updatePlotPair(QString, QString); //tabName, plotName

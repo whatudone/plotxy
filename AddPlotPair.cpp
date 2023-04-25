@@ -16,7 +16,6 @@ AddPlotPair::AddPlotPair(QWidget* parent)
     : QWidget(parent)
 {
     ui.setupUi(this);
-    this->setWindowTitle("Add Plot Pair");
 
     initStackedWidget_page1();
     initStackedWidget_page2();
@@ -342,8 +341,8 @@ void AddPlotPair::setPlotBaseInfo(PlotItemBase* pBaseItem)
 {
     if(!pBaseItem)
         return;
-    QList<QTreeWidgetItem*> plotItems = m_treePlot->findItems(
-        pBaseItem->getName(), Qt::MatchCaseSensitive | Qt::MatchRecursive, 0);
+    QList<QTreeWidgetItem*> plotItems =
+        m_treePlot->findItems(pBaseItem->getName(), Qt::MatchCaseSensitive | Qt::MatchRecursive, 0);
     if(plotItems.size() > 0)
     {
         m_treePlot->itemDoubleClicked(plotItems[0], 0);
@@ -594,6 +593,27 @@ bool AddPlotPair::getCurrentSelectParam(QString& strSum1, QString& strSum2)
     return true;
 }
 
+void AddPlotPair::updateAttrTableWidgetOnEntityChanged(QTableWidgetItem* entityItem,
+                                                       QTableWidget* attrTableWidget)
+{
+    int32_t id = entityItem->data(Qt::UserRole + 1).toInt();
+    auto pairList = DataManagerInstance->getAttrAndUnitPairList(id);
+
+    if(pairList.isEmpty())
+        return;
+    auto pairSize = pairList.size();
+    attrTableWidget->setRowCount(pairSize);
+    attrTableWidget->setColumnCount(2);
+    for(int i = 0; i < pairSize; i++)
+    {
+        QString attr = pairList.at(i).first;
+        QString unit = pairList.at(i).second;
+
+        attrTableWidget->setItem(i, 0, new QTableWidgetItem(attr));
+        attrTableWidget->setItem(i, 1, new QTableWidgetItem(unit));
+    }
+}
+
 void AddPlotPair::onBtnAddClicked()
 {
     QString strSum1, strSum2;
@@ -626,201 +646,72 @@ void AddPlotPair::onBtnAddClicked()
 
 void AddPlotPair::onTableWidgetItemClicked(QTableWidgetItem* curItem)
 {
-    QString currEntityTypeSelected = curItem->text();
-    auto dataMap = DataManager::getInstance()->getDataMap();
-    if(dataMap.isEmpty())
-        return;
-
-    if(!dataMap.contains(currEntityTypeSelected))
-        return;
-
-    QStringList currEntityAttrList = dataMap.value(currEntityTypeSelected).keys();
-
-    ui.tableWidget_nameUnits->setRowCount(currEntityAttrList.size());
-    for(int i = 0; i < currEntityAttrList.size(); i++)
-    {
-        QString currEntityAttr = currEntityAttrList.at(i);
-
-        QTableWidgetItem* item = new QTableWidgetItem(currEntityAttr);
-        ui.tableWidget_nameUnits->setItem(i, 0, item);
-    }
+    updateAttrTableWidgetOnEntityChanged(curItem, ui.tableWidget_nameUnits);
 }
 
 void AddPlotPair::onTableWidgetItemClicked_2(QTableWidgetItem* curItem)
 {
-    QString currEntityTypeSelected = curItem->text();
-    auto dataMap = DataManager::getInstance()->getDataMap();
-    if(dataMap.isEmpty())
-        return;
-
-    if(!dataMap.contains(currEntityTypeSelected))
-        return;
-
-    QStringList currEntityAttrList = dataMap.value(currEntityTypeSelected).keys();
-
-    ui.tableWidget_nameUnits_2->setRowCount(currEntityAttrList.size());
-    for(int i = 0; i < currEntityAttrList.size(); i++)
-    {
-        QString currEntityAttr = currEntityAttrList.at(i);
-
-        QTableWidgetItem* item = new QTableWidgetItem(currEntityAttr);
-        ui.tableWidget_nameUnits_2->setItem(i, 0, item);
-    }
+    updateAttrTableWidgetOnEntityChanged(curItem, ui.tableWidget_nameUnits_2);
 }
 
 void AddPlotPair::onTableWidgetItemClicked_3(QTableWidgetItem* curItem)
 {
-    QString currEntityTypeSelected = curItem->text();
-    auto dataMap = DataManager::getInstance()->getDataMap();
-    if(dataMap.isEmpty())
-        return;
-
-    if(!dataMap.contains(currEntityTypeSelected))
-        return;
-
-    QStringList currEntityAttrList = dataMap.value(currEntityTypeSelected).keys();
-
-    ui.tableWidget_nameUnits_3->setRowCount(currEntityAttrList.size());
-    for(int i = 0; i < currEntityAttrList.size(); i++)
-    {
-        QString currEntityAttr = currEntityAttrList.at(i);
-
-        QTableWidgetItem* item = new QTableWidgetItem(currEntityAttr);
-        ui.tableWidget_nameUnits_3->setItem(i, 0, item);
-    }
+    updateAttrTableWidgetOnEntityChanged(curItem, ui.tableWidget_nameUnits_3);
 }
 
 void AddPlotPair::onTableWidgetItemClicked_4(QTableWidgetItem* curItem)
 {
-    QString currEntityTypeSelected = curItem->text();
-    auto dataMap = DataManager::getInstance()->getDataMap();
-    if(dataMap.isEmpty())
-        return;
-
-    if(!dataMap.contains(currEntityTypeSelected))
-        return;
-
-    QStringList currEntityAttrList = dataMap.value(currEntityTypeSelected).keys();
-
-    ui.tableWidget_nameUnits_4->setRowCount(currEntityAttrList.size());
-    for(int i = 0; i < currEntityAttrList.size(); i++)
-    {
-        QString currEntityAttr = currEntityAttrList.at(i);
-
-        QTableWidgetItem* item = new QTableWidgetItem(currEntityAttr);
-        ui.tableWidget_nameUnits_4->setItem(i, 0, item);
-    }
+    updateAttrTableWidgetOnEntityChanged(curItem, ui.tableWidget_nameUnits_4);
 }
 
 void AddPlotPair::onTableWidgetLightEntityClicked(QTableWidgetItem* curItem)
 {
-    QString currEntityTypeSelected = curItem->text();
-    auto dataMap = DataManager::getInstance()->getDataMap();
-    if(dataMap.isEmpty())
-        return;
-
-    if(!dataMap.contains(currEntityTypeSelected))
-        return;
-
-    QStringList currEntityAttrList = dataMap.value(currEntityTypeSelected).keys();
-
-    ui.tableWidget_lightNameUnits->setRowCount(currEntityAttrList.size());
-    for(int i = 0; i < currEntityAttrList.size(); i++)
-    {
-        QString currEntityAttr = currEntityAttrList.at(i);
-
-        QTableWidgetItem* item = new QTableWidgetItem(currEntityAttr);
-        ui.tableWidget_lightNameUnits->setItem(i, 0, item);
-    }
+    updateAttrTableWidgetOnEntityChanged(curItem, ui.tableWidget_lightNameUnits);
 }
 
 void AddPlotPair::onTableWidgetItemClicked_Attitude1(QTableWidgetItem* curItem)
 {
-    QString currEntityTypeSelected = curItem->text();
-    auto dataMap = DataManager::getInstance()->getDataMap();
-    if(dataMap.isEmpty())
-        return;
-
-    if(!dataMap.contains(currEntityTypeSelected))
-        return;
-
-    QStringList currEntityAttrList = dataMap.value(currEntityTypeSelected).keys();
-
-    ui.tableWidget_nameUnits_Attitude1->setRowCount(currEntityAttrList.size());
-    for(int i = 0; i < currEntityAttrList.size(); i++)
-    {
-        QString currEntityAttr = currEntityAttrList.at(i);
-
-        QTableWidgetItem* item = new QTableWidgetItem(currEntityAttr);
-        ui.tableWidget_nameUnits_Attitude1->setItem(i, 0, item);
-    }
+    updateAttrTableWidgetOnEntityChanged(curItem, ui.tableWidget_nameUnits_Attitude1);
 }
 
 void AddPlotPair::onTableWidgetItemClicked_Attitude2(QTableWidgetItem* curItem)
 {
-    QString currEntityTypeSelected = curItem->text();
-    auto dataMap = DataManager::getInstance()->getDataMap();
-    if(dataMap.isEmpty())
-        return;
-
-    if(!dataMap.contains(currEntityTypeSelected))
-        return;
-
-    QStringList currEntityAttrList = dataMap.value(currEntityTypeSelected).keys();
-
-    ui.tableWidget_nameUnits_Attitude2->setRowCount(currEntityAttrList.size());
-    for(int i = 0; i < currEntityAttrList.size(); i++)
-    {
-        QString currEntityAttr = currEntityAttrList.at(i);
-
-        QTableWidgetItem* item = new QTableWidgetItem(currEntityAttr);
-        ui.tableWidget_nameUnits_Attitude2->setItem(i, 0, item);
-    }
+    updateAttrTableWidgetOnEntityChanged(curItem, ui.tableWidget_nameUnits_Attitude2);
 }
 
 void AddPlotPair::onUpdateData()
 {
+    // 数据更新，重新刷新实体表格数据
     auto dataMap = DataManager::getInstance()->getDataMap();
     if(dataMap.isEmpty())
     {
-        qDebug() << QString("尚未加载数据,当前数据为空") << endl;
-        QMessageBox::information(
-            nullptr, QString("提示信息"), QString("尚未加载数据,当前数据为空"));
+        qWarning() << QString("尚未加载数据,当前数据为空") << endl;
         return;
     }
     int index = 0;
     int icount = dataMap.size();
-    ui.tableWidget_Entity->setRowCount(icount);
-    ui.tableWidget_Entity_2->setRowCount(icount);
-    ui.tableWidget_Entity_3->setRowCount(icount);
-    ui.tableWidget_Entity_4->setRowCount(icount);
-    ui.tableWidget_Entity_5->setRowCount(icount);
-    ui.tableWidget_Entity_6->setRowCount(icount);
-    ui.tableWidget_Entity_7->setRowCount(icount);
-    ui.tableWidget_Entity_8->setRowCount(icount);
-    ui.tableWidget_Entity_9->setRowCount(icount);
-    ui.tableWidget_Entity_10->setRowCount(icount);
-    ui.tableWidget_Entity_Attitude1->setRowCount(icount);
-    ui.tableWidget_Entity_Attitude2->setRowCount(icount);
-    ui.tableWidget_lightEntity->setRowCount(icount);
+    QList<QTableWidget*> tableList;
+    tableList << ui.tableWidget_Entity << ui.tableWidget_Entity_2 << ui.tableWidget_Entity_3
+              << ui.tableWidget_Entity_4 << ui.tableWidget_Entity_5 << ui.tableWidget_lightEntity
+              << ui.tableWidget_Entity_6 << ui.tableWidget_Entity_7 << ui.tableWidget_Entity_8
+              << ui.tableWidget_Entity_9 << ui.tableWidget_Entity_10
+              << ui.tableWidget_Entity_Attitude1 << ui.tableWidget_Entity_Attitude2;
+    for(auto tableWidget : tableList)
+    {
+        tableWidget->setRowCount(icount);
+    }
 
     for(auto it = dataMap.begin(); it != dataMap.end(); it++)
     {
-        QString currEntityType = it.key();
-        QTableWidgetItem* item = new QTableWidgetItem(currEntityType);
-        ui.tableWidget_Entity->setItem(index, 0, item);
-        ui.tableWidget_Entity_2->setItem(index, 0, new QTableWidgetItem(*item));
-        ui.tableWidget_Entity_3->setItem(index, 0, new QTableWidgetItem(*item));
-        ui.tableWidget_Entity_4->setItem(index, 0, new QTableWidgetItem(*item));
-        ui.tableWidget_Entity_5->setItem(index, 0, new QTableWidgetItem(*item));
-        ui.tableWidget_lightEntity->setItem(index, 0, new QTableWidgetItem(*item));
-        ui.tableWidget_Entity_6->setItem(index, 0, new QTableWidgetItem(*item));
-        ui.tableWidget_Entity_7->setItem(index, 0, new QTableWidgetItem(*item));
-        ui.tableWidget_Entity_8->setItem(index, 0, new QTableWidgetItem(*item));
-        ui.tableWidget_Entity_9->setItem(index, 0, new QTableWidgetItem(*item));
-        ui.tableWidget_Entity_10->setItem(index, 0, new QTableWidgetItem(*item));
-        ui.tableWidget_Entity_Attitude1->setItem(index, 0, new QTableWidgetItem(*item));
-        ui.tableWidget_Entity_Attitude2->setItem(index, 0, new QTableWidgetItem(*item));
+        QString currEntityType = DataManagerInstance->getEntityNameByID(it.key());
+
+        for(auto tableWidget : tableList)
+        {
+            QTableWidgetItem* item = new QTableWidgetItem(currEntityType);
+            // 将key作为隐藏数据设置到item中，方便后续通过key查找数据
+            item->setData(Qt::UserRole + 1, it.key());
+            tableWidget->setItem(index, 0, item);
+        }
 
         index++;
     }
