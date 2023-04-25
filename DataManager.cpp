@@ -237,8 +237,11 @@ void DataManager::loadASIData(const QString& asiFileName)
             while(!file.atEnd())
             {
                 lineData = file.readLine();
-                // 当再次读取这个标签时，说明上个Platform数据解析完成，需要退出此循环进入下个Platform读取周期
-                if(lineData.startsWith("# Platform Keywords"))
+                /*
+                 * "# "作为大的数据段的起点，读取到这里，说明上个大数据段解析完成，需要退出此循环进入下个Platform读取周期
+                 * 此处暂时只解析"# Platform Keywords",还有"# Beam Keywords"等其他类型数据暂不解析
+                */
+                if(lineData.startsWith("# "))
                 {
                     // 将文件指针回溯到改行读取之前
                     file.seek(file.pos() - lineData.length());
@@ -255,10 +258,11 @@ void DataManager::loadASIData(const QString& asiFileName)
                 }
                 if(lineData.startsWith("PlatformName"))
                 {
-                    QStringList list = lineData.split(" ", QString::SkipEmptyParts);
+                    QStringList list = parsePlatformData(lineData);
                     if(list.size() == 3)
                     {
-                        p.m_platformName = list.at(2);
+                        // 去掉数据中自带的双引号
+                        p.m_platformName = list[2].remove('\"');
                     }
                 }
                 if(lineData.startsWith("PlatformIcon"))
