@@ -98,59 +98,16 @@ void PlotScatter::initPlot()
     m_customPlot->replot();
 }
 
-void PlotScatter::addPlotPairData(const QPair<QString, QString>& pair)
-{
-
-    //scatter
-    ScatterInfo info;
-    info.graph = m_customPlot->addGraph();
-    info.tracer = new QCPItemTracer(m_customPlot);
-    info.tracerText = new QCPItemText(m_customPlot);
-    info.tracer->setGraph(info.graph);
-    info.tracer->setInterpolating(false);
-    info.tracer->setStyle(QCPItemTracer::tsNone);
-    info.tracerText->position->setType(QCPItemPosition::ptPlotCoords);
-    info.tracerText->position->setParentAnchor(info.tracer->position);
-    m_mapScatter.insert(pair, info);
-    // 先创建map数据，后续基类中发送的信号会触发更新，使用到结构体中的指针。所以需要最后调用基类接口
-    PlotItemBase::addPlotPairData(pair);
-}
-
-void PlotScatter::delPlotPairData(const QPair<QString, QString>& pair)
+void PlotScatter::delPlotPairData(const QString& uuid)
 {
     if(m_dataPairs.isEmpty())
         return;
     //scatter
-    if(m_mapScatter.contains(pair))
+    if(m_mapScatter.contains(uuid))
     {
-        m_mapScatter.remove(pair);
+        m_mapScatter.remove(uuid);
     }
-
-    PlotItemBase::delPlotPairData(pair);
-}
-
-void PlotScatter::updatePlotPairData(const QPair<QString, QString>& oldPair,
-                                     const QPair<QString, QString>& newPair)
-{
-    if(m_dataPairs.isEmpty())
-        return;
-    //scatter
-    if(m_mapScatter.contains(oldPair))
-    {
-        m_mapScatter.remove(oldPair);
-        ScatterInfo info;
-        info.graph = m_customPlot->addGraph();
-        info.tracer = new QCPItemTracer(m_customPlot);
-        info.tracerText = new QCPItemText(m_customPlot);
-        info.tracer->setGraph(info.graph);
-        info.tracer->setInterpolating(true);
-        info.tracer->setStyle(QCPItemTracer::tsNone);
-        info.tracerText->position->setType(QCPItemPosition::ptPlotCoords);
-        info.tracerText->position->setParentAnchor(info.tracer->position);
-        m_mapScatter.insert(newPair, info);
-    }
-
-    PlotItemBase::updatePlotPairData(oldPair, newPair);
+    PlotItemBase::delPlotPairData(uuid);
 }
 
 void PlotScatter::updateDataForDataPairsByTime(double secs)
@@ -161,77 +118,92 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
     int itemCnt = m_dataPairs.size();
 
     for(int i = 0; i < itemCnt; ++i)
-    {
-        updateGraph(secs, i, m_dataPairs.at(i));
-    }
-    m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
+	{
+        updateGraph(secs, m_dataPairs.at(i));
+	}
+	m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
-void PlotScatter::updateGraph(double secs, int index, DataPair* data)
+void PlotScatter::updateGraph(double secs, DataPair* data)
 {
     if(!data)
     {
         return;
     }
-    QPair<QString, QString> dataPair = data->getDataPair();
-    if(data->isDraw())
+    ScatterInfo info;
+    auto uuid = data->getUuid();
+    if(!m_mapScatter.contains(uuid))
     {
-        QVector<double> x, y;
-        QString xEntityType = dataPair.first;
-        QString yEntityType = dataPair.second;
-        QStringList xlist = xEntityType.split("+");
-        QStringList ylist = yEntityType.split("+");
-        if(xlist.size() == 1 && ylist.size() == 1)
+        info.graph = m_customPlot->addGraph();
+        info.tracer = new QCPItemTracer(m_customPlot);
+        info.tracerText = new QCPItemText(m_customPlot);
+        info.tracer->setGraph(info.graph);
+        info.tracer->setInterpolating(false);
+        info.tracer->setStyle(QCPItemTracer::tsNone);
+        info.tracerText->position->setType(QCPItemPosition::ptPlotCoords);
+        info.tracerText->position->setParentAnchor(info.tracer->position);
+        m_mapScatter.insert(uuid, info);
+    }
+    auto graph = m_mapScatter[uuid].graph;
+    auto tracerText = m_mapScatter[uuid].tracerText;
+    if(data->isDraw())
+	{
+		QVector<double> x, y;
+
+        auto xEntityID = data->getEntityIDX();
+        auto yEntityID = data->getEntityIDY();
+        auto xAttr = data->getAttr_x();
+        auto yAttr = data->getAttr_y();
+        if(xAttr == "Time" && yAttr == "Time")
 		{
 			x = DataManager::getInstance()->getTimeDataSet();
 			y = DataManager::getInstance()->getTimeDataSet();
-        }
-        else if(xlist.size() == 1 && ylist.size() == 2)
-        {
+		}
+        else if(xAttr == "Time" && yAttr != "Time")
+		{
             x = DataManager::getInstance()
-                    ->getEntityAttr_MaxPartValue_List(ylist.at(0), xlist.at(0), secs)
+                    ->getEntityAttrValueListByMaxTime(yEntityID, xAttr, secs)
                     .toVector();
             y = DataManager::getInstance()
-                    ->getEntityAttr_MaxPartValue_List(ylist.at(0), ylist.at(1), secs)
+                    ->getEntityAttrValueListByMaxTime(yEntityID, yAttr, secs)
                     .toVector();
-        }
-        else if(xlist.size() == 2 && ylist.size() == 1)
-        {
+		}
+        else if(xAttr != "Time" && yAttr == "Time")
+		{
             x = DataManager::getInstance()
-                    ->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs)
+                    ->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs)
                     .toVector();
             y = DataManager::getInstance()
-                    ->getEntityAttr_MaxPartValue_List(xlist.at(0), ylist.at(0), secs)
+                    ->getEntityAttrValueListByMaxTime(xEntityID, yAttr, secs)
                     .toVector();
         }
         else
         {
             x = DataManager::getInstance()
-                    ->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs)
+                    ->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs)
                     .toVector();
             y = DataManager::getInstance()
-                    ->getEntityAttr_MaxPartValue_List(ylist.at(0), ylist.at(1), secs)
+                    ->getEntityAttrValueListByMaxTime(yEntityID, yAttr, secs)
                     .toVector();
         }
 
         if(x.isEmpty() || y.isEmpty())
             return;
 
-        m_mapScatter[dataPair].graph->setVisible(true);
-        m_mapScatter[dataPair].graph->setPen(QPen(data->dataColor(), data->lineWidth()));
-        //line mode
+        graph->setVisible(true);
+        graph->setPen(QPen(data->dataColor(), data->lineWidth()));
+		//line mode
         if(data->isLineMode())
-        {
-            m_mapScatter[dataPair].graph->setLineStyle(QCPGraph::lsLine);
-            m_mapScatter[dataPair].graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssNone));
-        }
-        else
-        {
-            m_mapScatter[dataPair].graph->setLineStyle(QCPGraph::lsNone);
-            m_mapScatter[dataPair].graph->setScatterStyle(
-                QCPScatterStyle(QCPScatterStyle::ssDisc, data->lineWidth()));
-        }
-        //icon
+		{
+            graph->setLineStyle(QCPGraph::lsLine);
+            graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssNone));
+		}
+		else
+		{
+            graph->setLineStyle(QCPGraph::lsNone);
+            graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, data->lineWidth()));
+		}
+		//icon
         if(data->isIconDraw())
         {
             //test
@@ -267,25 +239,27 @@ void PlotScatter::updateGraph(double secs, int index, DataPair* data)
             }
             //垂直镜像
             if(data->iconFlipVert() == true)
-            {
-                QImage oldImage = pix.toImage();
-                QImage newImage = oldImage.mirrored(false, true);
-                pix = QPixmap::fromImage(newImage);
-            }
-            QCPScatterStyle style(pix);
-            m_mapScatter[dataPair].graph->setScatterStyle(style);
-        }
-        m_mapScatter[dataPair].graph->setData(x, y);
+
+			{
+				QImage oldImage = pix.toImage();
+				QImage newImage = oldImage.mirrored(false, true);
+				pix = QPixmap::fromImage(newImage);
+			}
+			QCPScatterStyle style(pix);
+            graph->setScatterStyle(style);
+		}
+        graph->setData(x, y);
 
         //Label Text
         if(data->isLabelTextShow())
         {
 
             // 游标功能先注释掉
-            //          m_mapScatter[dataPair].tracer->setVisible(true);
-            m_mapScatter[dataPair].tracerText->setVisible(true);
-            //设置锚点
-            //          m_mapScatter[dataPair].tracer->setGraphKey(x.last());
+
+            //			m_mapScatter[dataPair].tracer->setVisible(true);
+            tracerText->setVisible(true);
+			//设置锚点
+            //			m_mapScatter[dataPair].tracer->setGraphKey(x.last());
 
             if(0 == data->getTextFormat())
             { //default
@@ -296,10 +270,11 @@ void PlotScatter::updateGraph(double secs, int index, DataPair* data)
                 //考虑仅显示实体名时的操作
                 if(data->isObjectShow() && !data->isPrefixShow() && !data->isAttrShow() &&
                    !data->isDataShow() && !data->isUnitShow())
-                {
-                    object_x = data->getObjectName_x();
-                    object_y = data->getObjectName_y();
-                    //实体名相同时，仅显示一个实体名
+
+				{
+                    object_x = data->getEntity_x();
+                    object_y = data->getEntity_y();
+					//实体名相同时，仅显示一个实体名
                     if(0 == object_x.compare(object_y) && !object_x.isEmpty() &&
                        !object_y.isEmpty())
                     {
@@ -323,16 +298,17 @@ void PlotScatter::updateGraph(double secs, int index, DataPair* data)
                     }
 
                     if(data->isObjectShow())
-                    {
-                        object_x = data->getObjectName_x();
-                        object_y = data->getObjectName_y();
-                    }
+
+					{
+                        object_x = data->getEntity_x();
+                        object_y = data->getEntity_y();
+					}
 
                     if(data->isAttrShow())
-                    {
-                        attr_x = data->getAttrName_x();
-                        attr_y = data->getAttrName_y();
-                    }
+					{
+                        attr_x = data->getAttr_x();
+                        attr_y = data->getAttr_y();
+					}
 
                     if(data->isDataShow())
                     {
@@ -373,7 +349,8 @@ void PlotScatter::updateGraph(double secs, int index, DataPair* data)
             }
             else if(2 == data->getTextFormat()) //script
             {}
-            m_mapScatter[dataPair].tracerText->setText(data->getLabelText());
+
+            tracerText->setText(data->getLabelText());
 
             QFontMetricsF fm(data->getLabelFont());
             double wd = (fm.size(Qt::TextSingleLine, data->getLabelText()).width()) / 3.0;
@@ -381,73 +358,57 @@ void PlotScatter::updateGraph(double secs, int index, DataPair* data)
             switch(data->getLabelPosition())
             {
             case 0: //left-top
-                m_mapScatter[dataPair].tracerText->position->setCoords(-wd, -ht);
-                break;
+                tracerText->position->setCoords(-wd, -ht);
+				break;
             case 1: //top
-                m_mapScatter[dataPair].tracerText->position->setCoords(0, -ht);
-                break;
+                tracerText->position->setCoords(0, -ht);
+				break;
             case 2: //right-top
-                m_mapScatter[dataPair].tracerText->position->setCoords(wd, -ht);
-                break;
+                tracerText->position->setCoords(wd, -ht);
+				break;
             case 3: //left
-                m_mapScatter[dataPair].tracerText->position->setCoords(-wd, 0);
-                break;
+                tracerText->position->setCoords(-wd, 0);
+				break;
             case 4: //center
-                m_mapScatter[dataPair].tracerText->position->setCoords(0, 0);
-                break;
+                tracerText->position->setCoords(0, 0);
+				break;
             case 5: //right
-                m_mapScatter[dataPair].tracerText->position->setCoords(wd, 0);
-                break;
+                tracerText->position->setCoords(wd, 0);
+				break;
             case 6: //left-bottom
-                m_mapScatter[dataPair].tracerText->position->setCoords(-wd, ht);
-                break;
+                tracerText->position->setCoords(-wd, ht);
+				break;
             case 7: //bottom
-                m_mapScatter[dataPair].tracerText->position->setCoords(0, ht);
-                break;
+                tracerText->position->setCoords(0, ht);
+				break;
             case 8: //right-bottom
-                m_mapScatter[dataPair].tracerText->position->setCoords(wd, ht);
-                break;
+                tracerText->position->setCoords(wd, ht);
+				break;
             default: //right
-                m_mapScatter[dataPair].tracerText->position->setCoords(wd, 0);
-                break;
-            }
-            m_mapScatter[dataPair].tracerText->setPositionAlignment(Qt::AlignCenter);
-            m_mapScatter[dataPair].tracerText->setTextAlignment(Qt::AlignLeft);
-            m_mapScatter[dataPair].tracerText->setFont(data->getLabelFont());
-            m_mapScatter[dataPair].tracerText->setColor(data->getLabelColor());
+                tracerText->position->setCoords(wd, 0);
+				break;
+			}
+            tracerText->setPositionAlignment(Qt::AlignCenter);
+            tracerText->setTextAlignment(Qt::AlignLeft);
+            tracerText->setFont(data->getLabelFont());
+            tracerText->setColor(data->getLabelColor());
             if(data->getLabelBackTransparent())
-                m_mapScatter[dataPair].tracerText->setBrush(Qt::transparent);
-            else
-                m_mapScatter[dataPair].tracerText->setBrush(data->getLabelBackground());
-        }
-        else
-        {
-            //          m_mapScatter[dataPair].tracer->setVisible(false);
-            m_mapScatter[dataPair].tracerText->setVisible(false);
-        }
-    }
-    else
-    {
-        m_mapScatter[dataPair].graph->setVisible(false);
-        //      m_mapScatter[dataPair].tracer->setVisible(false);
-        m_mapScatter[dataPair].tracerText->setVisible(false);
-    }
-}
-
-void PlotScatter::mouseReleaseEvent(QMouseEvent* event)
-{
-    //    qDebug() << "x point = " << event->pos().x();
-    //    qDebug() << "y point = " << event->pos().y();
-    //    qDebug() << "trans x point = " << m_customPlot->xAxis->pixelToCoord(event->pos().x());
-    //    qDebug() << "trans y point = " << m_customPlot->yAxis->pixelToCoord(event->pos().y());
-    //    m_customPlot->xAxis->setRange(m_customPlot->xAxis->pixelToCoord(event->pos().x()) - m_customPlot->xAxis->range().size() / 2,
-    //                                  m_customPlot->xAxis->pixelToCoord(event->pos().x()) + m_customPlot->xAxis->range().size() / 2);
-    //    m_customPlot->yAxis->setRange(m_customPlot->yAxis->pixelToCoord(event->pos().y()) - m_customPlot->yAxis->range().size() / 2,
-    //                                  m_customPlot->yAxis->pixelToCoord(event->pos().y()) + m_customPlot->yAxis->range().size() / 2);
-    ////        m_customPlot->rescaleAxes();
-    //    m_customPlot->replot();
-
-    return PlotItemBase::mouseReleaseEvent(event);
+                tracerText->setBrush(Qt::transparent);
+			else
+                tracerText->setBrush(data->getLabelBackground());
+		}
+		else
+		{
+            //			m_mapScatter[dataPair].tracer->setVisible(false);
+            tracerText->setVisible(false);
+		}
+	}
+	else
+	{
+        graph->setVisible(false);
+        //		m_mapScatter[dataPair].tracer->setVisible(false);
+        tracerText->setVisible(false);
+	}
 }
 
 void PlotScatter::setPaddings(double top, double bottom, double left, double right)

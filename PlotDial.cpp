@@ -39,12 +39,11 @@ void PlotDial::updateDataForDataPairsByTime(double secs)
 {
     if(getDataPairs().isEmpty())
         return;
-
-    int isize = getDataPairs().size();
-    QString xcolumn = getDataPairs().at(isize - 1)->getDataPair().first;
-    QStringList list = xcolumn.split("+");
+    auto dataPair = getDataPairs().last();
+    auto xEntityID = dataPair->getEntityIDX();
+    auto xAttr = dataPair->getAttr_x();
     QList<double> m_valueList =
-        DataManager::getInstance()->getEntityAttr_MaxPartValue_List(list.at(0), list.at(1), secs);
+        DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
 
     if(m_valueList.isEmpty())
         return;

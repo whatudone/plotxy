@@ -53,10 +53,7 @@ public:
     void rescale_yAxis(bool);
     void rescaleAxis(bool);
 
-    void addPlotPairData(const QPair<QString, QString>& pair) override;
-    void delPlotPairData(const QPair<QString, QString>&);
-    void updatePlotPairData(const QPair<QString, QString>& oldPair,
-                            const QPair<QString, QString>& newPair);
+    void delPlotPairData(const QString& uuid);
 
     void setHorzGrids(uint);
     void setVertGrids(uint);
@@ -94,12 +91,11 @@ public:
 private:
     void initPlot();
     void updateDataForDataPairsByTime(double secs);
-    void updateGraph(double secs, int index, DataPair* data);
-
-    virtual void mouseReleaseEvent(QMouseEvent* event) override;
+    void updateGraph(double secs, DataPair* data);
 
 private:
-    QMap<QPair<QString, QString>, ScatterInfo> m_mapScatter;
+    // <uuid,graph>
+    QMap<QString, ScatterInfo> m_mapScatter;
 };
 
 #endif // PLOTSCATTER_H

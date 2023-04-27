@@ -19,6 +19,23 @@ const QMap<QString, QList<PlotItemBase*>>& PlotManagerData::getPlotManagerData()
     return m_plotMgrDataMap;
 }
 
+PlotItemBase* PlotManagerData::getPlotByTabAndName(const QString& tabName, const QString& plotName)
+{
+    if(m_plotMgrDataMap.contains(tabName))
+    {
+        auto plots = m_plotMgrDataMap.value(tabName);
+        for(int i = 0; i < plots.size(); ++i)
+        {
+            PlotItemBase* tempPlot = plots.at(i);
+            if(plotName == tempPlot->getName())
+            {
+                return tempPlot;
+            }
+        }
+    }
+    return nullptr;
+}
+
 void PlotManagerData::slotChangeTabName(QString oldName, QString newName)
 {
     if(m_plotMgrDataMap.contains(oldName))

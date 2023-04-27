@@ -83,91 +83,37 @@ void PlotText::drawTitleText(QPainter& painter, QRect& rect)
 		painter.drawText(rect, Qt::AlignCenter | Qt::TextWordWrap, titleName);
 }
 
-void PlotText::drawData(QSet<QString>& xset,
-                        QSet<QString>& yset,
-                        int& horiGridWidth,
-                        int& verGridWidth)
-{
-    if(getDataPairs().isEmpty())
-	{
-		return;
-	}
-    if(m_temValueList.isEmpty())
-	{
-		return;
-	}
-	int i = 0;
-	int j = 0;
-	QRect rect;
-	QPainter painter;
-    for(auto it = xset.begin(); it != xset.end(); it++)
-	{
-        for(auto it2 = yset.begin(); it2 != yset.end(); it2++)
-		{
-			j++;
-            rect.setRect(0.05 * width() + (1 + i) * horiGridWidth,
-                         0.1 * height() + j * verGridWidth,
-                         horiGridWidth,
-                         verGridWidth);
-            painter.drawText(rect,
-                             Qt::AlignCenter | Qt::TextWrapAnywhere,
-                             QString::number((m_temValueList.at(j).back()), 'f', 2));
-		}
-		i++;
-		j = 0;
-	}
-	//m_attriName.clear();
-	//m_entityName.clear();
-	//update();
-}
-
 void PlotText::updateDataForDataPairsByTime(double secs)
 {
 
-    int isize = getDataPairs().size();
-    int entityNum = 0;
-    int attriNum = 0;
-    m_entityName.clear();
-    m_attriName.clear();
-    m_temValueList.clear();
-    m_valueList.clear();
-    for(int i = 0; i < isize; i++)
-    {
-        QString getTextData = getDataPairs().at(i)->getDataPair().first;
-        QList<QString> textValueList = getTextData.split("+");
-        if(m_entityName.isEmpty())
-            m_entityName.push_back(textValueList.front());
-        for(int i = 0; i < m_entityName.size(); i++)
-        {
-            if(textValueList.front() == m_entityName.at(i))
-                entityNum++;
-        }
-        if(entityNum == 0)
-            m_entityName.push_back(textValueList.front());
-        entityNum = 0;
+    // TODO:使用新的数据结构QMap<entityName,QMap<attrName,double>>替换复杂无用的原始数据
+    //    int isize = getDataPairs().size();
+    //    m_entityName.clear();
+    //    m_attriName.clear();
+    //    m_temValueList.clear();
 
-        if(m_attriName.isEmpty())
-            m_attriName.push_back(textValueList.back());
-        for(int i = 0; i < m_attriName.size(); i++)
-        {
-            if(textValueList.back() == m_attriName.at(i))
-                attriNum++;
-        }
-        if(attriNum == 0)
-            m_attriName.push_back(textValueList.back());
-        attriNum = 0;
-    }
-    for(auto ite = m_entityName.begin(); ite != m_entityName.end(); ite++)
-    {
-        for(auto ita = m_attriName.begin(); ita != m_attriName.end(); ita++)
-        {
-            m_valueList =
-                DataManager::getInstance()->getEntityAttr_MaxPartValue_List(*ite, *ita, secs);
-            if(m_valueList.isEmpty())
-                m_valueList.push_back(0);
-            m_temValueList.push_back(m_valueList);
-        }
-    }
+    //    for(int i = 0; i < isize; i++)
+    //    {
+    //        auto dataPair = getDataPairs().last();
+    //        auto xEntityID = dataPair->getEntityIDX();
+    //        auto xEntityName = dataPair->getEntity_x();
+    //        auto xAttr = dataPair->getAttr_x();
+    //        if(!m_entityName.contains(xEntityName))
+    //            m_entityName.push_back(xEntityName);
+    //        if(!m_attriName.contains(xAttr))
+    //            m_attriName.push_back(xAttr);
+    //    }
+    //    for(auto ite = m_entityName.begin(); ite != m_entityName.end(); ite++)
+    //    {
+    //        for(auto ita = m_attriName.begin(); ita != m_attriName.end(); ita++)
+    //        {
+    //            QList<double> valueList =
+    //                DataManager::getInstance()->getEntityAttrValueListByMaxTime(*ite, *ita, secs);
+    //            if(valueList.isEmpty())
+    //                valueList.push_back(0);
+    //            m_temValueList.push_back(valueList);
+    //        }
+    //    }
 }
 
 void PlotText::customPainting(QPainter& painter)
@@ -266,10 +212,9 @@ void PlotText::drawXYTitle(QPainter& painter,
     for(int i = 0; i < dataVector.size(); i++)
 	{
         DataPair* temDataPair = dataVector.at(i);
-		QPair<QString, QString> temPair = temDataPair->getDataPair();
-		QString xIncludePlus = temPair.first;
-		QString xColumn = xIncludePlus.split("+").front();
-		QString yColumn = xIncludePlus.split("+").back();
+
+        QString xColumn = temDataPair->getEntity_x();
+        QString yColumn = temDataPair->getAttr_x();
         if(m_xColumnList.isEmpty())
 			m_xColumnList.push_back(xColumn);
 		else
@@ -316,10 +261,6 @@ void PlotText::drawXYTitle(QPainter& painter,
 	}
 	m_xColumnList.clear();
 	m_yColumnList.clear();
-    if(static_cast<int32_t>(m_secValue) != -1)
-    {
-        updateDataForDataPairsByTime(m_secValue);
-    }
 }
 
 void PlotText::drawNMCell(QPainter& painter,
@@ -333,10 +274,10 @@ void PlotText::drawNMCell(QPainter& painter,
 
     for(int i = 0; i < dataVector.size(); i++)
 	{
-		QString xIncludePlus = dataVector.at(i)->getDataPair().first;
-		int pos = xIncludePlus.indexOf("+");
-		QString xColumn = xIncludePlus.mid(0, pos);
-		QString yColumn = xIncludePlus.mid(pos + 1);
+        DataPair* temDataPair = dataVector.at(i);
+
+        QString xColumn = temDataPair->getEntity_x();
+        QString yColumn = temDataPair->getAttr_x();
 		xset.insert(xColumn);
 		yset.insert(yColumn);
 		m_horiGridNum = xset.size() + 1;

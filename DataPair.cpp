@@ -2,6 +2,9 @@
 #include <QDebug>
 #include <QPainter>
 #include <QTransform>
+#include <QUuid>
+
+#include "DataManager.h"
 DataPair::DataPair(QObject* parent)
 	: QObject(parent)
 {
@@ -38,57 +41,131 @@ DataPair::DataPair(QObject* parent)
 	m_data_show = true;
 
 	m_unit_show = true;
+
+    m_uuid = QUuid::createUuid().toString();
 }
 
-DataPair::DataPair(const QPair<QString, QString>& pair)
+DataPair::DataPair(int32_t xEntityID,
+                   const QString& xAttrName,
+                   const QString& xAttrUnitName,
+                   int32_t yEntityID,
+                   const QString& yAttrName,
+                   const QString& yAttrUnitName)
     : DataPair()
+
 {
-    m_dataPair = pair;
-	updatePairText(pair);
+    m_entityIDX = xEntityID;
+    m_entityIDY = yEntityID;
+    m_entity_x = DataManagerInstance->getEntityNameByID(xEntityID);
+    m_entity_y = DataManagerInstance->getEntityNameByID(yEntityID);
+    m_attr_x = xAttrName;
+    m_attr_y = yAttrName;
+    m_unit_x = xAttrUnitName;
+    m_unit_y = yAttrUnitName;
 }
 
 DataPair::~DataPair() {}
 
-void DataPair::updatePairText(QPair<QString, QString> pair)
+QString DataPair::getUuid() const
 {
-	m_object_x = nullptr;
-	m_object_y = nullptr;
-	m_attr_x = nullptr;
-	m_attr_y = nullptr;
-
-	QString xEntityType = pair.first;
-	QString yEntityType = pair.second;
-	QStringList xlist = xEntityType.split("+");
-	QStringList ylist = yEntityType.split("+");
-    if(xlist.size() == 1)
-	{
-		m_attr_x = xlist.at(0);
-	}
-    else if(xlist.size() == 2)
-	{
-		m_object_x = xlist.at(0);
-		m_attr_x = xlist.at(1);
-	}
-
-    if(ylist.size() == 1)
-	{
-		m_attr_y = ylist.at(0);
-	}
-    else if(ylist.size() == 2)
-	{
-		m_object_y = ylist.at(0);
-		m_attr_y = ylist.at(1);
-	}
+    return m_uuid;
 }
 
-void DataPair::setDataPair(const QPair<QString, QString>& data)
+void DataPair::setUuid(const QString& uuid)
 {
-    if(m_dataPair != data)
-    {
-        m_dataPair = data;
-        updatePairText(data);
-        emit dataUpdate();
-    }
+    m_uuid = uuid;
+}
+
+QString DataPair::getXEntityAttrPair()
+{
+    return QString("%1 %2").arg(m_entity_x).arg(m_attr_x);
+}
+
+QString DataPair::getYEntityAttrPair()
+{
+    return QString("%1 %2").arg(m_entity_y).arg(m_attr_y);
+}
+
+int32_t DataPair::getEntityIDX() const
+{
+    return m_entityIDX;
+}
+
+void DataPair::setEntityIDX(const int32_t& entityIDX)
+{
+    m_entityIDX = entityIDX;
+    m_entity_x = DataManagerInstance->getEntityNameByID(entityIDX);
+}
+
+int32_t DataPair::getEntityIDY() const
+{
+    return m_entityIDY;
+}
+
+void DataPair::setEntityIDY(const int32_t& entityIDY)
+{
+    m_entityIDY = entityIDY;
+    m_entity_y = DataManagerInstance->getEntityNameByID(entityIDY);
+}
+
+QString DataPair::getEntity_x() const
+{
+    return m_entity_x;
+}
+
+void DataPair::setEntity_x(const QString& entity_x)
+{
+    m_entity_x = entity_x;
+}
+
+QString DataPair::getEntity_y() const
+{
+    return m_entity_y;
+}
+
+void DataPair::setEntity_y(const QString& entity_y)
+{
+    m_entity_y = entity_y;
+}
+
+QString DataPair::getAttr_x() const
+{
+    return m_attr_x;
+}
+
+void DataPair::setAttr_x(const QString& attr_x)
+{
+    m_attr_x = attr_x;
+}
+
+QString DataPair::getAttr_y() const
+{
+    return m_attr_y;
+}
+
+void DataPair::setAttr_y(const QString& attr_y)
+{
+    m_attr_y = attr_y;
+}
+
+QString DataPair::getUnit_x() const
+{
+    return m_unit_x;
+}
+
+void DataPair::setUnit_x(const QString& unit_x)
+{
+    m_unit_x = unit_x;
+}
+
+QString DataPair::getUnit_y() const
+{
+    return m_unit_y;
+}
+
+void DataPair::setUnit_y(const QString& unit_y)
+{
+    m_unit_y = unit_y;
 }
 
 void DataPair::setLineWidth(int width)

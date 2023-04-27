@@ -61,7 +61,7 @@ private:
     // 时间以s为计算单位，小数位表示ms
     double m_minTime = 0.0;
     double m_maxTime = 0.0;
-    // 用于确定时间轴范围的时间信息
+    // 去重，用于确定时间轴范围的时间信息，数据中还保留原始的Time数据列表
     std::set<double> m_timeDataSet;
     // 参考年份，作为相对时间的计算基准
     int m_refYear = 1970;
@@ -81,28 +81,25 @@ public:
     const QMap<int32_t, QMap<QPair<QString, QString>, QList<double>>>& getDataMap();
     void getMinMaxTime(double& minTime, double& maxTime);
 	int getRefYear();
-    int getEntityAttr_MaxIndex_List(const QString& entity,
-                                    const QString& attr,
-                                    double secs); //获取secs时间内的实体-属性的最大index
+
+    //获取最小时间到secs时间内的实体-属性数据list
     QList<double>
-    getEntityAttr_Value_List(const QString& entity,
-                             const QString& attr = "Time"); //获取实体-属性的全数据，属性默认为Time
-    QList<double>
-    getEntityAttr_MaxPartValue_List(const QString& entity,
-                                    const QString& attr,
-                                    double secs); //获取最小时间到secs时间内的实体-属性数据list
-    QList<double>
-    getEntityAttr_PartValue_List(const QString& entity,
-                                 const QString& attr,
-                                 int minIndex,
-                                 int maxIndex); //获取minIndex到maxIndex内的实体-属性数据list
+    getEntityAttrValueListByMaxTime(int32_t entityID, const QString& attr, double secs);
+
     QVector<double> getTimeDataSet();
     // 根据id获取实例(数据里面称为Platform)名称
     QString getEntityNameByID(int32_t id);
+    // 获取所有的实例名称
+    QStringList getEntityNameList();
     // 根据id获取实例对应的属性和单位列表
     QList<QPair<QString, QString>> getAttrAndUnitPairList(int32_t id);
 
 private:
+    //获取实体-属性的全数据，属性默认为Time
+    QList<double> getEntityAttrValueList(int32_t entityID, const QString& attr = "Time");
+    //获取secs时间内的实体-属性的最大index
+    int getEntityAttrMaxIndexByTime(int32_t entityID, double secs);
+
     // 加载带时间信息的csv数据
     void loadCSVData(const QString& filePath);
     // 加载ASI格式的数据（二维类型）

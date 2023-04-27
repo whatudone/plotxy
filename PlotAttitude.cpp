@@ -352,7 +352,7 @@ void PlotAttitude::setUnitsY(const QString& units)
 	update();
 }
 
-void PlotAttitude::updateItems()
+void PlotAttitude::updateGraph()
 {
 	int xSize = m_xValueList.size();
 	int ySize = m_yValueList.size();
@@ -508,18 +508,20 @@ void PlotAttitude::slot_setRollValue(double rollValue)
 
 void PlotAttitude::updateDataForDataPairsByTime(double secs)
 {
-
-    int isize = getDataPairs().size();
-    QString xcolumn = getDataPairs().at(isize - 1)->getDataPair().first;
-    QString ycolumn = getDataPairs().at(isize - 1)->getDataPair().second;
-    QStringList xlist = xcolumn.split("+");
-    QStringList ylist = ycolumn.split("+");
-
+    if(getDataPairs().isEmpty())
+    {
+        return;
+    }
+    auto dataPair = getDataPairs().last();
+    auto xEntityID = dataPair->getEntityIDX();
+    auto yEntityID = dataPair->getEntityIDY();
+    auto xAttr = dataPair->getAttr_x();
+    auto yAttr = dataPair->getAttr_y();
     m_xValueList =
-        DataManager::getInstance()->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs);
+        DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
     m_yValueList =
-        DataManager::getInstance()->getEntityAttr_MaxPartValue_List(ylist.at(0), ylist.at(1), secs);
-    updateItems();
+        DataManager::getInstance()->getEntityAttrValueListByMaxTime(yEntityID, yAttr, secs);
+    updateGraph();
 }
 
 void PlotAttitude::customPainting(QPainter& painter)

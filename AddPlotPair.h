@@ -50,7 +50,12 @@ private:
 
     void initTreePlot();
 	PlotType getPlotType(PlotItemBase*);
-    bool getCurrentSelectParam(QString&, QString&);
+    bool getCurrentSelectParam(int32_t& xEntityID,
+                               QString& xAttrName,
+                               QString& xAttrUnitName,
+                               int32_t& yEntityID,
+                               QString& yAttrName,
+                               QString& yAttrUnitName);
 
     // 根据点击的实体选项切换对应表格里面的属性列表
     void updateAttrTableWidgetOnEntityChanged(QTableWidgetItem* entityItem,
@@ -86,7 +91,9 @@ public slots:
 private:
     Ui::AddPlotPair ui;
 
-	BaseInfo m_curPlotInfo;
+    QString m_currTabName;
+    QString m_currPlotName;
+    // 添加数据内部选中的图表，方便直接操作，不影响主界面上选中的图表
     PlotItemBase* m_pCurSelectedPlot = nullptr;
 
 	QTreeWidget* m_treePlot;

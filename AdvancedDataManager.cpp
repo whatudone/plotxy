@@ -331,11 +331,10 @@ void AdvancedDataManager::onTableWidget_plotpairItemSelectionChanged()
 	ui.pushButton_delete->setEnabled(true);
 	subSettingWidgetContainer->setEnabled(true);
 
-	QString xText = ui.tableWidget_plotpair->item(row, 0)->text();
-	QString yText = ui.tableWidget_plotpair->item(row, 1)->text();
 	QString plotName = ui.tableWidget_plotpair->item(row, 2)->text();
 	QString tabName = ui.tableWidget_plotpair->item(row, 3)->text();
-	QPair<QString, QString> tempPair = qMakePair(xText, yText);
+    // 取出datapair uuid
+    QString uuid = ui.tableWidget_plotpair->item(row, 0)->data(Qt::UserRole + 1).toString();
     auto plotDataMap = PlotManagerData::getInstance()->getPlotManagerData();
     if(plotDataMap.contains(tabName))
 	{
@@ -349,7 +348,7 @@ void AdvancedDataManager::onTableWidget_plotpairItemSelectionChanged()
                 auto dataSize = dataPair.size();
                 for(int k = 0; k < dataSize; ++k)
 				{
-                    if(dataPair.at(k)->getDataPair() == tempPair)
+                    if(dataPair.at(k)->getUuid() == uuid)
 					{
                         m_curSelectDatapair = dataPair.at(k);
 						break;
@@ -416,16 +415,8 @@ void AdvancedDataManager::onPushButton_deleteClicked()
     if(m_curSelectPlot == nullptr || m_curSelectDatapair == nullptr)
 		return;
 
-    for(int i = 0; i < m_curSelectPlot->getDataPairs().size(); ++i)
-	{
-        if(*m_curSelectDatapair == m_curSelectPlot->getDataPairs().at(i)->getDataPair())
-		{
-            QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
-			vec.remove(i);
-			m_curSelectPlot->setDataPair(vec);
-			break;
-		}
-	}
+    // TODO:需要查看后续是否自动触发了数据对表格的刷新函数，那里面重置了这两个选中指针
+    m_curSelectPlot->delPlotPairData(m_curSelectDatapair->getUuid());
 }
 
 void AdvancedDataManager::onGeneral_draw(bool on)
@@ -769,14 +760,16 @@ void AdvancedDataManager::onUpdatePlotPair()
         for(int j = 0; j < plotData[tabString].size(); ++j)
 		{
             PlotItemBase* tempPlot = plotData[tabString].at(j);
-            QVector<DataPair*> dataPair = tempPlot->getDataPairs();
-            for(int k = 0; k < dataPair.size(); ++k)
+            QVector<DataPair*> dataPairs = tempPlot->getDataPairs();
+            for(int k = 0; k < dataPairs.size(); ++k)
 			{
+                auto dataPair = dataPairs[k];
 				//界面更新
-				QTableWidgetItem* data1 = new QTableWidgetItem(dataPair[k]->getDataPair().first);
-				QTableWidgetItem* data2 = new QTableWidgetItem(dataPair[k]->getDataPair().second);
+                QTableWidgetItem* data1 = new QTableWidgetItem(dataPair->getXEntityAttrPair());
+                data1->setData(Qt::UserRole + 1, dataPair->getUuid());
+                QTableWidgetItem* data2 = new QTableWidgetItem(dataPair->getYEntityAttrPair());
 				QTableWidgetItem* data3 = new QTableWidgetItem(tempPlot->getName());
-				QTableWidgetItem* data4 = new QTableWidgetItem(tempPlot->currTabName());
+				QTableWidgetItem* data4 = new QTableWidgetItem(tempPlot->getTabName());
 				int row = ui.tableWidget_plotpair->rowCount();
 				ui.tableWidget_plotpair->insertRow(row);
 				ui.tableWidget_plotpair->setItem(row, 0, data1);

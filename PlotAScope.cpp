@@ -157,41 +157,17 @@ void PlotAScope::setTitleFillColor(QColor& color)
     update();
 }
 
-void PlotAScope::addPlotPairData(const QPair<QString, QString>& pair)
-{
-    auto graph = m_customPlot->addGraph();
-    m_graphMap.insert(pair, graph);
-    // 先创建map数据，后续基类中发送的信号会触发更新，使用到结构体中的指针。所以需要最后调用基类接口
-    PlotItemBase::addPlotPairData(pair);
-}
-
-void PlotAScope::delPlotPairData(const QPair<QString, QString>& pair)
+void PlotAScope::delPlotPairData(const QString& uuid)
 {
     if(m_dataPairs.isEmpty())
         return;
-    if(m_graphMap.contains(pair))
+    if(m_graphMap.contains(uuid))
     {
-        auto graph = m_graphMap.take(pair);
+        auto graph = m_graphMap.take(uuid);
         m_customPlot->removeGraph(graph);
     }
 
-    PlotItemBase::delPlotPairData(pair);
-}
-
-void PlotAScope::updatePlotPairData(const QPair<QString, QString>& oldPair,
-                                    const QPair<QString, QString>& newPair)
-{
-    if(m_dataPairs.isEmpty())
-        return;
-    if(m_graphMap.contains(oldPair))
-    {
-        auto oldGraph = m_graphMap.take(oldPair);
-        m_customPlot->removeGraph(oldGraph);
-        auto newGraph = m_customPlot->addGraph();
-        m_graphMap.insert(newPair, newGraph);
-    }
-
-    PlotItemBase::updatePlotPairData(oldPair, newPair);
+    PlotItemBase::delPlotPairData(uuid);
 }
 
 void PlotAScope::updateDataForDataPairsByTime(double secs)
@@ -203,19 +179,28 @@ void PlotAScope::updateDataForDataPairsByTime(double secs)
 
     for(int i = 0; i < itemCnt; ++i)
     {
-        updateGraph(secs, i, m_dataPairs.at(i));
+        updateGraph(secs, m_dataPairs.at(i));
     }
     m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
-void PlotAScope::updateGraph(double secs, int index, DataPair* data)
+void PlotAScope::updateGraph(double secs, DataPair* data)
 {
     if(!data)
     {
         return;
     }
-    QPair<QString, QString> dataPair = data->getDataPair();
-    auto graph = m_graphMap.value(dataPair);
+    QString uuid = data->getUuid();
+    QCPGraph* graph = nullptr;
+    if(m_graphMap.contains(uuid))
+    {
+        graph = m_graphMap.value(uuid);
+    }
+    else
+    {
+        graph = m_customPlot->addGraph();
+        m_graphMap.insert(uuid, graph);
+    }
     if(!graph)
     {
         return;
@@ -223,42 +208,7 @@ void PlotAScope::updateGraph(double secs, int index, DataPair* data)
     if(data->isDraw())
     {
         QVector<double> x, y;
-        QString xEntityType = dataPair.first;
-        QString yEntityType = dataPair.second;
-        QStringList xlist = xEntityType.split("+");
-        QStringList ylist = yEntityType.split("+");
-        if(xlist.size() == 1 && ylist.size() == 1)
-        {
-            x = DataManager::getInstance()->getTimeDataSet();
-            y = DataManager::getInstance()->getTimeDataSet();
-        }
-        else if(xlist.size() == 1 && ylist.size() == 2)
-        {
-            x = DataManager::getInstance()
-                    ->getEntityAttr_MaxPartValue_List(ylist.at(0), xlist.at(0), secs)
-                    .toVector();
-            y = DataManager::getInstance()
-                    ->getEntityAttr_MaxPartValue_List(ylist.at(0), ylist.at(1), secs)
-                    .toVector();
-        }
-        else if(xlist.size() == 2 && ylist.size() == 1)
-        {
-            x = DataManager::getInstance()
-                    ->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs)
-                    .toVector();
-            y = DataManager::getInstance()
-                    ->getEntityAttr_MaxPartValue_List(xlist.at(0), ylist.at(0), secs)
-                    .toVector();
-        }
-        else
-        {
-            x = DataManager::getInstance()
-                    ->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs)
-                    .toVector();
-            y = DataManager::getInstance()
-                    ->getEntityAttr_MaxPartValue_List(ylist.at(0), ylist.at(1), secs)
-                    .toVector();
-        }
+        // TODO:数据结构还没定好，暂时没有数据提供
 
         if(x.isEmpty() || y.isEmpty())
             return;
@@ -326,8 +276,8 @@ void PlotAScope::updateGraph(double secs, int index, DataPair* data)
                 if(data->isObjectShow() && !data->isPrefixShow() && !data->isAttrShow() &&
                    !data->isDataShow() && !data->isUnitShow())
                 {
-                    object_x = data->getObjectName_x();
-                    object_y = data->getObjectName_y();
+                    object_x = data->getEntity_x();
+                    object_y = data->getEntity_y();
                     //实体名相同时，仅显示一个实体名
                     if(0 == object_x.compare(object_y) && !object_x.isEmpty() &&
                        !object_y.isEmpty())
@@ -353,14 +303,14 @@ void PlotAScope::updateGraph(double secs, int index, DataPair* data)
 
                     if(data->isObjectShow())
                     {
-                        object_x = data->getObjectName_x();
-                        object_y = data->getObjectName_y();
+                        object_x = data->getEntity_x();
+                        object_y = data->getEntity_y();
                     }
 
                     if(data->isAttrShow())
                     {
-                        attr_x = data->getAttrName_x();
-                        attr_y = data->getAttrName_y();
+                        attr_x = data->getAttr_x();
+                        attr_y = data->getAttr_y();
                     }
 
                     if(data->isDataShow())

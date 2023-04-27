@@ -39,14 +39,13 @@ public:
         rotation_270
     };
     DataPair(QObject* parent = nullptr);
-    DataPair(const QPair<QString, QString>& pair);
+    DataPair(int32_t xEntityID,
+             const QString& xAttrName,
+             const QString& xAttrUnitName,
+             int32_t yEntityID,
+             const QString& yAttrName,
+             const QString& yAttrUnitName);
 	~DataPair();
-
-    const QPair<QString, QString>& getDataPair()
-    {
-        return m_dataPair;
-    }
-    void setDataPair(const QPair<QString, QString>& data);
 
     int lineWidth()
     {
@@ -238,39 +237,45 @@ public:
     }
 	void setUnitShow(bool);
 
-    QString getObjectName_x()
-    {
-        return m_object_x;
-    }
-    QString getObjectName_y()
-    {
-        return m_object_y;
-    }
-    QString getAttrName_x()
-    {
-        return m_attr_x;
-    }
-    QString getAttrName_y()
-    {
-        return m_attr_y;
-    }
-    QString getUnit_x()
-    {
-        return m_unit_x;
-    }
-    QString getUnit_y()
-    {
-        return m_unit_y;
-    }
-
-	void updatePairText(QPair<QString, QString> pair);
     bool operator==(const DataPair& other) const
     {
-        return this->m_dataPair == other.m_dataPair;
+        return (m_entityIDX == other.m_entityIDX) && (m_entityIDY == other.m_entityIDY) &&
+               (m_attr_x == other.m_attr_x) && (m_attr_y == other.m_attr_y) &&
+               (m_unit_x == other.m_unit_x) && (m_unit_y == other.m_unit_y);
     }
 
+    QString getUuid() const;
+    void setUuid(const QString& uuid);
+    // 返回x轴实体和属性的拼接字符串,方便展示
+    QString getXEntityAttrPair();
+    // 返回Y轴实体和属性的拼接字符串
+    QString getYEntityAttrPair();
+
+    int32_t getEntityIDX() const;
+    void setEntityIDX(const int32_t& entityIDX);
+
+    int32_t getEntityIDY() const;
+    void setEntityIDY(const int32_t& entityIDY);
+
+    QString getEntity_x() const;
+    void setEntity_x(const QString& entity_x);
+
+    QString getEntity_y() const;
+    void setEntity_y(const QString& entity_y);
+
+    QString getAttr_x() const;
+    void setAttr_x(const QString& attr_x);
+
+    QString getAttr_y() const;
+    void setAttr_y(const QString& attr_y);
+
+    QString getUnit_x() const;
+    void setUnit_x(const QString& unit_x);
+
+    QString getUnit_y() const;
+    void setUnit_y(const QString& unit_y);
+
 private:
-    QPair<QString, QString> m_dataPair; //数据对，X和Y对应的属性名称
     int m_lineWidth; //线宽
     bool m_isDraw; //是否绘制
     QColor m_color; //数据颜色
@@ -296,20 +301,23 @@ private:
     int m_labelFontSize; //文本字体大小
     int m_labelPrec_x; //x轴显示精度
     int m_labelPrec_y; //y轴显示精度
-    QString m_unit_x; //x轴单位
-    QString m_unit_y; //y轴单位
     TEXT_POSITION m_textPosition; //文本位置
     bool m_labelText_show; //文本是否显示
     bool m_prefix_show; //前缀是否显示
-    QString m_object_x; //x轴实体名
-    QString m_object_y; //y轴实体名
-    bool m_object_show; //实体名是否显示
+    int32_t m_entityIDX; //x轴实体ID
+    int32_t m_entityIDY; //y轴实体ID
+    QString m_entity_x; //x轴实体名
+    QString m_entity_y; //y轴实体名
     QString m_attr_x; //x轴属性
     QString m_attr_y; //y轴属性
+    QString m_unit_x; //x轴单位
+    QString m_unit_y; //y轴单位
+    bool m_object_show; //实体名是否显示
     bool m_attr_show; //属性是否显示
     bool m_data_show; //数据是否显示
     bool m_unit_show; //单位是否显示
-
+    // 自动生成的唯一标识符
+    QString m_uuid;
 signals:
 	void dataUpdate();
 };

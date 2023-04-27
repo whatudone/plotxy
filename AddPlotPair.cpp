@@ -370,7 +370,7 @@ void AddPlotPair::updatePlotTrees(const QMap<QString, QList<PlotItemBase*>>& plo
             QTreeWidgetItem* itemselPlotI = new QTreeWidgetItem(QStringList() << plotString);
             itemselPlotH->addChild(itemselPlotI);
         }
-        //m_curPlotInfo.Base_TabName = tabString; 这个玩意需要更新下
+        //m_currTabName = tabString; 这个玩意需要更新下
     }
 }
 
@@ -428,48 +428,53 @@ PlotType AddPlotPair::getPlotType(PlotItemBase* plotItem)
     return type;
 }
 
-bool AddPlotPair::getCurrentSelectParam(QString& strSum1, QString& strSum2)
+bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
+                                        QString& xAttrName,
+                                        QString& xAttrUnitName,
+                                        int32_t& yEntityID,
+                                        QString& yAttrName,
+                                        QString& yAttrUnitName)
 {
+    // 11种图表这里归纳为5种添加数据的界面
+    // TODO:AScope三种图表还没实现 ，范围计算还没实现
     int index = ui.stackedWidget->currentIndex();
-    QString strEntity1, strNameUnit1, strEntity2, strNameUnit2, strSum3;
-    //    QPair<QString, QString> p1, p2;
 
     switch(index)
     {
+    // Bar Dial Track
     case 0:
+        // parameter
         if(ui.radioButton->isChecked())
         {
             if(ui.tableWidget_Entity->currentItem() == nullptr ||
                ui.tableWidget_nameUnits->item(ui.tableWidget_nameUnits->currentRow(), 0) == nullptr)
                 return false;
 
-            strEntity1 = ui.tableWidget_Entity->currentItem()->text();
-            strNameUnit1 =
+            xEntityID = ui.tableWidget_Entity->currentItem()->data(Qt::UserRole + 1).toInt();
+            xAttrName =
                 ui.tableWidget_nameUnits->item(ui.tableWidget_nameUnits->currentRow(), 0)->text();
-
-            //			strSum1 = strEntity1 + "+" + strNameUnit1;
+            xAttrUnitName =
+                ui.tableWidget_nameUnits->item(ui.tableWidget_nameUnits->currentRow(), 1)->text();
         }
+        // 范围计算
         else if(ui.radioButton_2->isChecked())
         {
             if(ui.tableWidget_Entity_9->currentItem() == nullptr ||
                ui.tableWidget_Entity_10->currentItem() == nullptr)
                 return false;
 
-            strEntity1 = ui.tableWidget_Entity_9->currentItem()->text();
-            strNameUnit1 = ui.tableWidget_Entity_10->currentItem()->text();
-            //			strSum1 = strEntity1 + "+" + strNameUnit1;
+            //            strEntity1 = ui.tableWidget_Entity_9->currentItem()->text();
+            //            strNameUnit1 = ui.tableWidget_Entity_10->currentItem()->text();
         }
+        // 固定y轴为时间
+        yAttrName = "Time";
 
-        strSum1 = strEntity1 + "+" + strNameUnit1;
-        strSum2 = "Time";
-
-        //		emit sigAddPlotPair(strEntity1, strNameUnit1);
         break;
-
+    // scatter polar
     case 1:
         if(ui.radioButton_7->isChecked())
         {
-            strSum1 = "Time";
+            xAttrName = "Time";
         }
         else if(ui.radioButton_5->isChecked())
         {
@@ -478,11 +483,13 @@ bool AddPlotPair::getCurrentSelectParam(QString& strSum1, QString& strSum2)
                    nullptr)
                 return false;
 
-            strEntity1 = ui.tableWidget_Entity_2->currentItem()->text();
-            strNameUnit1 =
+            xEntityID = ui.tableWidget_Entity_2->currentItem()->data(Qt::UserRole + 1).toInt();
+            xAttrName =
                 ui.tableWidget_nameUnits_2->item(ui.tableWidget_nameUnits_2->currentRow(), 0)
                     ->text();
-            strSum1 = strEntity1 + "+" + strNameUnit1;
+            xAttrUnitName =
+                ui.tableWidget_nameUnits_2->item(ui.tableWidget_nameUnits_2->currentRow(), 1)
+                    ->text();
         }
         else if(ui.radioButton_6->isChecked())
         {
@@ -490,14 +497,13 @@ bool AddPlotPair::getCurrentSelectParam(QString& strSum1, QString& strSum2)
                ui.tableWidget_Entity_6->currentItem() == nullptr)
                 return false;
 
-            strEntity1 = ui.tableWidget_Entity_5->currentItem()->text();
-            strNameUnit1 = ui.tableWidget_Entity_6->currentItem()->text();
-            strSum1 = strEntity1 + "+" + strNameUnit1;
+            //            strEntity1 = ui.tableWidget_Entity_5->currentItem()->text();
+            //            strNameUnit1 = ui.tableWidget_Entity_6->currentItem()->text();
         }
 
         if(ui.radioButton_8->isChecked())
         {
-            strSum2 = "Time";
+            yAttrName = "Time";
         }
         else if(ui.radioButton_3->isChecked())
         {
@@ -506,11 +512,13 @@ bool AddPlotPair::getCurrentSelectParam(QString& strSum1, QString& strSum2)
                    nullptr)
                 return false;
 
-            strEntity2 = ui.tableWidget_Entity_3->currentItem()->text();
-            strNameUnit2 =
+            yEntityID = ui.tableWidget_Entity_3->currentItem()->data(Qt::UserRole + 1).toInt();
+            yAttrName =
                 ui.tableWidget_nameUnits_3->item(ui.tableWidget_nameUnits_3->currentRow(), 0)
                     ->text();
-            strSum2 = strEntity2 + "+" + strNameUnit2;
+            yAttrUnitName =
+                ui.tableWidget_nameUnits_3->item(ui.tableWidget_nameUnits_3->currentRow(), 1)
+                    ->text();
         }
         else if(ui.radioButton_4->isChecked())
         {
@@ -518,11 +526,11 @@ bool AddPlotPair::getCurrentSelectParam(QString& strSum1, QString& strSum2)
                ui.tableWidget_Entity_8->currentItem() == nullptr)
                 return false;
 
-            strEntity2 = ui.tableWidget_Entity_7->currentItem()->text();
-            strNameUnit2 = ui.tableWidget_Entity_8->currentItem()->text();
-            strSum2 = strEntity2 + "+" + strNameUnit2;
+            //            strEntity2 = ui.tableWidget_Entity_7->currentItem()->text();
+            //            strNameUnit2 = ui.tableWidget_Entity_8->currentItem()->text();
         }
         break;
+        // Attitude
     case 2:
         if(ui.tableWidget_Entity_Attitude1->currentItem() == nullptr ||
            ui.tableWidget_nameUnits_Attitude1->item(
@@ -532,22 +540,28 @@ bool AddPlotPair::getCurrentSelectParam(QString& strSum1, QString& strSum2)
                ui.tableWidget_nameUnits_Attitude2->currentRow(), 0) == nullptr)
             return false;
 
-        strEntity1 = ui.tableWidget_Entity_Attitude1->currentItem()->text();
-        strNameUnit1 = ui.tableWidget_nameUnits_Attitude1
-                           ->item(ui.tableWidget_nameUnits_Attitude1->currentRow(), 0)
-                           ->text();
-        strSum1 = strEntity1 + "+" + strNameUnit1;
-        strEntity2 = ui.tableWidget_Entity_Attitude2->currentItem()->text();
-        strNameUnit2 = ui.tableWidget_nameUnits_Attitude2
-                           ->item(ui.tableWidget_nameUnits_Attitude2->currentRow(), 0)
-                           ->text();
-        strSum2 = strEntity2 + "+" + strNameUnit2;
+        xEntityID = ui.tableWidget_Entity_Attitude1->currentItem()->data(Qt::UserRole + 1).toInt();
+        xAttrName = ui.tableWidget_nameUnits_Attitude1
+                        ->item(ui.tableWidget_nameUnits_Attitude1->currentRow(), 0)
+                        ->text();
+        xAttrUnitName = ui.tableWidget_nameUnits_Attitude1
+                            ->item(ui.tableWidget_nameUnits_Attitude1->currentRow(), 1)
+                            ->text();
+
+        yEntityID = ui.tableWidget_Entity_Attitude2->currentItem()->data(Qt::UserRole + 1).toInt();
+        yAttrName = ui.tableWidget_nameUnits_Attitude2
+                        ->item(ui.tableWidget_nameUnits_Attitude2->currentRow(), 0)
+                        ->text();
+        yAttrUnitName = ui.tableWidget_nameUnits_Attitude2
+                            ->item(ui.tableWidget_nameUnits_Attitude2->currentRow(), 1)
+                            ->text();
 
         break;
+        // Text
     case 3:
         if(ui.radioButton_12->isChecked())
         {
-            strSum1 = "Time";
+            xAttrName = "Time";
         }
         else if(ui.radioButton_9->isChecked())
         {
@@ -556,13 +570,15 @@ bool AddPlotPair::getCurrentSelectParam(QString& strSum1, QString& strSum2)
                    nullptr)
                 return false;
 
-            strEntity1 = ui.tableWidget_Entity_4->currentItem()->text();
-            strNameUnit1 =
+            xEntityID = ui.tableWidget_Entity_4->currentItem()->data(Qt::UserRole + 1).toInt();
+            xAttrName =
                 ui.tableWidget_nameUnits_4->item(ui.tableWidget_nameUnits_4->currentRow(), 0)
                     ->text();
+            xAttrUnitName =
+                ui.tableWidget_nameUnits_4->item(ui.tableWidget_nameUnits_4->currentRow(), 1)
+                    ->text();
 
-            strSum1 = strEntity1 + "+" + strNameUnit1;
-            strSum2 = "Time";
+            yAttrName = "Time";
             emit sgn_onTextLightBtnClicked();
         }
         else if(ui.radioButton_10->isChecked())
@@ -570,6 +586,7 @@ bool AddPlotPair::getCurrentSelectParam(QString& strSum1, QString& strSum2)
         else if(ui.radioButton_11->isChecked())
         {}
         break;
+        // light
     case 4: {
         if(ui.radioButton_lightParameter->isChecked())
         {
@@ -577,13 +594,15 @@ bool AddPlotPair::getCurrentSelectParam(QString& strSum1, QString& strSum2)
                ui.tableWidget_lightNameUnits->item(ui.tableWidget_lightNameUnits->currentRow(),
                                                    0) == nullptr)
                 return false;
-            strEntity1 = ui.tableWidget_lightEntity->currentItem()->text();
-            strNameUnit1 =
+            xEntityID = ui.tableWidget_lightEntity->currentItem()->data(Qt::UserRole + 1).toInt();
+            xAttrName =
                 ui.tableWidget_lightNameUnits->item(ui.tableWidget_lightNameUnits->currentRow(), 0)
                     ->text();
+            xAttrUnitName =
+                ui.tableWidget_lightNameUnits->item(ui.tableWidget_lightNameUnits->currentRow(), 1)
+                    ->text();
 
-            strSum1 = strEntity1 + "+" + strNameUnit1;
-            strSum2 = "Time";
+            yAttrName = "Time";
         }
         break;
     }
@@ -613,35 +632,28 @@ void AddPlotPair::updateAttrTableWidgetOnEntityChanged(QTableWidgetItem* entityI
         attrTableWidget->setItem(i, 1, new QTableWidgetItem(unit));
     }
 }
-
+// 添加数据对
 void AddPlotPair::onBtnAddClicked()
 {
-    QString strSum1, strSum2;
+    int32_t xEntityID;
+    QString xAttrName;
+    QString xAttrUnitName;
+    int32_t yEntityID;
+    QString yAttrName;
+    QString yAttrUnitName;
 
-    if(!getCurrentSelectParam(strSum1, strSum2))
-        return;
-    QPair<QString, QString> p1 = qMakePair(strSum1, strSum2);
-    auto plotData = PlotManagerData::getInstance()->getPlotManagerData();
-    if(plotData.contains(m_curPlotInfo.Base_TabName))
+    if(!getCurrentSelectParam(
+           xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName))
     {
-        for(int i = 0; i < plotData[m_curPlotInfo.Base_TabName].size(); ++i)
-        {
-            PlotItemBase* tempPlot = plotData[m_curPlotInfo.Base_TabName].at(i);
-            if(m_curPlotInfo.Base_PlotName == tempPlot->getName())
-            {
-                tempPlot->addPlotPairData(p1);
-                break;
-            }
-        }
-        //		emit sgn_updatePlotPair(m_curPlotInfo.Base_TabName, m_curPlotInfo.Base_PlotName);
+        return;
     }
 
-    // 	QTableWidgetItem* addplot1 = new QTableWidgetItem(strSum1);
-    // 	QTableWidgetItem* addplot2 = new QTableWidgetItem(strSum2);
-    // 	int row = ui.tableWidget_union->rowCount();
-    // 	ui.tableWidget_union->insertRow(row);
-    // 	ui.tableWidget_union->setItem(row, 0, addplot1);
-    // 	ui.tableWidget_union->setItem(row, 1, addplot2);
+    // TODO:m_pCurSelectedPlot初始化的没有值，需要完善
+    if(m_pCurSelectedPlot)
+    {
+        m_pCurSelectedPlot->addPlotDataPair(
+            xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
+    }
 }
 
 void AddPlotPair::onTableWidgetItemClicked(QTableWidgetItem* curItem)
@@ -741,21 +753,22 @@ void AddPlotPair::onDoubleClickedTreeWidgetItem(QTreeWidgetItem* item, int colum
             if(child_text == tempPlot->getName())
             {
                 onChangeStackIndex(getPlotType(tempPlot));
-                m_curPlotInfo.Base_TabName = parent_text;
-                m_curPlotInfo.Base_PlotName = child_text;
+                // 更新当前选中的图表
+                m_pCurSelectedPlot = tempPlot;
+                m_currTabName = parent_text;
+                m_currPlotName = child_text;
 
-                ui.tableWidget_union->setRowCount(0);
-
-                QVector<DataPair*> dataPair = tempPlot->getDataPairs();
-                for(int k = 0; k < dataPair.size(); ++k)
+                QVector<DataPair*> dataPairs = tempPlot->getDataPairs();
+                ui.tableWidget_union->setRowCount(dataPairs.size());
+                for(int row = 0; row < dataPairs.size(); ++row)
                 {
+                    auto dataPair = dataPairs.value(row);
                     //界面更新
                     QTableWidgetItem* addplot1 =
-                        new QTableWidgetItem(dataPair[k]->getDataPair().first);
+                        new QTableWidgetItem(dataPair->getXEntityAttrPair());
                     QTableWidgetItem* addplot2 =
-                        new QTableWidgetItem(dataPair[k]->getDataPair().second);
-                    int row = ui.tableWidget_union->rowCount();
-                    ui.tableWidget_union->insertRow(row);
+                        new QTableWidgetItem(dataPair->getYEntityAttrPair());
+                    addplot1->setData(Qt::UserRole + 1, dataPair->getUuid());
                     ui.tableWidget_union->setItem(row, 0, addplot1);
                     ui.tableWidget_union->setItem(row, 1, addplot2);
                 }
@@ -764,39 +777,29 @@ void AddPlotPair::onDoubleClickedTreeWidgetItem(QTreeWidgetItem* item, int colum
         }
     }
 }
-
+// 更新已经添加的DataPair里面的数据
 void AddPlotPair::onBtnUpdateClicked()
 {
     int row = ui.tableWidget_union->currentRow();
     if(row != -1)
     {
-        QString strSum1, strSum2;
-        QPair<QString, QString> pOld, pNew;
-
-        QString str1 = ui.tableWidget_union->item(row, 0)->text();
-        QString str2 = ui.tableWidget_union->item(row, 1)->text();
-        pOld = qMakePair(str1, str2);
-
-        if(false == getCurrentSelectParam(strSum1, strSum2))
-            return;
-
-        pNew = qMakePair(strSum1, strSum2);
-
-        // 		ui.tableWidget_union->item(row, 0)->setText(strSum1);
-        // 		ui.tableWidget_union->item(row, 1)->setText(strSum2);
-        auto plotData = PlotManagerData::getInstance()->getPlotManagerData();
-        if(plotData.contains(m_curPlotInfo.Base_TabName))
+        int32_t xEntityID;
+        QString xAttrName;
+        QString xAttrUnitName;
+        int32_t yEntityID;
+        QString yAttrName;
+        QString yAttrUnitName;
+        if(!getCurrentSelectParam(
+               xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName))
         {
-            for(int i = 0; i < plotData[m_curPlotInfo.Base_TabName].size(); ++i)
-            {
-                PlotItemBase* tempPlot = plotData[m_curPlotInfo.Base_TabName].at(i);
-                if(m_curPlotInfo.Base_PlotName == tempPlot->getName())
-                {
-                    tempPlot->updatePlotPairData(pOld, pNew);
-                    break;
-                }
-            }
-            //	emit sgn_updatePlotPair(m_curPlotInfo.Base_TabName, m_curPlotInfo.Base_PlotName);
+            return;
+        }
+        if(m_pCurSelectedPlot)
+        {
+            // 从data中取出添加过的uuid数据
+            QString uuid = ui.tableWidget_union->item(row, 0)->data(Qt::UserRole + 1).toString();
+            m_pCurSelectedPlot->updatePlotPairData(
+                uuid, xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
         }
     }
 }
@@ -806,26 +809,12 @@ void AddPlotPair::onBtnRemoveClicked()
     int row = ui.tableWidget_union->currentRow();
     if(row != -1)
     {
-        QString str1 = ui.tableWidget_union->item(row, 0)->text();
-        QString str2 = ui.tableWidget_union->item(row, 1)->text();
-
-        QPair<QString, QString> pair = qMakePair(str1, str2);
-        auto plotData = PlotManagerData::getInstance()->getPlotManagerData();
-        if(plotData.contains(m_curPlotInfo.Base_TabName))
+        if(m_pCurSelectedPlot)
         {
-            for(int i = 0; i < plotData[m_curPlotInfo.Base_TabName].size(); ++i)
-            {
-                PlotItemBase* tempPlot = plotData[m_curPlotInfo.Base_TabName].at(i);
-                if(m_curPlotInfo.Base_PlotName == tempPlot->getName())
-                {
-                    tempPlot->delPlotPairData(pair);
-                    break;
-                }
-            }
-            //	emit sgn_updatePlotPair(m_curPlotInfo.Base_TabName, m_curPlotInfo.Base_PlotName);
+            // 从data中取出添加过的uuid数据
+            QString uuid = ui.tableWidget_union->item(row, 0)->data(Qt::UserRole + 1).toString();
+            m_pCurSelectedPlot->delPlotPairData(uuid);
         }
-
-        //	ui.tableWidget_union->removeRow(row);
     }
 }
 
@@ -885,7 +874,7 @@ void AddPlotPair::onUpdatePlotPair(PlotItemBase* pBaseItem)
     {
         foreach(QTreeWidgetItem* item, items)
         {
-            if(item->parent() != nullptr && item->parent()->text(0) == pBaseItem->currTabName())
+            if(item->parent() != nullptr && item->parent()->text(0) == pBaseItem->getTabName())
             {
                 m_treePlot->itemDoubleClicked(item, 0);
 
@@ -910,8 +899,8 @@ void AddPlotPair::onBtnLightAddClicked()
     QPair<QString, QString> temPair;
     QString temEntity;
     //    QString temAttr;
-    QString parent_text = m_curPlotInfo.Base_TabName;
-    //    QString child_text = m_curPlotInfo.Base_PlotName;
+    QString parent_text = m_currTabName;
+    //    QString child_text = m_currPlotName;
     auto plotData = PlotManagerData::getInstance()->getPlotManagerData();
     for(int i = 0; i < plotData[parent_text].size(); ++i)
     {
@@ -919,9 +908,9 @@ void AddPlotPair::onBtnLightAddClicked()
         QVector<DataPair*> temDataPair = tempPlot->getDataPairs();
         for(int i = 0; i < temDataPair.size(); i++)
         {
-            temPair = temDataPair.at(i)->getDataPair();
-            temEntity = temPair.first;
-            newCount0->addItem(temEntity);
+            // TODO:需要弄清楚意图
+            QString text = temDataPair.at(i)->getXEntityAttrPair();
+            newCount0->addItem(text);
         }
         ui.tableWidget_LightSet->setCellWidget(iRow, 0, newCount0);
     }
@@ -939,21 +928,9 @@ void AddPlotPair::onBtnLightDeleteClicked()
     int rowIdx = ui.tableWidget_LightSet->currentRow();
     if(rowIdx != -1)
     {
-        if(rowIdx == 0)
-        {
-            QMessageBox* temMessage = new QMessageBox(nullptr);
-            temMessage->setText(QString("示例行请勿删除"));
-            temMessage->show();
-        }
-        else
-            ui.tableWidget_LightSet->removeRow(rowIdx);
+        ui.tableWidget_LightSet->removeRow(rowIdx);
     }
-    else
-    {
-        QMessageBox* temMessage = new QMessageBox(nullptr);
-        temMessage->setText(QString("请先点选要删除的行"));
-        temMessage->show();
-    }
+
     ui.tableWidget_LightSet->setCurrentCell(0, 0);
 }
 

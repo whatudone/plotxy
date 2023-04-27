@@ -58,23 +58,18 @@ public:
         return Type_PlotAScope;
     }
 
-    void addPlotPairData(const QPair<QString, QString>& pair) override;
-
-    void delPlotPairData(const QPair<QString, QString>& pair) override;
-
-    void updatePlotPairData(const QPair<QString, QString>& oldPair,
-                            const QPair<QString, QString>& newPair) override;
+    void delPlotPairData(const QString& uuid) override;
 
 private:
     void updateDataForDataPairsByTime(double secs) override;
 
-    void updateGraph(double secs, int index, DataPair* data);
+    void updateGraph(double secs, DataPair* data);
 
 public:
     static int m_instanceCount; //实体个数
 private:
     // 一个数据对对应一个绘图图例，自绘图形需要在paintEvent中自行处理
-    QMap<QPair<QString, QString>, QCPGraph*> m_graphMap;
+    QMap<QString, QCPGraph*> m_graphMap;
     // 多个图例共用一个游标,使用legend切换图例
     QCPItemTracer* m_tracer = nullptr;
     // 游标坐标显示文本,x+y合并在一起显示

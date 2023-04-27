@@ -83,12 +83,12 @@ void PlotLight::judgeLight()
 	QString redOrGreen;
 	QList<QString> partUserLightData;
 	QStringList docEntityAndAttr;
-	QString temEntityAndAtrr = " ";
-    for(int i = 0; i < getDataPairs().size(); i++)
-    {
-        docEntityAndAttr.push_back(getDataPairs().at(i)->getDataPair().first);
-    }
-	int isize = 0;
+    // TODO
+    //    for(int i = 0; i < getDataPairs().size(); i++)
+    //    {
+    //        docEntityAndAttr.push_back(getDataPairs().at(i)->getDataPair().first);
+    //    }
+
 	int icount = 0;
     if(m_userLightData.size() > 1)
 	{
@@ -242,19 +242,16 @@ void PlotLight::updateDataForDataPairsByTime(double secs)
 
     for(int i = 0; i < isize; i++)
     {
-        QString getLightData = getDataPairs().at(i)->getDataPair().first;
-        QList<QString> lightValueList = getLightData.split("+");
-        m_valueList = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(
-            lightValueList.front(), lightValueList.back(), secs);
+        auto dataPair = getDataPairs().at(i);
+        auto xEntityID = dataPair->getEntityIDX();
+        auto xAttr = dataPair->getAttr_x();
+        m_valueList =
+            DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
         if(!m_valueList.isEmpty())
         {
+            auto uuid = dataPair->getUuid();
             m_lightDataList.push_back(m_valueList.back());
-            m_lightMap.insert(getLightData, m_lightDataList);
-        }
-        else
-        {
-            QMessageBox::warning(nullptr, "警告", QString("数据为空:%1").arg(getLightData));
-            return;
+            m_lightMap.insert(uuid, m_lightDataList);
         }
     }
 }
@@ -266,7 +263,6 @@ void PlotLight::customPainting(QPainter& painter)
     QPen pen;
     QFont font;
     QRect rect;
-    QSet<QString> yset;
 
     QVector<DataPair*> dataVector = getDataPairs();
     QFontMetricsF fm(font);
@@ -292,7 +288,7 @@ void PlotLight::customPainting(QPainter& painter)
     for(int i = 0; i < dataVector.size(); i++)
     {
         painter.setBrush(QBrush(Qt::gray));
-        yset.insert(dataVector.at(i)->getDataPair().first);
+
         m_verGridNum = dataVector.size();
         verGridWidth = (0.85 * height() - as) / m_verGridNum;
         horGridWidth =
@@ -301,8 +297,9 @@ void PlotLight::customPainting(QPainter& painter)
                      as + 0.1 * height() + i * verGridWidth,
                      horGridWidth,
                      verGridWidth);
-        painter.drawText(
-            rect, Qt::AlignCenter | Qt::TextWordWrap, dataVector.at(i)->getDataPair().first);
+        auto dataPair = dataVector.at(i);
+        QString text = dataPair->getXEntityAttrPair();
+        painter.drawText(rect, Qt::AlignCenter | Qt::TextWordWrap, text);
         judgeLight();
     }
     drawLight(painter, verGridWidth, as);

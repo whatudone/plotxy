@@ -49,7 +49,7 @@ public:
     int currHeight();
     QRect currRect();
     QString getName();
-    QString currTabName();
+    QString getTabName();
 
     //setters:
     virtual void setOuterFillColor(const QColor& color);
@@ -207,10 +207,20 @@ public:
         return m_axisLabelFontSize;
     }
 
-    virtual void addPlotPairData(const QPair<QString, QString>& pair);
-    virtual void delPlotPairData(const QPair<QString, QString>& pair);
-    virtual void updatePlotPairData(const QPair<QString, QString>& oldPair,
-                                    const QPair<QString, QString>& newPair);
+    virtual void addPlotDataPair(int32_t xEntityID,
+                                 const QString& xAttrName,
+                                 const QString& xAttrUnitName,
+                                 int32_t yEntityID,
+                                 const QString& yAttrName,
+                                 const QString& yAttrUnitName);
+    virtual void delPlotPairData(const QString& uuid);
+    virtual void updatePlotPairData(const QString& uuid,
+                                    int32_t xEntityID,
+                                    const QString& xAttrName,
+                                    const QString& xAttrUnitName,
+                                    int32_t yEntityID,
+                                    const QString& yAttrName,
+                                    const QString& yAttrUnitName);
     const QVector<DataPair*>& getDataPairs()
     {
         return m_dataPairs;
@@ -236,6 +246,8 @@ public:
 
     bool getYIsAdaptive() const;
     void setYIsAdaptive(bool yIsAdaptive);
+    // 针对两种类型的通用图表更新接口
+    void replot();
 
     void setInteract(QCP::Interaction inter);
     void setZoom(uint mode);
@@ -251,8 +263,6 @@ private:
     void setCursorByDirection();
 
     void drawBorderAndControls();
-    // 判断数据对是否已经被添加，避免添加重复的数据对
-    bool isAlreadyAdded(const QPair<QString, QString>& pair);
 
 private slots:
     // 响应整体数据变化

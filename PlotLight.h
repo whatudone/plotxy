@@ -48,6 +48,7 @@ private:
 	QList<QList<double>> m_temValueList;
 	QList<long double> m_lightDataList;
 	QList<QString> m_lightValueList;
+    // uuid-dataList
 	QMap<QString, QList<long double>> m_lightMap;
 	QList<QList<QString>> m_userLightData;
 	int m_horiGridNum;

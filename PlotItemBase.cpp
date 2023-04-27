@@ -152,7 +152,7 @@ QString PlotItemBase::getName()
     return m_plotItemName;
 }
 
-QString PlotItemBase::currTabName()
+QString PlotItemBase::getTabName()
 {
     return m_tabName;
 }
@@ -373,16 +373,18 @@ void PlotItemBase::setAxisLabelFontSize(int size)
 }
 
 // NOTE::其他地方不要直接创建DataPair对象，需要通过本接口创建，不然会导致丢失信号槽逻辑
-void PlotItemBase::addPlotPairData(const QPair<QString, QString>& pair)
+void PlotItemBase::addPlotDataPair(int32_t xEntityID,
+                                   const QString& xAttrName,
+                                   const QString& xAttrUnitName,
+                                   int32_t yEntityID,
+                                   const QString& yAttrName,
+                                   const QString& yAttrUnitName)
 {
-    if(isAlreadyAdded(pair))
-    {
-        qWarning() << "数据对重复添加";
-        return;
-    }
-    DataPair* data = new DataPair(pair);
+    // TODO:需要完善重复添加逻辑
+    DataPair* data =
+        new DataPair(xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
     m_dataPairs.append(data);
-    update();
+    replot();
     // 目前界面上都是直接修改DataPair内部的数据，这里提供一个集中的入口虚函数处理。
     connect(data,
             &DataPair::dataUpdate,
@@ -392,14 +394,12 @@ void PlotItemBase::addPlotPairData(const QPair<QString, QString>& pair)
     emit dataPairsChanged(this);
 }
 
-void PlotItemBase::delPlotPairData(const QPair<QString, QString>& pair)
+void PlotItemBase::delPlotPairData(const QString& uuid)
 {
-    if(m_dataPairs.isEmpty())
-        return;
 
     for(int i = 0; i < m_dataPairs.size(); ++i)
     {
-        if(m_dataPairs.at(i)->getDataPair() == pair)
+        if(m_dataPairs.at(i)->getUuid() == uuid)
         {
             auto data = m_dataPairs.takeAt(i);
             data->deleteLater();
@@ -410,17 +410,28 @@ void PlotItemBase::delPlotPairData(const QPair<QString, QString>& pair)
     }
 }
 
-void PlotItemBase::updatePlotPairData(const QPair<QString, QString>& oldPair,
-                                      const QPair<QString, QString>& newPair)
+void PlotItemBase::updatePlotPairData(const QString& uuid,
+                                      int32_t xEntityID,
+                                      const QString& xAttrName,
+                                      const QString& xAttrUnitName,
+                                      int32_t yEntityID,
+                                      const QString& yAttrName,
+                                      const QString& yAttrUnitName)
 {
     if(m_dataPairs.isEmpty())
         return;
 
     for(int i = 0; i < m_dataPairs.size(); ++i)
     {
-        if(m_dataPairs.at(i)->getDataPair() == oldPair)
+        if(m_dataPairs.at(i)->getUuid() == uuid)
         {
-            m_dataPairs.at(i)->setDataPair(newPair);
+            m_dataPairs.at(i)->setEntityIDX(xEntityID);
+            m_dataPairs.at(i)->setAttr_x(xAttrName);
+            m_dataPairs.at(i)->setUnit_x(xAttrUnitName);
+
+            m_dataPairs.at(i)->setEntityIDY(yEntityID);
+            m_dataPairs.at(i)->setAttr_y(yAttrName);
+            m_dataPairs.at(i)->setUnit_y(yAttrUnitName);
 
             emit dataPairsChanged(this);
             break;
@@ -611,18 +622,6 @@ void PlotItemBase::drawBorderAndControls()
     painter.setPen(pen);
 
     painter.drawRects(m_resizeRectMap.values().toVector());
-}
-
-bool PlotItemBase::isAlreadyAdded(const QPair<QString, QString>& pair)
-{
-    for(auto data : m_dataPairs)
-    {
-        if(data->getDataPair() == pair)
-        {
-            return true;
-        }
-    }
-    return false;
 }
 
 void PlotItemBase::onDataPairsChanged()
@@ -864,6 +863,17 @@ void PlotItemBase::setCustomPlotMouseTransparent(bool on)
     {
         m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, on);
         this->setAttribute(Qt::WA_TransparentForMouseEvents, on);
+    }
+}
+void PlotItemBase::replot()
+{
+    if(m_customPlot)
+    {
+        m_customPlot->replot();
+    }
+    else
+    {
+        update();
     }
 }
 

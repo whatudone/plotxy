@@ -100,16 +100,16 @@ void PlotTrack::updateDataForDataPairsByTime(double secs)
     m_trackDrawDataMap.clear();
     for(int i = 0; i < m_itemCnt; i++)
     {
-        QString entityType = getDataPairs().at(i)->getDataPair().first;
-        updateData(i, entityType, secs);
+        updateGraph(i, getDataPairs().at(i), secs);
     }
 }
 
-void PlotTrack::updateData(int itemIndex, QString entityType, double secs)
+void PlotTrack::updateGraph(int itemIndex, DataPair* dataPair, double secs)
 {
-    QStringList entityList = entityType.split("+");
-    QList<double> valueList = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(
-        entityList.at(0), entityList.at(1), secs);
+    auto xEntityID = dataPair->getEntityIDX();
+    auto xAttr = dataPair->getAttr_x();
+    QList<double> valueList =
+        DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
 
     if(valueList.isEmpty())
         return;

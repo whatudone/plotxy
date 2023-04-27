@@ -88,7 +88,7 @@ public:
         return m_dialPercentage;
     }
 
-	void updateItems();
+    void updateGraph();
     PlotType plotType() const override
     {
         return Type_PlotAttitude;

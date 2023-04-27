@@ -38,7 +38,7 @@ public slots:
 
 protected:
     void updateDataForDataPairsByTime(double secs) override;
-    void updateData(int itemIndex, QString entityType, double secs); //实现核心绘制逻辑
+    void updateGraph(int itemIndex, DataPair* dataPair, double secs); //实现核心绘制逻辑
 private:
     void customPainting(QPainter& painter) override;
 

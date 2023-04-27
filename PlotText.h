@@ -44,7 +44,6 @@ private:
                     int& horiGridWidth,
                     int& verGridWidth,
                     double& as);
-    void drawData(QSet<QString>& xset, QSet<QString>& yset, int& horiGridWidth, int& verGridWidth);
     void updateDataForDataPairsByTime(double secs) override;
     void customPainting(QPainter& painter) override;
 
@@ -67,7 +66,7 @@ private:
     QMap<QString, QMap<int, QColor>> m_thresholdColorMap;
 	QVector<QList<double>> m_valueListVector;
 	QColor m_defaultColor;
-	QList<double> m_valueList;
+
 	QList<QList<double>> m_temValueList;
 	QList<QString> m_entityName, m_attriName;
 	double m_secValue;

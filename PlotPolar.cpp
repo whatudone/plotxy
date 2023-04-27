@@ -298,21 +298,23 @@ void PlotPolar::slot_setRangeZoom(bool enabled)
 
 void PlotPolar::updateDataForDataPairsByTime(double secs)
 {
+    // TODO:使用map把graph变量存起来，不要动态创建graph
     int isize = getDataPairs().size();
     QVector<QCPPolarGraph*> graph;
 
     for(int i = 0; i < isize; ++i)
     {
-        QString xcolumn = getDataPairs().at(i)->getDataPair().first;
-        QString ycolumn = getDataPairs().at(i)->getDataPair().second;
-        QStringList xlist = xcolumn.split("+");
-        QStringList ylist = ycolumn.split("+");
+        auto dataPair = getDataPairs().last();
+        auto xEntityID = dataPair->getEntityIDX();
+        auto yEntityID = dataPair->getEntityIDY();
+        auto xAttr = dataPair->getAttr_x();
+        auto yAttr = dataPair->getAttr_y();
 
         QVector<double> x = DataManager::getInstance()
-                                ->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs)
+                                ->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs)
                                 .toVector();
         QVector<double> y = DataManager::getInstance()
-                                ->getEntityAttr_MaxPartValue_List(ylist.at(0), ylist.at(1), secs)
+                                ->getEntityAttrValueListByMaxTime(yEntityID, yAttr, secs)
                                 .toVector();
 
         QCPPolarGraph* g = new QCPPolarGraph(m_angularAxis, m_angularAxis->radialAxis());

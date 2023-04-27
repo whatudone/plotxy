@@ -48,17 +48,19 @@ void PlotBar::updateDataForDataPairsByTime(double secs)
     int isize = getDataPairs().size();
     for(int i = 0; i < isize; i++)
     {
-        QString xColumn = getDataPairs().at(i)->getDataPair().first;
-        QStringList xlist = xColumn.split("+");
-        QList<double> xSecList = DataManager::getInstance()->getEntityAttr_MaxPartValue_List(
-            xlist.at(0), xlist.at(1), secs);
+        auto dataPair = getDataPairs().at(i);
+        auto xEntityID = dataPair->getEntityIDX();
+        auto xEntityName = dataPair->getEntity_x();
+        auto xAttr = dataPair->getAttr_x();
+        QList<double> xSecList =
+            DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
 
         if(xSecList.isEmpty())
             continue;
 
         //*获取当前Attr值
         double currValue = xSecList.last();
-        QString currKey = xlist.at(0) + '_' + xlist.at(1);
+        QString currKey = xEntityName + '_' + xAttr;
         m_dataList.append({currValue, currKey});
     }
     update();
@@ -126,7 +128,7 @@ void PlotBar::drawPairData(
 {
     //    QStringList xlist = x.split("+");
     //    QList<double> xSecList =
-    //        DataManager::getInstance()->getEntityAttr_MaxPartValue_List(xlist.at(0), xlist.at(1), secs);
+    //        DataManager::getInstance()->getEntityAttrValueListByMaxTime(xlist.at(0), xlist.at(1), secs);
 
     //    if(xSecList.isEmpty())
     //        return;
