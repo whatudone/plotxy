@@ -28,10 +28,80 @@ void TabDrawWidget::mousePressEvent(QMouseEvent* event)
     if((event->button() == Qt::LeftButton))
     {
         m_originPoint = event->pos();
-        if((m_mouseMode == MouseMode::BoxZoom) || (m_mouseMode == MouseMode::CreatePlot))
+        // 所有的模式下点击鼠标都会切换当当前选中图表
+        m_pCurWidget = findPlotByMousePos(event->pos());
+        if(m_pCurWidget)
+        {
+            m_curSelectedPlots.clear();
+            m_curSelectedPlots.append(m_pCurWidget);
+            m_pCurWidget->clearInter();
+            emit selectedPlotChanged(m_curSelectedPlots);
+        }
+        else
+        {
+            return QWidget::mousePressEvent(event);
+        }
+        if(m_mouseMode == MouseMode::CreatePlot)
         {
             m_pRubberBand->setGeometry(QRect(m_originPoint, QSize()));
             m_pRubberBand->show();
+        }
+        else if(m_mouseMode == MouseMode::Pan)
+        {
+            m_pCurWidget->setCustomPlotMouseTransparent(false);
+            m_pCurWidget->setInteract(QCP::iRangeDrag);
+        }
+        else if(m_mouseMode == MouseMode::CenterPlot)
+        {
+            m_pCurWidget->setCustomPlotMouseTransparent(true);
+        }
+        else if(m_mouseMode == MouseMode::Zoom)
+        {
+            m_pCurWidget->setCustomPlotMouseTransparent(false);
+            m_pCurWidget->setZoom(1);
+        }
+        else if(m_mouseMode == MouseMode::BoxZoom)
+        {
+            m_pCurWidget->setCustomPlotMouseTransparent(false);
+            m_pCurWidget->setZoom(2);
+        }
+        else if(m_mouseMode == MouseMode::MeasureDistance)
+        {
+            m_pCurWidget->setMeasureTransparent();
+
+            auto customPlot = m_pCurWidget->getCustomPlot();
+            if(!m_measureLineItem)
+            {
+                m_measureLineItem = new QCPItemLine(customPlot);
+                QPen linePen(Qt::red);
+                linePen.setWidth(2);
+                m_measureLineItem->setPen(linePen);
+            }
+
+            if(!m_measureTextItem)
+            {
+                m_measureTextItem = new QCPItemText(customPlot);
+                m_measureTextItem->setPositionAlignment(Qt::AlignCenter | Qt::AlignTop);
+                m_measureTextItem->setColor(Qt::white);
+            }
+
+            auto tmpPoint = m_pCurWidget->mapFromParent(event->pos());
+            m_originPoint = customPlot->mapFromParent(tmpPoint);
+
+            if(customPlot && m_measureLineItem && m_measureTextItem)
+            {
+                m_measureLineItem->start->setCoords(
+                    QPointF(customPlot->xAxis->pixelToCoord(m_originPoint.x()),
+                            customPlot->yAxis->pixelToCoord(m_originPoint.y())));
+
+                m_measureLineItem->end->setCoords(
+                    QPointF(customPlot->xAxis->pixelToCoord(m_originPoint.x()),
+                            customPlot->yAxis->pixelToCoord(m_originPoint.y())));
+                m_measureLineItem->setVisible(true);
+                m_measureTextItem->setText(QString());
+                m_measureTextItem->setVisible(true);
+                customPlot->replot();
+            }
         }
         else if(m_mouseMode == MouseMode::MovePlot)
         {
@@ -40,12 +110,13 @@ void TabDrawWidget::mousePressEvent(QMouseEvent* event)
             {
                 m_movePlotMode = MultipleSelect;
                 m_pCurWidget = findPlotByMousePos(event->pos());
+                m_curSelectedPlots.append(m_pCurWidget);
             }
             else
             {
                 //根据点击的位置区分是缩放、移动、单选行为
 
-                if(m_pCurWidget = findPlotByMousePos(event->pos()))
+                if(m_pCurWidget)
                 {
                     auto plotPoint = m_pCurWidget->mapFromParent(event->pos());
                     // 需要将坐标转化到plot中
@@ -57,11 +128,15 @@ void TabDrawWidget::mousePressEvent(QMouseEvent* event)
                     {
                         m_movePlotMode = SingleSelect;
                     }
+                    m_curSelectedPlots.clear();
+                    m_curSelectedPlots.append(m_pCurWidget);
                 }
                 else
                 {
                     m_movePlotMode = Move;
                 }
+
+                emit selectedPlotChanged(m_curSelectedPlots);
             }
         }
     }
@@ -86,23 +161,47 @@ void TabDrawWidget::mouseMoveEvent(QMouseEvent* event)
             handleMouseMoveWithMovePlot(offsetX, offsetY);
             m_originPoint = event->pos();
         }
+        else if(m_mouseMode == MouseMode::MeasureDistance)
+        {
+            if(event->buttons() & Qt::LeftButton)
+            {
+                auto customPlot = m_pCurWidget->getCustomPlot();
+                auto tmpPoint = m_pCurWidget->mapFromParent(event->pos());
+                auto point = customPlot->mapFromParent(tmpPoint);
+                double dx = 0.0;
+                double dy = 0.0;
+                double l = 0.0;
+
+                if(customPlot && m_measureLineItem && m_measureTextItem)
+                {
+                    m_measureLineItem->end->setCoords(
+                        QPointF(customPlot->xAxis->pixelToCoord(point.x()),
+                                customPlot->yAxis->pixelToCoord(point.y())));
+
+                    m_measureTextItem->position->setCoords(QPointF(
+                        customPlot->xAxis->pixelToCoord((point.x() + m_originPoint.x()) / 2),
+                        customPlot->yAxis->pixelToCoord((point.y() + m_originPoint.y()) / 2)));
+
+                    dx = customPlot->xAxis->pixelToCoord(point.x()) -
+                         customPlot->xAxis->pixelToCoord(m_originPoint.x());
+                    dy = customPlot->yAxis->pixelToCoord(point.y()) -
+                         customPlot->yAxis->pixelToCoord(m_originPoint.y());
+                    l = sqrt(pow(dx, 2) + pow(dy, 2));
+                    m_measureTextItem->setText(
+                        QString("dx = %1\ndy = %2\nl = %3").arg(dx).arg(dy).arg(l));
+                    customPlot->replot();
+                }
+            }
+        }
     }
     QWidget::mouseMoveEvent(event);
 }
 
 void TabDrawWidget::mouseReleaseEvent(QMouseEvent* event)
 {
-
     if(event->button() == Qt::LeftButton)
     {
-        // 所有的模式下点击鼠标都会切换当当前选中图表
-        if(auto plot = findPlotByMousePos(event->pos()))
-        {
-            m_curSelectedPlots.clear();
-            m_curSelectedPlots.append(plot);
-            emit selectedPlotChanged(m_curSelectedPlots);
-        }
-        else if(m_mouseMode == MouseMode::CreatePlot)
+        if(m_mouseMode == MouseMode::CreatePlot)
         {
             // 避免点击事件直接触发CreatePlot逻辑，需要判断橡皮筋的大小
             m_pRubberBand->hide();
@@ -124,22 +223,14 @@ void TabDrawWidget::mouseReleaseEvent(QMouseEvent* event)
         {
             handleMouseReleaseWithSelectPlot(event->pos());
         }
-        else if(m_mouseMode == MouseMode::MovePlot)
+        else if(m_mouseMode == MouseMode::MeasureDistance)
         {
-            // 通过组合键区分是否为多选行为
-            // m_pCurWidget为mousePress中找到的当前点击的图表，不需要再重新查找一次，该api耗时较长
-            if(m_pCurWidget)
+            // 重置到无效状态
+            if(m_pCurWidget->getCustomPlot() && m_measureLineItem && m_measureTextItem)
             {
-                if(m_movePlotMode == MultipleSelect)
-                {
-                    m_curSelectedPlots.append(m_pCurWidget);
-                }
-                else if(m_movePlotMode == SingleSelect)
-                {
-                    m_curSelectedPlots.clear();
-                    m_curSelectedPlots.append(m_pCurWidget);
-                }
-                emit selectedPlotChanged(m_curSelectedPlots);
+                m_measureLineItem->setVisible(false);
+                m_measureTextItem->setVisible(false);
+                m_pCurWidget->getCustomPlot()->replot();
             }
         }
         QWidget::mouseReleaseEvent(event);
@@ -154,7 +245,15 @@ void TabDrawWidget::paintEvent(QPaintEvent* event)
 PlotItemBase* TabDrawWidget::findPlotByMousePos(const QPoint& mouseEventPoint)
 {
     // 获取最上层的控件,需要将坐标转化为全局坐标
-    return dynamic_cast<PlotItemBase*>(qApp->widgetAt(mapToGlobal(mouseEventPoint)));
+    // qApp->widgetAt可能受到Qt::WA_TransparentForMouseEvents的影响，获取能接收信号的最上层的QWidget
+    // 对PlotItemBase和customplot设置鼠标事件穿透之后，TabDrawWidget就是最上层的窗口
+    TabDrawWidget* plotList =
+        dynamic_cast<TabDrawWidget*>(qApp->widgetAt(mapToGlobal(mouseEventPoint)));
+    if(!plotList->m_curSelectedPlots.isEmpty())
+    {
+        return plotList->m_curSelectedPlots.at(0);
+    }
+    return nullptr;
 }
 
 void TabDrawWidget::handleMouseMoveWithMovePlot(int offsetX, int offsetY)

@@ -253,9 +253,11 @@ public:
     void setZoom(uint mode);
     void clearInter();
     void setNewTickOrigin(const QPoint& point);
-    void setIsDrawMeasureLine(bool isDraw);
 
     void setCustomPlotMouseTransparent(bool on);
+    void setMeasureTransparent();
+
+    QCustomPlot* getCustomPlot() const;
 
 private:
     void updateResizeFocusPos();
@@ -270,10 +272,6 @@ private slots:
 
 protected:
     void paintEvent(QPaintEvent* event) override;
-
-    virtual void mousePressEvent(QMouseEvent* event) override;
-    virtual void mouseReleaseEvent(QMouseEvent* event) override;
-    virtual void mouseMoveEvent(QMouseEvent* event) override;
 
 protected:
     QVector<DataPair*> m_dataPairs;
@@ -363,12 +361,6 @@ private:
     // 默认自适应缩放关闭
     bool m_xIsAdaptive = false;
     bool m_yIsAdaptive = false;
-    bool m_isDrawMeasureLine = false;
-
-    // 测距辅助线段
-    QPoint m_originPoint;
-    QCPItemLine* m_measureLineItem = nullptr;
-    QCPItemText* m_measureTextItem = nullptr;
 };
 
 #endif // !

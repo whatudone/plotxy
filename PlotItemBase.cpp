@@ -703,82 +703,9 @@ void PlotItemBase::updateDataForDataPairsByTime(double) {}
 
 void PlotItemBase::customPainting(QPainter& /*painter*/) {}
 
-void PlotItemBase::mousePressEvent(QMouseEvent* event)
+QCustomPlot* PlotItemBase::getCustomPlot() const
 {
-    if((event->button() == Qt::LeftButton))
-    {
-        m_originPoint = m_customPlot->mapFromParent(event->pos());
-        if(m_isDrawMeasureLine)
-        {
-            if(m_customPlot && m_measureLineItem && m_measureTextItem)
-            {
-                m_measureLineItem->start->setCoords(
-                    QPointF(m_customPlot->xAxis->pixelToCoord(m_originPoint.x()),
-                            m_customPlot->yAxis->pixelToCoord(m_originPoint.y())));
-
-                m_measureLineItem->end->setCoords(
-                    QPointF(m_customPlot->xAxis->pixelToCoord(m_originPoint.x()),
-                            m_customPlot->yAxis->pixelToCoord(m_originPoint.y())));
-                m_measureLineItem->setVisible(true);
-                m_measureTextItem->setText(QString());
-                m_measureTextItem->setVisible(true);
-                m_customPlot->replot();
-            }
-        }
-    }
-    QWidget::mousePressEvent(event);
-}
-
-void PlotItemBase::mouseReleaseEvent(QMouseEvent* event)
-{
-    if(event->button() == Qt::LeftButton)
-    {
-        if(m_isDrawMeasureLine)
-        {
-            // 重置到无效状态
-            if(m_customPlot && m_measureLineItem && m_measureTextItem)
-            {
-                m_measureLineItem->setVisible(false);
-                m_measureTextItem->setVisible(false);
-                m_customPlot->replot();
-            }
-        }
-        QWidget::mouseReleaseEvent(event);
-    }
-}
-
-void PlotItemBase::mouseMoveEvent(QMouseEvent* event)
-{
-    if(event->buttons() & Qt::LeftButton)
-    {
-        auto point = m_customPlot->mapFromParent(event->pos());
-        double dx = 0.0;
-        double dy = 0.0;
-        double l = 0.0;
-        if(m_isDrawMeasureLine)
-        {
-            if(m_customPlot && m_measureLineItem && m_measureTextItem)
-            {
-                m_measureLineItem->end->setCoords(
-                    QPointF(m_customPlot->xAxis->pixelToCoord(point.x()),
-                            m_customPlot->yAxis->pixelToCoord(point.y())));
-
-                m_measureTextItem->position->setCoords(QPointF(
-                    m_customPlot->xAxis->pixelToCoord((point.x() + m_originPoint.x()) / 2),
-                    m_customPlot->yAxis->pixelToCoord((point.y() + m_originPoint.y()) / 2)));
-
-                dx = m_customPlot->xAxis->pixelToCoord(point.x()) -
-                     m_customPlot->xAxis->pixelToCoord(m_originPoint.x());
-                dy = m_customPlot->yAxis->pixelToCoord(point.y()) -
-                     m_customPlot->yAxis->pixelToCoord(m_originPoint.y());
-                l = sqrt(pow(dx, 2) + pow(dy, 2));
-                m_measureTextItem->setText(
-                    QString("dx = %1\ndy = %2\nl = %3").arg(dx).arg(dy).arg(l));
-                m_customPlot->replot();
-            }
-        }
-    }
-    QWidget::mouseMoveEvent(event);
+    return m_customPlot;
 }
 
 bool PlotItemBase::getYIsAdaptive() const
@@ -819,7 +746,6 @@ void PlotItemBase::clearInter()
     {
         m_customPlot->setInteractions(QCP::iNone);
         m_customPlot->setSelectionRectMode(QCP::srmNone);
-        m_isDrawMeasureLine = false;
     }
 }
 
@@ -840,23 +766,6 @@ void PlotItemBase::setNewTickOrigin(const QPoint& point)
     }
 }
 
-void PlotItemBase::setIsDrawMeasureLine(bool isDraw)
-{
-    m_isDrawMeasureLine = isDraw;
-
-    if(m_customPlot && isDraw)
-    {
-        m_measureLineItem = new QCPItemLine(m_customPlot);
-        QPen linePen(Qt::red);
-        linePen.setWidth(2);
-        m_measureLineItem->setPen(linePen);
-
-        m_measureTextItem = new QCPItemText(m_customPlot);
-        m_measureTextItem->setPositionAlignment(Qt::AlignCenter | Qt::AlignTop);
-        m_measureTextItem->setColor(Qt::white);
-    }
-}
-
 void PlotItemBase::setCustomPlotMouseTransparent(bool on)
 {
     if(m_customPlot)
@@ -865,6 +774,16 @@ void PlotItemBase::setCustomPlotMouseTransparent(bool on)
         this->setAttribute(Qt::WA_TransparentForMouseEvents, on);
     }
 }
+
+void PlotItemBase::setMeasureTransparent()
+{
+    if(m_customPlot)
+    {
+        m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+        this->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+    }
+}
+
 void PlotItemBase::replot()
 {
     if(m_customPlot)

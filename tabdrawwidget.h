@@ -1,6 +1,8 @@
 #ifndef TABDRAWWIDGET_H
 #define TABDRAWWIDGET_H
 
+#include "qcustomplot.h"
+
 #include <QLine>
 #include <QMap>
 #include <QWidget>
@@ -105,6 +107,10 @@ private:
     static bool m_isLockingStack;
     // 平铺展开时固定缩放大小
     const QSize m_tileSize{400, 400};
+
+    // 测距辅助线段
+    QCPItemLine* m_measureLineItem = nullptr;
+    QCPItemText* m_measureTextItem = nullptr;
 };
 
 #endif // TABDRAWWIDGET_H
