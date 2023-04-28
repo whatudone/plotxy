@@ -214,9 +214,10 @@ void TabDrawWidget::handleMouseReleaseWithSelectPlot(const QPoint& mouseEventPoi
     QList<PlotItemBase*> selectedPlotList;
     foreach(auto plot, allPlotList)
     {
-        // 判断是否plot在鼠标坐标下
-        QPoint localPos = plot->mapFromGlobal(mouseEventPoint);
-        if(plot->rect().contains(localPos))
+        // 判断是否plot在鼠标坐标下，需要把tab上的坐标转化到plot中
+        QPoint localPos = plot->mapFromParent(mouseEventPoint);
+        auto rect = plot->rect();
+        if(rect.contains(localPos))
         {
             selectedPlotList.append(plot);
         }
@@ -232,7 +233,8 @@ void TabDrawWidget::handleMouseReleaseWithSelectPlot(const QPoint& mouseEventPoi
     {
         menu.addAction(plot->getName(), [plot]() { plot->raise(); });
     }
-    menu.exec(mouseEventPoint);
+    // 适配多屏坐标
+    menu.exec(QCursor::pos());
 }
 
 void TabDrawWidget::handleBoxZoom(const QRect& rect)

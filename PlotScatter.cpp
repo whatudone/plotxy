@@ -121,6 +121,8 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
 	{
         updateGraph(secs, m_dataPairs.at(i));
 	}
+    // 先默认缩放坐标轴看效果
+    m_customPlot->rescaleAxes(true);
 	m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 

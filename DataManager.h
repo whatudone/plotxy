@@ -49,7 +49,7 @@ private:
     DataManager& operator=(const DataManager&) = delete;
 
     ~DataManager();
-    // 旧的数据结构待迁移之后替换成新的
+    // 旧的数据结构待迁移之后替换成新的,这两个旧数据目前仅存于加载csv
     QMap<QString, QMap<QString, QList<double>>> m_entityDataMap;
     QVector<double> m_timeDataVector;
     // 新的数据存储结构 <PID,<<Attr,Unit>,DataList>>
