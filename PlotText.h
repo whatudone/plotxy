@@ -21,9 +21,7 @@ class PlotText : public PlotItemBase
 public:
 	PlotText(QWidget* parent = Q_NULLPTR);
 	~PlotText();
-	//void onTimeout();
 
-	bool m_flag;
     static int m_instanceCount; //实体个数
     PlotType plotType() const override
     {
@@ -31,45 +29,24 @@ public:
     }
 
 private:
-    void drawTitleText(QPainter& painter, QRect& rect);
-    void drawXYTitle(QPainter& painter,
-                     int& horiGridWidth,
-                     int& verGridWidth,
-                     const QVector<DataPair*>& dataVector,
-                     double& as);
-    void drawNMCell(QPainter& painter,
-                    QSet<QString>& xset,
-                    QSet<QString>& yset,
-                    const QVector<DataPair*>& dataVector,
-                    int& horiGridWidth,
-                    int& verGridWidth,
-                    double& as);
     void updateDataForDataPairsByTime(double secs) override;
     void customPainting(QPainter& painter) override;
+    // 绘制网格 坐标轴Label 数据
+    void drawCellData(QPainter& painter, const QRect& drawRect);
 
 private:
-    void setGridColorWidth(QColor color, uint width);
-    void setGridStyle(GridStyle);
-
 	bool m_bHorizontal;
     bool m_started;
-	QStringList m_xColumnList;
-	QStringList m_yColumnList;
-	QStringList m_entityTypeList;
-	QStringList m_entityAttrList;
-	int m_horiGridNum;
-    int m_verGridNum;
-	int m_leftPadding;
-	int m_rightPadding;
-	int m_interPadding;
-    int m_currTimeIndex;
-    QMap<QString, QMap<int, QColor>> m_thresholdColorMap;
-	QVector<QList<double>> m_valueListVector;
-	QColor m_defaultColor;
 
-	QList<QList<double>> m_temValueList;
-	QList<QString> m_entityName, m_attriName;
-	double m_secValue;
+	int m_interPadding;
+
+    QStringList m_entityList;
+    QStringList m_attrList;
+    // 二维数组的数据
+    QVector<QVector<double>> m_dataVec;
+
+    // value字体颜色
+    QColor m_cellValueColor;
 };
 
 #endif // _PLOT_TEXT_H_

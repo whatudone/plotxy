@@ -423,7 +423,20 @@ DataManager::getEntityAttrValueListByMaxTime(int32_t entityID, const QString& at
         // length = index +1
         valueList = valueList.mid(0, index + 1);
 	}
-	return valueList;
+    return valueList;
+}
+
+double DataManager::getEntityAttrValueByMaxTime(int32_t entityID, const QString& attr, double secs)
+{
+    int index = getEntityAttrMaxIndexByTime(entityID, secs);
+    QList<double> valueList;
+    if(index >= 0)
+    {
+        valueList = getEntityAttrValueList(entityID, attr);
+        // length = index +1
+        valueList = valueList.mid(0, index + 1);
+    }
+    return (valueList.size() == 0) ? 0.0 : valueList.last();
 }
 
 QVector<double> DataManager::getTimeDataSet()

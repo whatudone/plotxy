@@ -351,6 +351,7 @@ private:
     QPoint m_position;
     int m_width;
     int m_height;
+    // 目前的唯一标识符
     QString m_plotItemName;
     QString m_tabName;
     bool m_bVisible;

@@ -82,10 +82,11 @@ public:
     void getMinMaxTime(double& minTime, double& maxTime);
 	int getRefYear();
 
-    //获取最小时间到secs时间内的实体-属性数据list
+    // 获取最小时间到secs时间内的实体-属性数据list
     QList<double>
     getEntityAttrValueListByMaxTime(int32_t entityID, const QString& attr, double secs);
-
+    // 获取当前时间内最后一个值，用于Text-Bar这种一维数据展示
+    double getEntityAttrValueByMaxTime(int32_t entityID, const QString& attr, double secs);
     QVector<double> getTimeDataSet();
     // 根据id获取实例(数据里面称为Platform)名称
     QString getEntityNameByID(int32_t id);
