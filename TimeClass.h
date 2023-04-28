@@ -220,7 +220,7 @@ public:
     static bool canConvert(const QString& timeString, QStringList& listTime);
     static void convertToTime(
         QString timeString, int& days, int& refYear, int& hour, int& minute, double& seconds);
-    static double convertToSeconds(QString timeString, int refYear);
+    static double convertToSeconds(const QString& timeString, int refYear);
     static void secondsConvertToTime(double secSinceRefYear,
                                      int refYear,
                                      unsigned int& days,

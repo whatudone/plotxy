@@ -342,12 +342,13 @@ void TimeStamp::getTimeComponents(unsigned int& day,
 
 QString OrdinalTimeFormatter::toString(double secSinceRefYear, int refYear)
 {
-	QString timeString = nullptr;
+    QString timeString;
 	unsigned int days, hour, minute;
 	float seconds;
 	secondsConvertToTime(secSinceRefYear, refYear, days, hour, minute, seconds);
+    // 从时间显示上，天数是从001开始
     timeString = QString("%1 %2 %3:%4:%5")
-                     .arg(days, 3, 10, QChar('0'))
+                     .arg(days + 1, 3, 10, QChar('0'))
                      .arg(refYear)
                      .arg(hour, 2, 10, QChar('0'))
                      .arg(minute, 2, 10, QChar('0'))
@@ -402,7 +403,7 @@ void OrdinalTimeFormatter::convertToTime(
 	}
 }
 
-double OrdinalTimeFormatter::convertToSeconds(QString timeString, int referenceYear)
+double OrdinalTimeFormatter::convertToSeconds(const QString& timeString, int referenceYear)
 {
 	int days, year, hour, minute;
 	double seconds;
@@ -411,7 +412,9 @@ double OrdinalTimeFormatter::convertToSeconds(QString timeString, int referenceY
 	convertToTime(timeString, days, year, hour, minute, seconds);
 
 	days += simCore::leapDays(year - 1900) - simCore::leapDays(referenceYear - 1900);
-    secondsSinceReferenceYear = days * SECPERDAY + hour * SECPERHOUR + minute * SECPERMIN + seconds;
+    // 天数是从001开始的，需要-1得到正确的相对时间
+    secondsSinceReferenceYear =
+        (days - 1) * SECPERDAY + hour * SECPERHOUR + minute * SECPERMIN + seconds;
 	return secondsSinceReferenceYear;
 }
 
@@ -432,13 +435,13 @@ double OrdinalTimeFormatter::getSecondsFromTimeStr(const QString& str, int32_t r
     double value = 0.0;
     auto tmp = str;
     tmp.remove(QChar('\"'));
-    if(OrdinalTimeFormatter::isValidDoubleNumber(tmp))
+    if(isValidDoubleNumber(tmp))
     {
         value = tmp.toDouble();
     }
     else
     {
-        value = OrdinalTimeFormatter::convertToSeconds(tmp, refYear);
+        value = convertToSeconds(tmp, refYear);
     }
     return value;
 }

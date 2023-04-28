@@ -577,8 +577,7 @@ void PlotXYDemo::onSliderValueChanged(int value)
     double secs = (double)value / m_timeCtrl->getMultiplizer();
     int refYear = m_timeCtrl->getRefYear();
     // show data time
-    OrdinalTimeFormatter timeFormat;
-    QString dataTime = timeFormat.toString(secs, refYear);
+    QString dataTime = OrdinalTimeFormatter::toString(secs, refYear);
     m_statusBar_dataTime->setText(dataTime);
 
     //发送数据时间
