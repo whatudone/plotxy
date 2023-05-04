@@ -1808,21 +1808,21 @@
           <item>
            <widget class="QRadioButton" name="radioButton_lightParameter">
             <property name="text">
-             <string>范围计算</string>
+             <string>参数</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="radioButton_13">
+           <widget class="QRadioButton" name="radioButtonLightTemplate">
             <property name="text">
-             <string>模板计算</string>
+             <string>模板</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="radioButton_14">
+           <widget class="QRadioButton" name="radioButtonLightColor">
             <property name="text">
-             <string>颜色计算</string>
+             <string>颜色</string>
             </property>
            </widget>
           </item>

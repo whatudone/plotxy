@@ -303,18 +303,10 @@ void AddPlotPair::onChangeStackIndex(PlotType index)
         ui.stackedWidget->setCurrentIndex(1);
         break;
     case Type_PlotAScope:
-        ui.label_XAxis->setText(QString("X轴：Range(m)"));
-        ui.label_YAxis->setText(QString("Y轴：Time(s)"));
-        ui.stackedWidget->setCurrentIndex(5);
-        break;
     case Type_PlotRTI:
-        ui.label_XAxis->setText(QString("X轴：Range(m)"));
-        ui.label_YAxis->setText(QString("Y轴：Time(s)"));
-        ui.stackedWidget->setCurrentIndex(5);
-        break;
     case Type_PlotDoppler:
         ui.label_XAxis->setText(QString("X轴：Range(m)"));
-        ui.label_YAxis->setText(QString("Y轴：Range(m)"));
+        ui.label_YAxis->setText(QString("Y轴：Voltage(v)"));
         ui.stackedWidget->setCurrentIndex(5);
         break;
     case Type_PlotText:

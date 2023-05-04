@@ -251,11 +251,13 @@ public:
 
     void setInteract(QCP::Interaction inter);
     void setZoom(uint mode);
+    // 还原缩放设置
     void clearInter();
     void setNewTickOrigin(const QPoint& point);
     void setIsDrawMeasureLine(bool isDraw);
 
     void setCustomPlotMouseTransparent(bool on);
+    void setCustomPlotMouseTransparent(bool baseTransparent, bool customplotTransparent);
 
 private:
     void updateResizeFocusPos();

@@ -865,6 +865,15 @@ void PlotItemBase::setCustomPlotMouseTransparent(bool on)
         this->setAttribute(Qt::WA_TransparentForMouseEvents, on);
     }
 }
+
+void PlotItemBase::setCustomPlotMouseTransparent(bool baseTransparent, bool customplotTransparent)
+{
+    if(m_customPlot)
+    {
+        m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, customplotTransparent);
+        this->setAttribute(Qt::WA_TransparentForMouseEvents, baseTransparent);
+    }
+}
 void PlotItemBase::replot()
 {
     if(m_customPlot)

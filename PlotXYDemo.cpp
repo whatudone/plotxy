@@ -239,7 +239,7 @@ void PlotXYDemo::onStatusBtnClicked(int index)
         break;
     case MouseMode::MeasureDistance:
         plot->setCursor(QCursor(QPixmap(":/measure.svg")));
-        m_pCurSelectedPlot->setCustomPlotMouseTransparent(false);
+        m_pCurSelectedPlot->setCustomPlotMouseTransparent(false, true);
         m_pCurSelectedPlot->setIsDrawMeasureLine(true);
         break;
     case MouseMode::CreatePlot:
