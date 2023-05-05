@@ -168,6 +168,16 @@ void DataPair::setUnit_y(const QString& unit_y)
     m_unit_y = unit_y;
 }
 
+QString DataPair::getDesc() const
+{
+    return m_desc;
+}
+
+void DataPair::setDesc(const QString &desc)
+{
+    m_desc = desc;
+}
+
 void DataPair::setLineWidth(int width)
 {
     if(m_lineWidth != width)

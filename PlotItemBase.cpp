@@ -237,11 +237,6 @@ void PlotItemBase::setGridColorWidth(const QColor& color, uint width)
     m_gridWidth = width;
 }
 
-//void PlotItemBase::setGridColorWidth(uint width)
-//{
-//
-//}
-
 void PlotItemBase::setGridVisible(bool enable)
 {
     m_gridVisible = enable;
@@ -373,18 +368,18 @@ void PlotItemBase::setAxisLabelFontSize(int size)
 }
 
 // NOTE::其他地方不要直接创建DataPair对象，需要通过本接口创建，不然会导致丢失信号槽逻辑
-void PlotItemBase::addPlotDataPair(int32_t xEntityID,
-                                   const QString& xAttrName,
-                                   const QString& xAttrUnitName,
-                                   int32_t yEntityID,
-                                   const QString& yAttrName,
-                                   const QString& yAttrUnitName)
+DataPair* PlotItemBase::addPlotDataPair(int32_t xEntityID,
+                                        const QString& xAttrName,
+                                        const QString& xAttrUnitName,
+                                        int32_t yEntityID,
+                                        const QString& yAttrName,
+                                        const QString& yAttrUnitName)
 {
     // TODO:需要完善重复添加逻辑
     DataPair* data =
         new DataPair(xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
     m_dataPairs.append(data);
-    replot();
+
     // 目前界面上都是直接修改DataPair内部的数据，这里提供一个集中的入口虚函数处理。
     connect(data,
             &DataPair::dataUpdate,
@@ -392,6 +387,7 @@ void PlotItemBase::addPlotDataPair(int32_t xEntityID,
             &PlotItemBase::onDataPairUpdateData,
             Qt::UniqueConnection);
     emit dataPairsChanged(this);
+    return data;
 }
 
 void PlotItemBase::delPlotPairData(const QString& uuid)

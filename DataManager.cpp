@@ -12,6 +12,8 @@
 #include <QMessageBox>
 #include <QRegularExpression>
 
+#include <limits>
+
 #include "TimeClass.h"
 
 DataManager::DataManager() {}
@@ -436,7 +438,7 @@ double DataManager::getEntityAttrValueByMaxTime(int32_t entityID, const QString&
         // length = index +1
         valueList = valueList.mid(0, index + 1);
     }
-    return (valueList.size() == 0) ? 0.0 : valueList.last();
+    return (valueList.size() == 0) ? std::numeric_limits<double>::max() : valueList.last();
 }
 
 QVector<double> DataManager::getTimeDataSet()

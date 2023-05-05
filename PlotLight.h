@@ -7,12 +7,11 @@
 #ifndef PLOT_LIGHT_H
 #define PLOT_LIGHT_H
 
-#include "BaseData.h"
 #include "PlotItemBase.h"
 #include <QColor>
 #include <QMap>
-#include <QPaintEvent>
-#include <QTimer>
+
+#include <tuple>
 
 class PlotLight : public PlotItemBase
 {
@@ -20,58 +19,57 @@ class PlotLight : public PlotItemBase
 public:
 	PlotLight(QWidget* parent = Q_NULLPTR);
 	~PlotLight();
-	void onTimeout();
-	void onSwitch(bool bOn);
+
     static int m_instanceCount; //实体个数
-	//void updateItems();
+
     PlotType plotType() const override
     {
         return Type_PlotLight;
     }
 
-private:
-	bool m_bHorizontal;
-	bool m_started;
-
-	QColor m_defaultColor;
-	QStringList m_entityTypeList;
-	QStringList m_entityAttrList;
-    QMap<QString, QBrush> m_brushColor;
-	QList<QPair<QString, QPair<QString, double>>> m_thresholdData;
-	QPair<QString, QPair<QString, double>> m_innerThresholdData;
-    QPair<QString, double> m_innerInnerThresholdData;
-	QBrush m_temBrush;
-	QList<QString> m_entityAndAttr;
-	QList<QBrush> m_brush;
-	QList<double> m_valueList;
-	QList<QString> m_entityName, m_attriName;
-	QList<QList<double>> m_temValueList;
-	QList<long double> m_lightDataList;
-	QList<QString> m_lightValueList;
-    // uuid-dataList
-	QMap<QString, QList<long double>> m_lightMap;
-	QList<QList<QString>> m_userLightData;
-	int m_horiGridNum;
-	int m_verGridNum;
-
-	int m_interPadding;
-	int m_currTimeIndex;
-	int m_circleRadius;
-	void judgeLight();
-    void setCircleRadius(double&);
-    void drawLight(QPainter&, double&, double&);
-    void drawTitle(QPainter&, QRect&);
-    // void dataPairOrder();
-    // void setGridColorWidth(QColor color, uint width);
-    void setGridStyle(GridStyle);
-
 public slots:
-	void slot_getLightData(QList<QList<QString>>);
-	//更新后的由base 的sgn_发出
-	void slot_onAddButtonClicked();
+    void onLightConstraintUpdate(
+        const QList<std::tuple<int32_t, QString, QString, double, QString>>& constraintList);
 
 private:
     void updateDataForDataPairsByTime(double secs) override;
-    void customPainting(QPainter& painter) override;
+
+    // 通过约束信息解析数据，生成最终需要的绘制数据
+    void processDataByConstraints();
+    void initPlot();
+    // 通过最终绘图数据更新图表
+    void updatePlotByDrawData();
+    // 清理上次绘制内容
+    void clearPlotContent();
+    // 根据约束条件返回指定数据的颜色信息
+    QColor getColorByDataPairWithCon(int32_t id, const QString& attr, double value);
+    // 数据源没有发生变化，仅当一些设置发生变化时，调用此刷新接口
+    void updatePlotByCurrentData();
+    // 动态计算圆圈适合的半径
+    void calculateRaidus();
+
+private:
+    // 原始的属性-值约束信息，由添加数据对时的界面进行编辑，和数据对是独立的两对数据 entityid,attr,condition,threshold,colorName
+    QList<std::tuple<int32_t, QString, QString, double, QString>> m_constraintList;
+    // 默认灯颜色，当没有约束信息时，显示默认颜色
+    QColor m_defaultLightColor = QColor(Qt::green);
+    // 默认文本颜色
+    QColor m_defaultTextColor = QColor(Qt::yellow);
+    // 缓存数据 desc,entityid,entityName,attr,value
+    QList<std::tuple<QString, int32_t, QString, QString, double>> m_dataList;
+    // 处理后的用于直接绘制的数据 desc,color
+    QList<QPair<QString, QColor>> m_drawDataList;
+    // 绘制的元素指针列表，用于清除之后重绘
+    QList<QCPAbstractItem*> m_drawItemList;
+    // 状态灯和文本之间的距离间隔
+    uint32_t m_verPadding = 100;
+    // 每一行数据之间的水平间隔
+    uint32_t m_horPadding = 20;
+    // 外边框与内容之间的内间距
+    uint32_t m_innerPadding = 10;
+    // 状态灯半径
+    uint32_t m_circleRadius = 100;
+    // 是否按照行显示数据
+    bool m_isFilledByRow = true;
 };
 #endif // _PLOT_LIGHT_H_

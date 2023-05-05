@@ -30,12 +30,6 @@ public:
     explicit AddPlotPair(QWidget* parent = 0);
     ~AddPlotPair();
     void init(PlotType index = PlotType::Type_PlotScatter);
-	//int textRowCount();
-	//int textCloumnCount();
-	//QList<textUserData> getUserText();
-	//int m_textUserX;
-	//int m_textUserY;
-	//QString m_textUser;
 
 	void onChangeStackIndex(PlotType index);
     void setPlotBaseInfo(PlotItemBase* pBaseItem);
@@ -64,7 +58,8 @@ private:
 signals:
 	void sgn_addPlotPair(QString, QString, QString, QString);
     void sgn_updatePlotPair(QString, QString); //tabName, plotName
-	void sgn_getLightData(QList<QList<QString>>);
+    void
+    lightConstraintUpdate(const QList<std::tuple<int32_t, QString, QString, double, QString>>&);
 	void sgn_onTextLightBtnClicked();
 
 public slots:
@@ -78,6 +73,8 @@ public slots:
 	void onTableWidgetItemClicked_3(QTableWidgetItem*);
 	void onTableWidgetItemClicked_4(QTableWidgetItem*);
     void onTableWidgetLightEntityClicked(QTableWidgetItem*);
+    // light约束条件表格双击
+    void onLightSetDbClicked(QTableWidgetItem* item);
 	void onTableWidgetItemClicked_Attitude1(QTableWidgetItem*);
 	void onTableWidgetItemClicked_Attitude2(QTableWidgetItem*);
 	void onUpdateData();

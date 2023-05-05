@@ -94,8 +94,6 @@ void PlotScatter::initPlot()
     m_customPlot->yAxis->setLabelColor(m_axisLabelColor);
     m_customPlot->xAxis->setLabelFont(m_axisLabelFont);
     m_customPlot->yAxis->setLabelFont(m_axisLabelFont);
-
-    m_customPlot->replot();
 }
 
 void PlotScatter::delPlotPairData(const QString& uuid)

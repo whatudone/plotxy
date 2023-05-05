@@ -16,291 +16,161 @@ int PlotLight::m_instanceCount = 1;
 PlotLight::PlotLight(QWidget* parent)
     : PlotItemBase(parent)
 {
-	m_bHorizontal = true;
-	m_circleRadius = 0;
-    //	m_leftPadding = 50;
-    //	m_rightPadding = 50;
-	m_interPadding = 20;
-	m_currTimeIndex = 0;
-	m_started = false;
-	//m_brushColor = Qt::gray;
 	QString name = QString("Light%1").arg(m_instanceCount);
 	this->setName(name);
 	m_instanceCount += 1;
-	m_temBrush.setColor(Qt::gray);
-	m_defaultColor = Qt::gray;
     m_title = "Events";
+    initPlot();
 }
 
 PlotLight::~PlotLight() {}
 
-void PlotLight::drawTitle(QPainter& painter, QRect& rect)
+void PlotLight::onLightConstraintUpdate(
+    const QList<std::tuple<int32_t, QString, QString, double, QString>>& constraintList)
 {
-	QFont font;
-	QString lightTitle;
-	QPen pen;
-	font = getTitleFont();
-	font.setPointSize(getTitleFontSize());
-	lightTitle = getTitle();
-	pen.setColor(getTitleColor());
-	painter.setFont(font);
-	painter.setPen(pen);
-    if(lightTitle.isEmpty())
-		painter.drawText(rect, Qt::AlignCenter | Qt::TextWordWrap, "Events");
-	else
-		painter.drawText(rect, Qt::AlignCenter | Qt::TextWordWrap, lightTitle);
-	update();
-}
-
-void PlotLight::drawLight(QPainter& painter, double& verGridWidth, double& as)
-{
-	setCircleRadius(as);
-    for(int i = 0; i < getDataPairs().size(); ++i)
-	{
-		painter.setBrush(QBrush(Qt::gray));
-        if(m_brush.isEmpty())
-			painter.setBrush(QBrush(Qt::gray));
-        else if((m_brush.at(i).color() == QColor(0, 0, 0, 255)))
-			painter.setBrush(QBrush(Qt::gray));
-		else
-			painter.setBrush(QBrush(m_brush.at(i).color()));
-		//painter.drawEllipse(0.1*width(), as+0.11*height() + i*verGridWidth, m_circleRadius*2, 2*m_circleRadius);
-        QPointF temPoint(0.1 * width() + m_circleRadius,
-                         as + 0.1 * height() + i * verGridWidth + verGridWidth / 2);
-		painter.drawEllipse(temPoint, m_circleRadius, m_circleRadius);
-		painter.setBrush(QBrush(Qt::gray));
-	}
-}
-
-void PlotLight::judgeLight()
-{
-    if(m_lightMap.isEmpty())
-		return;
-	QBrush iBrush;
-	QString entityAndAtrr;
-	QString judge;
-	QString threshold;
-	QString redOrGreen;
-	QList<QString> partUserLightData;
-	QStringList docEntityAndAttr;
-    // TODO
-    //    for(int i = 0; i < getDataPairs().size(); i++)
-    //    {
-    //        docEntityAndAttr.push_back(getDataPairs().at(i)->getDataPair().first);
-    //    }
-
-	int icount = 0;
-    if(m_userLightData.size() > 1)
-	{
-        for(int j = 0; j < getDataPairs().size(); j++)
-		{
-			iBrush.setColor(Qt::gray);
-            for(int i = 0; i < m_userLightData.size(); i++)
-			{
-				icount = i * 4;
-                partUserLightData = m_userLightData.at(i);
-				entityAndAtrr = partUserLightData.at(icount++);
-				judge = partUserLightData.at(icount++);
-				threshold = partUserLightData.at(icount++);
-				redOrGreen = partUserLightData.at(icount++);
-                if(QString::compare(redOrGreen, "G/R/Y") == 0)
-					continue;
-                QList<long double> lightThreshold = m_lightMap.value(entityAndAtrr);
-                if(!lightThreshold.size() == 0)
-				{
-                    if(entityAndAtrr == docEntityAndAttr.at(j))
-					{
-                        if(QString::compare(judge, QString("≥")) == 0)
-						{
-                            if(lightThreshold.back() >= threshold.toDouble())
-							{
-                                if(QString::compare(redOrGreen, "Green") == 0)
-									iBrush.setColor(Qt::green);
-                                else if(QString::compare(redOrGreen, "Red") == 0)
-									iBrush.setColor(Qt::red);
-                                else if(QString::compare(redOrGreen, "Yellow") == 0)
-									iBrush.setColor(Qt::yellow);
-							}
-						}
-                        else if(QString::compare(judge, "<") == 0)
-						{
-                            if(lightThreshold.back() < threshold.toDouble())
-							{
-                                if(QString::compare(redOrGreen, "Green") == 0)
-									iBrush.setColor(Qt::green);
-                                else if(QString::compare(redOrGreen, "Red") == 0)
-									iBrush.setColor(Qt::red);
-                                else if(QString::compare(redOrGreen, "Yellow") == 0)
-									iBrush.setColor(Qt::yellow);
-							}
-						}
-					}
-				}
-			}
-			m_brush.push_back(iBrush);
-		}
-	}
-	update();
-}
-
-void PlotLight::setCircleRadius(double& as)
-{
-    m_circleRadius = (0.85 * height() - as) / (2 * m_verGridNum);
-    if((m_circleRadius > 0.1 * height()) || (m_circleRadius > 0.1 * width()))
-        (height() > width()) ? m_circleRadius = 0.1 * width() : m_circleRadius = 0.1 * height();
-}
-
-void PlotLight::setGridStyle(GridStyle gridStyle)
-{
-    switch(gridStyle)
-	{
-	case SOLIDLINE:
-		m_gridStyle = Qt::SolidLine;
-		break;
-	case DASHLINE:
-		m_gridStyle = Qt::DashLine;
-		break;
-	case DOTLINE:
-		m_gridStyle = Qt::DotLine;
-		break;
-	case DASHDOTLINE:
-		m_gridStyle = Qt::DashDotLine;
-		break;
-	default:
-		break;
-	}
-}
-
-//for (int i = 0; i < m_userLightData.size(); i++)
-//{
-//	//用户输入的数据
-//	QBrush iBrush;
-//	partUserLightData = m_userLightData.at(i);
-//	QString temEntity = partUserLightData.at(icount++);
-//	entityAndAtrr = temEntity + "+" + partUserLightData.at(icount++);
-//	judge = partUserLightData.at(icount++);
-//	threshold = partUserLightData.at(icount++);
-//	redOrGreen = partUserLightData.at(icount++);
-//	m_brush.push_back(iBrush);
-
-//	//文档拿来的数据
-//	QList <long double> lightThreshold = m_lightMap.value(entityAndAtrr);
-//	//判断颜色
-//	for (int i = 0; i < m_userLightData.size(); i++)
-//	{
-//		for (int j = 0; j < getPlotPairData().size(); j++)
-//		{
-//			if (entityAndAtrr == docEntityAndAttr.at(j))
-//			{
-//				if (judge == ">")
-//				{
-//					if (lightThreshold.back() > threshold.toDouble())
-//					{
-//						iBrush = m_brush.at(j);
-//						if (redOrGreen == QString("绿") || redOrGreen == QString("绿色"))
-//							iBrush.setColor(Qt::green);
-//						else if (redOrGreen == QString("红") || redOrGreen == QString("红色"))
-//							iBrush.setColor(Qt::red);
-//						else if (redOrGreen == QString("黄") || redOrGreen == QString("黄色"))
-//							iBrush.setColor(Qt::yellow);
-//					}
-//				}
-//				else if (judge == "<")
-//				{
-//					if (lightThreshold.back() < threshold.toDouble())
-//					{
-//						if (redOrGreen == QString("绿") || redOrGreen == QString("绿色"))
-//							iBrush.setColor(Qt::green);
-//						else if (redOrGreen == QString("红") || redOrGreen == QString("红色"))
-//							iBrush.setColor(Qt::red);
-//						else if (redOrGreen == QString("黄") || redOrGreen == QString("黄色"))
-//							iBrush.setColor(Qt::yellow);
-//					}
-//				}
-//			}
-//		}
-//	}
-
-void PlotLight::slot_getLightData(QList<QList<QString>> userLightData)
-{
-    if(userLightData.size() > 1)
-	{
-		m_userLightData = userLightData;
-		update();
-	}
-}
-
-void PlotLight::slot_onAddButtonClicked()
-{
-    update();
+    m_constraintList = constraintList;
+    updatePlotByCurrentData();
 }
 
 void PlotLight::updateDataForDataPairsByTime(double secs)
 {
-
+    m_dataList.clear();
     int isize = getDataPairs().size();
-
     for(int i = 0; i < isize; i++)
     {
         auto dataPair = getDataPairs().at(i);
         auto xEntityID = dataPair->getEntityIDX();
+        auto xEntityName = dataPair->getEntity_x();
         auto xAttr = dataPair->getAttr_x();
-        m_valueList =
-            DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
-        if(!m_valueList.isEmpty())
-        {
-            auto uuid = dataPair->getUuid();
-            m_lightDataList.push_back(m_valueList.back());
-            m_lightMap.insert(uuid, m_lightDataList);
-        }
+        double value =
+            DataManager::getInstance()->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs);
+
+        auto desc = dataPair->getDesc();
+        m_dataList.append(std::make_tuple(desc, xEntityID, xEntityName, xAttr, value));
+    }
+    updatePlotByCurrentData();
+}
+
+void PlotLight::processDataByConstraints()
+{
+    m_drawDataList.clear();
+    for(const auto& tuple : m_dataList)
+    {
+        QString desc = std::get<0>(tuple);
+        int32_t id = std::get<1>(tuple);
+        QString entityName = std::get<2>(tuple);
+        QString attr = std::get<3>(tuple);
+        double value = std::get<4>(tuple);
+        QString text = desc.isEmpty() ? entityName : desc;
+        m_drawDataList.append(qMakePair(text, getColorByDataPairWithCon(id, attr, value)));
     }
 }
 
-void PlotLight::customPainting(QPainter& painter)
+void PlotLight::initPlot()
 {
-    //以下为绘制表头
+    m_customPlot = new QCustomPlot();
+    QHBoxLayout* pLayout = new QHBoxLayout(this);
+    pLayout->addWidget(m_customPlot);
+    // top需要考虑标题栏的字体高度，先用60
+    pLayout->setContentsMargins(m_leftPadding, 60, m_rightPadding, m_bottomPadding);
+    setLayout(pLayout);
+    // 将plot里面的坐标轴和中间的绘图矩形全部删除
+    m_customPlot->plotLayout()->clear();
+    m_customPlot->setBackground(m_outerFillColor);
+}
 
-    QPen pen;
-    QFont font;
-    QRect rect;
+void PlotLight::updatePlotByDrawData()
+{
+    clearPlotContent();
+    calculateRaidus();
+    // 需要手动计算灯和文本的坐标，实现网格布局
+    // 状态灯左上角坐标
+    int32_t lampX = m_innerPadding;
+    int32_t lampY = 0;
+    // 文本框左上角坐标
+    int32_t textX = m_innerPadding + m_circleRadius * 2 + m_verPadding;
+    int32_t textY = 0;
 
-    QVector<DataPair*> dataVector = getDataPairs();
-    QFontMetricsF fm(font);
-    double as = fm.ascent();
-    m_axisColor = Qt::white;
-    pen.setColor(m_axisColor);
-    font.setPointSize(20);
-    rect.setRect(0, 0, width(), 0.1 * height() + as);
-    painter.setPen(pen);
-    painter.setFont(font);
-
-    //以下为绘制文字的内容和框框
-    double verGridWidth = 0;
-    double horGridWidth = 0;
-    m_horiGridNum = 1;
-    if(!dataVector.empty())
+    int i = 0;
+    for(const auto& pair : m_drawDataList)
     {
-        pen.setStyle(getGridStyle());
-        painter.setPen(pen);
-        rect.setRect(0.05 * width(), 0.1 * height() + as, 0.9 * width(), 0.85 * height() - as);
-        painter.drawRect(rect);
-    }
-    for(int i = 0; i < dataVector.size(); i++)
-    {
-        painter.setBrush(QBrush(Qt::gray));
+        lampY = m_innerPadding + i * (m_circleRadius * 2 + m_horPadding);
+        QCPItemEllipse* statusLamp = new QCPItemEllipse(m_customPlot);
+        statusLamp->setAntialiased(true);
 
-        m_verGridNum = dataVector.size();
-        verGridWidth = (0.85 * height() - as) / m_verGridNum;
-        horGridWidth =
-            (0.8 * width() - 2 * m_circleRadius) / m_horiGridNum; //整个宽减去框框宽，减去圆圈占宽
-        rect.setRect(0.15 * width() + 2 * m_circleRadius,
-                     as + 0.1 * height() + i * verGridWidth,
-                     horGridWidth,
-                     verGridWidth);
-        auto dataPair = dataVector.at(i);
-        QString text = dataPair->getXEntityAttrPair();
-        painter.drawText(rect, Qt::AlignCenter | Qt::TextWordWrap, text);
-        judgeLight();
+        statusLamp->setPen(Qt::NoPen);
+        statusLamp->setBrush(QBrush(pair.second));
+        statusLamp->topLeft->setType(QCPItemPosition::ptAbsolute);
+        statusLamp->topLeft->setCoords(lampX, lampY);
+        statusLamp->bottomRight->setType(QCPItemPosition::ptAbsolute);
+        statusLamp->bottomRight->setCoords(lampX + 2 * m_circleRadius, lampY + 2 * m_circleRadius);
+        m_drawItemList.append(statusLamp);
+
+        textY = lampY;
+        QCPItemText* statusText = new QCPItemText(m_customPlot);
+        statusText->setAntialiased(true);
+        //字体大小
+        statusText->setFont(QFont(font().family(), 16));
+        // 外边框画笔
+        statusText->setPen(QPen(Qt::NoPen));
+        //字体颜色
+        statusText->setColor(m_defaultTextColor);
+        statusText->setText(pair.first);
+        statusText->setVisible(true);
+        statusText->setPositionAlignment(Qt::AlignTop | Qt::AlignLeft);
+        statusText->position->setType(QCPItemPosition::ptAbsolute);
+        statusText->position->setCoords(textX, textY);
+        m_drawItemList.append(statusText);
+        ++i;
     }
-    drawLight(painter, verGridWidth, as);
+    m_customPlot->replot();
+}
+
+void PlotLight::clearPlotContent()
+{
+    for(auto item : m_drawItemList)
+    {
+        m_customPlot->removeItem(item);
+    }
+    m_drawItemList.clear();
+}
+
+QColor PlotLight::getColorByDataPairWithCon(int32_t id, const QString& attr, double value)
+{
+    for(const auto& tuple : m_constraintList)
+    {
+        int32_t conId = std::get<0>(tuple);
+        QString conAttr = std::get<1>(tuple);
+        // 存在约束条件
+        if(id == conId && attr == conAttr)
+        {
+            QString conCondition = std::get<2>(tuple);
+            double threshold = std::get<3>(tuple);
+            // 符合约束条件
+            if((conCondition == "≥" && value > threshold) ||
+               (conCondition == "<" && value < threshold))
+            {
+                QString colorName = std::get<4>(tuple);
+                return QColor(colorName);
+            }
+        }
+    }
+    // 不存在约束条件返回默认颜色
+    return m_defaultLightColor;
+}
+
+void PlotLight::updatePlotByCurrentData()
+{
+    if(!m_dataList.isEmpty())
+    {
+        processDataByConstraints();
+        updatePlotByDrawData();
+    }
+}
+
+void PlotLight::calculateRaidus()
+{
+    auto rect = m_customPlot->rect();
+    m_circleRadius = (rect.height() - 2 * m_innerPadding - (m_dataList.size() - 1) * m_horPadding) /
+                     m_dataList.size() / 2;
 }

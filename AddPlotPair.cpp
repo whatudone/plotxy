@@ -220,21 +220,6 @@ void AddPlotPair::initStackedWidget_page4()
 
 void AddPlotPair::initStackedWidget_pageLight()
 {
-    QComboBox* comboBoxEntity = new QComboBox;
-    QComboBox* comboBoxAttr = new QComboBox;
-    QComboBox* comboBoxCompare = new QComboBox;
-    QComboBox* comboBoxColor = new QComboBox;
-    comboBoxEntity->addItem("Target+Altitude");
-    comboBoxEntity->addItem("Target2+Mach");
-    ui.tableWidget_LightSet->setCellWidget(0, 0, comboBoxEntity);
-    comboBoxAttr->addItem("Time");
-    ui.tableWidget_LightSet->setCellWidget(0, 1, comboBoxAttr);
-    comboBoxCompare->addItem(QString("≥"));
-    comboBoxCompare->addItem("<");
-    ui.tableWidget_LightSet->setCellWidget(0, 2, comboBoxCompare);
-    comboBoxColor->addItem("G/R/Y");
-    ui.tableWidget_LightSet->setCellWidget(0, 4, comboBoxColor);
-
     ui.tableWidget_lightEntity->setStyleSheet("QHeaderView::section{background:lightgray;}");
     ui.tableWidget_lightEntity->horizontalHeader()->setStretchLastSection(true);
     ui.tableWidget_lightEntity->horizontalHeader()->setSectionResizeMode(
@@ -243,11 +228,15 @@ void AddPlotPair::initStackedWidget_pageLight()
     ui.tableWidget_lightNameUnits->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui.radioButton_lightParameter->setChecked(true);
     ui.tableWidget_LightSet->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-
     connect(ui.tableWidget_lightEntity,
             SIGNAL(itemClicked(QTableWidgetItem*)),
             this,
             SLOT(onTableWidgetLightEntityClicked(QTableWidgetItem*)));
+
+    connect(ui.tableWidget_LightSet,
+            &QTableWidget::itemDoubleClicked,
+            this,
+            &AddPlotPair::onLightSetDbClicked);
     connect(ui.pushButton_LightAdd, SIGNAL(clicked()), this, SLOT(onBtnLightAddClicked()));
     connect(ui.pushButton_LightDelete, SIGNAL(clicked()), this, SLOT(onBtnLightDeleteClicked()));
     connect(ui.pushButton_LightUpdate, SIGNAL(clicked()), this, SLOT(onBtnLightUpdateClicked()));
@@ -643,8 +632,12 @@ void AddPlotPair::onBtnAddClicked()
     // TODO:m_pCurSelectedPlot初始化的没有值，需要完善
     if(m_pCurSelectedPlot)
     {
-        m_pCurSelectedPlot->addPlotDataPair(
+        auto dataPair = m_pCurSelectedPlot->addPlotDataPair(
             xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
+        if(m_pCurSelectedPlot->plotType() == PlotType::Type_PlotLight)
+        {
+            dataPair->setDesc(ui.lineEdit_LightDesc->text());
+        }
     }
 }
 
@@ -671,6 +664,19 @@ void AddPlotPair::onTableWidgetItemClicked_4(QTableWidgetItem* curItem)
 void AddPlotPair::onTableWidgetLightEntityClicked(QTableWidgetItem* curItem)
 {
     updateAttrTableWidgetOnEntityChanged(curItem, ui.tableWidget_lightNameUnits);
+}
+
+void AddPlotPair::onLightSetDbClicked(QTableWidgetItem* item)
+{
+    // 只响应第四列的双击事件
+    if(item->column() == 4)
+    {
+        auto color = QColorDialog::getColor();
+        if(color.isValid())
+        {
+            item->setBackgroundColor(color);
+        }
+    }
 }
 
 void AddPlotPair::onTableWidgetItemClicked_Attitude1(QTableWidgetItem* curItem)
@@ -810,51 +816,6 @@ void AddPlotPair::onBtnRemoveClicked()
     }
 }
 
-void AddPlotPair::onBtnLightUpdateClicked()
-{
-    QList<QList<QString>> lightData;
-    QList<QString> rowLightData;
-    for(int j = 0; j < ui.tableWidget_LightSet->rowCount(); j++)
-    {
-        for(int i = 0; i < ui.tableWidget_LightSet->columnCount(); i++)
-        {
-            QString temData;
-            if(i == 3)
-            {
-                if(ui.tableWidget_LightSet->item(j, 3) == nullptr)
-                {
-                    QString changeLine = "\n";
-                    QString text1 = QString("请将数据填写完整");
-                    QString text3 = QString("第4列存在空白");
-                    QString warningInfo = text1 + changeLine + text3;
-                    QMessageBox::critical(nullptr, QString("提示信息"), warningInfo);
-                    return;
-                }
-                temData = ui.tableWidget_LightSet->item(j, 3)->text();
-                rowLightData.push_back(temData);
-            }
-            else if(i == 1)
-                continue;
-            else
-            {
-                temData = dynamic_cast<QComboBox*>(ui.tableWidget_LightSet->cellWidget(j, i))
-                              ->currentText();
-                if(temData == "")
-                {
-                    QMessageBox::critical(
-                        nullptr, QString("提示信息"), QString("请将数据填写完整"));
-                    return;
-                }
-                else
-                    rowLightData.push_back(temData);
-            }
-        }
-        lightData.push_back(rowLightData);
-    }
-    if(lightData.size() > 1)
-        emit sgn_getLightData(lightData);
-}
-
 void AddPlotPair::onUpdatePlotPair(PlotItemBase* pBaseItem)
 {
     if(!pBaseItem)
@@ -875,44 +836,43 @@ void AddPlotPair::onUpdatePlotPair(PlotItemBase* pBaseItem)
         }
     }
 }
-
+// light 添加约束信息
 void AddPlotPair::onBtnLightAddClicked()
 {
-    QList<QString> redYellowGreen;
-    redYellowGreen.push_back("Red");
-    redYellowGreen.push_back("Yellow");
-    redYellowGreen.push_back("Green");
+    // 选中了实体和属性之后才能添加对应的约束
+    if(!ui.tableWidget_lightEntity->currentItem() || !ui.tableWidget_lightNameUnits->currentItem())
+    {
+        return;
+    }
     int iRow = ui.tableWidget_LightSet->rowCount();
     ui.tableWidget_LightSet->setRowCount(iRow + 1);
-    QComboBox* newCount0 = new QComboBox;
-    QComboBox* newCount1 = new QComboBox;
-    QComboBox* newCount2 = new QComboBox;
-    QComboBox* newCount4 = new QComboBox;
-    QPair<QString, QString> temPair;
-    QString temEntity;
-    //    QString temAttr;
-    QString parent_text = m_currTabName;
-    //    QString child_text = m_currPlotName;
-    auto plotData = PlotManagerData::getInstance()->getPlotManagerData();
-    for(int i = 0; i < plotData[parent_text].size(); ++i)
-    {
-        PlotItemBase* tempPlot = plotData[parent_text].at(i);
-        QVector<DataPair*> temDataPair = tempPlot->getDataPairs();
-        for(int i = 0; i < temDataPair.size(); i++)
-        {
-            // TODO:需要弄清楚意图
-            QString text = temDataPair.at(i)->getXEntityAttrPair();
-            newCount0->addItem(text);
-        }
-        ui.tableWidget_LightSet->setCellWidget(iRow, 0, newCount0);
-    }
-    newCount1->addItem("Time");
-    newCount2->addItem(QString("≥"));
-    newCount2->addItem("<");
-    newCount4->addItems(redYellowGreen);
-    ui.tableWidget_LightSet->setCellWidget(iRow, 1, newCount1);
-    ui.tableWidget_LightSet->setCellWidget(iRow, 2, newCount2);
-    ui.tableWidget_LightSet->setCellWidget(iRow, 4, newCount4);
+
+    QString entityName = ui.tableWidget_lightEntity->currentItem()->text();
+    QTableWidgetItem* entityNameItem = new QTableWidgetItem(entityName);
+    entityNameItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    int32_t xEntityID = ui.tableWidget_lightEntity->currentItem()->data(Qt::UserRole + 1).toInt();
+    entityNameItem->setData(Qt::UserRole + 1, xEntityID);
+
+    QString attrName = ui.tableWidget_lightNameUnits->currentItem()->text();
+    QTableWidgetItem* attrNameItem = new QTableWidgetItem(attrName);
+    attrNameItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+    QTableWidgetItem* threshold = new QTableWidgetItem("0.0");
+
+    QTableWidgetItem* colorNameItem = new QTableWidgetItem();
+    // 默认绿色
+    colorNameItem->setBackgroundColor(Qt::green);
+    colorNameItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+    QComboBox* constraintCom = new QComboBox;
+    constraintCom->addItem(QString("≥"));
+    constraintCom->addItem("<");
+
+    ui.tableWidget_LightSet->setItem(iRow, 0, entityNameItem);
+    ui.tableWidget_LightSet->setItem(iRow, 1, attrNameItem);
+    ui.tableWidget_LightSet->setCellWidget(iRow, 2, constraintCom);
+    ui.tableWidget_LightSet->setItem(iRow, 3, threshold);
+    ui.tableWidget_LightSet->setItem(iRow, 4, colorNameItem);
 }
 
 void AddPlotPair::onBtnLightDeleteClicked()
@@ -924,6 +884,56 @@ void AddPlotPair::onBtnLightDeleteClicked()
     }
 
     ui.tableWidget_LightSet->setCurrentCell(0, 0);
+}
+
+void AddPlotPair::onBtnLightUpdateClicked()
+{
+    QList<std::tuple<int32_t, QString, QString, double, QString>> constraintList;
+    for(int i = 0; i < ui.tableWidget_LightSet->rowCount(); i++)
+    {
+        int32_t id = -1;
+        QString attrName;
+        QString constraint;
+        double threshold = 0.0;
+        QString colorName;
+        for(int j = 0; j < ui.tableWidget_LightSet->columnCount(); j++)
+        {
+
+            if(j == 2)
+            {
+                constraint = dynamic_cast<QComboBox*>(ui.tableWidget_LightSet->cellWidget(i, j))
+                                 ->currentText();
+            }
+            else
+            {
+                auto item = ui.tableWidget_LightSet->item(i, j);
+                if(!item)
+                {
+                    return;
+                }
+                if(j == 0)
+                {
+                    id = item->data(Qt::UserRole + 1).toInt();
+                }
+                if(j == 1)
+                {
+                    attrName = item->text();
+                }
+                if(j == 3)
+                {
+                    threshold = item->text().toDouble();
+                }
+                if(j == 4)
+                {
+                    colorName = item->backgroundColor().name();
+                }
+            }
+        }
+        constraintList.append(std::make_tuple(id, attrName, constraint, threshold, colorName));
+    }
+    // 更新的时候才发送信号通知图表刷新 TODO:此处信号会通知所有light图表刷新，是一个错误逻辑，应该针对当前图表进行刷新
+    if(!constraintList.isEmpty())
+        emit lightConstraintUpdate(constraintList);
 }
 
 void AddPlotPair::onBtnCloseClicked()

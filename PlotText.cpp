@@ -66,6 +66,7 @@ void PlotText::updateDataForDataPairsByTime(double secs)
         {
             double value = DataManager::getInstance()->getEntityAttrValueByMaxTime(
                 entityIDList.at(i), m_attrList.at(j), secs);
+            value = (value == std::numeric_limits<double>::max()) ? 0.0 : value;
             attrValueList.append(value);
         }
         m_dataVec.append(attrValueList);

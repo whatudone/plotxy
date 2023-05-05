@@ -275,6 +275,9 @@ public:
     QString getUnit_y() const;
     void setUnit_y(const QString& unit_y);
 
+    QString getDesc() const;
+    void setDesc(const QString& desc);
+
 private:
     int m_lineWidth; //线宽
     bool m_isDraw; //是否绘制
@@ -316,6 +319,8 @@ private:
     bool m_attr_show; //属性是否显示
     bool m_data_show; //数据是否显示
     bool m_unit_show; //单位是否显示
+    // 数据对描述信息，目前仅限于light图表使用
+    QString m_desc;
     // 自动生成的唯一标识符
     QString m_uuid;
 signals:

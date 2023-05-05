@@ -207,12 +207,12 @@ public:
         return m_axisLabelFontSize;
     }
 
-    virtual void addPlotDataPair(int32_t xEntityID,
-                                 const QString& xAttrName,
-                                 const QString& xAttrUnitName,
-                                 int32_t yEntityID,
-                                 const QString& yAttrName,
-                                 const QString& yAttrUnitName);
+    virtual DataPair* addPlotDataPair(int32_t xEntityID,
+                                      const QString& xAttrName,
+                                      const QString& xAttrUnitName,
+                                      int32_t yEntityID,
+                                      const QString& yAttrName,
+                                      const QString& yAttrUnitName);
     virtual void delPlotPairData(const QString& uuid);
     virtual void updatePlotPairData(const QString& uuid,
                                     int32_t xEntityID,

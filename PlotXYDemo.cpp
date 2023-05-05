@@ -691,9 +691,9 @@ void PlotXYDemo::addPlotWidget(PlotType type, const QRect& geo)
         plotItem = new PlotLight(ui.tabWidget->currentWidget());
         auto plotLight = static_cast<PlotLight*>(plotItem);
         connect(m_addPlotPair,
-                &AddPlotPair::sgn_getLightData,
+                &AddPlotPair::lightConstraintUpdate,
                 plotLight,
-                &PlotLight::slot_getLightData);
+                &PlotLight::onLightConstraintUpdate);
     }
     else if(type == PlotType::Type_PlotTrack)
     {
