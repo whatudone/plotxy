@@ -6,31 +6,39 @@ int PlotBar::m_instanceCount = 1;
 PlotBar::PlotBar(QWidget* parent)
     : PlotItemBase(parent)
 {
-    m_bHorizontal = true;
-	m_titleShow = true;
-
-    //    m_leftPadding = 50;
-    //    m_rightPadding = 50;
-    //	m_topPadding = 0;
-    //	m_bottomPadding = 50;
-    m_interPadding = 20;
-
-    m_currTimeIndex = 0;
-
-    m_horiGridNum = 4;
-    m_verGridNum = 5;
-
     QString name = QString("Bar%1").arg(m_instanceCount);
     this->setName(name);
     m_instanceCount += 1;
 
-    m_defaultColor = Qt::gray;
+    m_defaultColor = Qt::green;
     m_gridColor = Qt::darkGray;
 	m_axisColor = Qt::white;
 	m_titleColor = Qt::white;
+    m_outerFillColor = Qt::black;
+    m_gridFillColor = Qt::black;
 	m_title = "Bar";
 	m_titleFont.setFamily("Microsoft YaHei");
-	m_titleFont.setPointSizeF(16.0);
+    m_titleFont.setPointSizeF(16.0);
+
+    m_coordBgn_x = 0;
+    m_coordEnd_x = 8;
+    m_coordBgn_y = 0;
+    m_coordEnd_y = 12.1;
+
+    m_horzGrids = 5;
+    m_vertGrids = 5;
+    m_axisWidth = 1;
+    m_gridWidth = 1;
+    m_axisColor = Qt::white;
+    m_gridColor = QColor(200, 200, 200);
+    m_gridVisible = true;
+    m_tickLabelColor = Qt::white;
+    m_tickLabelFont.setFamily("Microsoft YaHei");
+    m_tickLabelFont.setPointSizeF(8.0);
+    m_gridStyle = Qt::DotLine;
+    m_gridDensity = GridDensity::LESS;
+
+    initPlot();
 }
 
 PlotBar::~PlotBar() {}
@@ -63,274 +71,82 @@ void PlotBar::updateDataForDataPairsByTime(double secs)
         QString currKey = xEntityName + '_' + xAttr;
         m_dataList.append({currValue, currKey});
     }
-    update();
+    updateGraph();
 }
 
-void PlotBar::setPlotItemExtentionDirec(bool horizontal)
+void PlotBar::initPlot()
 {
-    m_bHorizontal = horizontal;
+    m_customPlot = new QCustomPlot();
+    QHBoxLayout* pLayout = new QHBoxLayout(this);
+    pLayout->addWidget(m_customPlot);
+    setLayout(pLayout);
+    m_customPlot->axisRect()->setupFullAxesBox(true);
+    m_customPlot->axisRect()->setMinimumMargins(QMargins(30, 15, 30, 15));
+
+    m_customPlot->xAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
+    m_customPlot->yAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
+    m_customPlot->xAxis->ticker()->setTickCount(int(m_vertGrids));
+    m_customPlot->yAxis->ticker()->setTickCount(int(m_horzGrids));
+    m_customPlot->xAxis->setTickLabelColor(m_tickLabelColor);
+    m_customPlot->yAxis->setTickLabelColor(m_tickLabelColor);
+    m_customPlot->xAxis->setTickLabelFont(m_tickLabelFont);
+    m_customPlot->yAxis->setTickLabelFont(m_tickLabelFont);
+    m_customPlot->xAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
+    m_customPlot->yAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
+    m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+    m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+
+    m_customPlot->setBackground(m_outerFillColor);
+    m_customPlot->axisRect()->setBackground(m_gridFillColor);
+
+    m_pBar = new QCPBars(m_customPlot->yAxis, m_customPlot->xAxis);
+
+    m_pBar->setAntialiased(false); // 为了更好的边框效果，关闭抗齿锯
+    m_pBar->setPen(QPen(m_defaultColor.lighter(130))); // 设置柱状图的边框颜色
+    m_pBar->setBrush(m_defaultColor); // 设置柱状图的画刷颜色
+
+    m_customPlot->yAxis->setTickLabelRotation(60); // 轴刻度文字旋转60度
+    m_customPlot->yAxis->setSubTicks(false); // 不显示子刻度
+    m_customPlot->yAxis->setTickLength(0, 4); // 轴内外刻度的长度分别是0,4,也就是轴内的刻度线不显示
+    m_customPlot->yAxis->setUpperEnding(QCPLineEnding::esSpikeArrow);
+
+    m_customPlot->xAxis->setPadding(30);
+    m_customPlot->xAxis->setUpperEnding(QCPLineEnding::esSpikeArrow);
+
+    m_customPlot->replot();
 }
 
-void PlotBar::setLeftPadding(int leftPadding)
-{
-    m_leftPadding = leftPadding;
-}
-
-void PlotBar::setRightPadding(int rightPadding)
-{
-    m_rightPadding = rightPadding;
-}
-
-void PlotBar::setInterPadding(int interPadding)
-{
-    m_interPadding = interPadding;
-}
-
-void PlotBar::drawRect(int itemIndex,
-                       bool bHorizontal,
-                       int itemLength,
-                       int leftBoundary,
-                       int rightBoundary,
-                       const QColor& color,
-                       QPainter& painter)
-{
-    QPen pen;
-    pen.setColor(color);
-    QBrush brush;
-    brush.setColor(color);
-    brush.setStyle(Qt::SolidPattern);
-
-    painter.setPen(pen);
-    painter.setBrush(brush);
-    int height = this->height();
-
-    QRect rect;
-    if(bHorizontal)
-    {
-        rect.setRect(leftBoundary,
-                     height -
-                         (m_leftPadding + itemIndex * (itemLength + m_interPadding) + itemLength),
-                     rightBoundary - leftBoundary,
-                     itemLength);
-    }
-    else
-    {
-        rect.setRect(m_leftPadding + itemIndex * (itemLength + m_interPadding),
-                     height - rightBoundary,
-                     itemLength,
-                     rightBoundary - leftBoundary);
-    }
-    painter.drawRect(rect);
-}
-
-void PlotBar::drawPairData(
-    int itemIndex, QString currKey, int32_t perItemLength, double currValue, QPainter& painter)
-{
-    //    QStringList xlist = x.split("+");
-    //    QList<double> xSecList =
-    //        DataManager::getInstance()->getEntityAttrValueListByMaxTime(xlist.at(0), xlist.at(1), secs);
-
-    //    if(xSecList.isEmpty())
-    //        return;
-
-    //    //*获取当前Attr值
-    //    double currValue = xSecList.last();
-
-    //    QString currKey = xlist.at(0) + '_' + xlist.at(1);
-    /*
-     * 绘制分为两种大类情况：
-     * 1、没有设置颜色阈值，直接从left->lastValue
-     * 2、有阈值设置的，又分为三种情况：
-     * 2.1、lastValue在阈值左侧
-     * 2.2、lastValue在阈值范围内
-     * 2.3、lastValue在阈值右侧
-    */
-    if(!m_thresholdColorMap.contains(currKey) || m_thresholdColorMap.value(currKey).isEmpty())
-    {
-        //没有设置阈值，则无需分开绘制多个矩形，以默认颜色绘制一个即可
-        drawRect(itemIndex,
-                 m_bHorizontal,
-                 perItemLength,
-                 m_leftPadding,
-                 currValue,
-                 m_defaultColor,
-                 painter);
-        return;
-    }
-
-    //根据颜色阈值来分开绘制
-    auto colorMap = m_thresholdColorMap.value(currKey);
-    QList<int> thresholdList = colorMap.keys();
-    if(currValue < thresholdList.first())
-    {
-        drawRect(itemIndex,
-                 m_bHorizontal,
-                 perItemLength,
-                 m_leftPadding,
-                 currValue,
-                 m_defaultColor,
-                 painter);
-    }
-    else
-    {
-        //以默认颜色绘制第一个矩形
-        drawRect(itemIndex,
-                 m_bHorizontal,
-                 perItemLength,
-                 m_leftPadding,
-                 thresholdList.first(),
-                 m_defaultColor,
-                 painter);
-
-        auto thresSize = thresholdList.size();
-        for(int i = 0; i < thresSize; ++i)
-        {
-            QColor currColor = colorMap.value(thresholdList.at(i));
-
-            auto curThreshold = thresholdList.at(i);
-            auto nextThreadHold = thresholdList.at(i) + perItemLength;
-            if(i != thresSize - 1)
-            {
-
-                if(currValue < nextThreadHold)
-                {
-                    drawRect(itemIndex,
-                             m_bHorizontal,
-                             perItemLength,
-                             curThreshold,
-                             currValue,
-                             currColor,
-                             painter);
-                    break;
-                }
-                else
-                {
-                    drawRect(itemIndex,
-                             m_bHorizontal,
-                             perItemLength,
-                             curThreshold,
-                             nextThreadHold,
-                             currColor,
-                             painter);
-                }
-            }
-            else
-            {
-                drawRect(itemIndex,
-                         m_bHorizontal,
-                         perItemLength,
-                         curThreshold,
-                         currValue,
-                         currColor,
-                         painter);
-            }
-        }
-    }
-}
-
-void PlotBar::customPainting(QPainter& painter)
-{
-    int width = this->width();
-    int height = this->height();
-    QFontMetricsF fm(m_titleFont);
-    double h = fm.size(Qt::TextSingleLine, m_title).height();
-
-    QPen pen;
-    //绘制x轴和y轴
-    pen.setColor(m_axisColor);
-    pen.setWidth(2);
-    painter.setPen(pen);
-    painter.drawLine(QPoint(m_leftPadding, height - m_bottomPadding),
-                     QPoint(width - m_rightPadding, height - m_bottomPadding)); //x轴
-    painter.drawLine(QPoint(m_leftPadding, height - m_bottomPadding),
-                     QPoint(m_leftPadding, m_topPadding + h)); //y轴
-
-    //绘制网格
-    pen.setColor(m_gridColor);
-    painter.setPen(pen);
-
-    QBrush brush; //画刷。填充几何图形的调色板，由颜色和填充风格组成
-    brush.setColor(m_gridFillColor);
-    brush.setStyle(Qt::SolidPattern);
-    //painter.setBrush(brush);
-
-    int horiGridWidth = 0;
-    if(m_horiGridNum)
-    { //item水平方向延展
-        horiGridWidth = (width - m_leftPadding - m_rightPadding) / m_horiGridNum;
-    }
-
-    for(int i = 0; i < m_horiGridNum; i++)
-    {
-        QRect gridRect;
-        gridRect.setRect(i * horiGridWidth + m_leftPadding,
-                         m_topPadding + h,
-                         horiGridWidth,
-                         height - m_topPadding - m_bottomPadding - h);
-        painter.drawRect(gridRect);
-    }
-
-    int verGridWidth = 0;
-    if(m_verGridNum)
-    { //item水平方向延展
-        verGridWidth = (height - m_topPadding - m_bottomPadding - h) / m_verGridNum;
-    }
-
-    for(int i = 0; i < m_verGridNum; i++)
-    {
-        QRect gridRect;
-        gridRect.setRect(m_leftPadding,
-                         i * verGridWidth + m_topPadding + h,
-                         width - m_leftPadding - m_rightPadding,
-                         verGridWidth);
-        painter.drawRect(gridRect);
-    }
-    // 绘制数据块
-    drawPairDatas(painter);
-}
-
-void PlotBar::drawPairDatas(QPainter& painter)
+void PlotBar::updateGraph()
 {
     int isize = m_dataList.size();
     if(isize <= 0)
     {
         return;
     }
-    int perItemLength = calculateItemLength();
-    for(int i = 0; i < isize; ++i)
+    double min = 0.0;
+    double max = 0.0;
+    m_barTicks.clear();
+    m_barLabels.clear();
+    m_barData.clear();
+    for(int i = 0; i < isize; i++)
     {
-        auto pair = m_dataList.at(i);
-        drawPairData(i, pair.second, perItemLength, pair.first, painter);
+        m_barTicks << i + 1;
+        QPair<double, QString> pair = m_dataList.at(i);
+        double value = pair.first;
+        QString attr = pair.second;
+        m_barLabels << attr;
+        m_barData << value;
+        max = max > value ? max : value;
+        min = min < value ? min : value;
     }
-}
 
-int PlotBar::calculateItemLength()
-{
-    //首先计算每个item的宽度/高度
-    int cnt = getDataPairs().size();
-    int perItemLength = 0;
-    if(cnt <= 0)
-    {
-        return perItemLength;
-    }
-    QFontMetricsF fm(m_titleFont);
-    double h = fm.size(Qt::TextSingleLine, m_title).height();
-    int width = this->width() - m_leftPadding - m_rightPadding;
-    int height = this->height() - m_topPadding - m_bottomPadding - h;
+    QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
+    textTicker->addTicks(m_barTicks, m_barLabels);
+    m_customPlot->yAxis->setTicker(textTicker); // 设置为文字轴
 
-    if(m_bHorizontal)
-    {
-        //item水平方向延展
-        m_horiGridNum = 5;
-        m_verGridNum = 0;
-        perItemLength = (height - (cnt - 1) * m_interPadding) / cnt;
-    }
-    else
-    {
-        //item垂直方向延展
-        m_verGridNum = 5;
-        m_horiGridNum = 0;
-        perItemLength = (width - (cnt - 1) * m_interPadding) / cnt;
-    }
-    return perItemLength;
+    m_customPlot->yAxis->setRange(0, isize + 1); // 设置范围
+    m_customPlot->xAxis->setRange(min > 0 ? min * 0.9 : min * 1.1, max > 0 ? max * 1.1 : max * 0.9);
+
+    m_pBar->setData(m_barTicks, m_barData);
+    m_customPlot->replot();
 }
