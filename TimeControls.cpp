@@ -52,7 +52,7 @@ TimeControls::TimeControls(QWidget* parent)
         ui.toolButton_Decrease, &QToolButton::clicked, this, &TimeControls::onActionDecreseStep);
 	connect(ui.toolButton_TS, &QToolButton::clicked, this, &TimeControls::onActionTimeServer);
 	connect(ui.toolButton_TC, &QToolButton::clicked, this, &TimeControls::onActionTimeClient);
-	connect(ui.toolButton_RealTime, &QToolButton::clicked, this, &TimeControls::onActionRealTime);
+    connect(ui.toolButton_RealTime, &QToolButton::clicked, this, &TimeControls::onActionRealTime);
 
     connect(this, &TimeControls::sgn_setSliderRange, this, &TimeControls::onSetSliderRange);
 }
@@ -96,12 +96,12 @@ void TimeControls::setBeginTime(double seconds, int refYear)
 	OrdinalTimeFormatter timeFormat;
 	timeFormat.secondsConvertToTime(seconds, (double)refYear, day, hour, minute, second);
 	ui.spinBox_beginTimeD->setValue(day);
-	ui.spinBox_beginTimeY->setValue(refYear);
+    ui.spinBox_beginTimeY->setValue(seconds > 0 ? refYear : refYear - 1);
 	ui.spinBox_beginTimeH->setValue(hour);
 	ui.spinBox_beginTimeM->setValue(minute);
 	ui.doubleSpinBox_beginTimeS->setValue(second);
 
-	ui.spinBox_beginTimeY->setMinimum(refYear);
+    ui.spinBox_beginTimeY->setMinimum(seconds > 0 ? refYear : refYear - 1);
 }
 
 void TimeControls::setCurTime(double seconds, int refYear)
@@ -111,7 +111,7 @@ void TimeControls::setCurTime(double seconds, int refYear)
 	OrdinalTimeFormatter timeFormat;
 	timeFormat.secondsConvertToTime(seconds, (double)refYear, day, hour, minute, second);
 	ui.spinBox_curTimeD->setValue(day);
-	ui.spinBox_curTimeY->setValue(refYear);
+    ui.spinBox_curTimeY->setValue(seconds > 0 ? refYear : refYear - 1);
 	ui.spinBox_curTimeH->setValue(hour);
 	ui.spinBox_curTimeM->setValue(minute);
 	ui.doubleSpinBox_curTimeS->setValue(second);
@@ -124,12 +124,12 @@ void TimeControls::setEndTime(double seconds, int refYear)
 	OrdinalTimeFormatter timeFormat;
 	timeFormat.secondsConvertToTime(seconds, (double)refYear, day, hour, minute, second);
 	ui.spinBox_endTimeD->setValue(day);
-	ui.spinBox_endTimeY->setValue(refYear);
+    ui.spinBox_endTimeY->setValue(seconds > 0 ? refYear : refYear - 1);
 	ui.spinBox_endTimeH->setValue(hour);
 	ui.spinBox_endTimeM->setValue(minute);
 	ui.doubleSpinBox_endTimeS->setValue(second);
 
-	ui.spinBox_endTimeY->setMinimum(refYear);
+    ui.spinBox_endTimeY->setMinimum(seconds > 0 ? refYear : refYear - 1);
 }
 
 void TimeControls::setRefTime(int refYear)
@@ -202,12 +202,14 @@ void TimeControls::onUpdateData()
 	m_refYear = DataManager::getInstance()->getRefYear();
 
 	setBeginTime(m_minTime, m_refYear);
-	setCurTime(m_minTime, m_refYear);
+    setCurTime(m_maxTime, m_refYear);
 	setEndTime(m_maxTime, m_refYear);
-	setRefTime(m_refYear);
+    setRefTime(m_refYear);
 
     emit sgn_setSliderRange(
         m_minTime * m_Multiplier, m_maxTime * m_Multiplier, m_stepFactor * m_Multiplier);
+    ui.horizontalSlider->setValue(m_maxTime * m_Multiplier);
+    emit sgn_sliderValueChanged(m_maxTime * m_Multiplier);
 }
 
 void TimeControls::onClose()
