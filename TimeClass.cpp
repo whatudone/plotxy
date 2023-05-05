@@ -349,7 +349,7 @@ QString OrdinalTimeFormatter::toString(double secSinceRefYear, int refYear)
     // 从时间显示上，天数是从001开始
     timeString = QString("%1 %2 %3:%4:%5")
                      .arg(days + 1, 3, 10, QChar('0'))
-                     .arg(refYear)
+                     .arg(secSinceRefYear > 0 ? refYear : refYear - 1)
                      .arg(hour, 2, 10, QChar('0'))
                      .arg(minute, 2, 10, QChar('0'))
                      .arg(seconds);

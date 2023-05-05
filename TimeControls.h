@@ -1,34 +1,46 @@
 ﻿#pragma once
 
-#include <QWidget>
-#include "ui_TimeControls.h"
 #include "TimeClass.h"
+#include "ui_TimeControls.h"
+#include <QWidget>
 
 class TimeControls : public QWidget
 {
 	Q_OBJECT
 
 public:
-	explicit TimeControls(QWidget *parent = Q_NULLPTR);
+    explicit TimeControls(QWidget* parent = Q_NULLPTR);
 	~TimeControls();
-	double	getMultiplizer() { return m_Multiplier; }
-	double	getStepFactor() { return m_stepFactor; }
-	bool	getLoopTime() { return m_bLoopTime; }
-	int		getRefYear() { return m_refYear; }
+    double getMultiplizer()
+    {
+        return m_Multiplier;
+    }
+    double getStepFactor()
+    {
+        return m_stepFactor;
+    }
+    bool getLoopTime()
+    {
+        return m_bLoopTime;
+    }
+    int getRefYear()
+    {
+        return m_refYear;
+    }
 
 private:
 	Ui::TimeControls ui;
-	double	m_Multiplier;
-	double	m_minTime, m_maxTime;
-	int		m_refYear;
-	double	m_stepFactor;
-	bool	m_bLoopTime;
+    double m_Multiplier;
+    double m_minTime, m_maxTime;
+    int m_refYear;
+    double m_stepFactor;
+    bool m_bLoopTime;
 
 private:
 	void setBeginTime(double seconds, int refYear);
 	void setCurTime(double seconds, int refYear);
 	void setEndTime(double seconds, int refYear);
-	void setRefTime(int);
+    void setRefTime(int);
 
 	double getBeginTime(int refYear);
 	double getCurTime(int refYear);
@@ -37,8 +49,8 @@ private:
 public slots:
 	void onAlwaysOnTop();
 	void onUpdateData();
-	void onClose();
-	void onSetSliderRange(int min, int max, int singleStep);
+    void onClose();
+    void onSetSliderRange(int min, int max, int singleStep);
 	void onSliderValueChanged(int);
 	void onRemoteSliderValueChanged(int);
 
@@ -64,7 +76,7 @@ public slots:
 	void onLineEdit_stepFactor_EditingFinished();
 
 signals:
-	void sgn_setSliderRange(int min, int max, int singleStep);
+    void sgn_setSliderRange(int min, int max, int singleStep);
 	void sgn_sliderValueChanged(int);
 	void sgn_actionPlay();
 	void sgn_actionStop();
