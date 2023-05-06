@@ -710,11 +710,11 @@ void PlotItemBase::mousePressEvent(QMouseEvent* event)
 {
     if((event->button() == Qt::LeftButton))
     {
-        m_originPoint = m_customPlot->mapFromParent(event->pos());
         if(m_isDrawMeasureLine)
         {
             if(m_customPlot && m_measureLineItem && m_measureTextItem)
             {
+                m_originPoint = m_customPlot->mapFromParent(event->pos());
                 m_measureLineItem->start->setCoords(
                     QPointF(m_customPlot->xAxis->pixelToCoord(m_originPoint.x()),
                             m_customPlot->yAxis->pixelToCoord(m_originPoint.y())));
@@ -752,16 +752,17 @@ void PlotItemBase::mouseReleaseEvent(QMouseEvent* event)
 
 void PlotItemBase::mouseMoveEvent(QMouseEvent* event)
 {
-    if(event->buttons() & Qt::LeftButton)
+    if((event->buttons() & Qt::LeftButton))
     {
-        auto point = m_customPlot->mapFromParent(event->pos());
-        double dx = 0.0;
-        double dy = 0.0;
-        double l = 0.0;
+
         if(m_isDrawMeasureLine)
         {
             if(m_customPlot && m_measureLineItem && m_measureTextItem)
             {
+                auto point = m_customPlot->mapFromParent(event->pos());
+                double dx = 0.0;
+                double dy = 0.0;
+                double l = 0.0;
                 m_measureLineItem->end->setCoords(
                     QPointF(m_customPlot->xAxis->pixelToCoord(point.x()),
                             m_customPlot->yAxis->pixelToCoord(point.y())));
@@ -865,8 +866,8 @@ void PlotItemBase::setCustomPlotMouseTransparent(bool on)
     if(m_customPlot)
     {
         m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, on);
-        this->setAttribute(Qt::WA_TransparentForMouseEvents, on);
     }
+    setAttribute(Qt::WA_TransparentForMouseEvents, on);
 }
 
 void PlotItemBase::setCustomPlotMouseTransparent(bool baseTransparent, bool customplotTransparent)

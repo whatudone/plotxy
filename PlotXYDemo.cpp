@@ -750,6 +750,8 @@ void PlotXYDemo::addPlotWidget(PlotType type, const QRect& geo)
     // 默认选中添加的图表
     TabDrawWidget::setCurSelectedPlots(QList<PlotItemBase*>() << plotItem);
     m_pCurSelectedPlot = plotItem;
+    // 根据模式更新图表的鼠标穿透属性
+    onStatusBtnClicked(static_cast<int>(m_mouseMode));
     updateStatusBarInfo();
 
     PlotManagerData::getInstance()->addPlotByTab(currTabText, plotItem);

@@ -14,8 +14,6 @@
 #include <QTableWidgetItem>
 #include <QTreeWidget>
 
-//#include "PlotBar.h"
-
 PlotManager::PlotManager(QWidget* parent)
 	: QWidget(parent)
 {
@@ -71,10 +69,10 @@ void PlotManager::init()
 
 void PlotManager::addPlot(const QString& tabName, PlotItemBase* plotItem)
 {
-	m_plotManager = PlotManagerData::getInstance()->getPlotManagerData();
+    auto plotDataMap = PlotManagerData::getInstance()->getPlotManagerData();
 
 	//显示层更新
-    if(m_plotManager.contains(tabName))
+    if(plotDataMap.contains(tabName))
 	{
         QList<QTreeWidgetItem*> topWidget =
             ui.treeWidget_selectedPlots->findItems(tabName, Qt::MatchCaseSensitive, 0);
@@ -99,7 +97,7 @@ void PlotManager::addPlot(const QString& tabName, PlotItemBase* plotItem)
 	}
 
 	//数据层更新
-    //	m_plotManager[tabName].append(plotItem);
+    //	plotDataMap[tabName].append(plotItem);
 }
 
 void PlotManager::initTreeWidgetSettings()
@@ -382,56 +380,56 @@ void PlotManager::initAttitudeUI()
 void PlotManager::refreshTreeWidgetSettingEnabled(PlotItemBase* plot)
 {
 	ui.treeWidget_settings->setEnabled(true);
-	QString name = plot->metaObject()->className();
+    PlotType type = plot->plotType();
 
-    if(name.compare("PlotScatter") == 0)
+    if(type == PlotType::Type_PlotScatter)
 	{
 		enableItem_Scatter();
 		//plotPair界面
 		refreshPlotDataUI(m_curSelectPlot);
 	}
-    else if(name.compare("PlotAScope") == 0)
+    else if(type == PlotType::Type_PlotAScope)
 	{
 		enableItem_AScope();
 	}
-    else if(name.compare("PlotRTI") == 0)
+    else if(type == PlotType::Type_PlotRTI)
 	{
 		enableItem_RTI();
 	}
-    else if(name.compare("PlotText") == 0)
+    else if(type == PlotType::Type_PlotText)
 	{
 		enableItem_Text_Light();
 		//Text&Light界面
 		refreshLightTextUI(m_curSelectPlot);
 	}
-    else if(name.compare("PlotLight") == 0)
+    else if(type == PlotType::Type_PlotLight)
 	{
 		enableItem_Text_Light();
 		//Text&Light界面
 		refreshLightTextUI(m_curSelectPlot);
 	}
-    else if(name.compare("PlotBar") == 0)
+    else if(type == PlotType::Type_PlotBar)
 	{
 		enableItem_Bar();
 	}
-    else if(name.compare("PlotDial") == 0)
+    else if(type == PlotType::Type_PlotDial)
 	{
 		enableItem_Dial();
 	}
-    else if(name.compare("PlotAttitude") == 0)
+    else if(type == PlotType::Type_PlotAttitude)
 	{
 		enableItem_Attitude();
 		refreshAttitudeUI(m_curSelectPlot);
 	}
-    else if(name.compare("PlotPolar") == 0)
+    else if(type == PlotType::Type_PlotPolar)
 	{
 		enableItem_Polar();
 	}
-    else if(name.compare("PlotTrack") == 0)
+    else if(type == PlotType::Type_PlotTrack)
 	{
 		enableItem_Track();
 	}
-    else if(name.compare("PlotDoppler") == 0)
+    else if(type == PlotType::Type_PlotDoppler)
 	{
 		enableItem_Doppler();
 	}
@@ -439,6 +437,7 @@ void PlotManager::refreshTreeWidgetSettingEnabled(PlotItemBase* plot)
 
 void PlotManager::refreshGeneralUI(PlotItemBase* plot)
 {
+    // 从主界面获取TabRect
 	emit sigGetTabRect();
 
 	ui.lineEdit_plotName->setText(plot->getName());
@@ -587,12 +586,12 @@ void PlotManager::refreshAttitudeUI(PlotItemBase* plot)
 
 void PlotManager::enableItem_Scatter()
 {
-	m_itemLinkedAxis->setDisabled(false);
-	m_itemPlotData->setDisabled(false);
-	m_itemScatterPlot->setDisabled(false);
+    m_itemLinkedAxis->setDisabled(false);
+    m_itemPlotData->setDisabled(false);
+    m_itemScatterPlot->setDisabled(false);
 	m_itemAScope->setDisabled(true);
 	m_itemRTI->setDisabled(true);
-	m_itemTextLight->setDisabled(true);
+    m_itemTextLight->setDisabled(true);
 	m_itemBar->setDisabled(true);
 	m_itemDial->setDisabled(true);
 	m_itemAttitude->setDisabled(true);
@@ -605,7 +604,7 @@ void PlotManager::enableItem_AScope()
 	m_itemLinkedAxis->setDisabled(true);
 	m_itemPlotData->setDisabled(true);
 	m_itemScatterPlot->setDisabled(true);
-	m_itemAScope->setDisabled(false);
+    m_itemAScope->setDisabled(false);
 	m_itemRTI->setDisabled(true);
 	m_itemTextLight->setDisabled(true);
 	m_itemBar->setDisabled(true);
@@ -621,7 +620,7 @@ void PlotManager::enableItem_RTI()
 	m_itemPlotData->setDisabled(true);
 	m_itemScatterPlot->setDisabled(true);
 	m_itemAScope->setDisabled(true);
-	m_itemRTI->setDisabled(false);
+    m_itemRTI->setDisabled(false);
 	m_itemTextLight->setDisabled(true);
 	m_itemBar->setDisabled(true);
 	m_itemDial->setDisabled(true);
@@ -637,7 +636,7 @@ void PlotManager::enableItem_Text_Light()
 	m_itemScatterPlot->setDisabled(true);
 	m_itemAScope->setDisabled(true);
 	m_itemRTI->setDisabled(true);
-	m_itemTextLight->setDisabled(false);
+    m_itemTextLight->setDisabled(false);
 	m_itemBar->setDisabled(true);
 	m_itemDial->setDisabled(true);
 	m_itemAttitude->setDisabled(true);
@@ -653,7 +652,7 @@ void PlotManager::enableItem_Bar()
 	m_itemAScope->setDisabled(true);
 	m_itemRTI->setDisabled(true);
 	m_itemTextLight->setDisabled(true);
-	m_itemBar->setDisabled(false);
+    m_itemBar->setDisabled(false);
 	m_itemDial->setDisabled(true);
 	m_itemAttitude->setDisabled(true);
 	m_itemTrackStatus->setDisabled(true);
@@ -669,7 +668,7 @@ void PlotManager::enableItem_Dial()
 	m_itemRTI->setDisabled(true);
 	m_itemTextLight->setDisabled(true);
 	m_itemBar->setDisabled(true);
-	m_itemDial->setDisabled(false);
+    m_itemDial->setDisabled(false);
 	m_itemAttitude->setDisabled(true);
 	m_itemTrackStatus->setDisabled(true);
 	m_itemRangeDoppler->setDisabled(true);
@@ -685,7 +684,7 @@ void PlotManager::enableItem_Attitude()
 	m_itemTextLight->setDisabled(true);
 	m_itemBar->setDisabled(true);
 	m_itemDial->setDisabled(true);
-	m_itemAttitude->setDisabled(false);
+    m_itemAttitude->setDisabled(false);
 	m_itemTrackStatus->setDisabled(true);
 	m_itemRangeDoppler->setDisabled(true);
 }
@@ -716,7 +715,7 @@ void PlotManager::enableItem_Track()
 	m_itemBar->setDisabled(true);
 	m_itemDial->setDisabled(true);
 	m_itemAttitude->setDisabled(true);
-	m_itemTrackStatus->setDisabled(false);
+    m_itemTrackStatus->setDisabled(false);
 	m_itemRangeDoppler->setDisabled(true);
 }
 
@@ -732,48 +731,29 @@ void PlotManager::enableItem_Doppler()
 	m_itemDial->setDisabled(true);
 	m_itemAttitude->setDisabled(true);
 	m_itemTrackStatus->setDisabled(true);
-	m_itemRangeDoppler->setDisabled(false);
+    m_itemRangeDoppler->setDisabled(false);
 }
 
 void PlotManager::onTWSPclicked(QTreeWidgetItem* item, int column)
 {
     QTreeWidgetItem* parent = item->parent();
-    if(NULL == parent)
+    if(!parent)
 		return;
 
-	QString parent_text = parent->text(0);
-	QString child_text = item->text(column);
-
-    if(m_plotManager.contains(parent_text))
-	{
-        for(int i = 0; i < m_plotManager[parent_text].size(); ++i)
-		{
-            PlotItemBase* tempPlot = m_plotManager[parent_text].at(i);
-            if(child_text == tempPlot->getName())
-			{
-				m_curSelectPlot = tempPlot;
-				//刷新treeWidgetSetting的使能状态
-				refreshTreeWidgetSettingEnabled(m_curSelectPlot);
-				//general界面
-				refreshGeneralUI(m_curSelectPlot);
-				//Axis&Grid界面
-				refreshAxisGridUI(m_curSelectPlot);
-				//Text Edit
-				refreshTextEditUI(m_curSelectPlot);
-				//
-                //	tempPlot->deleteLater();
-				break;
-			}
-			m_curSelectPlot = nullptr;
-		}
-	}
-	else
-		m_curSelectPlot = nullptr;
-
-	/*if (child_text == "Bar")
-	{
-		m_itemBar->setDisabled(false);
-	}*/
+    QString tabName = parent->text(0);
+    QString plotName = item->text(column);
+    m_curSelectPlot = PlotManagerData::getInstance()->getPlotByTabAndName(tabName, plotName);
+    if(m_curSelectPlot)
+    {
+        //刷新treeWidgetSetting的使能状态
+        refreshTreeWidgetSettingEnabled(m_curSelectPlot);
+        //general界面
+        refreshGeneralUI(m_curSelectPlot);
+        //Axis&Grid界面
+        refreshAxisGridUI(m_curSelectPlot);
+        //Text Edit
+        refreshTextEditUI(m_curSelectPlot);
+    }
 }
 
 void PlotManager::onAddNewClicked()
@@ -811,26 +791,25 @@ void PlotManager::onSelectedPlot(PlotItemBase* pBasePlot)
 	}
 }
 
-void PlotManager::onUpdatePlotManager(const QMap<QString, QList<PlotItemBase*>>& plotData)
+void PlotManager::onUpdatePlotManager(const QMap<QString, QList<PlotItemBase*>>& plotDataMap)
 {
-    m_plotManager = plotData;
-    if(m_plotManager.isEmpty())
+    if(plotDataMap.isEmpty())
     {
         return;
     }
 	ui.comboBox_tabName->clear();
 	ui.treeWidget_selectedPlots->clear();
 
-    for(int i = 0; i < m_plotManager.size(); ++i)
+    for(int i = 0; i < plotDataMap.size(); ++i)
 	{
-		QString tabName = m_plotManager.keys().at(i);
+        QString tabName = plotDataMap.keys().at(i);
 		QTreeWidgetItem* itemselPlotH = new QTreeWidgetItem(QStringList() << tabName);
 		ui.treeWidget_selectedPlots->addTopLevelItem(itemselPlotH);
 		ui.treeWidget_selectedPlots->expandAll();
-        for(int k = 0; k < m_plotManager[tabName].size(); ++k)
+        for(int k = 0; k < plotDataMap[tabName].size(); ++k)
 		{
             QTreeWidgetItem* itemselPlotI =
-                new QTreeWidgetItem(QStringList() << m_plotManager[tabName].at(k)->getName());
+                new QTreeWidgetItem(QStringList() << plotDataMap[tabName].at(k)->getName());
 			itemselPlotH->addChild(itemselPlotI);
 		}
 		//comboBox_tabName

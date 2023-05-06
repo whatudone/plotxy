@@ -8,7 +8,6 @@ AdvancedDataManager::AdvancedDataManager(QWidget* parent)
     : QWidget(parent)
 {
     ui.setupUi(this);
-    this->setWindowTitle(QString("AdvancedDataManager"));
 
 	ui.pushButton_copy->setEnabled(false);
 	ui.pushButton_autofit->setEnabled(false);

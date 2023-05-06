@@ -64,7 +64,7 @@ public slots:
     void onTWSPclicked(QTreeWidgetItem* item, int i);
     void onSelectedPlot(PlotItemBase* pBasePlot); //用于默认点击的Item
 
-    void onUpdatePlotManager(const QMap<QString, QList<PlotItemBase*>>& plotData);
+    void onUpdatePlotManager(const QMap<QString, QList<PlotItemBase*>>& plotDataMap);
 	void onBtnCloseClicked();
 
 	void spinboxBetweenChanged();
@@ -173,9 +173,9 @@ private:
 	QTreeWidgetItem* m_itemTrackStatus;
 	QTreeWidgetItem* m_itemRangeDoppler;
 
-    QMap<QString, QList<PlotItemBase*>> m_plotManager; //tabName
 	bool m_radioPixelChecked;
 	QRect m_tabWidgetRect;
+    // 本界面当前选中图表，不影响主界面选中图表
     PlotItemBase* m_curSelectPlot = nullptr;
 };
 
