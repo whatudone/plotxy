@@ -226,6 +226,8 @@ public:
     {
         return m_dataPairs;
     }
+
+    DataPair* getDataPariByUuid(const QString& uuid);
     void setDataPair(QVector<DataPair*>& newVector);
 
     virtual PlotType plotType() const
@@ -333,7 +335,6 @@ public slots:
     // 响应主界面时间滑块时间产生的信号，按照具体时间过滤数据，数据里面都是带有时间
     void onGetCurrentSeconds(double secs);
 
-    virtual void onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>>);
     // 响应内部DataPair数据发送的change信号
     virtual void onDataPairUpdateData();
     // 控制图表本身是否可以响应鼠标事件，比如可以拖拽图表的坐标轴等，因为部分是自绘。所以处理方式不同

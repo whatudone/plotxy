@@ -43,11 +43,6 @@ PlotBar::PlotBar(QWidget* parent)
 
 PlotBar::~PlotBar() {}
 
-void PlotBar::onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>> targetMap)
-{
-    m_thresholdColorMap = targetMap;
-}
-
 void PlotBar::updateDataForDataPairsByTime(double secs)
 {
     if(getDataPairs().isEmpty())

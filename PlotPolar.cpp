@@ -329,8 +329,3 @@ void PlotPolar::updateDataForDataPairsByTime(double secs)
     qDeleteAll(graph);
     graph.clear();
 }
-
-void PlotPolar::onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>> targetMap)
-{
-    m_thresholdColorMap = targetMap;
-}

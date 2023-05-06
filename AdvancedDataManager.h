@@ -18,10 +18,7 @@ public:
     explicit AdvancedDataManager(QWidget* parent = nullptr);
     ~AdvancedDataManager();
 
-    QMap<QString, QMap<int, QColor>> m_map;
-
 signals:
-    void updateColorThresholdMap(QMap<QString, QMap<int, QColor>>);
 	void sgnAddPlotPair();
 	void sgnFilterSort(QString);
 
@@ -65,7 +62,9 @@ signals:
 public slots:
     void onBtnMore();
     void onBtnColorMore();
-    void onBtnAdd();
+    void onBtnAddColorRange();
+    void onBtnUpdateColorRange();
+
 	void onEventBtnMoreClicked();
     void onUpdatePlotPair();
 	void onTableWidget_plotpairItemSelectionChanged();

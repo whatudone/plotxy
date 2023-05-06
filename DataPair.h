@@ -278,6 +278,9 @@ public:
     QString getDesc() const;
     void setDesc(const QString& desc);
 
+    QList<std::tuple<QString, double, QColor>> getColorInfoList() const;
+    void setColorInfoList(const QList<std::tuple<QString, double, QColor>>& colorInfoList);
+
 private:
     int m_lineWidth; //线宽
     bool m_isDraw; //是否绘制
@@ -323,6 +326,8 @@ private:
     QString m_desc;
     // 自动生成的唯一标识符
     QString m_uuid;
+    //  Bar等图表需要设置ColorRange QString:colorname，double:lower limit,QColor:color
+    QList<std::tuple<QString, double, QColor>> m_colorInfoList;
 signals:
 	void dataUpdate();
 };

@@ -442,6 +442,18 @@ void PlotItemBase::updatePlotPairData(const QString& uuid,
     }
 }
 
+DataPair* PlotItemBase::getDataPariByUuid(const QString& uuid)
+{
+    for(auto dataPair : m_dataPairs)
+    {
+        if(dataPair->getUuid() == uuid)
+        {
+            return dataPair;
+        }
+    }
+    return nullptr;
+}
+
 void PlotItemBase::setDataPair(QVector<DataPair*>& newVector)
 {
     m_dataPairs.swap(newVector);
@@ -678,8 +690,6 @@ void PlotItemBase::paintEvent(QPaintEvent* event)
         drawBorderAndControls();
     }
 }
-
-void PlotItemBase::onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>> /* targetMap*/) {}
 
 void PlotItemBase::onDataPairUpdateData()
 {

@@ -28,9 +28,6 @@ public:
 public:
     static int m_instanceCount; //实体个数
 
-public slots:
-    void onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>>) override;
-
 protected:
     void updateDataForDataPairsByTime(double secs) override;
 

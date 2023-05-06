@@ -735,10 +735,6 @@ void PlotXYDemo::addPlotWidget(PlotType type, const QRect& geo)
             &PlotItemBase::dataPairsChanged,
             m_AdvancedDataManager,
             &AdvancedDataManager::onUpdatePlotPair);
-    connect(m_AdvancedDataManager,
-            &AdvancedDataManager::updateColorThresholdMap,
-            plotItem,
-            &PlotItemBase::onUpdateColorThresholdMap);
 
     plotItem->show();
     plotItem->setCustomPlotMouseTransparent(true);

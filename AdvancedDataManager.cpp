@@ -18,7 +18,12 @@ AdvancedDataManager::AdvancedDataManager(QWidget* parent)
 	subSettingWidgetContainer->setEnabled(false);
 
 	ui.stackedWidget_aDMrpart->setCurrentIndex(0);
-	connect(ui.pushButton_add_2, SIGNAL(clicked()), this, SLOT(onBtnAdd()));
+    connect(ui.pushButtonAddColorRange, SIGNAL(clicked()), this, SLOT(onBtnAddColorRange()));
+    connect(ui.pushButtonUpdateColorRange,
+            &QPushButton::clicked,
+            this,
+            &AdvancedDataManager::onBtnUpdateColorRange);
+
     connect(ui.pushButton_add,
             &QPushButton::clicked,
             this,
@@ -334,33 +339,15 @@ void AdvancedDataManager::onTableWidget_plotpairItemSelectionChanged()
 	QString tabName = ui.tableWidget_plotpair->item(row, 3)->text();
     // 取出datapair uuid
     QString uuid = ui.tableWidget_plotpair->item(row, 0)->data(Qt::UserRole + 1).toString();
-    auto plotDataMap = PlotManagerData::getInstance()->getPlotManagerData();
-    if(plotDataMap.contains(tabName))
-	{
-        for(int i = 0; i < plotDataMap[tabName].size(); ++i)
-		{
-            PlotItemBase* tempPlot = plotDataMap[tabName].at(i);
-            if(plotName == tempPlot->getName())
-			{
-				m_curSelectPlot = tempPlot;
-                auto dataPair = m_curSelectPlot->getDataPairs();
-                auto dataSize = dataPair.size();
-                for(int k = 0; k < dataSize; ++k)
-				{
-                    if(dataPair.at(k)->getUuid() == uuid)
-					{
-                        m_curSelectDatapair = dataPair.at(k);
-						break;
-					}
-                }
-                if(m_curSelectDatapair != nullptr)
-				{
-					refreshUI();
-					break;
-                }
-			}
-		}
-	}
+    m_curSelectPlot = PlotManagerData::getInstance()->getPlotByTabAndName(tabName, plotName);
+    if(m_curSelectPlot)
+    {
+        m_curSelectDatapair = m_curSelectPlot->getDataPariByUuid(uuid);
+        if(m_curSelectDatapair)
+        {
+            refreshUI();
+        }
+    }
 }
 
 void AdvancedDataManager::onPushButton_addClicked()
@@ -701,34 +688,34 @@ void AdvancedDataManager::refreshLabelText()
 
 void AdvancedDataManager::refreshColorRanges() {}
 
-void AdvancedDataManager::onBtnAdd()
+void AdvancedDataManager::onBtnAddColorRange()
 {
-	QString x_y;
-	QString x, y;
-	//QTreeWidgetItem* item;
-	//item = ui.treeWidget_xy->currentItem();
-	QList<QTableWidgetItem*> item;
-	item = ui.tableWidget_plotpair->selectedItems();
-	x = item.at(0)->text();
-	y = item.at(1)->text();
-	x_y = x + "_" + y;
-
-	QString key = ui.lineEdit_value->text();
-	int intKey = key.toInt();
-	QPalette pal = ui.pushButton_color->palette();
-	QBrush brush = pal.base();
-	QColor value = brush.color();
-
-	m_map[x_y].insert(intKey, value);
-
+    QColor color = ui.pushButton_color->color();
 	QTreeWidgetItem* addUnion = new QTreeWidgetItem;
 	addUnion->setText(0, ui.lineEdit_name->text());
 	addUnion->setText(1, ui.lineEdit_value->text());
-	addUnion->setBackground(2, brush);
+    addUnion->setBackgroundColor(2, color);
 
 	ui.treeWidget_union->addTopLevelItem(addUnion);
+}
 
-	emit updateColorThresholdMap(m_map);
+void AdvancedDataManager::onBtnUpdateColorRange()
+{
+    // 将ColorRange数据更新到具体的DataPair中
+    if(m_curSelectDatapair)
+    {
+        QList<std::tuple<QString, double, QColor>> colorInfoList;
+        int32_t count = ui.treeWidget_union->topLevelItemCount();
+        for(int var = 0; var < count; ++var)
+        {
+            auto item = ui.treeWidget_union->topLevelItem(var);
+            QString name = item->text(0);
+            double value = item->text(1).toDouble();
+            QColor color = item->backgroundColor(2);
+            colorInfoList.append(std::make_tuple(name, value, color));
+        }
+        m_curSelectDatapair->setColorInfoList(colorInfoList);
+    }
 }
 
 void AdvancedDataManager::onBtnMore()

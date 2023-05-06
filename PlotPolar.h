@@ -42,7 +42,6 @@ public:
     }
 
 public slots:
-    void onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>>) override;
 
 	//axis
     void setCoordRangeX(double lower, double upper) override;

@@ -173,9 +173,19 @@ QString DataPair::getDesc() const
     return m_desc;
 }
 
-void DataPair::setDesc(const QString &desc)
+void DataPair::setDesc(const QString& desc)
 {
     m_desc = desc;
+}
+
+QList<std::tuple<QString, double, QColor>> DataPair::getColorInfoList() const
+{
+    return m_colorInfoList;
+}
+
+void DataPair::setColorInfoList(const QList<std::tuple<QString, double, QColor>>& colorInfoList)
+{
+    m_colorInfoList = colorInfoList;
 }
 
 void DataPair::setLineWidth(int width)

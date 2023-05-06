@@ -223,7 +223,7 @@
           <item>
            <widget class="QStackedWidget" name="stackedWidget_aDMrpart">
             <property name="currentIndex">
-             <number>0</number>
+             <number>2</number>
             </property>
             <widget class="QWidget" name="page_4"/>
             <widget class="QWidget" name="page">
@@ -486,21 +486,21 @@ p, li { white-space: pre-wrap; }
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="pushButton_add_2">
+                 <widget class="QPushButton" name="pushButtonAddColorRange">
                   <property name="text">
                    <string>添加</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="pushButton_6">
+                 <widget class="QPushButton" name="pushButtonUpdateColorRange">
                   <property name="text">
                    <string>更新</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="pushButton_7">
+                 <widget class="QPushButton" name="pushButtonRemoveColorRange">
                   <property name="text">
                    <string>移除</string>
                   </property>

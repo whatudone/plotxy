@@ -37,11 +37,6 @@ PlotTrack::PlotTrack(QWidget* parent)
 
 PlotTrack::~PlotTrack() {}
 
-void PlotTrack::onUpdateColorThresholdMap(QMap<QString, QMap<int, QColor>> targetMap)
-{
-    m_thresholdColorMap = targetMap;
-}
-
 void PlotTrack::setLeftPadding(int leftPadding)
 {
     m_leftPadding = leftPadding;
