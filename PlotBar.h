@@ -33,20 +33,37 @@ protected:
 
 private:
     void initPlot();
-    void updateGraph();
+    void updateGraph(double secs, DataPair* data);
+    void updateLabelAndTick();
+    void setBarData(const QString& uuid, double value, int index);
+
+    virtual DataPair* addPlotDataPair(int32_t xEntityID,
+                                      const QString& xAttrName,
+                                      const QString& xAttrUnitName,
+                                      int32_t yEntityID,
+                                      const QString& yAttrName,
+                                      const QString& yAttrUnitName,
+                                      const QVariantList& extraParams) override;
+    virtual void delPlotPairData(const QString& uuid) override;
 
 private:
-    QMap<QString, QMap<int, QColor>>
-        m_thresholdColorMap; //key:entityType+entityAttr, threshold,QColor
     QColor m_defaultColor;
 
-    // 从数据管理器采集的临时数据，用于绘图，每次更新数据只需要更新这个临时数据即可《value,key》
-    QList<QPair<double, QString>> m_dataList;
+    QList<std::tuple<QString, double, QColor>>
+        m_colorInfoList; //QString:colorname，double:lower limit,QColor:color
 
     QVector<double> m_barTicks;
-    QVector<QString> m_barLabels;
-    QVector<double> m_barData;
-    QCPBars* m_pBar = nullptr;
+    QMap<QString, QMap<double, QColor>>
+        m_barColorInfoMap; // 最终界面上的所有QCPBar  QString:uuid  内层QMap对应当前目标上的所有QCPBar：double:阈值 QColor:显示的颜色
+
+    QMap<QString, QList<QCPBars*>> m_allBar;
+    QMap<QString, QString>
+        m_itemInfo; // 用来存放每个item对应的描述，显示在y轴左边 QString:uuid  QString:target_attr
+    QMap<QString, double> m_itemData; //用来存放每个target对应的最小值
+
+    // 范围的最小值和最大值，用于缩放图表坐标范围，保证图表始终能完全显示
+    double m_min;
+    double m_max;
 };
 
 #endif // _PLOT_BAR_H_

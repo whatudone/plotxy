@@ -443,6 +443,20 @@ double DataManager::getEntityAttrValueByMaxTime(int32_t entityID, const QString&
     return (valueList.size() == 0) ? std::numeric_limits<double>::max() : valueList.last();
 }
 
+QPair<double, double> DataManager::getMaxAndMinEntityAttrValue(int32_t entityID,
+                                                               const QString& attr)
+{
+    QList<double> valueList = getEntityAttrValueList(entityID, attr);
+    double min = std::numeric_limits<double>::max();
+    double max = 0.0;
+    for(int i = 0; i < valueList.size(); i++)
+    {
+        min = min < valueList.at(i) ? min : valueList.at(i);
+        max = max > valueList.at(i) ? max : valueList.at(i);
+    }
+    return QPair<double, double>(min, max);
+}
+
 QVector<double> DataManager::getTimeDataSet()
 {
     // 为了方便外部使用，统一转成QVector返回值
