@@ -752,7 +752,7 @@ void PlotXYDemo::addPlotWidget(PlotType type, const QRect& geo)
     m_pCurSelectedPlot = plotItem;
     updateStatusBarInfo();
 
-    PlotManagerData::getInstance()->addPlotManagerData(currTabText, plotItem);
+    PlotManagerData::getInstance()->addPlotByTab(currTabText, plotItem);
 }
 
 TabDrawWidget* PlotXYDemo::getCurDrawWidget()
@@ -1224,6 +1224,8 @@ void PlotXYDemo::onDelete()
 {
     if(m_pCurSelectedPlot)
     {
+        PlotManagerData::getInstance()->deletePlotByTab(m_pCurSelectedPlot->getTabName(),
+                                                        m_pCurSelectedPlot);
         m_pCurSelectedPlot->deleteLater();
         m_pCurSelectedPlot = nullptr;
         updateStatusBarInfo();

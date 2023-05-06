@@ -632,12 +632,13 @@ void AddPlotPair::onBtnAddClicked()
     // TODO:m_pCurSelectedPlot初始化的没有值，需要完善
     if(m_pCurSelectedPlot)
     {
-        auto dataPair = m_pCurSelectedPlot->addPlotDataPair(
-            xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
+        QVariantList list;
         if(m_pCurSelectedPlot->plotType() == PlotType::Type_PlotLight)
         {
-            dataPair->setDesc(ui.lineEdit_LightDesc->text());
+            list.append(ui.lineEdit_LightDesc->text());
         }
+        m_pCurSelectedPlot->addPlotDataPair(
+            xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName, list);
     }
 }
 
@@ -730,7 +731,7 @@ void AddPlotPair::onUpdateData()
 void AddPlotPair::onAddPlot(const QString& tabName, PlotItemBase* plotItem)
 {
     //数据层更新
-    PlotManagerData::getInstance()->addPlotManagerData(tabName, plotItem);
+    PlotManagerData::getInstance()->addPlotByTab(tabName, plotItem);
 }
 
 void AddPlotPair::onDoubleClickedTreeWidgetItem(QTreeWidgetItem* item, int column)

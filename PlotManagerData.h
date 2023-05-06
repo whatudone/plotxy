@@ -24,7 +24,8 @@ public:
         return &instance;
 	}
 
-	void addPlotManagerData(const QString&, PlotItemBase*);
+    void addPlotByTab(const QString&, PlotItemBase*);
+    void deletePlotByTab(const QString& tabName, PlotItemBase* plot);
     const QMap<QString, QList<PlotItemBase*>>& getPlotManagerData();
     // TODO:需要把PlotName这个唯一标识符替换成UUID
     PlotItemBase* getPlotByTabAndName(const QString& tabName, const QString& plotName);

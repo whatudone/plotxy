@@ -212,7 +212,8 @@ public:
                                       const QString& xAttrUnitName,
                                       int32_t yEntityID,
                                       const QString& yAttrName,
-                                      const QString& yAttrUnitName);
+                                      const QString& yAttrUnitName,
+                                      const QVariantList& extraParams = QVariantList());
     virtual void delPlotPairData(const QString& uuid);
     virtual void updatePlotPairData(const QString& uuid,
                                     int32_t xEntityID,

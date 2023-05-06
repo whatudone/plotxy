@@ -373,12 +373,19 @@ DataPair* PlotItemBase::addPlotDataPair(int32_t xEntityID,
                                         const QString& xAttrUnitName,
                                         int32_t yEntityID,
                                         const QString& yAttrName,
-                                        const QString& yAttrUnitName)
+                                        const QString& yAttrUnitName,
+                                        const QVariantList& extraParams)
 {
     // TODO:需要完善重复添加逻辑
     DataPair* data =
         new DataPair(xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
     m_dataPairs.append(data);
+    // 设置额外参数
+    if(plotType() == PlotType::Type_PlotLight)
+    {
+        auto desc = extraParams.at(0).toString();
+        data->setDesc(desc);
+    }
 
     // 目前界面上都是直接修改DataPair内部的数据，这里提供一个集中的入口虚函数处理。
     connect(data,
