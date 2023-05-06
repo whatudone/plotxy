@@ -102,7 +102,7 @@ void TabDrawWidget::mouseReleaseEvent(QMouseEvent* event)
             m_curSelectedPlots.append(plot);
             emit selectedPlotChanged(m_curSelectedPlots);
         }
-        else if(m_mouseMode == MouseMode::CreatePlot)
+        if(m_mouseMode == MouseMode::CreatePlot)
         {
             // 避免点击事件直接触发CreatePlot逻辑，需要判断橡皮筋的大小
             m_pRubberBand->hide();
@@ -154,7 +154,21 @@ void TabDrawWidget::paintEvent(QPaintEvent* event)
 PlotItemBase* TabDrawWidget::findPlotByMousePos(const QPoint& mouseEventPoint)
 {
     // 获取最上层的控件,需要将坐标转化为全局坐标
-    return dynamic_cast<PlotItemBase*>(qApp->widgetAt(mapToGlobal(mouseEventPoint)));
+    // PlotItemBase这一层被鼠标穿透，导致无法通过qApp->widgetAt()获取到
+    // 通过findChildren目前测试发现最上层的控件是在处于列表的最后
+    auto allPlotList = findAllPlots();
+    std::reverse(allPlotList.begin(), allPlotList.end());
+    foreach(auto plot, allPlotList)
+    {
+        // 判断是否plot在鼠标坐标下，需要把tab上的坐标转化到plot中
+        QPoint localPos = plot->mapFromParent(mouseEventPoint);
+        auto rect = plot->rect();
+        if(rect.contains(localPos))
+        {
+            return plot;
+        }
+    }
+    return nullptr;
 }
 
 void TabDrawWidget::handleMouseMoveWithMovePlot(int offsetX, int offsetY)
@@ -231,7 +245,12 @@ void TabDrawWidget::handleMouseReleaseWithSelectPlot(const QPoint& mouseEventPoi
     QMenu menu;
     foreach(auto plot, selectedPlotList)
     {
-        menu.addAction(plot->getName(), [plot]() { plot->raise(); });
+        menu.addAction(plot->getName(), [plot, this]() {
+            plot->raise();
+            m_curSelectedPlots.clear();
+            m_curSelectedPlots.append(plot);
+            emit selectedPlotChanged(m_curSelectedPlots);
+        });
     }
     // 适配多屏坐标
     menu.exec(QCursor::pos());
