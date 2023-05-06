@@ -5,6 +5,8 @@
 int PlotBar::m_instanceCount = 1;
 PlotBar::PlotBar(QWidget* parent)
     : PlotItemBase(parent)
+    , m_min(std::numeric_limits<double>::max())
+    , m_max(0.0)
 {
     QString name = QString("Bar%1").arg(m_instanceCount);
     this->setName(name);
@@ -46,27 +48,14 @@ PlotBar::~PlotBar() {}
 void PlotBar::updateDataForDataPairsByTime(double secs)
 {
     if(getDataPairs().isEmpty())
-		return;
-    m_dataList.clear();
-    int isize = getDataPairs().size();
-    for(int i = 0; i < isize; i++)
+        return;
+
+    for(int i = 0; i < m_dataPairs.size(); ++i)
     {
-        auto dataPair = getDataPairs().at(i);
-        auto xEntityID = dataPair->getEntityIDX();
-        auto xEntityName = dataPair->getEntity_x();
-        auto xAttr = dataPair->getAttr_x();
-        QList<double> xSecList =
-            DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
-
-        if(xSecList.isEmpty())
-            continue;
-
-        //*获取当前Attr值
-        double currValue = xSecList.last();
-        QString currKey = xEntityName + '_' + xAttr;
-        m_dataList.append({currValue, currKey});
+        updateGraph(secs, m_dataPairs.at(i));
     }
-    updateGraph();
+
+    m_customPlot->replot();
 }
 
 void PlotBar::initPlot()
@@ -94,12 +83,6 @@ void PlotBar::initPlot()
     m_customPlot->setBackground(m_outerFillColor);
     m_customPlot->axisRect()->setBackground(m_gridFillColor);
 
-    m_pBar = new QCPBars(m_customPlot->yAxis, m_customPlot->xAxis);
-
-    m_pBar->setAntialiased(false); // 为了更好的边框效果，关闭抗齿锯
-    m_pBar->setPen(QPen(m_defaultColor.lighter(130))); // 设置柱状图的边框颜色
-    m_pBar->setBrush(m_defaultColor); // 设置柱状图的画刷颜色
-
     m_customPlot->yAxis->setTickLabelRotation(60); // 轴刻度文字旋转60度
     m_customPlot->yAxis->setSubTicks(false); // 不显示子刻度
     m_customPlot->yAxis->setTickLength(0, 4); // 轴内外刻度的长度分别是0,4,也就是轴内的刻度线不显示
@@ -111,37 +94,236 @@ void PlotBar::initPlot()
     m_customPlot->replot();
 }
 
-void PlotBar::updateGraph()
+void PlotBar::updateGraph(double secs, DataPair* data)
 {
-    int isize = m_dataList.size();
-    if(isize <= 0)
+    if(!data)
     {
         return;
     }
-    double min = 0.0;
-    double max = 0.0;
-    m_barTicks.clear();
-    m_barLabels.clear();
-    m_barData.clear();
-    for(int i = 0; i < isize; i++)
+
+    auto uuid = data->getUuid();
+    auto xEntityID = data->getEntityIDX();
+    auto xAttr = data->getAttr_x();
+
+    double value = DataManager::getInstance()->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs);
+
+    if(abs(value - std::numeric_limits<double>::max()) < 1) // 表示value无效
     {
-        m_barTicks << i + 1;
-        QPair<double, QString> pair = m_dataList.at(i);
-        double value = pair.first;
-        QString attr = pair.second;
-        m_barLabels << attr;
-        m_barData << value;
-        max = max > value ? max : value;
-        min = min < value ? min : value;
+        value = 0;
+    }
+    int index = 0;
+    int cnt = 0; // 标记是哪一条Target对应的Bar
+    for(auto it = m_itemInfo.constBegin(); it != m_itemInfo.constEnd(); it++)
+    {
+        index++;
+        if(it.key() == uuid)
+        {
+            cnt = index;
+            break;
+        }
+    }
+
+    QList<std::tuple<QString, double, QColor>> colorList = data->getColorInfoList();
+    if(data->getColorInfoList().isEmpty())
+    {
+        // 表示未设置显示范围，则全用默认颜色绘制
+        m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << value);
+        return;
+    }
+    for(int i = 0; i < colorList.size(); i++)
+    {
+        // 如果用户设置的colorRange范围在所有数据的最小值和最大值之外，则认为设置无效，不绘制图像
+        if(std::get<1>(colorList.at(i)) < m_min || std::get<1>(colorList.at(i)) > m_max)
+        {
+            return;
+        }
+    }
+
+    // 不相等表示用户重新设置了阈值，这个时候需要重新创建堆叠的柱状图;相等表示没有重新设置，不用创建和修改
+    if(m_colorInfoList != colorList)
+    {
+        m_colorInfoList = colorList;
+        m_barColorInfoMap[uuid].clear();
+        for(int i = 0; i < m_allBar[uuid].size(); i++)
+        {
+            m_customPlot->removePlottable(m_allBar[uuid].at(i));
+        }
+        QList<QCPBars*> tarBar;
+        for(int i = 0; i < m_colorInfoList.size(); i++)
+        {
+            double thresholdValue = std::get<1>(m_colorInfoList.at(i));
+            QColor color = std::get<2>(m_colorInfoList.at(i));
+            m_barColorInfoMap[uuid].insert(thresholdValue, color);
+        }
+
+        // colorRange下限前面的部分，用默认颜色绘制
+        QCPBars* subBar = new QCPBars(m_customPlot->yAxis, m_customPlot->xAxis);
+        subBar->setPen(QPen(m_defaultColor.lighter(130)));
+        subBar->setBrush(m_defaultColor);
+        tarBar.push_back(subBar);
+
+        for(auto it = m_barColorInfoMap[uuid].constBegin();
+            it != m_barColorInfoMap[uuid].constEnd();
+            it++)
+        {
+            QCPBars* subBar = new QCPBars(m_customPlot->yAxis, m_customPlot->xAxis);
+            subBar->setPen(QPen(it.value().lighter(130)));
+            subBar->setBrush(it.value());
+            tarBar.push_back(subBar);
+        }
+
+        if(tarBar.size() > 1)
+        {
+            for(int i = 1; i < tarBar.size(); i++)
+            {
+                tarBar.at(i)->moveAbove(tarBar.at(i - 1));
+            }
+        }
+        m_allBar.insert(uuid, tarBar);
+    }
+
+    // 设置了正确的colorRange，每个target上绘制多个Bar
+    setBarData(uuid, value, cnt);
+}
+
+void PlotBar::updateLabelAndTick()
+{
+    if(m_itemInfo.isEmpty())
+    {
+        return;
+    }
+
+    m_barTicks.clear();
+    QVector<QString> labels;
+
+    int index = 1;
+    for(auto it = m_itemInfo.constBegin(); it != m_itemInfo.constEnd(); it++)
+    {
+        m_barTicks << index++;
+        labels << it.value();
     }
 
     QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
-    textTicker->addTicks(m_barTicks, m_barLabels);
+    textTicker->addTicks(m_barTicks, labels);
     m_customPlot->yAxis->setTicker(textTicker); // 设置为文字轴
-
-    m_customPlot->yAxis->setRange(0, isize + 1); // 设置范围
-    m_customPlot->xAxis->setRange(min > 0 ? min * 0.9 : min * 1.1, max > 0 ? max * 1.1 : max * 0.9);
-
-    m_pBar->setData(m_barTicks, m_barData);
+    m_customPlot->yAxis->setRange(0, index);
+    m_customPlot->xAxis->setRange(m_min, m_max);
     m_customPlot->replot();
+}
+
+void PlotBar::setBarData(const QString& uuid, double value, int index)
+{
+    if(!m_barColorInfoMap.contains(uuid) || !m_allBar.contains(uuid))
+        return;
+    QMap<double, QColor> colorMap = m_barColorInfoMap[uuid];
+    QList<QCPBars*> barList = m_allBar[uuid];
+    if(barList.isEmpty())
+        return;
+
+    QList<double> valueList;
+    valueList.push_back(m_itemData[uuid]);
+    for(auto it = colorMap.constBegin(); it != colorMap.constEnd(); it++)
+    {
+        if(value - it.key() > 0)
+        {
+            // 表示数值在标记的范围内
+            valueList.push_back(it.key());
+            continue;
+        }
+    }
+    valueList.push_back(value);
+    if(value < valueList.at(0))
+    {
+        barList.at(0)->setData(QVector<double>() << index, QVector<double>() << 0.0);
+    }
+    else
+    {
+        barList.at(0)->setData(QVector<double>() << index, QVector<double>() << valueList.at(0));
+    }
+
+    if(valueList.size() > 1)
+    {
+        int cnt = 1;
+        for(; cnt < valueList.size() - 1; cnt++)
+        {
+            barList.at(cnt)->setData(QVector<double>() << index,
+                                     QVector<double>()
+                                         << (valueList.at(cnt + 1) - valueList.at(cnt)));
+        }
+    }
+}
+
+DataPair* PlotBar::addPlotDataPair(int32_t xEntityID,
+                                   const QString& xAttrName,
+                                   const QString& xAttrUnitName,
+                                   int32_t yEntityID,
+                                   const QString& yAttrName,
+                                   const QString& yAttrUnitName,
+                                   const QVariantList& extraParams)
+{
+    Q_UNUSED(extraParams)
+    DataPair* data =
+        new DataPair(xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
+    m_dataPairs.append(data);
+
+    // 目前界面上都是直接修改DataPair内部的数据，这里提供一个集中的入口虚函数处理。
+    connect(data,
+            &DataPair::dataUpdate,
+            this,
+            &PlotItemBase::onDataPairUpdateData,
+            Qt::UniqueConnection);
+
+    QString uuid = data->getUuid();
+    QCPBars* pBar = new QCPBars(m_customPlot->yAxis, m_customPlot->xAxis);
+    pBar->setAntialiased(false); // 为了更好的边框效果，关闭抗齿锯
+    pBar->setPen(QPen(m_defaultColor.lighter(130)));
+    pBar->setBrush(m_defaultColor);
+
+    QMap<double, QColor> baseBarMap;
+    baseBarMap.insert(0.0, m_defaultColor);
+    m_barColorInfoMap.insert(uuid, baseBarMap);
+    QList<QCPBars*> baseBar;
+    baseBar.push_back(pBar);
+    m_allBar.insert(uuid, baseBar);
+    m_itemInfo.insert(uuid, data->getEntity_x() + '_' + xAttrName);
+
+    QPair<double, double> limit =
+        DataManager::getInstance()->getMaxAndMinEntityAttrValue(xEntityID, xAttrName);
+    m_min = m_min < limit.first ? m_min : limit.first;
+    m_max = m_max > limit.second ? m_max : limit.second;
+
+    m_itemData.insert(uuid, limit.first);
+
+    updateLabelAndTick();
+    emit dataPairsChanged(this);
+
+    return data;
+}
+
+void PlotBar::delPlotPairData(const QString& uuid)
+{
+    if(m_dataPairs.isEmpty())
+        return;
+    if(m_barColorInfoMap.contains(uuid))
+    {
+        m_barColorInfoMap.remove(uuid);
+    }
+    if(m_itemData.contains(uuid))
+    {
+        m_itemData.remove(uuid);
+    }
+    if(m_itemInfo.contains(uuid))
+    {
+        m_itemInfo.remove(uuid);
+    }
+    if(m_allBar.contains(uuid))
+    {
+        for(int i = 0; i < m_allBar[uuid].size(); i++)
+        {
+            m_customPlot->removePlottable(m_allBar[uuid].at(i));
+        }
+        m_allBar.remove(uuid);
+    }
+    updateLabelAndTick();
+    PlotItemBase::delPlotPairData(uuid);
 }
