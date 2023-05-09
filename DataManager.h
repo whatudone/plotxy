@@ -95,6 +95,9 @@ public:
     // 根据id获取实例对应的属性和单位列表
     QList<QPair<QString, QString>> getAttrAndUnitPairList(int32_t id);
 
+    QString getDataFileName() const;
+    void setDataFileName(const QString& dataFileName);
+
 private:
     //获取实体-属性的全数据，属性默认为Time
     QList<double> getEntityAttrValueList(int32_t entityID, const QString& attr = "Time");
@@ -105,8 +108,12 @@ private:
     void loadCSVData(const QString& filePath);
     // 加载ASI格式的数据（二维类型）
     void loadASIData(const QString& asiFileName);
+
     // 使用正则表达式加载ASI中特定数据格式
     QStringList parsePlatformData(const QString& data);
+
+    // 导入数据文件路径
+    QString m_dataFileName;
 signals:
     void loadDataReady();
 };

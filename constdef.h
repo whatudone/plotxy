@@ -18,12 +18,6 @@ enum PlotType : int32_t
 	Type_PlotDoppler
 };
 
-struct BaseInfo
-{
-	QString Base_TabName;
-	QString Base_PlotName;
-};
-
 static const double OUTPUT_CONV_FACTOR = 1e-03;
 static const double INPUT_CONV_FACTOR_PREC_LIMIT = 1e+03;
 static const double INPUT_ROUND_UP_VALUE = 5e-4;

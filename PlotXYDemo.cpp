@@ -2,6 +2,9 @@
 
 #include <QButtonGroup>
 #include <QFileDialog>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QMetaType>
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QPushButton>
@@ -59,8 +62,6 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
             SIGNAL(sgn_renameTabPage(QString, QString)),
             PlotManagerData::getInstance(),
             SLOT(slotChangeTabName(QString, QString)));
-
-    qRegisterMetaType<BaseInfo>("BaseInfo");
 
     connect(m_plotManager,
             &PlotManager::sigAddPlotPair,
@@ -170,14 +171,23 @@ void PlotXYDemo::onClassification() {}
 
 void PlotXYDemo::onOpenFile()
 {
-    QString path = QFileDialog::getOpenFileName(
-        this, "Open File", ".", tr("ASI(*.asi) ;; Microsoft CSV(*.csv)"));
+    QString path =
+        QFileDialog::getOpenFileName(this, "Open File", ".", tr("ASI(*.asi) ;; PXY(*.pxy)"));
     if(path.isEmpty())
     {
         return;
     }
+    QFileInfo info(path);
 
-    DataManager::getInstance()->loadFileData(path);
+    QString suffix = info.suffix().toLower();
+    if(suffix == "asi")
+    {
+        DataManager::getInstance()->loadFileData(path);
+    }
+    else
+    {
+        loadPXYData(path);
+    }
 }
 
 void PlotXYDemo::onUserManual() {}
@@ -648,13 +658,17 @@ void PlotXYDemo::onTabDrawWidgetCreatePlot(PlotType type, const QRect& rect)
     addPlotWidget(type, rect);
 }
 
-void PlotXYDemo::addTabPage()
+void PlotXYDemo::addTabPage(QString& tabName)
 {
     TabDrawWidget* tabWidgetItem = new TabDrawWidget();
     tabWidgetItem->setMouseMode(m_mouseMode);
     int currCount = ui.tabWidget->count();
-    QString genTabName = QString("Tab ") + QString::number(currCount + 1);
-    ui.tabWidget->addTab(tabWidgetItem, genTabName);
+    if(tabName.isEmpty())
+    {
+        // 产生一个默认名称
+        tabName = QString("Tab ") + QString::number(currCount + 1);
+    }
+    ui.tabWidget->addTab(tabWidgetItem, tabName);
     ui.tabWidget->setCurrentIndex(currCount);
 
     connect(tabWidgetItem,
@@ -667,7 +681,7 @@ void PlotXYDemo::addTabPage()
         tabWidgetItem, &TabDrawWidget::createPlot, this, &PlotXYDemo::onTabDrawWidgetCreatePlot);
 }
 
-void PlotXYDemo::addPlotWidget(PlotType type, const QRect& geo)
+PlotItemBase* PlotXYDemo::addPlotWidget(PlotType type, const QRect& geo, const QString& plotName)
 {
     PlotItemBase* plotItem = nullptr;
     if(type == PlotType::Type_PlotBar)
@@ -721,7 +735,7 @@ void PlotXYDemo::addPlotWidget(PlotType type, const QRect& geo)
     }
     else
     {
-        return;
+        return nullptr;
     }
     int currTabIndex = ui.tabWidget->currentIndex();
     QString currTabText = ui.tabWidget->tabText(currTabIndex);
@@ -742,6 +756,10 @@ void PlotXYDemo::addPlotWidget(PlotType type, const QRect& geo)
     {
         plotItem->setGeometry(geo);
     }
+    if(!plotName.isEmpty())
+    {
+        plotItem->setName(plotName);
+    }
 
     // 默认选中添加的图表
     TabDrawWidget::setCurSelectedPlots(QList<PlotItemBase*>() << plotItem);
@@ -751,11 +769,168 @@ void PlotXYDemo::addPlotWidget(PlotType type, const QRect& geo)
     updateStatusBarInfo();
 
     PlotManagerData::getInstance()->addPlotByTab(currTabText, plotItem);
+    return plotItem;
 }
 
 TabDrawWidget* PlotXYDemo::getCurDrawWidget()
 {
     return static_cast<TabDrawWidget*>(ui.tabWidget->currentWidget());
+}
+
+void PlotXYDemo::savePXYData(const QString& pxyFileName)
+{
+    QString dataFileName = DataManagerInstance->getDataFileName();
+    if(dataFileName.isEmpty())
+    {
+        return;
+    }
+
+    QFile file(pxyFileName);
+    if(!file.open(QIODevice::WriteOnly))
+    {
+        return;
+    }
+    QJsonObject allObject;
+    // 通用信息
+    allObject.insert("Date", QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+    allObject.insert("DataPath", dataFileName);
+
+    // 图表空间信息,多个tab，每个tab包含多个plot
+    int32_t tabSize = ui.tabWidget->count();
+
+    // Object会对内容排序，为了保准按照顺序保存和加载，采用Array存储tab和plot
+    QJsonArray allTabJsonArray;
+    for(int i = 0; i < tabSize; ++i)
+    {
+        QJsonObject tabObjct;
+        QString tabName = ui.tabWidget->tabText(i);
+        TabDrawWidget* draw = static_cast<TabDrawWidget*>(ui.tabWidget->widget(i));
+        auto plotList = draw->findAllPlots();
+
+        QJsonArray plotArray;
+        for(auto plot : plotList)
+        {
+            QString plotName = plot->getName();
+            QJsonObject plotObject;
+
+            plotObject.insert("PlotName", plotName);
+            plotObject.insert("X", plot->x());
+            plotObject.insert("Y", plot->y());
+            plotObject.insert("Width", plot->width());
+            plotObject.insert("Height", plot->height());
+            plotObject.insert("PlotType", plot->plotType());
+            // 图表存在多个数据对
+            QJsonArray dataPairArray;
+            auto dataPairs = plot->getDataPairs();
+            for(DataPair* dataPair : dataPairs)
+            {
+                QJsonObject dataPairObject;
+                saveDataPairToJson(dataPair, dataPairObject);
+                dataPairArray.append(dataPairObject);
+            }
+            plotObject.insert("DataPairs", dataPairArray);
+            plotArray.append(plotObject);
+        }
+        tabObjct.insert("TabName", tabName);
+        tabObjct.insert("Plots", plotArray);
+        tabObjct.insert("BackgroundColor", "Test");
+        allTabJsonArray.append(tabObjct);
+    }
+    allObject.insert("Tabs", allTabJsonArray);
+
+    QJsonDocument jsonDoc;
+    jsonDoc.setObject(allObject);
+    file.write(jsonDoc.toJson());
+    file.close();
+}
+
+void PlotXYDemo::loadPXYData(const QString& pxyFileName)
+{
+    QFile inFile(pxyFileName);
+    inFile.open(QIODevice::ReadOnly | QIODevice::Text);
+    QByteArray data = inFile.readAll();
+    inFile.close();
+
+    QJsonParseError error;
+    QJsonDocument doc = QJsonDocument::fromJson(data, &error);
+    if(error.error != QJsonParseError::NoError)
+    {
+        qDebug() << "Parse failed";
+    }
+    QJsonObject rootObj = doc.object();
+    QString dataFileName = rootObj.value("DataPath").toString();
+    if(!dataFileName.isEmpty())
+    {
+        DataManagerInstance->loadFileData(dataFileName);
+    }
+    QJsonArray allTabJsonArray = rootObj.value("Tabs").toArray();
+    int32_t tabSize = allTabJsonArray.size();
+    // 先清理创建好的tab页
+    clearAllTab();
+    for(int i = 0; i < tabSize; ++i)
+    {
+        auto tabObject = allTabJsonArray.at(i).toObject();
+        QString tabName = tabObject.value("TabName").toString();
+        // 创建Tab页
+        addTabPage(tabName);
+        // 创建图表
+        QJsonArray plotArray = tabObject.value("Plots").toArray();
+        int32_t plotSize = plotArray.size();
+        for(int j = 0; j < plotSize; ++j)
+        {
+            auto plotObject = plotArray.at(j).toObject();
+            int32_t x = plotObject.value("X").toInt();
+            int32_t y = plotObject.value("Y").toInt();
+            int32_t width = plotObject.value("Width").toInt();
+            int32_t height = plotObject.value("Height").toInt();
+            PlotType type = static_cast<PlotType>(plotObject.value("PlotType").toInt());
+            QString plotName = plotObject.value("PlotName").toString();
+            auto plot = addPlotWidget(type, QRect(x, y, width, height), plotName);
+            QJsonArray dataPairArray = plotObject.value("DataPairs").toArray();
+            auto dataPairSize = dataPairArray.size();
+            for(int m = 0; m < dataPairSize; ++m)
+            {
+                QJsonObject dataPairObject = dataPairArray.at(m).toObject();
+                QString uuid = dataPairObject.value("UUID").toString();
+                bool visible = dataPairObject.value("Visible").toBool();
+                int32_t xEntityID = dataPairObject.value("XEntityID").toInt();
+                QString xAttrName = dataPairObject.value("XAttrName").toString();
+                QString xAttrUnitName = dataPairObject.value("XAttrUnitName").toString();
+
+                int32_t yEntityID = dataPairObject.value("YEntityID").toInt();
+                QString yAttrName = dataPairObject.value("YAttrName").toString();
+                QString yAttrUnitName = dataPairObject.value("YAttrUnitName").toString();
+
+                auto dataPair = plot->addPlotDataPair(
+                    xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
+                dataPair->setUuid(uuid);
+                dataPair->setDraw(visible);
+            }
+        }
+    }
+}
+
+void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object)
+{
+    object.insert("UUID", dataPair->getUuid());
+    object.insert("Visible", dataPair->isDraw());
+    object.insert("XEntityID", dataPair->getEntityIDX());
+    object.insert("YEntityID", dataPair->getEntityIDY());
+    object.insert("XAttrName", dataPair->getAttr_x());
+    object.insert("YAttrName", dataPair->getAttr_y());
+    object.insert("XAttrUnitName", dataPair->getUnit_x());
+    object.insert("YAttrUnitName", dataPair->getUnit_y());
+}
+
+void PlotXYDemo::clearAllTab()
+{
+    PlotManagerData::getInstance()->clearPlotData();
+    auto count = ui.tabWidget->count();
+    for(int var = 0; var < count; ++var)
+    {
+        delete ui.tabWidget->widget(var);
+    }
+    ui.tabWidget->clear();
 }
 
 void PlotXYDemo::onPlay()
@@ -1164,24 +1339,13 @@ void PlotXYDemo::updateStatusBarInfo()
     }
 }
 
-PlotType PlotXYDemo::getCurrentFocusPlot()
-{
-    QWidget* subWidget = QApplication::widgetAt(QCursor::pos().x(), QCursor::pos().y());
-    if(subWidget == nullptr)
-        return m_lastSelectedType;
-
-    if(subWidget->objectName() == "PlotItemBase")
-    {
-        m_pCurSelectedPlot = dynamic_cast<PlotItemBase*>(subWidget);
-
-        m_lastSelectedType = m_pCurSelectedPlot->plotType();
-    }
-    return m_lastSelectedType;
-}
-
 void PlotXYDemo::onOpenNetwork() {}
 
-void PlotXYDemo::onExportDataStore() {}
+void PlotXYDemo::onExportDataStore()
+{
+    QString pxyFileName = QFileDialog::getSaveFileName(nullptr, "保存", ".", "PXY (*.pxy)");
+    savePXYData(pxyFileName);
+}
 
 void PlotXYDemo::onClose_Disconnect() {}
 

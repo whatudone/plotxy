@@ -116,16 +116,16 @@ void DataManager::loadCSVData(const QString& filePath)
 								QString timeString = currEntityAttrStringVec.at(k).at(t);
 								timeString.remove(QChar('\"'));
 								QStringList timeStringList;
-								OrdinalTimeFormatter timeFormat;
-                                if(timeFormat.canConvert(timeString, timeStringList))
+
+                                if(OrdinalTimeFormatter::canConvert(timeString, timeStringList))
 								{
                                     // 目前csv中没有参考年份的独立字段，所以参考年份默认从数据中读取，立面上不正确。
                                     if(m_refYear == -1)
 									{
 										m_refYear = timeStringList.at(1).toInt();
 									}
-                                    currEntityAttrValue =
-                                        timeFormat.convertToSeconds(timeString, m_refYear);
+                                    currEntityAttrValue = OrdinalTimeFormatter::convertToSeconds(
+                                        timeString, m_refYear);
                                     // 实时更新整个数据文件中的最大和最小时间，用于时间轴中设置起始和终止时间
                                     m_minTime = (currEntityAttrValue < m_minTime)
                                                     ? currEntityAttrValue
@@ -378,6 +378,8 @@ void DataManager::loadASIData(const QString& asiFileName)
         m_minTime = *m_timeDataSet.cbegin();
         m_maxTime = *m_timeDataSet.rbegin();
     }
+
+    m_dataFileName = asiFileName;
 }
 
 const QMap<int32_t, QMap<QPair<QString, QString>, QList<double>>>& DataManager::getDataMap()
@@ -519,4 +521,14 @@ QStringList DataManager::parsePlatformData(const QString& data)
         list.append(element);
     }
     return list;
+}
+
+QString DataManager::getDataFileName() const
+{
+    return m_dataFileName;
+}
+
+void DataManager::setDataFileName(const QString& dataFileName)
+{
+    m_dataFileName = dataFileName;
 }

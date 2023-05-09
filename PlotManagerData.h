@@ -29,6 +29,7 @@ public:
     const QMap<QString, QList<PlotItemBase*>>& getPlotManagerData();
     // TODO:需要把PlotName这个唯一标识符替换成UUID
     PlotItemBase* getPlotByTabAndName(const QString& tabName, const QString& plotName);
+    void clearPlotData();
 
 public slots:
 	void slotChangePlotName();

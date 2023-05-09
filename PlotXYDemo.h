@@ -12,6 +12,7 @@ class PlotManager;
 class AddPlotPair;
 class AdvancedDataManager;
 class TabDrawWidget;
+class DataPair;
 enum class MouseMode : uint8_t;
 class PlotXYDemo : public QMainWindow
 {
@@ -34,12 +35,12 @@ public:
 
     void initStatusBar();
     void updateStatusBarInfo();
-    PlotType getCurrentFocusPlot();
 
 public slots:
 	//menu-file
 	void onOpenFile();
 	void onOpenNetwork();
+    // 导出数据成pxy或者csv，目前先保存为pxy
 	void onExportDataStore();
 	void onClose_Disconnect();
 	void onRunPythonScript();
@@ -176,10 +177,19 @@ signals:
     void mouseModeChanged(MouseMode mode);
 
 private:
-    void addTabPage();
+    void addTabPage(QString& tabName = QString());
     // 将添加图表控件操作合并到一个函数
-    void addPlotWidget(PlotType type, const QRect& geo = QRect());
+    PlotItemBase*
+    addPlotWidget(PlotType type, const QRect& geo = QRect(), const QString& plotName = QString());
     TabDrawWidget* getCurDrawWidget();
+    // 保存PXY格式工程信息
+    void savePXYData(const QString& pxyFileName);
+    // 加载PXY格式工程信息，里面带了图表空间信息和数据信息
+    void loadPXYData(const QString& pxyFileName);
+    // 保存数据对信息
+    void saveDataPairToJson(DataPair* dataPair, QJsonObject& object);
+    // 清理历史创建的tab页和其中的图表
+    void clearAllTab();
 
 private:
     Ui::PlotXYDemo ui;

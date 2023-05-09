@@ -93,8 +93,8 @@ void TimeControls::setBeginTime(double seconds, int refYear)
 {
 	unsigned int day, hour, minute;
 	float second;
-	OrdinalTimeFormatter timeFormat;
-	timeFormat.secondsConvertToTime(seconds, (double)refYear, day, hour, minute, second);
+
+    OrdinalTimeFormatter::secondsConvertToTime(seconds, (double)refYear, day, hour, minute, second);
 	ui.spinBox_beginTimeD->setValue(day);
     ui.spinBox_beginTimeY->setValue(seconds > 0 ? refYear : refYear - 1);
 	ui.spinBox_beginTimeH->setValue(hour);

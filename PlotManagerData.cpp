@@ -44,6 +44,12 @@ PlotItemBase* PlotManagerData::getPlotByTabAndName(const QString& tabName, const
     return nullptr;
 }
 
+void PlotManagerData::clearPlotData()
+{
+    m_plotMgrDataMap.clear();
+    emit plotDataChanged(m_plotMgrDataMap);
+}
+
 void PlotManagerData::slotChangeTabName(QString oldName, QString newName)
 {
     if(m_plotMgrDataMap.contains(oldName))
