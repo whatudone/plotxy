@@ -108,8 +108,8 @@ void TimeControls::setCurTime(double seconds, int refYear)
 {
 	unsigned int day, hour, minute;
 	float second;
-	OrdinalTimeFormatter timeFormat;
-	timeFormat.secondsConvertToTime(seconds, (double)refYear, day, hour, minute, second);
+
+    OrdinalTimeFormatter::secondsConvertToTime(seconds, (double)refYear, day, hour, minute, second);
 	ui.spinBox_curTimeD->setValue(day);
     ui.spinBox_curTimeY->setValue(seconds > 0 ? refYear : refYear - 1);
 	ui.spinBox_curTimeH->setValue(hour);
@@ -121,8 +121,8 @@ void TimeControls::setEndTime(double seconds, int refYear)
 {
 	unsigned int day, hour, minute;
 	float second;
-	OrdinalTimeFormatter timeFormat;
-	timeFormat.secondsConvertToTime(seconds, (double)refYear, day, hour, minute, second);
+
+    OrdinalTimeFormatter::secondsConvertToTime(seconds, (double)refYear, day, hour, minute, second);
 	ui.spinBox_endTimeD->setValue(day);
     ui.spinBox_endTimeY->setValue(seconds > 0 ? refYear : refYear - 1);
 	ui.spinBox_endTimeH->setValue(hour);
@@ -153,8 +153,8 @@ double TimeControls::getBeginTime(int refYear)
 	second = ui.doubleSpinBox_beginTimeS->value();
 
 	QString str = QString("%1 %2 %3:%4:%5").arg(day).arg(year).arg(hour).arg(minute).arg(second);
-	OrdinalTimeFormatter timeFormat;
-	double secs = timeFormat.convertToSeconds(str, refYear);
+
+    double secs = OrdinalTimeFormatter::convertToSeconds(str, refYear);
 	return secs;
 }
 
@@ -170,8 +170,8 @@ double TimeControls::getCurTime(int refYear)
 	second = ui.doubleSpinBox_curTimeS->value();
 
 	QString str = QString("%1 %2 %3:%4:%5").arg(day).arg(year).arg(hour).arg(minute).arg(second);
-	OrdinalTimeFormatter timeFormat;
-	double secs = timeFormat.convertToSeconds(str, refYear);
+
+    double secs = OrdinalTimeFormatter::convertToSeconds(str, refYear);
 	return secs;
 }
 
@@ -187,8 +187,8 @@ double TimeControls::getEndTime(int refYear)
 	second = ui.doubleSpinBox_endTimeS->value();
 
 	QString str = QString("%1 %2 %3:%4:%5").arg(day).arg(year).arg(hour).arg(minute).arg(second);
-	OrdinalTimeFormatter timeFormat;
-	double secs = timeFormat.convertToSeconds(str, refYear);
+
+    double secs = OrdinalTimeFormatter::convertToSeconds(str, refYear);
 	return secs;
 }
 

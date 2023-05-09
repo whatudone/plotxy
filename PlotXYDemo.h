@@ -167,9 +167,8 @@ public slots:
     void onTabDrawWidgetCreatePlot(PlotType type, const QRect& rect);
 
 signals:
-
-    void sgn_sliderValueChanged(int);
-    void sgn_sendCurrentSeconds(double);
+    // 通知图表时间轴当前时间发送变化
+    void currentSecsChanged(double secs);
     void sgn_enableActionStop(bool);
 	void sgn_sendTabWidgetRect(QRect);
 	void sgn_renameTabPage(QString, QString);

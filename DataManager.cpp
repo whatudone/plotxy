@@ -51,7 +51,7 @@ void DataManager::loadFileData(const QString& filename)
     {
 
         QMessageBox::information(NULL, QString("提示信息"), QString("已成功加载数据"));
-        emit loadDataReady();
+        emit loadDataFinished();
     }
 }
 
@@ -531,4 +531,14 @@ QString DataManager::getDataFileName() const
 void DataManager::setDataFileName(const QString& dataFileName)
 {
     m_dataFileName = dataFileName;
+}
+
+void DataManager::clearData()
+{
+    m_newEntityDataMap.clear();
+    m_platformMap.clear();
+    m_eventMap.clear();
+    m_timeDataSet.clear();
+    m_gogFileList.clear();
+    m_dataFileName.clear();
 }

@@ -69,6 +69,8 @@ private:
     QVector3D m_refLLAPoint;
     // ASI文件中带的gog数据路径，是相对于ASI文件的相对路径，需要读取的时候转化为绝对路径
     QList<QString> m_gogFileList;
+    // 导入数据文件路径
+    QString m_dataFileName;
 
 public:
     static DataManager* getInstance()
@@ -80,7 +82,7 @@ public:
     void loadFileData(const QString& filename);
     const QMap<int32_t, QMap<QPair<QString, QString>, QList<double>>>& getDataMap();
     void getMinMaxTime(double& minTime, double& maxTime);
-	int getRefYear();
+    int getRefYear();
 
     // 获取最小时间到secs时间内的实体-属性数据list
     QList<double>
@@ -98,6 +100,8 @@ public:
     QString getDataFileName() const;
     void setDataFileName(const QString& dataFileName);
 
+    void clearData();
+
 private:
     //获取实体-属性的全数据，属性默认为Time
     QList<double> getEntityAttrValueList(int32_t entityID, const QString& attr = "Time");
@@ -111,11 +115,8 @@ private:
 
     // 使用正则表达式加载ASI中特定数据格式
     QStringList parsePlatformData(const QString& data);
-
-    // 导入数据文件路径
-    QString m_dataFileName;
 signals:
-    void loadDataReady();
+    void loadDataFinished();
 };
 
 #define DataManagerInstance DataManager::getInstance()

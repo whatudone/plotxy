@@ -43,21 +43,13 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
     m_plotManager = new PlotManager();
     m_addPlotPair = new AddPlotPair();
 
+    connect(DataManager::getInstance(),
+            SIGNAL(loadDataFinished()),
+            m_addPlotPair,
+            SLOT(onUpdateData()));
     connect(
-        DataManager::getInstance(), SIGNAL(loadDataReady()), m_addPlotPair, SLOT(onUpdateData()));
-    connect(DataManager::getInstance(), SIGNAL(loadDataReady()), m_timeCtrl, SLOT(onUpdateData()));
+        DataManager::getInstance(), SIGNAL(loadDataFinished()), m_timeCtrl, SLOT(onUpdateData()));
 
-    connect(m_timeCtrl, &TimeControls::sgn_setSliderRange, this, &PlotXYDemo::onSetSliderRange);
-
-    connect(this,
-            &PlotXYDemo::sgn_sliderValueChanged,
-            m_timeCtrl,
-            &TimeControls::onRemoteSliderValueChanged);
-    connect(m_timeCtrl,
-            &TimeControls::sgn_sliderValueChanged,
-            this,
-            &PlotXYDemo::onRemoteSliderValueChanged);
-    connect(this, &PlotXYDemo::sgn_enableActionStop, m_timeCtrl, &TimeControls::onEnableActionStop);
     connect(this,
             SIGNAL(sgn_renameTabPage(QString, QString)),
             PlotManagerData::getInstance(),
@@ -100,6 +92,10 @@ PlotXYDemo::~PlotXYDemo()
     }
     if(m_AdvancedDataManager)
         m_AdvancedDataManager->deleteLater();
+    if(m_timeCtrl)
+    {
+        m_timeCtrl->deleteLater();
+    }
 }
 
 void PlotXYDemo::onAdvancedData()
@@ -582,8 +578,6 @@ void PlotXYDemo::onSetSliderRange(int min, int max, int singleStep)
 
 void PlotXYDemo::onSliderValueChanged(int value)
 {
-    emit sgn_sliderValueChanged(value);
-
     double secs = (double)value / m_timeCtrl->getMultiplizer();
     int refYear = m_timeCtrl->getRefYear();
     // show data time
@@ -591,7 +585,7 @@ void PlotXYDemo::onSliderValueChanged(int value)
     m_statusBar_dataTime->setText(dataTime);
 
     //发送数据时间
-    emit sgn_sendCurrentSeconds(secs);
+    emit currentSecsChanged(secs);
 }
 
 void PlotXYDemo::onRemoteSliderValueChanged(int value)
@@ -740,8 +734,7 @@ PlotItemBase* PlotXYDemo::addPlotWidget(PlotType type, const QRect& geo, const Q
     int currTabIndex = ui.tabWidget->currentIndex();
     QString currTabText = ui.tabWidget->tabText(currTabIndex);
     plotItem->setTabName(currTabText);
-    connect(
-        this, &PlotXYDemo::sgn_sendCurrentSeconds, plotItem, &PlotItemBase::onGetCurrentSeconds);
+    connect(this, &PlotXYDemo::currentSecsChanged, plotItem, &PlotItemBase::onGetCurrentSeconds);
     connect(
         plotItem, &PlotItemBase::dataPairsChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
     connect(plotItem, &PlotItemBase::dataPairsChanged, m_plotManager, &PlotManager::onSelectedPlot);
@@ -1134,6 +1127,18 @@ void PlotXYDemo::initMenuTime()
     connect(m_timer, &QTimer::timeout, this, &PlotXYDemo::onTimeOut);
     connect(ui.timeSlider, &QSlider::valueChanged, this, &PlotXYDemo::onSliderValueChanged);
 
+    connect(m_timeCtrl, &TimeControls::sgn_setSliderRange, this, &PlotXYDemo::onSetSliderRange);
+
+    connect(ui.timeSlider,
+            &QSlider::valueChanged,
+            m_timeCtrl,
+            &TimeControls::onRemoteSliderValueChanged);
+    connect(m_timeCtrl,
+            &TimeControls::sgn_sliderValueChanged,
+            this,
+            &PlotXYDemo::onRemoteSliderValueChanged);
+    connect(this, &PlotXYDemo::sgn_enableActionStop, m_timeCtrl, &TimeControls::onEnableActionStop);
+
     connect(ui.actionTime_Controls, &QAction::triggered, this, &PlotXYDemo::onTimeControls);
     connect(ui.actionPlay, &QAction::triggered, this, &PlotXYDemo::onPlay);
     connect(ui.actionStop, &QAction::triggered, this, &PlotXYDemo::onStop);
@@ -1347,7 +1352,11 @@ void PlotXYDemo::onExportDataStore()
     savePXYData(pxyFileName);
 }
 
-void PlotXYDemo::onClose_Disconnect() {}
+void PlotXYDemo::onClose_Disconnect()
+{
+    //清空上次加载数据
+    DataManagerInstance->clearData();
+}
 
 void PlotXYDemo::onRunPythonScript() {}
 
