@@ -819,13 +819,13 @@ void PlotManager::onUpdatePlotManager(const QMap<QString, QList<PlotItemBase*>>&
 
 void PlotManager::onTWSclicked(QTreeWidgetItem* item, int column)
 {
-	QString compare;
-	compare = item->text(column);
 
-    if(item->isDisabled() == true)
+    if(item->isDisabled())
         return;
 	else
 	{
+        QString compare;
+        compare = item->text(column);
         if(compare == QString("通用设置"))
 		{
 			ui.stackedWidget->setCurrentIndex(0);

@@ -169,9 +169,8 @@ void PlotItemBase::setOuterFillColor(const QColor& color)
     if(m_customPlot)
     {
         m_customPlot->setBackground(color);
-        m_customPlot->replot();
     }
-    update();
+    replot();
 }
 
 void PlotItemBase::setOutlineColor(const QColor& color)
@@ -186,9 +185,8 @@ void PlotItemBase::setCoordRangeX(double lower, double upper)
     if(m_customPlot)
     {
         m_customPlot->xAxis->setRange(lower, upper);
-        m_customPlot->replot();
     }
-    update();
+    replot();
 }
 
 void PlotItemBase::setCoordRangeY(double lower, double upper)
@@ -198,9 +196,8 @@ void PlotItemBase::setCoordRangeY(double lower, double upper)
     if(m_customPlot)
     {
         m_customPlot->yAxis->setRange(lower, upper);
-        m_customPlot->replot();
     }
-    update();
+    replot();
 }
 
 void PlotItemBase::getCoordRangeX(double& lower, double& upper)
@@ -217,45 +214,111 @@ void PlotItemBase::getCoordRangeY(double& lower, double& upper)
 
 void PlotItemBase::setHorzGrids(uint count)
 {
+    if(m_horzGrids == count)
+    {
+        return;
+    }
     m_horzGrids = count;
+    if(m_customPlot)
+    {
+
+        if(count == 0)
+        {
+            m_customPlot->yAxis->grid()->setVisible(false);
+        }
+        else
+        {
+            m_customPlot->yAxis->grid()->setVisible(true);
+            m_customPlot->yAxis->ticker()->setTickCount(m_horzGrids);
+        }
+    }
+    replot();
 }
 
 void PlotItemBase::setVertGrids(uint count)
 {
+    if(m_vertGrids == count)
+    {
+        return;
+    }
     m_vertGrids = count;
+    if(m_customPlot)
+    {
+        if(count == 0)
+        {
+            m_customPlot->xAxis->grid()->setVisible(false);
+        }
+        else
+        {
+            m_customPlot->xAxis->grid()->setVisible(true);
+            m_customPlot->xAxis->ticker()->setTickCount(m_vertGrids);
+        }
+    }
+    replot();
 }
 
 void PlotItemBase::setAxisColorWidth(const QColor& color, uint width)
 {
     m_axisColor = color;
     m_axisWidth = width;
+    if(m_customPlot)
+    {
+        m_customPlot->xAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
+        m_customPlot->yAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
+    }
+    replot();
 }
 
 void PlotItemBase::setGridColorWidth(const QColor& color, uint width)
 {
     m_gridColor = color;
     m_gridWidth = width;
+    if(m_customPlot)
+    {
+        m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+        m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+    }
+    replot();
 }
 
 void PlotItemBase::setGridVisible(bool enable)
 {
     m_gridVisible = enable;
+    if(m_customPlot)
+    {
+        m_customPlot->xAxis->grid()->setVisible(enable);
+        m_customPlot->yAxis->grid()->setVisible(enable);
+    }
+    replot();
 }
 
 void PlotItemBase::setTickLabelColor(const QColor& color)
 {
     m_tickLabelColor = color;
+    if(m_customPlot)
+    {
+        m_customPlot->xAxis->setTickLabelColor(m_tickLabelColor);
+        m_customPlot->yAxis->setTickLabelColor(m_tickLabelColor);
+    }
+    replot();
 }
 
 void PlotItemBase::setTickLabelFont(const QFont& font)
 {
     m_tickLabelFont = font;
+    if(m_customPlot)
+    {
+        m_customPlot->xAxis->setTickLabelFont(m_tickLabelFont);
+        m_customPlot->yAxis->setTickLabelFont(m_tickLabelFont);
+    }
+    replot();
 }
 
 void PlotItemBase::setTickLabelFontSize(int size)
 {
     m_tickLabelFontSize = size;
     m_tickLabelFont.setPixelSize(size);
+    setTickLabelFont(m_tickLabelFont);
 }
 
 void PlotItemBase::setGridStyle(GridStyle style)
@@ -278,93 +341,163 @@ void PlotItemBase::setGridStyle(GridStyle style)
         m_gridStyle = Qt::SolidLine;
         break;
     }
+    if(m_customPlot)
+    {
+        m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+        m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+    }
+    replot();
 }
 
 void PlotItemBase::setGridDensity(GridDensity density)
 {
     m_gridDensity = density;
+    replot();
 }
 
 void PlotItemBase::setGridFillColor(const QColor& color)
 {
     m_gridFillColor = color;
+    if(m_customPlot)
+    {
+        m_customPlot->axisRect()->setBackground(color);
+    }
+    replot();
 }
 
 void PlotItemBase::setUnitsShowX(bool on)
 {
     m_showUnits_x = on;
+    if(m_customPlot)
+    {
+        m_customPlot->xAxis->setAxisFormatShow(on);
+    }
+    replot();
 }
 
 void PlotItemBase::setUnitsShowY(bool on)
 {
     m_showUnits_y = on;
+    if(m_customPlot)
+    {
+        m_customPlot->yAxis->setAxisFormatShow(on);
+    }
+    replot();
 }
 
 void PlotItemBase::setUnitsX(const QString& units)
 {
     m_units_x = units;
+    if(m_customPlot)
+    {
+        m_customPlot->xAxis->setAxisFormat(units);
+    }
+    replot();
 }
 
 void PlotItemBase::setUnitsY(const QString& units)
 {
     m_units_y = units;
+    if(m_customPlot)
+    {
+        m_customPlot->yAxis->setAxisFormat(units);
+    }
+    replot();
 }
 
 void PlotItemBase::setTitleVisible(bool on)
 {
     m_titleVisible = on;
+    replot();
 }
 
 void PlotItemBase::setTitle(const QString& title)
 {
     m_title = title;
+    replot();
 }
 
 void PlotItemBase::setTitleColor(const QColor& color)
 {
     m_titleColor = color;
+    replot();
 }
 
 void PlotItemBase::setTitleFillColor(const QColor& color)
 {
     m_titleFillColor = color;
+    replot();
 }
 
 void PlotItemBase::setTitleFont(const QFont& font)
 {
     m_titleFont = font;
+    replot();
 }
 
 void PlotItemBase::setTitleFontSize(int size)
 {
     m_titleFontSize = size;
     m_titleFont.setPointSize(size);
+    replot();
 }
 
 void PlotItemBase::setxAxisLabel(const QString& label)
 {
     m_xAxisLabel = label;
+    if(m_customPlot)
+    {
+        m_customPlot->xAxis->setLabel(m_xAxisLabel);
+    }
+    replot();
 }
 
 void PlotItemBase::setyAxisLabel(const QString& label)
 {
     m_yAxisLabel = label;
+    if(m_customPlot)
+    {
+        m_customPlot->yAxis->setLabel(m_yAxisLabel);
+    }
+    replot();
 }
 
 void PlotItemBase::setAxisLabelColor(const QColor& color)
 {
     m_axisLabelColor = color;
+    if(m_customPlot)
+    {
+        m_customPlot->xAxis->setLabelColor(m_axisLabelColor);
+        m_customPlot->yAxis->setLabelColor(m_axisLabelColor);
+    }
+    replot();
 }
 
 void PlotItemBase::setAxisLabelFont(const QFont& font)
 {
     m_axisLabelFont = font;
+    if(m_customPlot)
+    {
+        m_customPlot->xAxis->setLabelFont(m_axisLabelFont);
+        m_customPlot->yAxis->setLabelFont(m_axisLabelFont);
+    }
+    replot();
 }
 
 void PlotItemBase::setAxisLabelFontSize(int size)
 {
     m_axisLabelFontSize = size;
     m_axisLabelFont.setPointSize(size);
+    replot();
+}
+
+void PlotItemBase::setPaddings(double top, double bottom, double left, double right)
+{
+    m_topPadding = top;
+    m_bottomPadding = bottom;
+    m_leftPadding = left;
+    m_rightPadding = right;
+    replot();
 }
 
 // NOTE::其他地方不要直接创建DataPair对象，需要通过本接口创建，不然会导致丢失信号槽逻辑

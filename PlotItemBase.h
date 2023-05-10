@@ -83,6 +83,8 @@ public:
     virtual void setAxisLabelFont(const QFont& font);
     virtual void setAxisLabelFontSize(int size);
 
+    void setPaddings(double top, double bottom, double left, double right);
+
     //getters:
     QColor getOuterFillColor()
     {

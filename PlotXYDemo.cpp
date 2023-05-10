@@ -184,6 +184,7 @@ void PlotXYDemo::onOpenFile()
     {
         loadPXYData(path);
     }
+    setWindowTitle(QString("仿真数据分析:[%1]").arg(path));
 }
 
 void PlotXYDemo::onUserManual() {}
