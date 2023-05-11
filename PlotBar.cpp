@@ -5,8 +5,8 @@
 int PlotBar::m_instanceCount = 1;
 PlotBar::PlotBar(QWidget* parent)
     : PlotItemBase(parent)
-    , m_min(std::numeric_limits<double>::max())
-    , m_max(0.0)
+    , m_min(std::numeric_limits<double>::min())
+    , m_max(std::numeric_limits<double>::max())
 {
     QString name = QString("Bar%1").arg(m_instanceCount);
     this->setName(name);
@@ -289,8 +289,25 @@ DataPair* PlotBar::addPlotDataPair(int32_t xEntityID,
 
     QPair<double, double> limit =
         DataManager::getInstance()->getMaxAndMinEntityAttrValue(xEntityID, xAttrName);
-    m_min = m_min < limit.first ? m_min : limit.first;
-    m_max = m_max > limit.second ? m_max : limit.second;
+    if(abs(m_min - std::numeric_limits<double>::min()) < 1)
+    {
+        // 表示m_min数值无意义，先赋值
+        m_min = limit.first;
+    }
+    else
+    {
+        m_min = m_min < limit.first ? m_min : limit.first;
+    }
+
+    if(abs(m_max - std::numeric_limits<double>::max()) < 1)
+    {
+        // 表示m_max数值无意义，先赋值
+        m_max = limit.second;
+    }
+    else
+    {
+        m_max = m_max > limit.second ? m_max : limit.second;
+    }
 
     m_itemData.insert(uuid, limit.first);
 
