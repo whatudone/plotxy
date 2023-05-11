@@ -1,5 +1,6 @@
 ﻿#include "PlotBar.h"
 #include "DataManager.h"
+#include "Utils.h"
 #include <QDebug>
 #include <QPainter>
 int PlotBar::m_instanceCount = 1;
@@ -107,7 +108,7 @@ void PlotBar::updateGraph(double secs, DataPair* data)
 
     double value = DataManager::getInstance()->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs);
 
-    if(abs(value - std::numeric_limits<double>::max()) < 1) // 表示value无效
+    if(math::doubleEqual(value, std::numeric_limits<double>::max())) // 表示value无效
     {
         value = 0;
     }
@@ -289,7 +290,8 @@ DataPair* PlotBar::addPlotDataPair(int32_t xEntityID,
 
     QPair<double, double> limit =
         DataManager::getInstance()->getMaxAndMinEntityAttrValue(xEntityID, xAttrName);
-    if(abs(m_min - std::numeric_limits<double>::min()) < 1)
+
+    if(math::doubleEqual(m_min, std::numeric_limits<double>::min()))
     {
         // 表示m_min数值无意义，先赋值
         m_min = limit.first;
@@ -299,7 +301,7 @@ DataPair* PlotBar::addPlotDataPair(int32_t xEntityID,
         m_min = m_min < limit.first ? m_min : limit.first;
     }
 
-    if(abs(m_max - std::numeric_limits<double>::max()) < 1)
+    if(math::doubleEqual(m_max, std::numeric_limits<double>::max()))
     {
         // 表示m_max数值无意义，先赋值
         m_max = limit.second;
