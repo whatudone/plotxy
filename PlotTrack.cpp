@@ -34,6 +34,8 @@ PlotTrack::PlotTrack(QWidget* parent)
     m_vertGrids = 5;
     m_axisWidth = 1;
     m_gridWidth = 1;
+    m_axisColor = Qt::white;
+    m_gridColor = QColor(200, 200, 200);
     m_gridVisible = true;
     m_tickLabelColor = Qt::white;
     m_tickLabelFontSize = 8.0;
@@ -46,16 +48,6 @@ PlotTrack::PlotTrack(QWidget* parent)
 }
 
 PlotTrack::~PlotTrack() {}
-
-void PlotTrack::setLeftPadding(int leftPadding)
-{
-    m_leftPadding = leftPadding;
-}
-
-void PlotTrack::setRightPadding(int rightPadding)
-{
-    m_rightPadding = rightPadding;
-}
 
 void PlotTrack::initPlot()
 {
@@ -98,15 +90,23 @@ void PlotTrack::updateDataForDataPairsByTime(double secs)
     if(getDataPairs().isEmpty())
         return;
 
-    for(int i = 0; i < getDataPairs().size(); i++)
+    int itemCnt = getDataPairs().size();
+
+    for(int i = 0; i < itemCnt; i++)
     {
-        updateGraph(getDataPairs().at(i), secs);
+        auto data = getDataPairs().at(i);
+        m_curValue.insert(data->getUuid(), secs);
+    }
+
+    for(int i = 0; i < itemCnt; i++)
+    {
+        updateGraphByDataPair(getDataPairs().at(i));
     }
 
     m_customPlot->replot();
 }
 
-void PlotTrack::updateGraph(DataPair* dataPair, double secs)
+void PlotTrack::updateGraphByDataPair(DataPair* dataPair)
 {
     if(!dataPair)
         return;
@@ -133,30 +133,34 @@ void PlotTrack::updateGraph(DataPair* dataPair, double secs)
         }
     }
 
-    if(secs < lowLimit)
+    if(m_curValue.contains(uuid))
     {
-        // 仅有Unavailable数据
-        m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << secs);
-        m_allBar[uuid].at(1)->setData(QVector<double>() << cnt, QVector<double>() << 0);
-        m_allBar[uuid].at(2)->setData(QVector<double>() << cnt, QVector<double>() << 0);
-    }
-    else if(secs > lowLimit && secs < highLimit)
-    {
-        // 仅有Unavailable数据和部分Available数据
-        m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << lowLimit);
-        m_allBar[uuid].at(1)->setData(QVector<double>() << cnt,
-                                      QVector<double>() << (secs - lowLimit));
-        m_allBar[uuid].at(2)->setData(QVector<double>() << cnt, QVector<double>() << 0);
-    }
-    else if(secs > highLimit)
-    {
-        // 仅有Unavailable数据和全部Available数据
-        // 目前超过Available的数据临时用Invalid的Bar显示，后期再进行优化
-        m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << lowLimit);
-        m_allBar[uuid].at(1)->setData(QVector<double>() << cnt,
-                                      QVector<double>() << highLimit - lowLimit);
-        m_allBar[uuid].at(2)->setData(QVector<double>() << cnt,
-                                      QVector<double>() << (secs - highLimit));
+        double secs = m_curValue[uuid];
+        if(secs < lowLimit)
+        {
+            // 仅有Unavailable数据
+            m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << secs);
+            m_allBar[uuid].at(1)->setData(QVector<double>() << cnt, QVector<double>() << 0);
+            m_allBar[uuid].at(2)->setData(QVector<double>() << cnt, QVector<double>() << 0);
+        }
+        else if(secs > lowLimit && secs < highLimit)
+        {
+            // 仅有Unavailable数据和部分Available数据
+            m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << lowLimit);
+            m_allBar[uuid].at(1)->setData(QVector<double>() << cnt,
+                                          QVector<double>() << (secs - lowLimit));
+            m_allBar[uuid].at(2)->setData(QVector<double>() << cnt, QVector<double>() << 0);
+        }
+        else if(secs > highLimit)
+        {
+            // 仅有Unavailable数据和全部Available数据
+            // 目前超过Available的数据临时用Invalid的Bar显示，后期再进行优化
+            m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << lowLimit);
+            m_allBar[uuid].at(1)->setData(QVector<double>() << cnt,
+                                          QVector<double>() << highLimit - lowLimit);
+            m_allBar[uuid].at(2)->setData(QVector<double>() << cnt,
+                                          QVector<double>() << (secs - highLimit));
+        }
     }
 }
 

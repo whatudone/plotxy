@@ -33,9 +33,7 @@ protected:
 
 private:
     void initPlot();
-    void updateGraph(double secs, DataPair* data);
     void updateLabelAndTick();
-    void setBarData(const QString& uuid, double value, int index);
 
     virtual DataPair* addPlotDataPair(int32_t xEntityID,
                                       const QString& xAttrName,
@@ -45,12 +43,12 @@ private:
                                       const QString& yAttrUnitName,
                                       const QVariantList& extraParams) override;
     virtual void delPlotPairData(const QString& uuid) override;
+    virtual void updateGraphByDataPair(DataPair* dataPair) override;
 
 private:
     QColor m_defaultColor;
 
-    QList<std::tuple<QString, double, QColor>>
-        m_colorInfoList; //QString:colorname，double:lower limit,QColor:color
+    QMap<QString,QList<std::tuple<QString, double, QColor>>> m_allColorInfoList;//QString:colorname，double:lower limit,QColor:color
 
     QVector<double> m_barTicks;
     QMap<QString, QMap<double, QColor>>
@@ -60,6 +58,7 @@ private:
     QMap<QString, QString>
         m_itemInfo; // 用来存放每个item对应的描述，显示在y轴左边 QString:uuid  QString:target_attr
     QMap<QString, double> m_itemData; //用来存放每个target对应的最小值
+    QMap<QString, double> m_curValue; //用来存放当前secs对应的数据
 
     // 范围的最小值和最大值，用于缩放图表坐标范围，保证图表始终能完全显示
     double m_min;

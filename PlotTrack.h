@@ -22,9 +22,6 @@ public:
     PlotTrack(QWidget* parent = Q_NULLPTR);
     ~PlotTrack() override;
 
-    void setLeftPadding(int);
-    void setRightPadding(int);
-
     PlotType plotType() const override
     {
         return Type_PlotTrack;
@@ -36,7 +33,6 @@ public:
 protected:
     void initPlot();
     void updateDataForDataPairsByTime(double secs) override;
-    void updateGraph(DataPair* dataPair, double secs); //实现核心绘制逻辑
     void updateLabelAndTick();
 
     virtual DataPair* addPlotDataPair(int32_t xEntityID,
@@ -47,10 +43,12 @@ protected:
                                       const QString& yAttrUnitName,
                                       const QVariantList& extraParams) override;
     virtual void delPlotPairData(const QString& uuid) override;
+    virtual void updateGraphByDataPair(DataPair* dataPair) override;
 
 private:
     QMap<QString, QMap<double, QColor>>
         m_trackDrawDataMap; //key:entityType+entityAttr, threshold,QColor
+    QMap<QString,double> m_curValue;
     QMap<TrackStatus, QColor> m_defaultColorMap;
 
     QVector<double> m_barTicks;

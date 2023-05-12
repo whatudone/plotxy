@@ -176,7 +176,7 @@ signals:
     void mouseModeChanged(MouseMode mode);
 
 private:
-    void addTabPage(QString& tabName = QString());
+    void addTabPage(const QString& tabName = QString());
     // 将添加图表控件操作合并到一个函数
     PlotItemBase*
     addPlotWidget(PlotType type, const QRect& geo = QRect(), const QString& plotName = QString());
