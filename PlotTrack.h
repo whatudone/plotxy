@@ -3,6 +3,8 @@
 
 #include "BaseData.h"
 #include "PlotItemBase.h"
+#include "qcustomplot.h"
+
 #include <QMap>
 #include <QString>
 
@@ -18,13 +20,11 @@ public:
     };
 
     PlotTrack(QWidget* parent = Q_NULLPTR);
-    ~PlotTrack();
+    ~PlotTrack() override;
 
     void setLeftPadding(int);
     void setRightPadding(int);
-    void setInterPadding(int);
 
-    void drawRect(int itemIndex, QList<QColor> dataList);
     PlotType plotType() const override
     {
         return Type_PlotTrack;
@@ -34,28 +34,32 @@ public:
     static int m_instanceCount; //实体个数
 
 protected:
+    void initPlot();
     void updateDataForDataPairsByTime(double secs) override;
-    void updateGraph(int itemIndex, DataPair* dataPair, double secs); //实现核心绘制逻辑
-private:
-    void customPainting(QPainter& painter) override;
+    void updateGraph(DataPair* dataPair, double secs); //实现核心绘制逻辑
+    void updateLabelAndTick();
+
+    virtual DataPair* addPlotDataPair(int32_t xEntityID,
+                                      const QString& xAttrName,
+                                      const QString& xAttrUnitName,
+                                      int32_t yEntityID,
+                                      const QString& yAttrName,
+                                      const QString& yAttrUnitName,
+                                      const QVariantList& extraParams) override;
+    virtual void delPlotPairData(const QString& uuid) override;
 
 private:
-    QLine m_xAxis;
-    QLine m_yAxis;
+    QMap<QString, QMap<double, QColor>>
+        m_trackDrawDataMap; //key:entityType+entityAttr, threshold,QColor
+    QMap<TrackStatus, QColor> m_defaultColorMap;
 
-    int m_interPadding;
+    QVector<double> m_barTicks;
 
-    QMap<QString, QMap<int, QColor>>
-        m_thresholdColorMap; //key:entityType+entityAttr, threshold,QColor
-    QColor m_defaultColor;
-
-    QFont m_axisFont; //坐标标题字体
-
-    int m_horiGridNum;
-    int m_verGridNum;
-
-    int m_itemCnt;
-    QMap<int, QList<QColor>> m_trackDrawDataMap;
+    QMap<QString, QList<QCPBars*>> m_allBar;
+    QMap<QString, QString> m_itemInfo;
+    QMap<QString, QList<double>> m_itemData;
+    double m_minTime;
+    double m_maxTime;
 };
 
 #endif // _PLOT_TRACK_H_

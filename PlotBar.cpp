@@ -23,21 +23,15 @@ PlotBar::PlotBar(QWidget* parent)
 	m_titleFont.setFamily("Microsoft YaHei");
     m_titleFont.setPointSizeF(16.0);
 
-    m_coordBgn_x = 0;
-    m_coordEnd_x = 8;
-    m_coordBgn_y = 0;
-    m_coordEnd_y = 12.1;
-
     m_horzGrids = 5;
     m_vertGrids = 5;
     m_axisWidth = 1;
     m_gridWidth = 1;
-    m_axisColor = Qt::white;
-    m_gridColor = QColor(200, 200, 200);
     m_gridVisible = true;
     m_tickLabelColor = Qt::white;
+    m_tickLabelFontSize = 8.0;
     m_tickLabelFont.setFamily("Microsoft YaHei");
-    m_tickLabelFont.setPointSizeF(8.0);
+    m_tickLabelFont.setPointSizeF(m_tickLabelFontSize);
     m_gridStyle = Qt::DotLine;
     m_gridDensity = GridDensity::LESS;
 
@@ -84,7 +78,7 @@ void PlotBar::initPlot()
     m_customPlot->setBackground(m_outerFillColor);
     m_customPlot->axisRect()->setBackground(m_gridFillColor);
 
-    m_customPlot->yAxis->setTickLabelRotation(60); // 轴刻度文字旋转60度
+    m_customPlot->yAxis->setTickLabelRotation(45); // 轴刻度文字旋转45度
     m_customPlot->yAxis->setSubTicks(false); // 不显示子刻度
     m_customPlot->yAxis->setTickLength(0, 4); // 轴内外刻度的长度分别是0,4,也就是轴内的刻度线不显示
     m_customPlot->yAxis->setUpperEnding(QCPLineEnding::esSpikeArrow);
