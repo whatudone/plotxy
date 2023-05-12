@@ -653,17 +653,18 @@ void PlotXYDemo::onTabDrawWidgetCreatePlot(PlotType type, const QRect& rect)
     addPlotWidget(type, rect);
 }
 
-void PlotXYDemo::addTabPage(QString& tabName)
+void PlotXYDemo::addTabPage(const QString& tabName)
 {
     TabDrawWidget* tabWidgetItem = new TabDrawWidget();
     tabWidgetItem->setMouseMode(m_mouseMode);
     int currCount = ui.tabWidget->count();
-    if(tabName.isEmpty())
+    QString name = tabName;
+    if(name.isEmpty())
     {
         // 产生一个默认名称
-        tabName = QString("Tab ") + QString::number(currCount + 1);
+        name = QString("Tab ") + QString::number(currCount + 1);
     }
-    ui.tabWidget->addTab(tabWidgetItem, tabName);
+    ui.tabWidget->addTab(tabWidgetItem, name);
     ui.tabWidget->setCurrentIndex(currCount);
 
     connect(tabWidgetItem,
