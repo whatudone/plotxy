@@ -606,7 +606,6 @@ void PlotItemBase::onGetCurrentSeconds(double secs)
     if(getDataPairs().isEmpty())
         return;
     updateDataForDataPairsByTime(m_seconds);
-    update();
 }
 
 void PlotItemBase::slot_updateRect(const QRect& rect)
@@ -1018,8 +1017,8 @@ void PlotItemBase::setCustomPlotMouseTransparent(bool baseTransparent, bool cust
     if(m_customPlot)
     {
         m_customPlot->setAttribute(Qt::WA_TransparentForMouseEvents, customplotTransparent);
-        this->setAttribute(Qt::WA_TransparentForMouseEvents, baseTransparent);
     }
+    this->setAttribute(Qt::WA_TransparentForMouseEvents, baseTransparent);
 }
 void PlotItemBase::replot()
 {

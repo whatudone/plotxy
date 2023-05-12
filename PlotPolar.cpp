@@ -310,12 +310,10 @@ void PlotPolar::updateDataForDataPairsByTime(double secs)
         auto xAttr = dataPair->getAttr_x();
         auto yAttr = dataPair->getAttr_y();
 
-        QVector<double> x = DataManager::getInstance()
-                                ->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs)
-                                .toVector();
-        QVector<double> y = DataManager::getInstance()
-                                ->getEntityAttrValueListByMaxTime(yEntityID, yAttr, secs)
-                                .toVector();
+        QVector<double> x =
+            DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
+        QVector<double> y =
+            DataManager::getInstance()->getEntityAttrValueListByMaxTime(yEntityID, yAttr, secs);
 
         QCPPolarGraph* g = new QCPPolarGraph(m_angularAxis, m_angularAxis->radialAxis());
         g->setScatterStyle(QCPScatterStyle::ssDisc);

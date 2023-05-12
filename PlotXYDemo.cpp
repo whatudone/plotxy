@@ -44,9 +44,9 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
     m_addPlotPair = new AddPlotPair();
 
     connect(DataManager::getInstance(),
-            SIGNAL(loadDataFinished()),
+            &DataManager::loadDataFinished,
             m_addPlotPair,
-            SLOT(onUpdateData()));
+            &AddPlotPair::onUpdateEntityTableByDataChanged);
     connect(
         DataManager::getInstance(), SIGNAL(loadDataFinished()), m_timeCtrl, SLOT(onUpdateData()));
 

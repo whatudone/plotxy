@@ -141,9 +141,9 @@ public:
     }
     void setLabelText(const QString&);
 
-    int getTextFormat()
+    TEXT_FROMAT getTextFormat()
     {
-        return (int)m_format;
+        return m_format;
     }
     void setTextFormat(TEXT_FROMAT);
 
@@ -189,9 +189,9 @@ public:
     }
 	void setLabelFontSize(int);
 
-    int getLabelPosition()
+    TEXT_POSITION getLabelPosition()
     {
-        return (int)m_textPosition;
+        return m_textPosition;
     }
     void setLabelPosition(TEXT_POSITION);
 

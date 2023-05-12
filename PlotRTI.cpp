@@ -45,10 +45,6 @@ PlotRTI::PlotRTI(QWidget* parent)
     m_showUnits_y = false;
 
     initPlot();
-
-#ifdef TEST_SCOPE_DATA
-    loadCustomData();
-#endif
 }
 
 PlotRTI::~PlotRTI() {}
@@ -100,71 +96,6 @@ void PlotRTI::initPlot()
     // 保证上下对齐
     m_customPlot->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
     m_colorScale->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
-}
-
-void PlotRTI::setUnitsShowX(bool on)
-{
-    m_showUnits_x = on;
-    m_customPlot->xAxis->setAxisFormatShow(on);
-    m_customPlot->replot();
-}
-
-void PlotRTI::setUnitsShowY(bool on)
-{
-    m_showUnits_y = on;
-    m_customPlot->yAxis->setAxisFormatShow(on);
-    m_customPlot->replot();
-}
-
-void PlotRTI::setUnitsX(const QString& units)
-{
-    m_units_x = units;
-    m_customPlot->xAxis->setAxisFormat(units);
-    m_customPlot->replot();
-}
-
-void PlotRTI::setUnitsY(const QString& units)
-{
-    m_units_y = units;
-    m_customPlot->yAxis->setAxisFormat(units);
-    m_customPlot->replot();
-}
-
-void PlotRTI::setTitle(QString& str)
-{
-    m_title = str;
-    update();
-}
-
-void PlotRTI::setTitleColor(QColor& color)
-{
-    m_titleColor = color;
-    update();
-}
-
-void PlotRTI::setTitleFillColor(QColor& color)
-{
-    m_titleFillColor = color;
-    update();
-}
-
-void PlotRTI::setTitleFontSize(int size)
-{
-    m_titleFontSize = size;
-    m_titleFont.setPointSize(size);
-    update();
-}
-
-void PlotRTI::setTitleFont(QFont& font)
-{
-    m_titleFont = font;
-    update();
-}
-
-void PlotRTI::setTitleVisible(bool show)
-{
-    m_titleVisible = show;
-    update();
 }
 
 void PlotRTI::loadCustomData()
@@ -235,36 +166,6 @@ void PlotRTI::loadCustomData()
     m_customPlot->rescaleAxes();
 }
 
-void PlotRTI::setxAxisLabel(QString& str)
-{
-    m_xAxisLabel = str;
-    m_customPlot->xAxis->setLabel(m_xAxisLabel);
-    m_customPlot->replot();
-}
-
-void PlotRTI::setyAxisLabel(QString& str)
-{
-    m_yAxisLabel = str;
-    m_customPlot->yAxis->setLabel(m_yAxisLabel);
-    m_customPlot->replot();
-}
-
-void PlotRTI::setAxisLabelColor(QColor& color)
-{
-    m_axisColor = color;
-    m_customPlot->xAxis->setLabelColor(m_axisColor);
-    m_customPlot->yAxis->setLabelColor(m_axisColor);
-    m_customPlot->replot();
-}
-
-void PlotRTI::setAxisLabelFont(QFont& font)
-{
-    m_axisLabelFont = font;
-    m_customPlot->xAxis->setLabelFont(m_axisLabelFont);
-    m_customPlot->yAxis->setLabelFont(m_axisLabelFont);
-    m_customPlot->replot();
-}
-
 void PlotRTI::setAxisVisible(bool on, AxisType type)
 {
     switch(type)
@@ -309,125 +210,15 @@ void PlotRTI::setAxisTickLabelShow(bool on, AxisType type)
     m_customPlot->replot();
 }
 
-void PlotRTI::setHorzGrids(uint count)
+void PlotRTI::updateDataForDataPairsByTime(double secs)
 {
-    if(m_horzGrids == count)
-    {
+    if(getDataPairs().isEmpty())
         return;
-    }
-    m_horzGrids = count;
-    if(count == 0)
-    {
-        m_customPlot->yAxis->grid()->setVisible(false);
-    }
-    else
-    {
-        m_customPlot->yAxis->grid()->setVisible(true);
-        m_customPlot->yAxis->ticker()->setTickCount(m_horzGrids);
-    }
-    m_customPlot->replot();
+    // 按照目录的理解，RTI暂时只能同事绘制一个数据对的数据
+    auto lastDataPair = getDataPairs().last();
+    updateGraph(secs, lastDataPair);
+
+    m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
-void PlotRTI::setVertGrids(uint count)
-{
-    if(m_vertGrids == count)
-    {
-        return;
-    }
-    m_vertGrids = count;
-    if(count == 0)
-    {
-        m_customPlot->xAxis->grid()->setVisible(false);
-    }
-    else
-    {
-        m_customPlot->xAxis->grid()->setVisible(true);
-        m_customPlot->xAxis->ticker()->setTickCount(m_vertGrids);
-    }
-    m_customPlot->replot();
-}
-
-void PlotRTI::setAxisColorWidth(QColor color, uint width)
-{
-    m_axisColor = color;
-    m_axisWidth = width;
-    m_customPlot->xAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
-    m_customPlot->yAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
-    m_customPlot->xAxis2->setBasePen(QPen(m_axisColor, m_axisWidth));
-    m_customPlot->yAxis2->setBasePen(QPen(m_axisColor, m_axisWidth));
-    m_customPlot->replot();
-}
-
-void PlotRTI::setGridColorWidth(QColor color, uint width)
-{
-    m_gridColor = color;
-    m_gridWidth = width;
-    m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
-    m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
-    m_customPlot->replot();
-}
-
-void PlotRTI::setGridFillColor(QColor color)
-{
-    m_gridFillColor = color;
-    //  m_customPlot->axisRect()->setBackground(color);
-    //  m_customPlot->replot();
-}
-
-void PlotRTI::setGridVisible(bool enable)
-{
-    m_gridVisible = enable;
-    m_customPlot->xAxis->grid()->setVisible(enable);
-    m_customPlot->yAxis->grid()->setVisible(enable);
-    m_customPlot->replot();
-}
-
-void PlotRTI::setTickLabelColor(QColor& color)
-{
-    m_tickLabelColor = color;
-    m_customPlot->xAxis->setTickLabelColor(m_tickLabelColor);
-    m_customPlot->yAxis->setTickLabelColor(m_tickLabelColor);
-    m_customPlot->replot();
-}
-
-void PlotRTI::setTickLabelFont(QFont& font)
-{
-    m_tickLabelFont = font;
-    m_customPlot->xAxis->setTickLabelFont(m_tickLabelFont);
-    m_customPlot->yAxis->setTickLabelFont(m_tickLabelFont);
-    m_customPlot->replot();
-}
-
-void PlotRTI::setTickLabelFontSize(int size)
-{
-    m_tickLabelFontSize = size;
-    m_tickLabelFont.setPointSize(size);
-    setTickLabelFont(m_tickLabelFont);
-}
-
-void PlotRTI::setGridStyle(GridStyle style)
-{
-    switch(style)
-    {
-    case GridStyle::SOLIDLINE:
-        m_gridStyle = Qt::SolidLine;
-        break;
-    case GridStyle::DASHLINE:
-        m_gridStyle = Qt::DashLine;
-        break;
-    case GridStyle::DOTLINE:
-        m_gridStyle = Qt::DotLine;
-        break;
-    case GridStyle::DASHDOTLINE:
-        m_gridStyle = Qt::DashDotLine;
-        break;
-    default:
-        m_gridStyle = Qt::SolidLine;
-        break;
-    }
-    m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
-    m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
-    m_customPlot->replot();
-}
-
-void PlotRTI::setGridDensity(GridDensity density) {}
+void PlotRTI::updateGraph(double secs, DataPair* data) {}

@@ -43,7 +43,7 @@ private:
     void initStackedWidget_pageAScope();
 
     void initTreePlot();
-	PlotType getPlotType(PlotItemBase*);
+
     bool getCurrentSelectParam(int32_t& xEntityID,
                                QString& xAttrName,
                                QString& xAttrUnitName,
@@ -77,7 +77,8 @@ public slots:
     void onLightSetDbClicked(QTableWidgetItem* item);
 	void onTableWidgetItemClicked_Attitude1(QTableWidgetItem*);
 	void onTableWidgetItemClicked_Attitude2(QTableWidgetItem*);
-	void onUpdateData();
+    // 加载数据后重新更新所有的实体表格数据
+    void onUpdateEntityTableByDataChanged();
 	void onAddPlot(const QString&, PlotItemBase*);
     void onDoubleClickedTreeWidgetItem(QTreeWidgetItem* item, int column);
 	void onBtnLightAddClicked();

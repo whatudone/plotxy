@@ -12,6 +12,7 @@
 #include <QVector3D>
 
 #include <set>
+#include <unordered_map>
 
 class DataManager : public QObject
 {
@@ -52,8 +53,10 @@ private:
     // 旧的数据结构待迁移之后替换成新的,这两个旧数据目前仅存于加载csv
     QMap<QString, QMap<QString, QList<double>>> m_entityDataMap;
     QVector<double> m_timeDataVector;
-    // 新的数据存储结构 <PID,<<Attr,Unit>,DataList>>
-    QMap<int32_t, QMap<QPair<QString, QString>, QList<double>>> m_newEntityDataMap;
+    // 新的数据存储结构 <EntityID,<<Attr>,DataList>> qhash是随机排序，性能比qmap强
+    QMap<int32_t, QHash<QString, QVector<double>>> m_newEntityDataMap;
+    // <EntityID, <attr,unit>>
+    QHash<int32_t, QList<QPair<QString, QString>>> m_attrUnitHash;
     // 平台map数据
     QMap<int32_t, Platform> m_platformMap;
     // 事件map数据
@@ -80,17 +83,23 @@ public:
     }
     // 自动根据文件扩展名称解析对应格式数据
     void loadFileData(const QString& filename);
-    const QMap<int32_t, QMap<QPair<QString, QString>, QList<double>>>& getDataMap();
+    const QMap<int32_t, QHash<QString, QVector<double>>>& getDataMap();
     void getMinMaxTime(double& minTime, double& maxTime);
     int getRefYear();
 
     // 获取最小时间到secs时间内的实体-属性数据list
-    QList<double>
+    QVector<double>
     getEntityAttrValueListByMaxTime(int32_t entityID, const QString& attr, double secs);
     // 获取当前时间内最后一个值，用于Text-Bar这种一维数据展示
     double getEntityAttrValueByMaxTime(int32_t entityID, const QString& attr, double secs);
+
     QPair<double, double> getMaxAndMinEntityAttrValue(int32_t entityID, const QString& attr);
+    // 获取时间轴上所有的时间节点
     QVector<double> getTimeDataSet();
+    // 获取某个时间节点的切片数据list<range,voltage>，针对于ASCope
+    QPair<QVector<double>, QVector<double>> getSliceDataByTime(int32_t entityID, double secs);
+    // 获取某个时间节点的三维数据，针对RTI图表
+    void getRTIDataByTime();
     // 根据id获取实例(数据里面称为Platform)名称
     QString getEntityNameByID(int32_t id);
     // 获取所有的实例名称
@@ -105,7 +114,7 @@ public:
 
 private:
     //获取实体-属性的全数据，属性默认为Time
-    QList<double> getEntityAttrValueList(int32_t entityID, const QString& attr = "Time");
+    QVector<double> getEntityAttrValueList(int32_t entityID, const QString& attr = "Time");
     //获取secs时间内的实体-属性的最大index
     int getEntityAttrMaxIndexByTime(int32_t entityID, double secs);
 

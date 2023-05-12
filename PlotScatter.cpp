@@ -161,30 +161,18 @@ void PlotScatter::updateGraph(double secs, DataPair* data)
 		}
         else if(xAttr == "Time" && yAttr != "Time")
 		{
-            x = DataManager::getInstance()
-                    ->getEntityAttrValueListByMaxTime(yEntityID, xAttr, secs)
-                    .toVector();
-            y = DataManager::getInstance()
-                    ->getEntityAttrValueListByMaxTime(yEntityID, yAttr, secs)
-                    .toVector();
+            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(yEntityID, xAttr, secs);
+            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(yEntityID, yAttr, secs);
 		}
         else if(xAttr != "Time" && yAttr == "Time")
 		{
-            x = DataManager::getInstance()
-                    ->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs)
-                    .toVector();
-            y = DataManager::getInstance()
-                    ->getEntityAttrValueListByMaxTime(xEntityID, yAttr, secs)
-                    .toVector();
+            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
+            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, yAttr, secs);
         }
         else
         {
-            x = DataManager::getInstance()
-                    ->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs)
-                    .toVector();
-            y = DataManager::getInstance()
-                    ->getEntityAttrValueListByMaxTime(yEntityID, yAttr, secs)
-                    .toVector();
+            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
+            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(yEntityID, yAttr, secs);
         }
 
         if(x.isEmpty() || y.isEmpty())
@@ -261,7 +249,7 @@ void PlotScatter::updateGraph(double secs, DataPair* data)
 			//设置锚点
             //			m_mapScatter[dataPair].tracer->setGraphKey(x.last());
 
-            if(0 == data->getTextFormat())
+            if(DataPair::format_default == data->getTextFormat())
             { //default
                 QString labelText, prefix_x, prefix_y;
                 QString object_x, object_y, attr_x, attr_y;
@@ -343,11 +331,11 @@ void PlotScatter::updateGraph(double secs, DataPair* data)
                 }
                 data->setLabelText(labelText);
             }
-            else if(1 == data->getTextFormat())
+            else if(DataPair::format_custom == data->getTextFormat())
             { //custom
                 data->setLabelText(data->getCustomText());
             }
-            else if(2 == data->getTextFormat()) //script
+            else if(DataPair::format_script == data->getTextFormat()) //script
             {}
 
             tracerText->setText(data->getLabelText());

@@ -274,7 +274,7 @@ void AddPlotPair::initTreePlot()
 void AddPlotPair::init(PlotType index)
 {
     onChangeStackIndex(index);
-    onUpdateData();
+    onUpdateEntityTableByDataChanged();
 }
 
 void AddPlotPair::onChangeStackIndex(PlotType index)
@@ -332,7 +332,6 @@ void AddPlotPair::setPlotBaseInfo(PlotItemBase* pBaseItem)
 
 void AddPlotPair::updatePlotTrees(const QMap<QString, QList<PlotItemBase*>>& plotData)
 {
-    //    plotData = plotData;
     if(plotData.isEmpty())
         return;
 
@@ -351,62 +350,7 @@ void AddPlotPair::updatePlotTrees(const QMap<QString, QList<PlotItemBase*>>& plo
             QTreeWidgetItem* itemselPlotI = new QTreeWidgetItem(QStringList() << plotString);
             itemselPlotH->addChild(itemselPlotI);
         }
-        //m_currTabName = tabString; 这个玩意需要更新下
     }
-}
-
-PlotType AddPlotPair::getPlotType(PlotItemBase* plotItem)
-{
-    QString name = plotItem->metaObject()->className();
-    PlotType type;
-    if(name.compare("PlotPlotScatter") == 0)
-    {
-        type = PlotType::Type_PlotScatter;
-    }
-    else if(name.compare("PlotAScope") == 0)
-    {
-        type = PlotType::Type_PlotAScope;
-    }
-    else if(name.compare("PlotRTI") == 0)
-    {
-        type = PlotType::Type_PlotRTI;
-    }
-    else if(name.compare("PlotText") == 0)
-    {
-        type = PlotType::Type_PlotText;
-    }
-    else if(name.compare("PlotLight") == 0)
-    {
-        type = PlotType::Type_PlotLight;
-    }
-    else if(name.compare("PlotBar") == 0)
-    {
-        type = PlotType::Type_PlotBar;
-    }
-    else if(name.compare("PlotDial") == 0)
-    {
-        type = PlotType::Type_PlotDial;
-    }
-    else if(name.compare("PlotAttitude") == 0)
-    {
-        type = PlotType::Type_PlotAttitude;
-    }
-    else if(name.compare("PlotPolar") == 0)
-    {
-        type = PlotType::Type_PlotPolar;
-    }
-    else if(name.compare("PlotTrack") == 0)
-    {
-        type = PlotType::Type_PlotTrack;
-    }
-    else if(name.compare("PlotDoppler") == 0)
-    {
-        type = PlotType::Type_PlotDoppler;
-    }
-    else
-        type = PlotType::Type_PlotScatter;
-
-    return type;
 }
 
 bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
@@ -587,6 +531,21 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
         }
         break;
     }
+        // ASCope
+    case 5: {
+
+        if(!ui.tableWidget_AScopeEntity->currentItem())
+            return false;
+        xEntityID = ui.tableWidget_AScopeEntity->currentItem()->data(Qt::UserRole + 1).toInt();
+        // 目前根据需求将此处属性和单位写死，后续看是否存在动态变化的需求
+        xAttrName = "Range";
+        xAttrUnitName = "m";
+        yEntityID = xEntityID;
+        yAttrName = "Voltage";
+        yAttrUnitName = "v";
+
+        break;
+    }
     default:
         break;
     }
@@ -637,6 +596,7 @@ void AddPlotPair::onBtnAddClicked()
         {
             list.append(ui.lineEdit_LightDesc->text());
         }
+        // 数据对触发的DataPairsChanged信号会在后续触发数据对表格的刷新操作
         m_pCurSelectedPlot->addPlotDataPair(
             xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName, list);
     }
@@ -690,7 +650,7 @@ void AddPlotPair::onTableWidgetItemClicked_Attitude2(QTableWidgetItem* curItem)
     updateAttrTableWidgetOnEntityChanged(curItem, ui.tableWidget_nameUnits_Attitude2);
 }
 
-void AddPlotPair::onUpdateData()
+void AddPlotPair::onUpdateEntityTableByDataChanged()
 {
     // 数据更新，重新刷新实体表格数据
     auto dataMap = DataManager::getInstance()->getDataMap();
@@ -706,7 +666,8 @@ void AddPlotPair::onUpdateData()
               << ui.tableWidget_Entity_4 << ui.tableWidget_Entity_5 << ui.tableWidget_lightEntity
               << ui.tableWidget_Entity_6 << ui.tableWidget_Entity_7 << ui.tableWidget_Entity_8
               << ui.tableWidget_Entity_9 << ui.tableWidget_Entity_10
-              << ui.tableWidget_Entity_Attitude1 << ui.tableWidget_Entity_Attitude2;
+              << ui.tableWidget_Entity_Attitude1 << ui.tableWidget_Entity_Attitude2
+              << ui.tableWidget_AScopeEntity;
     for(auto tableWidget : tableList)
     {
         tableWidget->setRowCount(icount);
@@ -740,39 +701,31 @@ void AddPlotPair::onDoubleClickedTreeWidgetItem(QTreeWidgetItem* item, int colum
     if(nullptr == parent)
         return;
 
-    QString parent_text = parent->text(0);
-    QString child_text = item->text(column);
-    ui.toolButton_plot->setText(child_text);
-    auto plotData = PlotManagerData::getInstance()->getPlotManagerData();
-    if(plotData.contains(parent_text))
-    {
-        for(int i = 0; i < plotData[parent_text].size(); ++i)
-        {
-            PlotItemBase* tempPlot = plotData[parent_text].at(i);
-            if(child_text == tempPlot->getName())
-            {
-                onChangeStackIndex(getPlotType(tempPlot));
-                // 更新当前选中的图表
-                m_pCurSelectedPlot = tempPlot;
-                m_currTabName = parent_text;
-                m_currPlotName = child_text;
+    QString tabNanme = parent->text(0);
+    QString plotName = item->text(column);
 
-                QVector<DataPair*> dataPairs = tempPlot->getDataPairs();
-                ui.tableWidget_union->setRowCount(dataPairs.size());
-                for(int row = 0; row < dataPairs.size(); ++row)
-                {
-                    auto dataPair = dataPairs.value(row);
-                    //界面更新
-                    QTableWidgetItem* addplot1 =
-                        new QTableWidgetItem(dataPair->getXEntityAttrPair());
-                    QTableWidgetItem* addplot2 =
-                        new QTableWidgetItem(dataPair->getYEntityAttrPair());
-                    addplot1->setData(Qt::UserRole + 1, dataPair->getUuid());
-                    ui.tableWidget_union->setItem(row, 0, addplot1);
-                    ui.tableWidget_union->setItem(row, 1, addplot2);
-                }
-                break;
-            }
+    ui.toolButton_plot->setText(plotName);
+    auto plot = PlotManagerData::getInstance()->getPlotByTabAndName(tabNanme, plotName);
+    if(plot)
+    {
+        // 更新当前选中的图表
+        m_pCurSelectedPlot = plot;
+        m_currTabName = tabNanme;
+        m_currPlotName = plotName;
+        onChangeStackIndex(plot->plotType());
+
+        QVector<DataPair*> dataPairs = plot->getDataPairs();
+        ui.tableWidget_union->clearContents();
+        ui.tableWidget_union->setRowCount(dataPairs.size());
+        // 更新历史添加过的数据对
+        for(int row = 0; row < dataPairs.size(); ++row)
+        {
+            auto dataPair = dataPairs.value(row);
+            QTableWidgetItem* addplot1 = new QTableWidgetItem(dataPair->getXEntityAttrPair());
+            QTableWidgetItem* addplot2 = new QTableWidgetItem(dataPair->getYEntityAttrPair());
+            addplot1->setData(Qt::UserRole + 1, dataPair->getUuid());
+            ui.tableWidget_union->setItem(row, 0, addplot1);
+            ui.tableWidget_union->setItem(row, 1, addplot2);
         }
     }
 }

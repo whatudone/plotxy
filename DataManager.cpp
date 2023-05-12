@@ -15,6 +15,7 @@
 #include <limits>
 
 #include "TimeClass.h"
+#include "Utils.h"
 
 DataManager::DataManager() {}
 
@@ -191,6 +192,7 @@ void DataManager::loadASIData(const QString& asiFileName)
         return;
     }
     m_newEntityDataMap.clear();
+    m_attrUnitHash.clear();
     m_timeDataSet.clear();
     m_platformMap.clear();
     m_eventMap.clear();
@@ -278,11 +280,11 @@ void DataManager::loadASIData(const QString& asiFileName)
                 // Platform数据
                 if(lineData.startsWith("#Keyword"))
                 {
-                    QMap<QPair<QString, QString>, QList<double>> attrDataMap;
+                    QHash<QString, QVector<double>> attrDataMap;
                     // 属性名称
                     QStringList attrNameList = lineData.split(",", QString::SkipEmptyParts);
-                    // 方便后续往属性里面添加数据，得到对应的pair
-                    QList<QPair<QString, QString>> attrPairList;
+                    // 每一个实例对应的属性-单位列表，可能不同
+                    QList<QPair<QString, QString>> attrUnitList;
                     for(const auto& attr : attrNameList)
                     {
                         QString tmpAttr = attr.trimmed();
@@ -294,10 +296,11 @@ void DataManager::loadASIData(const QString& asiFileName)
                         if(attrList.size() == 2)
                         {
                             auto pair = qMakePair(attrList.at(0), attrList.at(1));
-                            attrDataMap.insert(pair, QList<double>());
-                            attrPairList.append(pair);
+                            attrUnitList.append(pair);
+                            attrDataMap.insert(attrList.at(0), QVector<double>());
                         }
                     }
+                    m_attrUnitHash.insert(p.m_platformDataID, attrUnitList);
                     while(!file.atEnd())
                     {
                         lineData = file.readLine();
@@ -311,15 +314,16 @@ void DataManager::loadASIData(const QString& asiFileName)
                             for(int32_t i = 2; i < valueSize; ++i)
                             {
                                 QString tmpAttrValue = attrValueList.at(i).trimmed();
-                                auto pair = attrPairList.at(i - 2);
+
                                 double value = 0.0;
                                 /*
                                  * 常规数据直接转为double类型
                                  * Time数据有两种情况:
                                  * 1、直接就是double型的相对时间，无需转化
                                  * 2、001 2000 00:00:00 这种形式的数据，需要根据偏移时间转化为
+                                 * 默认第三列数据就是Time数据
                                 */
-                                if(pair.first == "Time")
+                                if(i == 2)
                                 {
                                     value = OrdinalTimeFormatter::getSecondsFromTimeStr(
                                         tmpAttrValue, m_refYear);
@@ -330,17 +334,20 @@ void DataManager::loadASIData(const QString& asiFileName)
                                 {
                                     value = tmpAttrValue.toDouble();
                                 }
-                                attrDataMap[pair].append(value);
+                                attrDataMap[attrUnitList.at(i - 2).first].append(value);
                             }
                         }
                         else
                         {
-                            m_newEntityDataMap.insert(p.m_platformDataID, attrDataMap);
-                            m_platformMap.insert(p.m_platformDataID, p);
                             // 结束本Platform的数据读取
+                            //                            m_newEntityDataMap.insert(p.m_platformDataID, attrDataMap);
+                            //                            m_platformMap.insert(p.m_platformDataID, p);
                             break;
                         }
                     }
+                    // 此处有两种情况1、PlatformData数据后面直接文件结束；2、PlatformData读取完成进入新的数据段
+                    m_newEntityDataMap.insert(p.m_platformDataID, attrDataMap);
+                    m_platformMap.insert(p.m_platformDataID, p);
                 }
                 // 事件(Event)等其他类型数据
                 if(lineData.startsWith("GenericData"))
@@ -382,7 +389,7 @@ void DataManager::loadASIData(const QString& asiFileName)
     m_dataFileName = asiFileName;
 }
 
-const QMap<int32_t, QMap<QPair<QString, QString>, QList<double>>>& DataManager::getDataMap()
+const QMap<int32_t, QHash<QString, QVector<double>>>& DataManager::getDataMap()
 {
     return m_newEntityDataMap;
 }
@@ -398,29 +405,22 @@ int DataManager::getRefYear()
 	return m_refYear;
 }
 
-QList<double> DataManager::getEntityAttrValueList(int32_t entityID, const QString& attr)
+QVector<double> DataManager::getEntityAttrValueList(int32_t entityID, const QString& attr)
 {
-	QList<double> valueList;
-    if(m_newEntityDataMap.contains(entityID))
+
+    QVector<double> valueList;
+    if(m_newEntityDataMap.contains(entityID) && m_newEntityDataMap.value(entityID).contains(attr))
     {
-        auto attrDataMap = m_newEntityDataMap.value(entityID);
-        for(const auto& key : attrDataMap.keys())
-        {
-            if(key.first == attr)
-            {
-                valueList = attrDataMap.value(key);
-                break;
-            }
-        }
+        return m_newEntityDataMap.value(entityID).value(attr);
     }
 	return valueList;
 }
 
-QList<double>
+QVector<double>
 DataManager::getEntityAttrValueListByMaxTime(int32_t entityID, const QString& attr, double secs)
 {
     int index = getEntityAttrMaxIndexByTime(entityID, secs);
-	QList<double> valueList;
+    QVector<double> valueList;
     if(index >= 0)
 	{
         valueList = getEntityAttrValueList(entityID, attr);
@@ -433,7 +433,7 @@ DataManager::getEntityAttrValueListByMaxTime(int32_t entityID, const QString& at
 double DataManager::getEntityAttrValueByMaxTime(int32_t entityID, const QString& attr, double secs)
 {
     int index = getEntityAttrMaxIndexByTime(entityID, secs);
-    QList<double> valueList;
+    QVector<double> valueList;
     if(index >= 0)
     {
         valueList = getEntityAttrValueList(entityID, attr);
@@ -446,7 +446,7 @@ double DataManager::getEntityAttrValueByMaxTime(int32_t entityID, const QString&
 QPair<double, double> DataManager::getMaxAndMinEntityAttrValue(int32_t entityID,
                                                                const QString& attr)
 {
-    QList<double> valueList = getEntityAttrValueList(entityID, attr);
+    QVector<double> valueList = getEntityAttrValueList(entityID, attr);
     if(valueList.isEmpty())
     {
         return QPair<double, double>(std::numeric_limits<double>::min(),
@@ -473,6 +473,48 @@ QVector<double> DataManager::getTimeDataSet()
     return QVector<double>::fromStdVector(vec);
 }
 
+QPair<QVector<double>, QVector<double>> DataManager::getSliceDataByTime(int32_t entityID,
+                                                                        double secs)
+{
+    // 将与secs时间相等的数据全部返回
+    QPair<QVector<double>, QVector<double>> dataListPair;
+    if(m_newEntityDataMap.contains(entityID))
+    {
+        auto attrDataMap = m_newEntityDataMap.value(entityID);
+        QVector<double> timeList = attrDataMap.value(QString("Time"));
+        if(timeList.isEmpty())
+        {
+            return dataListPair;
+        }
+        QVector<double> rangeList;
+        QVector<double> voltageList;
+        int32_t timeSize = timeList.count();
+        for(int index = 0; index < timeSize; ++index)
+        {
+            double time = timeList.at(index);
+            if(math::doubleEqual(time, secs))
+            {
+                double range = attrDataMap.value(QString("Range")).at(index);
+                double voltage = attrDataMap.value(QString("Voltage")).at(index);
+                rangeList.append(range);
+                voltageList.append(voltage);
+            }
+            else
+            {
+                // 为了减少循环次数，暂定时间信息都是排序好的，重复的时间数据都在一起
+                if(!rangeList.isEmpty())
+                {
+                    break;
+                }
+            }
+        }
+        dataListPair = qMakePair(rangeList, voltageList);
+    }
+    return dataListPair;
+}
+
+void DataManager::getRTIDataByTime() {}
+
 QString DataManager::getEntityNameByID(int32_t id)
 {
     if(m_platformMap.contains(id))
@@ -494,27 +536,15 @@ QStringList DataManager::getEntityNameList()
 
 QList<QPair<QString, QString>> DataManager::getAttrAndUnitPairList(int32_t id)
 {
-    QList<QPair<QString, QString>> list;
-    if(m_newEntityDataMap.contains(id))
-    {
-        auto attrMap = m_newEntityDataMap.value(id);
-        for(const auto& keyPair : attrMap.keys())
-        {
-            // 去掉Time属性
-            if(keyPair.first == "Time")
-            {
-                continue;
-            }
-            list.append(keyPair);
-        }
-    }
+    auto list = m_attrUnitHash.value(id);
+    list.removeOne(qMakePair(QString("Time"), QString("sec")));
     return list;
 }
 
 int DataManager::getEntityAttrMaxIndexByTime(int32_t entityID, double secs)
 {
 	int index = 0;
-    QList<double> timeList = getEntityAttrValueList(entityID);
+    QVector<double> timeList = getEntityAttrValueList(entityID, "Time");
     if(!timeList.isEmpty())
 	{
         for(index = 0; index < timeList.size(); ++index)

@@ -42,8 +42,8 @@ private:
     int m_textPercentage; //文本半径百分比
     int m_dialPercentage; //表盘半径百分比
 
-	QList<double> m_xValueList;
-	QList<double> m_yValueList;
+    QVector<double> m_xValueList;
+    QVector<double> m_yValueList;
 
 public:
     static int m_instanceCount; //实体个数

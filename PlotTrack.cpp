@@ -103,7 +103,7 @@ void PlotTrack::updateGraph(int itemIndex, DataPair* dataPair, double secs)
 {
     auto xEntityID = dataPair->getEntityIDX();
     auto xAttr = dataPair->getAttr_x();
-    QList<double> valueList =
+    QVector<double> valueList =
         DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
 
     if(valueList.isEmpty())

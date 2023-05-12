@@ -42,7 +42,7 @@ void PlotDial::updateDataForDataPairsByTime(double secs)
     auto dataPair = getDataPairs().last();
     auto xEntityID = dataPair->getEntityIDX();
     auto xAttr = dataPair->getAttr_x();
-    QList<double> m_valueList =
+    QVector<double> m_valueList =
         DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
 
     if(m_valueList.isEmpty())

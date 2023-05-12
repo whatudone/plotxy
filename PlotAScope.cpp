@@ -134,8 +134,10 @@ void PlotAScope::updateGraph(double secs, DataPair* data)
     if(data->isDraw())
     {
         QVector<double> x, y;
-        // TODO:数据结构还没定好，暂时没有数据提供
-
+        int32_t eid = data->getEntityIDX();
+        auto pair = DataManagerInstance->getSliceDataByTime(eid, secs);
+        x = pair.first;
+        y = pair.second;
         if(x.isEmpty() || y.isEmpty())
             return;
         graph->setVisible(true);
