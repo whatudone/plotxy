@@ -560,5 +560,3 @@ void PlotDoppler::setGridStyle(GridStyle style)
 
     m_customPlot->replot();
 }
-
-void PlotDoppler::setGridDensity(GridDensity density) {}

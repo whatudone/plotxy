@@ -408,38 +408,39 @@ void PlotItemBase::setUnitsY(const QString& units)
 void PlotItemBase::setTitleVisible(bool on)
 {
     m_titleVisible = on;
-    replot();
+    // title是自绘实现，需要调用update刷新，而不是replot
+    update();
 }
 
 void PlotItemBase::setTitle(const QString& title)
 {
     m_title = title;
-    replot();
+    update();
 }
 
 void PlotItemBase::setTitleColor(const QColor& color)
 {
     m_titleColor = color;
-    replot();
+    update();
 }
 
 void PlotItemBase::setTitleFillColor(const QColor& color)
 {
     m_titleFillColor = color;
-    replot();
+    update();
 }
 
 void PlotItemBase::setTitleFont(const QFont& font)
 {
     m_titleFont = font;
-    replot();
+    update();
 }
 
 void PlotItemBase::setTitleFontSize(int size)
 {
     m_titleFontSize = size;
     m_titleFont.setPointSize(size);
-    replot();
+    update();
 }
 
 void PlotItemBase::setxAxisLabel(const QString& label)
@@ -497,7 +498,7 @@ void PlotItemBase::setPaddings(double top, double bottom, double left, double ri
     m_bottomPadding = bottom;
     m_leftPadding = left;
     m_rightPadding = right;
-    replot();
+    update();
 }
 
 // NOTE::其他地方不要直接创建DataPair对象，需要通过本接口创建，不然会导致丢失信号槽逻辑
@@ -829,7 +830,11 @@ void PlotItemBase::onDataPairUpdateData()
      *  此时会触发因为没有封装独立的刷新接口，此处调用总的数据刷新入口
      * TODO:提供一个针对某个DataPair发生变化的刷新接口
     */
-    updateDataForDataPairsByTime(m_seconds);
+    auto dataPair = qobject_cast<DataPair*>(sender());
+    if(dataPair)
+    {
+        updateGraphByDataPair(dataPair);
+    }
 }
 
 void PlotItemBase::onPlotMouseEventEnable(bool on)
@@ -845,6 +850,11 @@ void PlotItemBase::onPlotMouseEventEnable(bool on)
 }
 
 void PlotItemBase::updateDataForDataPairsByTime(double) {}
+
+void PlotItemBase::updateGraphByDataPair(DataPair* dataPair)
+{
+    Q_UNUSED(dataPair)
+}
 
 void PlotItemBase::customPainting(QPainter& /*painter*/) {}
 

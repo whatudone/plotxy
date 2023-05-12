@@ -21,7 +21,6 @@ public:
     void setTickLabelFont(QFont& font);
     void setTickLabelFontSize(int size);
     void setGridStyle(GridStyle style);
-    void setGridDensity(GridDensity density);
 
 	//title
 	void setTitle(QString&);

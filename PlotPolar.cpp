@@ -205,8 +205,6 @@ void PlotPolar::setGridStyle(GridStyle style)
     m_customPlot->replot();
 }
 
-void PlotPolar::setGridDensity(GridDensity density) {}
-
 void PlotPolar::setTitle(QString& title)
 {
     m_title = title;

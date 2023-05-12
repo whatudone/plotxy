@@ -113,18 +113,50 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
     if(getDataPairs().isEmpty())
         return;
 
-    int itemCnt = m_dataPairs.size();
+    int itemCnt = getDataPairs().size();
 
     for(int i = 0; i < itemCnt; ++i)
 	{
-        updateGraph(secs, m_dataPairs.at(i));
+        QVector<double> x;
+        QVector<double> y;
+        auto data = getDataPairs().at(i);
+        QString uuid = data->getUuid();
+        auto xEntityID = data->getEntityIDX();
+        auto yEntityID = data->getEntityIDY();
+        auto xAttr = data->getAttr_x();
+        auto yAttr = data->getAttr_y();
+        if(xAttr == "Time" && yAttr == "Time")
+        {
+            x = DataManager::getInstance()->getTimeDataSet();
+            y = DataManager::getInstance()->getTimeDataSet();
+        }
+        else if(xAttr == "Time" && yAttr != "Time")
+        {
+            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(yEntityID, xAttr, secs);
+            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(yEntityID, yAttr, secs);
+        }
+        else if(xAttr != "Time" && yAttr == "Time")
+        {
+            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
+            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, yAttr, secs);
+        }
+        else
+        {
+            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
+            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(yEntityID, yAttr, secs);
+        }
+        m_dataHash.insert(uuid, qMakePair(x, y));
 	}
+    for(int i = 0; i < itemCnt; ++i)
+    {
+        updateGraphByDataPair(m_dataPairs.at(i));
+    }
     // 先默认缩放坐标轴看效果
     m_customPlot->rescaleAxes(true);
 	m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
-void PlotScatter::updateGraph(double secs, DataPair* data)
+void PlotScatter::updateGraphByDataPair(DataPair* data)
 {
     if(!data)
     {
@@ -133,7 +165,7 @@ void PlotScatter::updateGraph(double secs, DataPair* data)
     ScatterInfo info;
     auto uuid = data->getUuid();
     if(!m_mapScatter.contains(uuid))
-    {
+	{
         info.graph = m_customPlot->addGraph();
         info.tracer = new QCPItemTracer(m_customPlot);
         info.tracerText = new QCPItemText(m_customPlot);
@@ -147,34 +179,9 @@ void PlotScatter::updateGraph(double secs, DataPair* data)
     auto graph = m_mapScatter[uuid].graph;
     auto tracerText = m_mapScatter[uuid].tracerText;
     if(data->isDraw())
-	{
-		QVector<double> x, y;
-
-        auto xEntityID = data->getEntityIDX();
-        auto yEntityID = data->getEntityIDY();
-        auto xAttr = data->getAttr_x();
-        auto yAttr = data->getAttr_y();
-        if(xAttr == "Time" && yAttr == "Time")
-		{
-			x = DataManager::getInstance()->getTimeDataSet();
-			y = DataManager::getInstance()->getTimeDataSet();
-		}
-        else if(xAttr == "Time" && yAttr != "Time")
-		{
-            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(yEntityID, xAttr, secs);
-            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(yEntityID, yAttr, secs);
-		}
-        else if(xAttr != "Time" && yAttr == "Time")
-		{
-            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
-            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, yAttr, secs);
-        }
-        else
-        {
-            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
-            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(yEntityID, yAttr, secs);
-        }
-
+    {
+        auto x = m_dataHash.value(uuid).first;
+        auto y = m_dataHash.value(uuid).second;
         if(x.isEmpty() || y.isEmpty())
             return;
 
@@ -198,19 +205,19 @@ void PlotScatter::updateGraph(double secs, DataPair* data)
             QPixmap pix(data->iconName());
             pix = pix.scaled(data->iconSize(), Qt::IgnoreAspectRatio);
             QTransform trans;
-            int rotationIndex = data->iconRotation();
+            auto rotationIndex = data->iconRotation();
             switch(rotationIndex)
             {
-            case 0:
+            case DataPair::no_rotation:
                 trans.rotate(0);
                 break;
-            case 1:
+            case DataPair::rotation_90:
                 trans.rotate(90);
                 break;
-            case 2:
+            case DataPair::rotation_180:
                 trans.rotate(180);
                 break;
-            case 3:
+            case DataPair::rotation_270:
                 trans.rotate(270);
                 break;
             default:
@@ -248,10 +255,10 @@ void PlotScatter::updateGraph(double secs, DataPair* data)
             tracerText->setVisible(true);
 			//设置锚点
             //			m_mapScatter[dataPair].tracer->setGraphKey(x.last());
-
+            QString labelText;
             if(DataPair::format_default == data->getTextFormat())
             { //default
-                QString labelText, prefix_x, prefix_y;
+                QString prefix_x, prefix_y;
                 QString object_x, object_y, attr_x, attr_y;
                 QString data_x, data_y, unit_x, unit_y, Left_bracket, right_bracket;
 
@@ -329,47 +336,46 @@ void PlotScatter::updateGraph(double secs, DataPair* data)
                                     .arg(unit_y)
                                     .arg(right_bracket);
                 }
-                data->setLabelText(labelText);
             }
             else if(DataPair::format_custom == data->getTextFormat())
             { //custom
-                data->setLabelText(data->getCustomText());
+                labelText = data->getCustomText();
             }
             else if(DataPair::format_script == data->getTextFormat()) //script
             {}
 
-            tracerText->setText(data->getLabelText());
+            tracerText->setText(labelText);
 
             QFontMetricsF fm(data->getLabelFont());
             double wd = (fm.size(Qt::TextSingleLine, data->getLabelText()).width()) / 3.0;
             double ht = fm.size(Qt::TextSingleLine, data->getLabelText()).height() / 1.0;
             switch(data->getLabelPosition())
             {
-            case 0: //left-top
+            case DataPair::left_top: //left-top
                 tracerText->position->setCoords(-wd, -ht);
 				break;
-            case 1: //top
+            case DataPair::top: //top
                 tracerText->position->setCoords(0, -ht);
 				break;
-            case 2: //right-top
+            case DataPair::right_top: //right-top
                 tracerText->position->setCoords(wd, -ht);
 				break;
-            case 3: //left
+            case DataPair::left: //left
                 tracerText->position->setCoords(-wd, 0);
 				break;
-            case 4: //center
+            case DataPair::center: //center
                 tracerText->position->setCoords(0, 0);
 				break;
-            case 5: //right
+            case DataPair::right: //right
                 tracerText->position->setCoords(wd, 0);
 				break;
-            case 6: //left-bottom
+            case DataPair::left_bottom: //left-bottom
                 tracerText->position->setCoords(-wd, ht);
 				break;
-            case 7: //bottom
+            case DataPair::bottom: //bottom
                 tracerText->position->setCoords(0, ht);
 				break;
-            case 8: //right-bottom
+            case DataPair::right_bottom: //right-bottom
                 tracerText->position->setCoords(wd, ht);
 				break;
             default: //right
@@ -397,52 +403,6 @@ void PlotScatter::updateGraph(double secs, DataPair* data)
         //		m_mapScatter[dataPair].tracer->setVisible(false);
         tracerText->setVisible(false);
 	}
-}
-
-void PlotScatter::setPaddings(double top, double bottom, double left, double right)
-{
-    m_topPadding = top;
-    m_bottomPadding = bottom;
-    m_leftPadding = left;
-    m_rightPadding = right;
-    update();
-}
-
-void PlotScatter::setTitle(QString& str)
-{
-    m_title = str;
-    update();
-}
-
-void PlotScatter::setTitleColor(QColor& color)
-{
-    m_titleColor = color;
-    update();
-}
-
-void PlotScatter::setTitleFillColor(QColor& color)
-{
-    m_titleFillColor = color;
-    update();
-}
-
-void PlotScatter::setTitleFont(QFont& font)
-{
-    m_titleFont = font;
-    update();
-}
-
-void PlotScatter::setTitleFontSize(int size)
-{
-    m_titleFontSize = size;
-    m_titleFont.setPointSize(size);
-    update();
-}
-
-void PlotScatter::setTitleVisible(bool show)
-{
-    m_titleVisible = show;
-    update();
 }
 
 void PlotScatter::exportDataToFile(const QString& filename) const
@@ -473,35 +433,6 @@ void PlotScatter::exportDataToFile(const QString& filename) const
         }
     }
     file.close();
-}
-
-void PlotScatter::setxAxisLabel(QString& str)
-{
-    m_xAxisLabel = str;
-    m_customPlot->xAxis->setLabel(m_xAxisLabel);
-}
-
-void PlotScatter::setyAxisLabel(QString& str)
-{
-    m_yAxisLabel = str;
-    m_customPlot->yAxis->setLabel(m_yAxisLabel);
-    m_customPlot->replot();
-}
-
-void PlotScatter::setAxisLabelColor(QColor& color)
-{
-    m_axisLabelColor = color;
-    m_customPlot->xAxis->setLabelColor(m_axisLabelColor);
-    m_customPlot->yAxis->setLabelColor(m_axisLabelColor);
-    m_customPlot->replot();
-}
-
-void PlotScatter::setAxisLabelFont(QFont& font)
-{
-    m_axisLabelFont = font;
-    m_customPlot->xAxis->setLabelFont(m_axisLabelFont);
-    m_customPlot->yAxis->setLabelFont(m_axisLabelFont);
-    m_customPlot->replot();
 }
 
 void PlotScatter::setAxisVisible(bool on, AxisType type)
@@ -564,155 +495,4 @@ void PlotScatter::rescaleAxis(bool on)
 {
     m_customPlot->rescaleAxes(on);
     m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
-}
-
-void PlotScatter::setHorzGrids(uint count)
-{
-    if(m_horzGrids == count)
-    {
-        return;
-    }
-    m_horzGrids = count;
-    if(count == 0)
-    {
-        m_customPlot->yAxis->grid()->setVisible(false);
-    }
-    else
-    {
-        m_customPlot->yAxis->grid()->setVisible(m_gridVisible);
-        m_customPlot->yAxis->ticker()->setTickCount(m_horzGrids);
-    }
-    m_customPlot->replot();
-}
-
-void PlotScatter::setVertGrids(uint count)
-{
-    if(m_vertGrids == count)
-    {
-        return;
-    }
-    m_vertGrids = count;
-    if(count == 0)
-    {
-        m_customPlot->xAxis->grid()->setVisible(false);
-    }
-    else
-    {
-        m_customPlot->xAxis->grid()->setVisible(true);
-        m_customPlot->xAxis->ticker()->setTickCount(m_vertGrids);
-    }
-    m_customPlot->replot();
-}
-
-void PlotScatter::setAxisColorWidth(QColor color, uint width)
-{
-    m_axisColor = color;
-    m_axisWidth = width;
-    m_customPlot->xAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
-    m_customPlot->yAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
-    m_customPlot->xAxis2->setBasePen(QPen(m_axisColor, m_axisWidth));
-    m_customPlot->yAxis2->setBasePen(QPen(m_axisColor, m_axisWidth));
-    m_customPlot->replot();
-}
-
-void PlotScatter::setGridColorWidth(QColor color, uint width)
-{
-    m_gridColor = color;
-    m_gridWidth = width;
-    m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
-    m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
-    m_customPlot->replot();
-}
-
-void PlotScatter::setGridFillColor(QColor color)
-{
-    m_gridFillColor = color;
-    m_customPlot->axisRect()->setBackground(color);
-    m_customPlot->replot();
-}
-
-void PlotScatter::setGridVisible(bool enable)
-{
-    m_gridVisible = enable;
-    m_customPlot->xAxis->grid()->setVisible(enable);
-    m_customPlot->yAxis->grid()->setVisible(enable);
-    m_customPlot->replot();
-}
-
-void PlotScatter::setTickLabelColor(QColor& color)
-{
-    m_tickLabelColor = color;
-    m_customPlot->xAxis->setTickLabelColor(m_tickLabelColor);
-    m_customPlot->yAxis->setTickLabelColor(m_tickLabelColor);
-    m_customPlot->replot();
-}
-
-void PlotScatter::setTickLabelFont(QFont& font)
-{
-    m_tickLabelFont = font;
-    m_customPlot->xAxis->setTickLabelFont(m_tickLabelFont);
-    m_customPlot->yAxis->setTickLabelFont(m_tickLabelFont);
-    m_customPlot->replot();
-}
-
-void PlotScatter::setTickLabelFontSize(int size)
-{
-    m_tickLabelFontSize = size;
-    m_tickLabelFont.setPointSize(size);
-    setTickLabelFont(m_tickLabelFont);
-}
-
-void PlotScatter::setGridStyle(GridStyle style)
-{
-    switch(style)
-    {
-    case GridStyle::SOLIDLINE:
-        m_gridStyle = Qt::SolidLine;
-        break;
-    case GridStyle::DASHLINE:
-        m_gridStyle = Qt::DashLine;
-        break;
-    case GridStyle::DOTLINE:
-        m_gridStyle = Qt::DotLine;
-        break;
-    case GridStyle::DASHDOTLINE:
-        m_gridStyle = Qt::DashDotLine;
-        break;
-    default:
-        m_gridStyle = Qt::SolidLine;
-        break;
-    }
-    m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
-    m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
-    m_customPlot->replot();
-}
-
-void PlotScatter::setGridDensity(GridDensity density) {}
-
-void PlotScatter::setUnitsShowX(bool on)
-{
-    m_showUnits_x = on;
-    m_customPlot->xAxis->setAxisFormatShow(on);
-    m_customPlot->replot();
-}
-
-void PlotScatter::setUnitsShowY(bool on)
-{
-    m_showUnits_y = on;
-    m_customPlot->yAxis->setAxisFormatShow(on);
-    m_customPlot->replot();
-}
-
-void PlotScatter::setUnitsX(const QString& units)
-{
-    m_units_x = units;
-    m_customPlot->xAxis->setAxisFormat(units);
-    m_customPlot->replot();
-}
-
-void PlotScatter::setUnitsY(const QString& units)
-{
-    m_units_y = units;
-    m_customPlot->yAxis->setAxisFormat(units);
-    m_customPlot->replot();
 }

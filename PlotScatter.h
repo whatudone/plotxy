@@ -39,13 +39,6 @@ public:
 
     static int m_instanceCount; //Plot实体个数
 
-    void setPaddings(double top, double bottom, double left, double right);
-
-    void setxAxisLabel(QString& str);
-    void setyAxisLabel(QString& str);
-    void setAxisLabelColor(QColor& color);
-    void setAxisLabelFont(QFont& font);
-
     void setAxisVisible(bool on, AxisType type);
     void setAxisTickLabelShow(bool on, AxisType type);
 
@@ -54,32 +47,6 @@ public:
     void rescaleAxis(bool);
 
     void delPlotPairData(const QString& uuid);
-
-    void setHorzGrids(uint);
-    void setVertGrids(uint);
-
-    void setAxisColorWidth(QColor, uint);
-    void setGridColorWidth(QColor, uint);
-
-    void setGridFillColor(QColor color);
-
-    void setGridVisible(bool enable);
-    void setTickLabelColor(QColor& color);
-    void setTickLabelFont(QFont& font);
-    void setTickLabelFontSize(int size);
-    void setGridStyle(GridStyle style);
-    void setGridDensity(GridDensity density);
-
-    void setUnitsShowX(bool on);
-    void setUnitsShowY(bool on);
-    void setUnitsX(const QString& units);
-    void setUnitsY(const QString& units);
-    void setTitle(QString& str);
-    void setTitleColor(QColor& color);
-    void setTitleFillColor(QColor& color);
-    void setTitleFont(QFont& font);
-    void setTitleFontSize(int size);
-    void setTitleVisible(bool show);
 
     PlotType plotType() const override
     {
@@ -91,7 +58,8 @@ public:
 private:
     void initPlot();
     void updateDataForDataPairsByTime(double secs);
-    void updateGraph(double secs, DataPair* data);
+    void updateGraphByDataPair(DataPair* data);
+    QHash<QString, QPair<QVector<double>, QVector<double>>> m_dataHash;
 
 private:
     // <uuid,graph>

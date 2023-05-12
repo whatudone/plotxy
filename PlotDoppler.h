@@ -51,7 +51,6 @@ public:
     void setTickLabelFont(QFont& font);
     void setTickLabelFontSize(int size);
     void setGridStyle(GridStyle style);
-    void setGridDensity(GridDensity density);
 
     void setUnitsShowX(bool on);
     void setUnitsShowY(bool on);
