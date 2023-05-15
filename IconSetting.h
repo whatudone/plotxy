@@ -1,14 +1,14 @@
 ﻿#pragma once
 
-#include <QWidget>
 #include "ui_IconSetting.h"
+#include <QWidget>
 
 class IconSetting : public QWidget
 {
 	Q_OBJECT
 
 public:
-	IconSetting(QWidget *parent = Q_NULLPTR);
+    IconSetting(QWidget* parent = Q_NULLPTR);
 	~IconSetting();
 
 private:

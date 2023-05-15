@@ -1,7 +1,7 @@
 ﻿#include "SubSettingWidgetContainer.h"
 #include "ToolBox.h"
-#include <QTextEdit>
 #include <QColorDialog>
+#include <QTextEdit>
 
 SubSettingWidgetContainer::SubSettingWidgetContainer(QWidget* parent)
 	: QMainWindow(parent)
@@ -42,17 +42,21 @@ SubSettingWidgetContainer::SubSettingWidgetContainer(QWidget* parent)
 
 	setCentralWidget(toolBox);
 
-	connect(m_labelSettings, &LabelSettings::sigCheckBox_5StateChanged, m_labelText, &LabelText::onWidgetEnabled);
+    connect(m_labelSettings,
+            &LabelSettings::sigCheckBox_5StateChanged,
+            m_labelText,
+            &LabelText::onWidgetEnabled);
+    connect(m_general,
+            &General::sigCheckBox_14Color,
+            m_iconSetting,
+            &IconSetting::setPushButton_2Color);
 }
 
-SubSettingWidgetContainer::~SubSettingWidgetContainer()
-{
-
-}
+SubSettingWidgetContainer::~SubSettingWidgetContainer() {}
 
 /////////////////////////////General//////////////////////////////////
-General::General(QWidget* parent) :
-	QWidget(parent)
+General::General(QWidget* parent)
+    : QWidget(parent)
 {
 	ui.setupUi(this);
 	connect(ui.pushButton_more, &QPushButton::clicked, this, &General::onPushbuttonMoreClicked);
@@ -61,14 +65,12 @@ General::General(QWidget* parent) :
 	connect(ui.checkBox_14, &QCheckBox::stateChanged, this, &General::onCheckBox_14StateChanged);
 }
 
-General::~General()
-{
-}
+General::~General() {}
 
 void General::onCheckBox_14StateChanged()
 {
 	emit sigCheckBox_14StateChanged(ui.checkBox_14->checkState());
-	if (ui.checkBox_14->isChecked())
+    if(ui.checkBox_14->isChecked())
 		emit sigCheckBox_14Color(ui.pushButton_12->color());
 }
 
@@ -80,7 +82,7 @@ void General::onCheckBox_16StateChanged()
 void General::onPushButton_12Clicked()
 {
 	emit sigPushButton_12Clicked(ui.pushButton_12->color());
-	if (ui.checkBox_14->isChecked())
+    if(ui.checkBox_14->isChecked())
 		emit sigCheckBox_14Color(ui.pushButton_12->color());
 }
 
@@ -105,43 +107,56 @@ void General::onPushbuttonMoreClicked()
 }
 
 /////////////////////////////Extrapolation//////////////////////////////////
-Extrapolation::Extrapolation(QWidget* parent) :
-	QWidget(parent)
+Extrapolation::Extrapolation(QWidget* parent)
+    : QWidget(parent)
 {
 	ui.setupUi(this);
 }
 
-Extrapolation::~Extrapolation()
-{
-}
+Extrapolation::~Extrapolation() {}
 
 /////////////////////////////LabelSetting//////////////////////////////////
-LabelSettings::LabelSettings(QWidget* parent) :
-	QWidget(parent)
+LabelSettings::LabelSettings(QWidget* parent)
+    : QWidget(parent)
 {
 	ui.setupUi(this);
 
 	QFontDatabase FontDb;
-	foreach(int size, FontDb.standardSizes()) {
+    foreach(int size, FontDb.standardSizes())
+    {
 		ui.comboBox_4->addItem(QString::number(size));
 	}
 
-	connect(ui.checkBox_5, &QCheckBox::stateChanged, this, &LabelSettings::onCheckBox_5StateChanged);
+    connect(
+        ui.checkBox_5, &QCheckBox::stateChanged, this, &LabelSettings::onCheckBox_5StateChanged);
 	connect(ui.pushButton_5, &QPushButton::clicked, this, &LabelSettings::onPushButton_5Clicked);
 	connect(ui.pushButton_6, &QPushButton::clicked, this, &LabelSettings::onPushButton_6Clicked);
 	connect(ui.checkBox, &QCheckBox::stateChanged, this, &LabelSettings::onCheckBoxStateChanged);
-	connect(ui.fontComboBox, &QFontComboBox::currentFontChanged, this, &LabelSettings::onFontComboBoxCurrentFontChanged);
-	connect(ui.comboBox, &QComboBox::currentTextChanged, this, &LabelSettings::onComboBoxCurrentTextChanged);
-	connect(ui.comboBox_2, SIGNAL(currentIndexChanged(int)), this, SLOT(onComboBox_2CurrentIndexChanged(int)));
-	connect(ui.comboBox_3, &QComboBox::currentTextChanged, this, &LabelSettings::onComboBox_3CurrentTextChanged);
-	connect(ui.comboBox_4, &QComboBox::currentTextChanged, this, &LabelSettings::onComboBox_4CurrentTextChanged);
+    connect(ui.fontComboBox,
+            &QFontComboBox::currentFontChanged,
+            this,
+            &LabelSettings::onFontComboBoxCurrentFontChanged);
+    connect(ui.comboBox,
+            &QComboBox::currentTextChanged,
+            this,
+            &LabelSettings::onComboBoxCurrentTextChanged);
+    connect(ui.comboBox_2,
+            SIGNAL(currentIndexChanged(int)),
+            this,
+            SLOT(onComboBox_2CurrentIndexChanged(int)));
+    connect(ui.comboBox_3,
+            &QComboBox::currentTextChanged,
+            this,
+            &LabelSettings::onComboBox_3CurrentTextChanged);
+    connect(ui.comboBox_4,
+            &QComboBox::currentTextChanged,
+            this,
+            &LabelSettings::onComboBox_4CurrentTextChanged);
 	connect(ui.spinBox_2, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_2ValueChanged(int)));
 	connect(ui.spinBox_3, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_3ValueChanged(int)));
 }
 
-LabelSettings::~LabelSettings()
-{
-}
+LabelSettings::~LabelSettings() {}
 
 void LabelSettings::onCheckBox_5StateChanged(int state)
 {
@@ -163,7 +178,7 @@ void LabelSettings::onCheckBoxStateChanged(int state)
 	emit sigCheckBoxStateChanged((bool)state);
 }
 
-void LabelSettings::onFontComboBoxCurrentFontChanged(const QFont &font)
+void LabelSettings::onFontComboBoxCurrentFontChanged(const QFont& font)
 {
 	emit sigFontComboBoxCurrentFontChanged(font);
 }
@@ -223,13 +238,9 @@ void LabelSettings::setFontComboBoxFont(QFont font)
 	ui.fontComboBox->setCurrentFont(font);
 }
 
-void LabelSettings::setComboBoxText(QString text)
-{
-}
+void LabelSettings::setComboBoxText(QString text) {}
 
-void LabelSettings::setComboBox_3Text(QString text)
-{
-}
+void LabelSettings::setComboBox_3Text(QString text) {}
 
 void LabelSettings::setComboBox_2Text(int index)
 {
@@ -252,27 +263,29 @@ void LabelSettings::setSpinBox_3Value(int value)
 }
 
 /////////////////////////////LabelText//////////////////////////////////
-LabelText::LabelText(QWidget* parent) :
-	QWidget(parent)
+LabelText::LabelText(QWidget* parent)
+    : QWidget(parent)
 {
 	ui.setupUi(this);
 	ui.label_14->setVisible(false);
 	ui.label_15->setVisible(false);
 	ui.pushButton_9->setVisible(false);
 	ui.lineEdit_4->setVisible(false);
-	connect(ui.comboBox_3, SIGNAL(currentIndexChanged(int)), this, SLOT(onComboBox_3CurrentIndexChanged(int)));
+    connect(ui.comboBox_3,
+            SIGNAL(currentIndexChanged(int)),
+            this,
+            SLOT(onComboBox_3CurrentIndexChanged(int)));
 	connect(ui.checkBox, &QCheckBox::stateChanged, this, &LabelText::onCheckBoxStateChanged);
 	connect(ui.checkBox_2, &QCheckBox::stateChanged, this, &LabelText::onCheckBox_2StateChanged);
 	connect(ui.checkBox_3, &QCheckBox::stateChanged, this, &LabelText::onCheckBox_3StateChanged);
 	connect(ui.checkBox_4, &QCheckBox::stateChanged, this, &LabelText::onCheckBox_4StateChanged);
 	connect(ui.checkBox_5, &QCheckBox::stateChanged, this, &LabelText::onCheckBox_5StateChanged);
 	connect(ui.pushButton_9, &QPushButton::clicked, this, &LabelText::onPushbutton_9Clicked);
-	connect(ui.lineEdit_4, &QLineEdit::editingFinished, this, &LabelText::onLineEdit_4EditingFinished);
+    connect(
+        ui.lineEdit_4, &QLineEdit::editingFinished, this, &LabelText::onLineEdit_4EditingFinished);
 }
 
-LabelText::~LabelText()
-{
-}
+LabelText::~LabelText() {}
 
 void LabelText::onWidgetEnabled(bool on)
 {
@@ -281,7 +294,7 @@ void LabelText::onWidgetEnabled(bool on)
 
 void LabelText::onComboBox_3CurrentIndexChanged(int index)
 {
-	switch (index)
+    switch(index)
 	{
 	case 0:
 		ui.label->setVisible(true);
@@ -409,20 +422,16 @@ void LabelText::setLineEdit_4Text(QString text)
 }
 
 /////////////////////////////ColorRanges//////////////////////////////////
-ColorRanges::ColorRanges(QWidget* parent) :
-	QWidget(parent)
+ColorRanges::ColorRanges(QWidget* parent)
+    : QWidget(parent)
 {
 	ui.setupUi(this);
 	connect(ui.pushButton_more, &QPushButton::clicked, this, &ColorRanges::onBtnCRMoreclicked);
 }
 
-ColorRanges::~ColorRanges()
-{
-}
+ColorRanges::~ColorRanges() {}
 
 void ColorRanges::onBtnCRMoreclicked()
 {
 	emit sigBtnColorRangesMoreclicked();
 }
-
-

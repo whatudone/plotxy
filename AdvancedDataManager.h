@@ -22,11 +22,6 @@ signals:
 	void sgnAddPlotPair();
 	void sgnFilterSort(QString);
 
-	//General
-	void sgnGeneral_draw(bool);
-	void sgnGeneral_color(QColor);
-	void sgnGeneral_matchColor(bool);
-
 	//Label Settings
 	void sgnLabelSettings_draw(bool);
 	void sgnLabelSettings_color(QColor);
@@ -48,16 +43,6 @@ signals:
 	void sgnLabelText_data(bool);
 	void sgnLabelText_unit(bool);
 	void sgnLabelText_custom(QString);
-
-	//Icon Setting
-	void sgnIconSetting_draw(bool);
-	void sgnIconSetting_name(QString);
-	void sgnIconSetting_rotation(int);
-	void sgnIconSetting_flipHorz(bool);
-	void sgnIconSetting_flipVert(bool);
-	void sgnIconSetting_width(int);
-	void sgnIconSetting_height(int);
-	void sgnIconSetting_color(QColor);
 
 public slots:
     void onBtnMore();
@@ -113,6 +98,7 @@ public slots:
 	void onIconSetting_color(QColor);
 
 private:
+    // 根据数据对数据刷新UI
 	void refreshUI();
 	void refreshGeneral();
 	void refreshIcon();
@@ -122,6 +108,14 @@ private:
 	void refreshEvent();
 	void refreshLabelText();
 	void refreshColorRanges();
+
+    void initConnections();
+    void initGeneralConnections();
+    void initIconConnections();
+    void initLabelSettingsConnections();
+    void initLabelTextConnections();
+    void initColorRangeConnections();
+    void initEventConnections();
 
 private:
     Ui::AdvancedDataManager ui;

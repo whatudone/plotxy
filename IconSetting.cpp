@@ -1,14 +1,17 @@
 ﻿#include "IconSetting.h"
 #include <QFileDialog>
 
-IconSetting::IconSetting(QWidget *parent)
+IconSetting::IconSetting(QWidget* parent)
 	: QWidget(parent)
 {
 	ui.setupUi(this);
 
 	connect(ui.checkBox, &QCheckBox::stateChanged, this, &IconSetting::onCheckBoxStateChanged);
 	connect(ui.pushButton, &QPushButton::clicked, this, &IconSetting::onPushButtonClicked);
-	connect(ui.comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onComboBoxCurrentIndexChanged(int)));
+    connect(ui.comboBox,
+            SIGNAL(currentIndexChanged(int)),
+            this,
+            SLOT(onComboBoxCurrentIndexChanged(int)));
 	connect(ui.checkBox_2, &QCheckBox::stateChanged, this, &IconSetting::onCheckBox_2StateChanged);
 	connect(ui.checkBox_3, &QCheckBox::stateChanged, this, &IconSetting::onCheckBox_3StateChanged);
 	connect(ui.spinBox, SIGNAL(valueChanged(int)), this, SLOT(onSpinBoxValueChanged(int)));
@@ -16,9 +19,7 @@ IconSetting::IconSetting(QWidget *parent)
 	connect(ui.pushButton_2, &QPushButton::clicked, this, &IconSetting::onPushButton_2Clicked);
 }
 
-IconSetting::~IconSetting()
-{
-}
+IconSetting::~IconSetting() {}
 
 void IconSetting::onCheckBoxStateChanged(int state)
 {
@@ -27,8 +28,9 @@ void IconSetting::onCheckBoxStateChanged(int state)
 
 void IconSetting::onPushButtonClicked()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, "Select icon", QDir::currentPath(), "Images (*.png *.icon *.jpg *.bmp)");
-	if (!fileName.isEmpty())
+    QString fileName = QFileDialog::getOpenFileName(
+        this, "Select icon", QDir::currentPath(), "Images (*.png *.icon *.jpg *.bmp)");
+    if(!fileName.isEmpty())
 	{
 		ui.lineEdit->setText(fileName);
 		emit sigPushButtonClicked(fileName);
@@ -102,5 +104,5 @@ void IconSetting::setSpinBox_2Value(int value)
 
 void IconSetting::setPushButton_2Color(QColor color)
 {
-	ui.pushButton_2->setColor(color);
+    ui.pushButton_2->setColor(color);
 }

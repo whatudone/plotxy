@@ -18,301 +18,7 @@ AdvancedDataManager::AdvancedDataManager(QWidget* parent)
 	subSettingWidgetContainer->setEnabled(false);
 
 	ui.stackedWidget_aDMrpart->setCurrentIndex(0);
-    connect(ui.pushButtonAddColorRange, SIGNAL(clicked()), this, SLOT(onBtnAddColorRange()));
-    connect(ui.pushButtonUpdateColorRange,
-            &QPushButton::clicked,
-            this,
-            &AdvancedDataManager::onBtnUpdateColorRange);
-
-    connect(ui.pushButton_add,
-            &QPushButton::clicked,
-            this,
-            &AdvancedDataManager::onPushButton_addClicked);
-    connect(ui.pushButton_copy,
-            &QPushButton::clicked,
-            this,
-            &AdvancedDataManager::onPushButton_copyClicked);
-    connect(ui.pushButton_autofit,
-            &QPushButton::clicked,
-            this,
-            &AdvancedDataManager::onPushButton_autofitClicked);
-    connect(ui.pushButton_delete,
-            &QPushButton::clicked,
-            this,
-            &AdvancedDataManager::onPushButton_deleteClicked);
-    connect(ui.tableWidget_plotpair,
-            &QTableWidget::itemSelectionChanged,
-            this,
-            &AdvancedDataManager::onTableWidget_plotpairItemSelectionChanged);
-    connect(ui.pushButton_close,
-            &QPushButton::clicked,
-            this,
-            &AdvancedDataManager::onPushButton_closeClicked);
-	connect(ui.lineEdit, &QLineEdit::textChanged, this, &AdvancedDataManager::onLineEditChanged);
-
-	//General
-    connect(subSettingWidgetContainer->m_general,
-            SIGNAL(sigBtnGenneralMoreclicked()),
-            this,
-            SLOT(onBtnMore()));
-    connect(subSettingWidgetContainer->m_general,
-            SIGNAL(sigCheckBox_16StateChanged(bool)),
-            this,
-            SLOT(onGeneral_draw(bool)));
-    connect(subSettingWidgetContainer->m_general,
-            SIGNAL(sigPushButton_12Clicked(QColor)),
-            this,
-            SLOT(onGeneral_color(QColor)));
-    connect(subSettingWidgetContainer->m_general,
-            SIGNAL(sigCheckBox_14StateChanged(bool)),
-            this,
-            SLOT(onGeneral_matchColor(bool)));
-    connect(this,
-            SIGNAL(sgnGeneral_draw(bool)),
-            subSettingWidgetContainer->m_general,
-            SLOT(setCheckBox_16CheckState(bool)));
-    connect(this,
-            SIGNAL(sgnGeneral_color(QColor)),
-            subSettingWidgetContainer->m_general,
-            SLOT(setPushButton_12Color(QColor)));
-    connect(this,
-            SIGNAL(sgnGeneral_matchColor(bool)),
-            subSettingWidgetContainer->m_general,
-            SLOT(setCheckBox_14CheckState(bool)));
-
-	//Icon
-    connect(subSettingWidgetContainer->m_iconSetting,
-            &IconSetting::sigCheckBoxStateChanged,
-            this,
-            &AdvancedDataManager::onIconSetting_draw);
-    connect(subSettingWidgetContainer->m_iconSetting,
-            &IconSetting::sigCheckBox_2StateChanged,
-            this,
-            &AdvancedDataManager::onIconSetting_flipHorz);
-    connect(subSettingWidgetContainer->m_iconSetting,
-            &IconSetting::sigCheckBox_3StateChanged,
-            this,
-            &AdvancedDataManager::onIconSetting_flipVert);
-    connect(subSettingWidgetContainer->m_iconSetting,
-            &IconSetting::sigPushButtonClicked,
-            this,
-            &AdvancedDataManager::onIconSetting_name);
-    connect(subSettingWidgetContainer->m_iconSetting,
-            &IconSetting::sigComboBoxCurrentIndexChanged,
-            this,
-            &AdvancedDataManager::onIconSetting_rotation);
-    connect(subSettingWidgetContainer->m_iconSetting,
-            &IconSetting::sigSpinBoxValueChanged,
-            this,
-            &AdvancedDataManager::onIconSetting_width);
-    connect(subSettingWidgetContainer->m_iconSetting,
-            &IconSetting::sigSpinBox_2ValueChanged,
-            this,
-            &AdvancedDataManager::onIconSetting_height);
-    connect(subSettingWidgetContainer->m_iconSetting,
-            &IconSetting::sigPushButton_2Clicked,
-            this,
-            &AdvancedDataManager::onIconSetting_color);
-    connect(this,
-            &AdvancedDataManager::sgnIconSetting_draw,
-            subSettingWidgetContainer->m_iconSetting,
-            &IconSetting::setCheckBoxCheckState);
-    connect(this,
-            &AdvancedDataManager::sgnIconSetting_flipHorz,
-            subSettingWidgetContainer->m_iconSetting,
-            &IconSetting::setCheckBox_2CheckState);
-    connect(this,
-            &AdvancedDataManager::sgnIconSetting_flipVert,
-            subSettingWidgetContainer->m_iconSetting,
-            &IconSetting::setCheckBox_3CheckState);
-    connect(this,
-            &AdvancedDataManager::sgnIconSetting_name,
-            subSettingWidgetContainer->m_iconSetting,
-            &IconSetting::setLineEditText);
-    connect(this,
-            &AdvancedDataManager::sgnIconSetting_width,
-            subSettingWidgetContainer->m_iconSetting,
-            &IconSetting::setSpinBoxValue);
-    connect(this,
-            &AdvancedDataManager::sgnIconSetting_height,
-            subSettingWidgetContainer->m_iconSetting,
-            &IconSetting::setSpinBox_2Value);
-    connect(this,
-            &AdvancedDataManager::sgnIconSetting_color,
-            subSettingWidgetContainer->m_iconSetting,
-            &IconSetting::setPushButton_2Color);
-    connect(subSettingWidgetContainer->m_general,
-            &General::sigCheckBox_14Color,
-            subSettingWidgetContainer->m_iconSetting,
-            &IconSetting::setPushButton_2Color);
-
-	//Label Settings
-    connect(subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::sigCheckBox_5StateChanged,
-            this,
-            &AdvancedDataManager::onLabelSettings_draw);
-    connect(subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::sigPushButton_5Clicked,
-            this,
-            &AdvancedDataManager::onLabelSettings_color);
-    connect(subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::sigPushButton_6Clicked,
-            this,
-            &AdvancedDataManager::onLabelSettings_background);
-    connect(subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::sigCheckBoxStateChanged,
-            this,
-            &AdvancedDataManager::onLabelSettings_transparent);
-    connect(subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::sigFontComboBoxCurrentFontChanged,
-            this,
-            &AdvancedDataManager::onLabelSettings_font);
-    connect(subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::sigComboBox_4CurrentTextChanged,
-            this,
-            &AdvancedDataManager::onLabelSettings_fontSize);
-    connect(subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::sigComboBox_2CurrentIndexChanged,
-            this,
-            &AdvancedDataManager::onLabelSettings_position);
-    connect(subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::sigComboBoxCurrentTextChanged,
-            this,
-            &AdvancedDataManager::onLabelSettings_xUnit);
-    connect(subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::sigComboBox_3CurrentTextChanged,
-            this,
-            &AdvancedDataManager::onLabelSettings_yUnit);
-    connect(subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::sigSpinBox_2ValueChanged,
-            this,
-            &AdvancedDataManager::onLabelSettings_precision_x);
-    connect(subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::sigSpinBox_3ValueChanged,
-            this,
-            &AdvancedDataManager::onLabelSettings_precision_y);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_draw,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setCheckBox_5CheckState);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_color,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setPushButton_5Color);
-    connect(subSettingWidgetContainer->m_general,
-            &General::sigCheckBox_14Color,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setPushButton_5Color);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_background,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setPushButton_6Color);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_transparent,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setCheckBoxStateChanged);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_font,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setFontComboBoxFont);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_fontSize,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setComboBox_4Text);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_xUnit,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setComboBoxText);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_yUnit,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setComboBox_3Text);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_position,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setComboBox_2Text);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_precision_x,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setSpinBox_2Value);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_precision_y,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setSpinBox_3Value);
-
-	//Label Text
-    connect(subSettingWidgetContainer->m_labelText,
-            &LabelText::sigComboBox_3CurrentIndexChanged,
-            this,
-            &AdvancedDataManager::onLabelText_format);
-    connect(subSettingWidgetContainer->m_labelText,
-            &LabelText::sigCheckBoxStateChanged,
-            this,
-            &AdvancedDataManager::onLabelText_prefix);
-    connect(subSettingWidgetContainer->m_labelText,
-            &LabelText::sigCheckBox_2StateChanged,
-            this,
-            &AdvancedDataManager::onLabelText_object);
-    connect(subSettingWidgetContainer->m_labelText,
-            &LabelText::sigCheckBox_3StateChanged,
-            this,
-            &AdvancedDataManager::onLabelText_attr);
-    connect(subSettingWidgetContainer->m_labelText,
-            &LabelText::sigCheckBox_4StateChanged,
-            this,
-            &AdvancedDataManager::onLabelText_data);
-    connect(subSettingWidgetContainer->m_labelText,
-            &LabelText::sigCheckBox_5StateChanged,
-            this,
-            &AdvancedDataManager::onLabelText_unit);
-    connect(subSettingWidgetContainer->m_labelText,
-            &LabelText::sigLineEdit_4EditingFinished,
-            this,
-            &AdvancedDataManager::onLabelText_custom);
-    connect(this,
-            &AdvancedDataManager::sgnLabelText_format,
-            subSettingWidgetContainer->m_labelText,
-            &LabelText::setComboBox_3CurrentIndex);
-    connect(this,
-            &AdvancedDataManager::sgnLabelText_prefix,
-            subSettingWidgetContainer->m_labelText,
-            &LabelText::setCheckBoxCheckState);
-    connect(this,
-            &AdvancedDataManager::sgnLabelText_object,
-            subSettingWidgetContainer->m_labelText,
-            &LabelText::setCheckBox_2CheckState);
-    connect(this,
-            &AdvancedDataManager::sgnLabelText_attr,
-            subSettingWidgetContainer->m_labelText,
-            &LabelText::setCheckBox_3CheckState);
-    connect(this,
-            &AdvancedDataManager::sgnLabelText_data,
-            subSettingWidgetContainer->m_labelText,
-            &LabelText::setCheckBox_4CheckState);
-    connect(this,
-            &AdvancedDataManager::sgnLabelText_unit,
-            subSettingWidgetContainer->m_labelText,
-            &LabelText::setCheckBox_5CheckState);
-    connect(this,
-            &AdvancedDataManager::sgnLabelText_custom,
-            subSettingWidgetContainer->m_labelText,
-            &LabelText::setLineEdit_4Text);
-
-	//Color Ranges
-    connect(subSettingWidgetContainer->m_colorRanges,
-            SIGNAL(sigBtnColorRangesMoreclicked()),
-            this,
-            SLOT(onBtnColorMore()));
-
-	//Event
-    connect(subSettingWidgetContainer->m_eventSetting,
-            SIGNAL(sgn_BtnMoreClicked()),
-            this,
-            SLOT(onEventBtnMoreClicked()));
-    connect(PlotManagerData::getInstance(),
-            &PlotManagerData::plotDataChanged,
-            this,
-            &AdvancedDataManager::onUpdatePlotPair);
+    initConnections();
 }
 
 AdvancedDataManager::~AdvancedDataManager() {}
@@ -352,6 +58,7 @@ void AdvancedDataManager::onTableWidget_plotpairItemSelectionChanged()
 
 void AdvancedDataManager::onPushButton_addClicked()
 {
+    // 跳转到添加数据对界面
 	emit sgnAddPlotPair();
 }
 
@@ -639,21 +346,23 @@ void AdvancedDataManager::refreshUI()
 
 void AdvancedDataManager::refreshGeneral()
 {
-	sgnGeneral_draw(m_curSelectDatapair->isDraw());
-	sgnGeneral_color(m_curSelectDatapair->dataColor());
-	sgnGeneral_matchColor(m_curSelectDatapair->matchColor());
+    auto general = subSettingWidgetContainer->m_general;
+    general->setCheckBox_16CheckState(m_curSelectDatapair->isDraw());
+    general->setPushButton_12Color(m_curSelectDatapair->dataColor());
+    general->setCheckBox_14CheckState(m_curSelectDatapair->matchColor());
 }
 
 void AdvancedDataManager::refreshIcon()
 {
-	sgnIconSetting_draw(m_curSelectDatapair->isIconDraw());
-	sgnIconSetting_color(m_curSelectDatapair->iconColor());
-	sgnIconSetting_width(m_curSelectDatapair->iconWidth());
-	sgnIconSetting_height(m_curSelectDatapair->iconHeight());
-	sgnIconSetting_flipHorz(m_curSelectDatapair->iconFlipHorz());
-	sgnIconSetting_flipVert(m_curSelectDatapair->iconFlipVert());
-	sgnIconSetting_rotation(m_curSelectDatapair->iconRotation());
-	sgnIconSetting_name(m_curSelectDatapair->iconName());
+    auto iconSetting = subSettingWidgetContainer->m_iconSetting;
+    iconSetting->setCheckBoxCheckState(m_curSelectDatapair->isIconDraw());
+    iconSetting->setPushButton_2Color(m_curSelectDatapair->iconColor());
+    iconSetting->setSpinBoxValue(m_curSelectDatapair->iconWidth());
+    iconSetting->setSpinBox_2Value(m_curSelectDatapair->iconHeight());
+    iconSetting->setCheckBox_2CheckState(m_curSelectDatapair->iconFlipHorz());
+    iconSetting->setCheckBox_3CheckState(m_curSelectDatapair->iconFlipVert());
+    iconSetting->setComboBoxCurrentIndex(m_curSelectDatapair->iconRotation());
+    iconSetting->setLineEditText(m_curSelectDatapair->iconName());
 }
 
 void AdvancedDataManager::refreshExtrapolation() {}
@@ -687,6 +396,285 @@ void AdvancedDataManager::refreshLabelText()
 }
 
 void AdvancedDataManager::refreshColorRanges() {}
+
+void AdvancedDataManager::initConnections()
+{
+    initGeneralConnections();
+    initIconConnections();
+    initLabelSettingsConnections();
+    initLabelTextConnections();
+    initColorRangeConnections();
+    initEventConnections();
+}
+
+void AdvancedDataManager::initGeneralConnections()
+{
+    connect(ui.pushButton_add,
+            &QPushButton::clicked,
+            this,
+            &AdvancedDataManager::onPushButton_addClicked);
+    connect(ui.pushButton_copy,
+            &QPushButton::clicked,
+            this,
+            &AdvancedDataManager::onPushButton_copyClicked);
+    connect(ui.pushButton_autofit,
+            &QPushButton::clicked,
+            this,
+            &AdvancedDataManager::onPushButton_autofitClicked);
+    connect(ui.pushButton_delete,
+            &QPushButton::clicked,
+            this,
+            &AdvancedDataManager::onPushButton_deleteClicked);
+    connect(ui.tableWidget_plotpair,
+            &QTableWidget::itemSelectionChanged,
+            this,
+            &AdvancedDataManager::onTableWidget_plotpairItemSelectionChanged);
+    connect(ui.pushButton_close,
+            &QPushButton::clicked,
+            this,
+            &AdvancedDataManager::onPushButton_closeClicked);
+    connect(ui.lineEdit, &QLineEdit::textChanged, this, &AdvancedDataManager::onLineEditChanged);
+
+    //General
+    connect(subSettingWidgetContainer->m_general,
+            SIGNAL(sigBtnGenneralMoreclicked()),
+            this,
+            SLOT(onBtnMore()));
+    connect(subSettingWidgetContainer->m_general,
+            SIGNAL(sigCheckBox_16StateChanged(bool)),
+            this,
+            SLOT(onGeneral_draw(bool)));
+    connect(subSettingWidgetContainer->m_general,
+            SIGNAL(sigPushButton_12Clicked(QColor)),
+            this,
+            SLOT(onGeneral_color(QColor)));
+    connect(subSettingWidgetContainer->m_general,
+            SIGNAL(sigCheckBox_14StateChanged(bool)),
+            this,
+            SLOT(onGeneral_matchColor(bool)));
+}
+
+void AdvancedDataManager::initIconConnections()
+{
+    //Icon
+    connect(subSettingWidgetContainer->m_iconSetting,
+            &IconSetting::sigCheckBoxStateChanged,
+            this,
+            &AdvancedDataManager::onIconSetting_draw);
+    connect(subSettingWidgetContainer->m_iconSetting,
+            &IconSetting::sigCheckBox_2StateChanged,
+            this,
+            &AdvancedDataManager::onIconSetting_flipHorz);
+    connect(subSettingWidgetContainer->m_iconSetting,
+            &IconSetting::sigCheckBox_3StateChanged,
+            this,
+            &AdvancedDataManager::onIconSetting_flipVert);
+    connect(subSettingWidgetContainer->m_iconSetting,
+            &IconSetting::sigPushButtonClicked,
+            this,
+            &AdvancedDataManager::onIconSetting_name);
+    connect(subSettingWidgetContainer->m_iconSetting,
+            &IconSetting::sigComboBoxCurrentIndexChanged,
+            this,
+            &AdvancedDataManager::onIconSetting_rotation);
+    connect(subSettingWidgetContainer->m_iconSetting,
+            &IconSetting::sigSpinBoxValueChanged,
+            this,
+            &AdvancedDataManager::onIconSetting_width);
+    connect(subSettingWidgetContainer->m_iconSetting,
+            &IconSetting::sigSpinBox_2ValueChanged,
+            this,
+            &AdvancedDataManager::onIconSetting_height);
+    connect(subSettingWidgetContainer->m_iconSetting,
+            &IconSetting::sigPushButton_2Clicked,
+            this,
+            &AdvancedDataManager::onIconSetting_color);
+}
+
+void AdvancedDataManager::initLabelSettingsConnections()
+{
+    //Label Settings
+    connect(subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::sigCheckBox_5StateChanged,
+            this,
+            &AdvancedDataManager::onLabelSettings_draw);
+    connect(subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::sigPushButton_5Clicked,
+            this,
+            &AdvancedDataManager::onLabelSettings_color);
+    connect(subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::sigPushButton_6Clicked,
+            this,
+            &AdvancedDataManager::onLabelSettings_background);
+    connect(subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::sigCheckBoxStateChanged,
+            this,
+            &AdvancedDataManager::onLabelSettings_transparent);
+    connect(subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::sigFontComboBoxCurrentFontChanged,
+            this,
+            &AdvancedDataManager::onLabelSettings_font);
+    connect(subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::sigComboBox_4CurrentTextChanged,
+            this,
+            &AdvancedDataManager::onLabelSettings_fontSize);
+    connect(subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::sigComboBox_2CurrentIndexChanged,
+            this,
+            &AdvancedDataManager::onLabelSettings_position);
+    connect(subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::sigComboBoxCurrentTextChanged,
+            this,
+            &AdvancedDataManager::onLabelSettings_xUnit);
+    connect(subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::sigComboBox_3CurrentTextChanged,
+            this,
+            &AdvancedDataManager::onLabelSettings_yUnit);
+    connect(subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::sigSpinBox_2ValueChanged,
+            this,
+            &AdvancedDataManager::onLabelSettings_precision_x);
+    connect(subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::sigSpinBox_3ValueChanged,
+            this,
+            &AdvancedDataManager::onLabelSettings_precision_y);
+    connect(this,
+            &AdvancedDataManager::sgnLabelSettings_draw,
+            subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::setCheckBox_5CheckState);
+    connect(this,
+            &AdvancedDataManager::sgnLabelSettings_color,
+            subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::setPushButton_5Color);
+    connect(subSettingWidgetContainer->m_general,
+            &General::sigCheckBox_14Color,
+            subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::setPushButton_5Color);
+    connect(this,
+            &AdvancedDataManager::sgnLabelSettings_background,
+            subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::setPushButton_6Color);
+    connect(this,
+            &AdvancedDataManager::sgnLabelSettings_transparent,
+            subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::setCheckBoxStateChanged);
+    connect(this,
+            &AdvancedDataManager::sgnLabelSettings_font,
+            subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::setFontComboBoxFont);
+    connect(this,
+            &AdvancedDataManager::sgnLabelSettings_fontSize,
+            subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::setComboBox_4Text);
+    connect(this,
+            &AdvancedDataManager::sgnLabelSettings_xUnit,
+            subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::setComboBoxText);
+    connect(this,
+            &AdvancedDataManager::sgnLabelSettings_yUnit,
+            subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::setComboBox_3Text);
+    connect(this,
+            &AdvancedDataManager::sgnLabelSettings_position,
+            subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::setComboBox_2Text);
+    connect(this,
+            &AdvancedDataManager::sgnLabelSettings_precision_x,
+            subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::setSpinBox_2Value);
+    connect(this,
+            &AdvancedDataManager::sgnLabelSettings_precision_y,
+            subSettingWidgetContainer->m_labelSettings,
+            &LabelSettings::setSpinBox_3Value);
+}
+
+void AdvancedDataManager::initLabelTextConnections()
+{
+    //Label Text
+    connect(subSettingWidgetContainer->m_labelText,
+            &LabelText::sigComboBox_3CurrentIndexChanged,
+            this,
+            &AdvancedDataManager::onLabelText_format);
+    connect(subSettingWidgetContainer->m_labelText,
+            &LabelText::sigCheckBoxStateChanged,
+            this,
+            &AdvancedDataManager::onLabelText_prefix);
+    connect(subSettingWidgetContainer->m_labelText,
+            &LabelText::sigCheckBox_2StateChanged,
+            this,
+            &AdvancedDataManager::onLabelText_object);
+    connect(subSettingWidgetContainer->m_labelText,
+            &LabelText::sigCheckBox_3StateChanged,
+            this,
+            &AdvancedDataManager::onLabelText_attr);
+    connect(subSettingWidgetContainer->m_labelText,
+            &LabelText::sigCheckBox_4StateChanged,
+            this,
+            &AdvancedDataManager::onLabelText_data);
+    connect(subSettingWidgetContainer->m_labelText,
+            &LabelText::sigCheckBox_5StateChanged,
+            this,
+            &AdvancedDataManager::onLabelText_unit);
+    connect(subSettingWidgetContainer->m_labelText,
+            &LabelText::sigLineEdit_4EditingFinished,
+            this,
+            &AdvancedDataManager::onLabelText_custom);
+    connect(this,
+            &AdvancedDataManager::sgnLabelText_format,
+            subSettingWidgetContainer->m_labelText,
+            &LabelText::setComboBox_3CurrentIndex);
+    connect(this,
+            &AdvancedDataManager::sgnLabelText_prefix,
+            subSettingWidgetContainer->m_labelText,
+            &LabelText::setCheckBoxCheckState);
+    connect(this,
+            &AdvancedDataManager::sgnLabelText_object,
+            subSettingWidgetContainer->m_labelText,
+            &LabelText::setCheckBox_2CheckState);
+    connect(this,
+            &AdvancedDataManager::sgnLabelText_attr,
+            subSettingWidgetContainer->m_labelText,
+            &LabelText::setCheckBox_3CheckState);
+    connect(this,
+            &AdvancedDataManager::sgnLabelText_data,
+            subSettingWidgetContainer->m_labelText,
+            &LabelText::setCheckBox_4CheckState);
+    connect(this,
+            &AdvancedDataManager::sgnLabelText_unit,
+            subSettingWidgetContainer->m_labelText,
+            &LabelText::setCheckBox_5CheckState);
+    connect(this,
+            &AdvancedDataManager::sgnLabelText_custom,
+            subSettingWidgetContainer->m_labelText,
+            &LabelText::setLineEdit_4Text);
+}
+
+void AdvancedDataManager::initColorRangeConnections()
+{
+    //Color Ranges
+    connect(ui.pushButtonAddColorRange, SIGNAL(clicked()), this, SLOT(onBtnAddColorRange()));
+    connect(ui.pushButtonUpdateColorRange,
+            &QPushButton::clicked,
+            this,
+            &AdvancedDataManager::onBtnUpdateColorRange);
+    connect(subSettingWidgetContainer->m_colorRanges,
+            SIGNAL(sigBtnColorRangesMoreclicked()),
+            this,
+            SLOT(onBtnColorMore()));
+}
+
+void AdvancedDataManager::initEventConnections()
+{
+    //Event
+    connect(subSettingWidgetContainer->m_eventSetting,
+            SIGNAL(sgn_BtnMoreClicked()),
+            this,
+            SLOT(onEventBtnMoreClicked()));
+    connect(PlotManagerData::getInstance(),
+            &PlotManagerData::plotDataChanged,
+            this,
+            &AdvancedDataManager::onUpdatePlotPair);
+}
 
 void AdvancedDataManager::onBtnAddColorRange()
 {
