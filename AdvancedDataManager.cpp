@@ -369,15 +369,18 @@ void AdvancedDataManager::refreshExtrapolation() {}
 
 void AdvancedDataManager::refreshLabelSettings()
 {
-	sgnLabelSettings_color(m_curSelectDatapair->getLabelColor());
-	sgnLabelSettings_background(m_curSelectDatapair->getLabelBackground());
-	sgnLabelSettings_transparent(m_curSelectDatapair->getLabelBackTransparent());
-	sgnLabelSettings_draw(m_curSelectDatapair->isLabelTextShow());
-	sgnLabelSettings_font(m_curSelectDatapair->getLabelFont());
-	sgnLabelSettings_fontSize(m_curSelectDatapair->getLabelFontSize());
-	sgnLabelSettings_position(m_curSelectDatapair->getLabelPosition());
-	sgnLabelSettings_precision_x(m_curSelectDatapair->getLabelPrecision_x());
-	sgnLabelSettings_precision_y(m_curSelectDatapair->getLabelPrecision_y());
+    auto labelSettings = subSettingWidgetContainer->m_labelSettings;
+    labelSettings->setPushButton_5Color(m_curSelectDatapair->getLabelColor());
+    labelSettings->setPushButton_6Color(m_curSelectDatapair->getLabelBackground());
+    labelSettings->setCheckBoxStateChanged(m_curSelectDatapair->getLabelBackTransparent());
+    labelSettings->setCheckBox_5CheckState(m_curSelectDatapair->isLabelTextShow());
+    labelSettings->setFontComboBoxFont(m_curSelectDatapair->getLabelFont());
+    labelSettings->setComboBox_4Text(m_curSelectDatapair->getLabelFontSize());
+    labelSettings->setComboBox_2Text(m_curSelectDatapair->getLabelPosition());
+    labelSettings->setSpinBox_2Value(m_curSelectDatapair->getLabelPrecision_x());
+    labelSettings->setSpinBox_3Value(m_curSelectDatapair->getLabelPrecision_y());
+    labelSettings->setComboBoxText(m_curSelectDatapair->getUnit_x());
+    labelSettings->setComboBox_3Text(m_curSelectDatapair->getUnit_y());
 }
 
 void AdvancedDataManager::refreshStipple() {}
@@ -386,13 +389,14 @@ void AdvancedDataManager::refreshEvent() {}
 
 void AdvancedDataManager::refreshLabelText()
 {
-	sgnLabelText_format(m_curSelectDatapair->getTextFormat());
-	sgnLabelText_prefix(m_curSelectDatapair->isPrefixShow());
-	sgnLabelText_object(m_curSelectDatapair->isObjectShow());
-	sgnLabelText_attr(m_curSelectDatapair->isAttrShow());
-	sgnLabelText_data(m_curSelectDatapair->isDataShow());
-	sgnLabelText_unit(m_curSelectDatapair->isUnitShow());
-	sgnLabelText_custom(m_curSelectDatapair->getCustomText());
+    auto labelText = subSettingWidgetContainer->m_labelText;
+    labelText->setComboBox_3CurrentIndex(m_curSelectDatapair->getTextFormat());
+    labelText->setCheckBoxCheckState(m_curSelectDatapair->isPrefixShow());
+    labelText->setCheckBox_2CheckState(m_curSelectDatapair->isObjectShow());
+    labelText->setCheckBox_3CheckState(m_curSelectDatapair->isAttrShow());
+    labelText->setCheckBox_4CheckState(m_curSelectDatapair->isDataShow());
+    labelText->setCheckBox_5CheckState(m_curSelectDatapair->isUnitShow());
+    labelText->setLineEdit_4Text(m_curSelectDatapair->getCustomText());
 }
 
 void AdvancedDataManager::refreshColorRanges() {}
@@ -538,54 +542,11 @@ void AdvancedDataManager::initLabelSettingsConnections()
             &LabelSettings::sigSpinBox_3ValueChanged,
             this,
             &AdvancedDataManager::onLabelSettings_precision_y);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_draw,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setCheckBox_5CheckState);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_color,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setPushButton_5Color);
+
     connect(subSettingWidgetContainer->m_general,
             &General::sigCheckBox_14Color,
             subSettingWidgetContainer->m_labelSettings,
             &LabelSettings::setPushButton_5Color);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_background,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setPushButton_6Color);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_transparent,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setCheckBoxStateChanged);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_font,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setFontComboBoxFont);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_fontSize,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setComboBox_4Text);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_xUnit,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setComboBoxText);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_yUnit,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setComboBox_3Text);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_position,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setComboBox_2Text);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_precision_x,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setSpinBox_2Value);
-    connect(this,
-            &AdvancedDataManager::sgnLabelSettings_precision_y,
-            subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::setSpinBox_3Value);
 }
 
 void AdvancedDataManager::initLabelTextConnections()
@@ -619,34 +580,6 @@ void AdvancedDataManager::initLabelTextConnections()
             &LabelText::sigLineEdit_4EditingFinished,
             this,
             &AdvancedDataManager::onLabelText_custom);
-    connect(this,
-            &AdvancedDataManager::sgnLabelText_format,
-            subSettingWidgetContainer->m_labelText,
-            &LabelText::setComboBox_3CurrentIndex);
-    connect(this,
-            &AdvancedDataManager::sgnLabelText_prefix,
-            subSettingWidgetContainer->m_labelText,
-            &LabelText::setCheckBoxCheckState);
-    connect(this,
-            &AdvancedDataManager::sgnLabelText_object,
-            subSettingWidgetContainer->m_labelText,
-            &LabelText::setCheckBox_2CheckState);
-    connect(this,
-            &AdvancedDataManager::sgnLabelText_attr,
-            subSettingWidgetContainer->m_labelText,
-            &LabelText::setCheckBox_3CheckState);
-    connect(this,
-            &AdvancedDataManager::sgnLabelText_data,
-            subSettingWidgetContainer->m_labelText,
-            &LabelText::setCheckBox_4CheckState);
-    connect(this,
-            &AdvancedDataManager::sgnLabelText_unit,
-            subSettingWidgetContainer->m_labelText,
-            &LabelText::setCheckBox_5CheckState);
-    connect(this,
-            &AdvancedDataManager::sgnLabelText_custom,
-            subSettingWidgetContainer->m_labelText,
-            &LabelText::setLineEdit_4Text);
 }
 
 void AdvancedDataManager::initColorRangeConnections()

@@ -22,28 +22,6 @@ signals:
 	void sgnAddPlotPair();
 	void sgnFilterSort(QString);
 
-	//Label Settings
-	void sgnLabelSettings_draw(bool);
-	void sgnLabelSettings_color(QColor);
-	void sgnLabelSettings_background(QColor);
-	void sgnLabelSettings_transparent(bool);
-	void sgnLabelSettings_font(QFont);
-	void sgnLabelSettings_fontSize(int);
-	void sgnLabelSettings_position(int);
-	void sgnLabelSettings_precision_x(int);
-	void sgnLabelSettings_precision_y(int);
-	void sgnLabelSettings_xUnit(QString);
-	void sgnLabelSettings_yUnit(QString);
-
-	//Label Text
-	void sgnLabelText_format(int);
-	void sgnLabelText_prefix(bool);
-	void sgnLabelText_object(bool);
-	void sgnLabelText_attr(bool);
-	void sgnLabelText_data(bool);
-	void sgnLabelText_unit(bool);
-	void sgnLabelText_custom(QString);
-
 public slots:
     void onBtnMore();
     void onBtnColorMore();

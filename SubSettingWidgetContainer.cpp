@@ -237,7 +237,7 @@ void LabelSettings::setFontComboBoxFont(QFont font)
 {
 	ui.fontComboBox->setCurrentFont(font);
 }
-
+// TODO:xunit
 void LabelSettings::setComboBoxText(QString text) {}
 
 void LabelSettings::setComboBox_3Text(QString text) {}
