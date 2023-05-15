@@ -42,7 +42,7 @@ HEADERS += $$PWD/TimeClass.h \
     $$PWD/AddPlotPair.h \
     $$PWD/AdvancedDataManager.h \
     $$PWD/PlotBar.h \
-    choose_plot_type_dialog.h \
+    $$PWD/choose_plot_type_dialog.h \
 
 SOURCES += $$PWD/AddPlotPair.cpp \
     $$PWD/rename_tab_dialog.cpp \
@@ -77,7 +77,7 @@ SOURCES += $$PWD/AddPlotPair.cpp \
     $$PWD/ToolBox.cpp \
     $$PWD/Toolpage.cpp \
     $$PWD/Utils.cpp \
-    choose_plot_type_dialog.cpp
+    $$PWD/choose_plot_type_dialog.cpp
 
 FORMS += $$PWD/AddPlotPair.ui \
     $$PWD/AdvancedDataManager.ui \
@@ -96,10 +96,12 @@ FORMS += $$PWD/AddPlotPair.ui \
     $$PWD/ToolBox.ui \
     $$PWD/ToolPage.ui \
     $$PWD/rename_tab_dialog.ui \
-    choose_plot_type_dialog.ui
+    $$PWD/choose_plot_type_dialog.ui
 
 RESOURCES += resources/statusbar.qrc \
     $$PWD/resources/cursor/cursor.qrc \
     $$PWD/resources/data/data.qrc \
+    $$PWD/resources/icon/icons.qrc \
     $$PWD/resources/qss.qrc \
-    resources/toolbar.qrc
+    $$PWD/resources/toolbar.qrc
+

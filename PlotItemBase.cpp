@@ -834,6 +834,7 @@ void PlotItemBase::onDataPairUpdateData()
     if(dataPair)
     {
         updateGraphByDataPair(dataPair);
+        replot();
     }
 }
 

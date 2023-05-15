@@ -281,6 +281,17 @@ public:
     QList<std::tuple<QString, double, QColor>> getColorInfoList() const;
     void setColorInfoList(const QList<std::tuple<QString, double, QColor>>& colorInfoList);
 
+    /*
+     * 下面一系列接口
+     * 根据高级管理界面的设置，处理原始绘图数据，输出直接显示的数据
+     */
+    // 文本标签
+    QString processLabelText(double xData, double yData);
+    // 文本标签坐标
+    QPair<double, double> processLabelTextPosition(const QString& text);
+    // 图标icon
+    QPixmap processIcon();
+
 private:
     int m_lineWidth; //线宽
     bool m_isDraw; //是否绘制

@@ -28,12 +28,14 @@ public:
         QPointer<QCPGraph> graph;
         QPointer<QCPItemTracer> tracer;
         QPointer<QCPItemText> tracerText;
+        QPointer<QCPItemPixmap> pixmap;
 
         ScatterInfo()
         {
             graph = nullptr;
             tracer = nullptr;
             tracerText = nullptr;
+            pixmap = nullptr;
         }
     };
 
@@ -46,6 +48,13 @@ public:
     void rescale_yAxis(bool);
     void rescaleAxis(bool);
 
+    virtual DataPair* addPlotDataPair(int32_t xEntityID,
+                                      const QString& xAttrName,
+                                      const QString& xAttrUnitName,
+                                      int32_t yEntityID,
+                                      const QString& yAttrName,
+                                      const QString& yAttrUnitName,
+                                      const QVariantList& extraParams) override;
     void delPlotPairData(const QString& uuid);
 
     PlotType plotType() const override
@@ -59,9 +68,9 @@ private:
     void initPlot();
     void updateDataForDataPairsByTime(double secs);
     void updateGraphByDataPair(DataPair* data);
-    QHash<QString, QPair<QVector<double>, QVector<double>>> m_dataHash;
 
 private:
+    QHash<QString, QPair<QVector<double>, QVector<double>>> m_dataHash;
     // <uuid,graph>
     QMap<QString, ScatterInfo> m_mapScatter;
 };

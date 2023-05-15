@@ -1,5 +1,6 @@
 ﻿#include "DataPair.h"
 #include <QDebug>
+#include <QFileInfo>
 #include <QPainter>
 #include <QTransform>
 #include <QUuid>
@@ -186,6 +187,187 @@ QList<std::tuple<QString, double, QColor>> DataPair::getColorInfoList() const
 void DataPair::setColorInfoList(const QList<std::tuple<QString, double, QColor>>& colorInfoList)
 {
     m_colorInfoList = colorInfoList;
+}
+
+QString DataPair::processLabelText(double xData, double yData)
+{
+    QString labelText;
+    if(DataPair::format_default == this->getTextFormat())
+    { //default
+        QString prefix_x, prefix_y;
+        QString object_x, object_y, attr_x, attr_y;
+        QString data_x, data_y, unit_x, unit_y, Left_bracket, right_bracket;
+
+        //考虑仅显示实体名时的操作
+        if(this->isObjectShow() && !this->isPrefixShow() && !this->isAttrShow() &&
+           !this->isDataShow() && !this->isUnitShow())
+
+        {
+            object_x = this->getEntity_x();
+            object_y = this->getEntity_y();
+            //实体名相同时，仅显示一个实体名
+            if(0 == object_x.compare(object_y) && !object_x.isEmpty() && !object_y.isEmpty())
+            {
+                labelText = object_x;
+            }
+            else if(object_x.isEmpty() && object_y.isEmpty())
+            {
+                labelText = "Time";
+            }
+            else
+            {
+                labelText = QString("%1\n%2").arg(object_x).arg(object_y);
+            }
+        }
+        else
+        {
+            if(this->isPrefixShow())
+            {
+                prefix_x = "X:";
+                prefix_y = "Y:";
+            }
+
+            if(this->isObjectShow())
+
+            {
+                object_x = this->getEntity_x();
+                object_y = this->getEntity_y();
+            }
+
+            if(this->isAttrShow())
+            {
+                attr_x = this->getAttr_x();
+                attr_y = this->getAttr_y();
+            }
+
+            if(this->isDataShow())
+            {
+                data_x = QString::number(xData, 10, this->getLabelPrecision_x());
+                data_y = QString::number(yData, 10, this->getLabelPrecision_y());
+                Left_bracket = "(";
+                right_bracket = ")";
+            }
+
+            if(this->isUnitShow())
+            {
+                unit_x = this->getUnit_x();
+                unit_y = this->getUnit_y();
+                Left_bracket = "(";
+                right_bracket = ")";
+            }
+            labelText = QString("%1%2 %3%4%5 %6%7\n%8%9 %10%11%12 %13%14")
+                            .arg(prefix_x)
+                            .arg(object_x)
+                            .arg(attr_x)
+                            .arg(Left_bracket)
+                            .arg(data_x)
+                            .arg(unit_x)
+                            .arg(right_bracket)
+                            .arg(prefix_y)
+                            .arg(object_y)
+                            .arg(attr_y)
+                            .arg(Left_bracket)
+                            .arg(data_y)
+                            .arg(unit_y)
+                            .arg(right_bracket);
+        }
+    }
+    else if(DataPair::format_custom == this->getTextFormat())
+    { //custom
+        labelText = this->getCustomText();
+    }
+    else if(DataPair::format_script == this->getTextFormat()) //script
+    {}
+    return labelText;
+}
+
+QPair<double, double> DataPair::processLabelTextPosition(const QString& text)
+{
+    QFontMetricsF fm(getLabelFont());
+    double wd = (fm.size(Qt::TextSingleLine, text).width()) / 3.0;
+    double ht = fm.size(Qt::TextSingleLine, text).height() / 1.0;
+    QPair<double, double> pair;
+    switch(getLabelPosition())
+    {
+    case DataPair::left_top: //left-top
+        pair = qMakePair(-wd, -ht);
+        break;
+    case DataPair::top: //top
+        pair = qMakePair(0, -ht);
+        break;
+    case DataPair::right_top: //right-top
+        pair = qMakePair(wd, -ht);
+        break;
+    case DataPair::left: //left
+        pair = qMakePair(-wd, 0);
+        break;
+    case DataPair::center: //center
+        pair = qMakePair(0, 0);
+        break;
+    case DataPair::right: //right
+        pair = qMakePair(wd, 0);
+        break;
+    case DataPair::left_bottom: //left-bottom
+        pair = qMakePair(-wd, ht);
+        break;
+    case DataPair::bottom: //bottom
+        pair = qMakePair(0, ht);
+        break;
+    case DataPair::right_bottom: //right-bottom
+        pair = qMakePair(wd, ht);
+        break;
+    default: //right
+        pair = qMakePair(wd, 0);
+        break;
+    }
+    return pair;
+}
+
+QPixmap DataPair::processIcon()
+{
+    if(!QFileInfo(m_iconName).exists())
+    {
+        return QPixmap();
+    }
+    QPixmap pix(m_iconName);
+    pix = pix.scaled(iconSize(), Qt::IgnoreAspectRatio);
+    QTransform trans;
+    auto rotationIndex = iconRotation();
+    switch(rotationIndex)
+    {
+    case DataPair::no_rotation:
+        trans.rotate(0);
+        break;
+    case DataPair::rotation_90:
+        trans.rotate(90);
+        break;
+    case DataPair::rotation_180:
+        trans.rotate(180);
+        break;
+    case DataPair::rotation_270:
+        trans.rotate(270);
+        break;
+    default:
+        trans.rotate(45);
+        break;
+    }
+    pix = pix.transformed(trans);
+    //水平镜像
+    if(iconFlipHorz())
+    {
+        QImage oldImage = pix.toImage();
+        QImage newImage = oldImage.mirrored(true, false);
+        pix = QPixmap::fromImage(newImage);
+    }
+    //垂直镜像
+    if(iconFlipVert())
+
+    {
+        QImage oldImage = pix.toImage();
+        QImage newImage = oldImage.mirrored(false, true);
+        pix = QPixmap::fromImage(newImage);
+    }
+    return pix;
 }
 
 void DataPair::setLineWidth(int width)
