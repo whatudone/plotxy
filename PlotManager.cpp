@@ -115,7 +115,8 @@ void PlotManager::initTreeWidgetSettings()
     m_itemAxis =
         new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("坐标轴和网格设置")));
 	m_itemLinkedAxis = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("链接轴")));
-	m_itemPlotData = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("数据设置")));
+    m_itemPlotData = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("数据设置")));
+    m_itemGOG = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("GOG曲线")));
 	m_itemText = new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("文本信息")));
     m_itemScatterPlot =
         new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("Scatter设置")));
@@ -132,8 +133,7 @@ void PlotManager::initTreeWidgetSettings()
     m_itemRangeDoppler =
         new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("Range Doppler设置")));
 
-	m_itemGOG = new QTreeWidgetItem(m_itemScatterPlot, QStringList(QString("GOG曲线")));
-	m_itemLimits = new QTreeWidgetItem(m_itemScatterPlot, QStringList(QString("限制")));
+    m_itemLimits = new QTreeWidgetItem(m_itemScatterPlot, QStringList(QString("限制")));
 	m_itemPlotMarkers = new QTreeWidgetItem(m_itemScatterPlot, QStringList(QString("标记")));
 	m_itemTimeLine = new QTreeWidgetItem(m_itemScatterPlot, QStringList("Time Line"));
 	m_itemHandsOff = new QTreeWidgetItem(m_itemScatterPlot, QStringList("Hands-Off"));
@@ -586,8 +586,10 @@ void PlotManager::refreshAttitudeUI(PlotItemBase* plot)
 
 void PlotManager::enableItem_Scatter()
 {
+    m_itemAxis->setDisabled(false);
     m_itemLinkedAxis->setDisabled(false);
     m_itemPlotData->setDisabled(false);
+    m_itemGOG->setDisabled(false);
     m_itemScatterPlot->setDisabled(false);
 	m_itemAScope->setDisabled(true);
 	m_itemRTI->setDisabled(true);
@@ -601,8 +603,10 @@ void PlotManager::enableItem_Scatter()
 
 void PlotManager::enableItem_AScope()
 {
-	m_itemLinkedAxis->setDisabled(true);
-	m_itemPlotData->setDisabled(true);
+    m_itemAxis->setDisabled(false);
+    m_itemLinkedAxis->setDisabled(false);
+    m_itemPlotData->setDisabled(false);
+    m_itemGOG->setDisabled(true);
 	m_itemScatterPlot->setDisabled(true);
     m_itemAScope->setDisabled(false);
 	m_itemRTI->setDisabled(true);
@@ -616,8 +620,10 @@ void PlotManager::enableItem_AScope()
 
 void PlotManager::enableItem_RTI()
 {
-	m_itemLinkedAxis->setDisabled(true);
-	m_itemPlotData->setDisabled(true);
+    m_itemAxis->setDisabled(false);
+    m_itemLinkedAxis->setDisabled(false);
+    m_itemPlotData->setDisabled(true);
+    m_itemGOG->setDisabled(true);
 	m_itemScatterPlot->setDisabled(true);
 	m_itemAScope->setDisabled(true);
     m_itemRTI->setDisabled(false);
@@ -632,7 +638,9 @@ void PlotManager::enableItem_RTI()
 void PlotManager::enableItem_Text_Light()
 {
 	m_itemLinkedAxis->setDisabled(true);
-	m_itemPlotData->setDisabled(true);
+    m_itemAxis->setDisabled(true);
+    m_itemGOG->setDisabled(true);
+    m_itemPlotData->setDisabled(false);
 	m_itemScatterPlot->setDisabled(true);
 	m_itemAScope->setDisabled(true);
 	m_itemRTI->setDisabled(true);
@@ -646,8 +654,10 @@ void PlotManager::enableItem_Text_Light()
 
 void PlotManager::enableItem_Bar()
 {
-	m_itemLinkedAxis->setDisabled(true);
-	m_itemPlotData->setDisabled(true);
+    m_itemAxis->setDisabled(false);
+    m_itemLinkedAxis->setDisabled(false);
+    m_itemPlotData->setDisabled(false);
+    m_itemGOG->setDisabled(true);
 	m_itemScatterPlot->setDisabled(true);
 	m_itemAScope->setDisabled(true);
 	m_itemRTI->setDisabled(true);
@@ -661,8 +671,10 @@ void PlotManager::enableItem_Bar()
 
 void PlotManager::enableItem_Dial()
 {
+    m_itemAxis->setDisabled(false);
 	m_itemLinkedAxis->setDisabled(true);
-	m_itemPlotData->setDisabled(true);
+    m_itemPlotData->setDisabled(false);
+    m_itemGOG->setDisabled(true);
 	m_itemScatterPlot->setDisabled(true);
 	m_itemAScope->setDisabled(true);
 	m_itemRTI->setDisabled(true);
@@ -676,8 +688,10 @@ void PlotManager::enableItem_Dial()
 
 void PlotManager::enableItem_Attitude()
 {
+    m_itemAxis->setDisabled(false);
 	m_itemLinkedAxis->setDisabled(true);
 	m_itemPlotData->setDisabled(true);
+    m_itemGOG->setDisabled(true);
 	m_itemScatterPlot->setDisabled(true);
 	m_itemAScope->setDisabled(true);
 	m_itemRTI->setDisabled(true);
@@ -691,8 +705,10 @@ void PlotManager::enableItem_Attitude()
 
 void PlotManager::enableItem_Polar()
 {
+    m_itemAxis->setDisabled(false);
 	m_itemLinkedAxis->setDisabled(true);
-	m_itemPlotData->setDisabled(true);
+    m_itemPlotData->setDisabled(false);
+    m_itemGOG->setDisabled(false);
 	m_itemScatterPlot->setDisabled(true);
 	m_itemAScope->setDisabled(true);
 	m_itemRTI->setDisabled(true);
@@ -706,8 +722,10 @@ void PlotManager::enableItem_Polar()
 
 void PlotManager::enableItem_Track()
 {
-	m_itemLinkedAxis->setDisabled(true);
-	m_itemPlotData->setDisabled(true);
+    m_itemAxis->setDisabled(false);
+    m_itemLinkedAxis->setDisabled(true);
+    m_itemPlotData->setDisabled(false);
+    m_itemGOG->setDisabled(true);
 	m_itemScatterPlot->setDisabled(true);
 	m_itemAScope->setDisabled(true);
 	m_itemRTI->setDisabled(true);
@@ -721,8 +739,10 @@ void PlotManager::enableItem_Track()
 
 void PlotManager::enableItem_Doppler()
 {
-	m_itemLinkedAxis->setDisabled(true);
+    m_itemAxis->setDisabled(false);
+    m_itemLinkedAxis->setDisabled(false);
 	m_itemPlotData->setDisabled(true);
+    m_itemGOG->setDisabled(true);
 	m_itemScatterPlot->setDisabled(true);
 	m_itemAScope->setDisabled(true);
 	m_itemRTI->setDisabled(true);

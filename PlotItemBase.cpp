@@ -184,7 +184,8 @@ void PlotItemBase::setCoordRangeX(double lower, double upper)
     m_coordEnd_x = upper;
     if(m_customPlot)
     {
-        m_customPlot->xAxis->setRange(lower, upper);
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
+            m_customPlot->xAxis->setRange(lower, upper);
     }
     replot();
 }
@@ -195,7 +196,8 @@ void PlotItemBase::setCoordRangeY(double lower, double upper)
     m_coordEnd_y = upper;
     if(m_customPlot)
     {
-        m_customPlot->yAxis->setRange(lower, upper);
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
+            m_customPlot->yAxis->setRange(lower, upper);
     }
     replot();
 }
@@ -221,15 +223,17 @@ void PlotItemBase::setHorzGrids(uint count)
     m_horzGrids = count;
     if(m_customPlot)
     {
-
-        if(count == 0)
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
         {
-            m_customPlot->yAxis->grid()->setVisible(false);
-        }
-        else
-        {
-            m_customPlot->yAxis->grid()->setVisible(true);
-            m_customPlot->yAxis->ticker()->setTickCount(m_horzGrids);
+            if(count == 0)
+            {
+                m_customPlot->yAxis->grid()->setVisible(false);
+            }
+            else
+            {
+                m_customPlot->yAxis->grid()->setVisible(true);
+                m_customPlot->yAxis->ticker()->setTickCount(m_horzGrids);
+            }
         }
     }
     replot();
@@ -244,14 +248,17 @@ void PlotItemBase::setVertGrids(uint count)
     m_vertGrids = count;
     if(m_customPlot)
     {
-        if(count == 0)
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
         {
-            m_customPlot->xAxis->grid()->setVisible(false);
-        }
-        else
-        {
-            m_customPlot->xAxis->grid()->setVisible(true);
-            m_customPlot->xAxis->ticker()->setTickCount(m_vertGrids);
+            if(count == 0)
+            {
+                m_customPlot->xAxis->grid()->setVisible(false);
+            }
+            else
+            {
+                m_customPlot->xAxis->grid()->setVisible(true);
+                m_customPlot->xAxis->ticker()->setTickCount(m_vertGrids);
+            }
         }
     }
     replot();
@@ -263,8 +270,11 @@ void PlotItemBase::setAxisColorWidth(const QColor& color, uint width)
     m_axisWidth = width;
     if(m_customPlot)
     {
-        m_customPlot->xAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
-        m_customPlot->yAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
+        {
+            m_customPlot->xAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
+            m_customPlot->yAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
+        }
     }
     replot();
 }
@@ -275,8 +285,11 @@ void PlotItemBase::setGridColorWidth(const QColor& color, uint width)
     m_gridWidth = width;
     if(m_customPlot)
     {
-        m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
-        m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
+        {
+            m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+            m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+        }
     }
     replot();
 }
@@ -286,8 +299,11 @@ void PlotItemBase::setGridVisible(bool enable)
     m_gridVisible = enable;
     if(m_customPlot)
     {
-        m_customPlot->xAxis->grid()->setVisible(enable);
-        m_customPlot->yAxis->grid()->setVisible(enable);
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
+        {
+            m_customPlot->xAxis->grid()->setVisible(enable);
+            m_customPlot->yAxis->grid()->setVisible(enable);
+        }
     }
     replot();
 }
@@ -297,8 +313,11 @@ void PlotItemBase::setTickLabelColor(const QColor& color)
     m_tickLabelColor = color;
     if(m_customPlot)
     {
-        m_customPlot->xAxis->setTickLabelColor(m_tickLabelColor);
-        m_customPlot->yAxis->setTickLabelColor(m_tickLabelColor);
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
+        {
+            m_customPlot->xAxis->setTickLabelColor(m_tickLabelColor);
+            m_customPlot->yAxis->setTickLabelColor(m_tickLabelColor);
+        }
     }
     replot();
 }
@@ -308,8 +327,11 @@ void PlotItemBase::setTickLabelFont(const QFont& font)
     m_tickLabelFont = font;
     if(m_customPlot)
     {
-        m_customPlot->xAxis->setTickLabelFont(m_tickLabelFont);
-        m_customPlot->yAxis->setTickLabelFont(m_tickLabelFont);
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
+        {
+            m_customPlot->xAxis->setTickLabelFont(m_tickLabelFont);
+            m_customPlot->yAxis->setTickLabelFont(m_tickLabelFont);
+        }
     }
     replot();
 }
@@ -343,8 +365,11 @@ void PlotItemBase::setGridStyle(GridStyle style)
     }
     if(m_customPlot)
     {
-        m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
-        m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
+        {
+            m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+            m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+        }
     }
     replot();
 }
@@ -360,7 +385,8 @@ void PlotItemBase::setGridFillColor(const QColor& color)
     m_gridFillColor = color;
     if(m_customPlot)
     {
-        m_customPlot->axisRect()->setBackground(color);
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
+            m_customPlot->axisRect()->setBackground(color);
     }
     replot();
 }
@@ -370,7 +396,8 @@ void PlotItemBase::setUnitsShowX(bool on)
     m_showUnits_x = on;
     if(m_customPlot)
     {
-        m_customPlot->xAxis->setAxisFormatShow(on);
+        if(m_customPlot->xAxis)
+            m_customPlot->xAxis->setAxisFormatShow(on);
     }
     replot();
 }
@@ -380,7 +407,8 @@ void PlotItemBase::setUnitsShowY(bool on)
     m_showUnits_y = on;
     if(m_customPlot)
     {
-        m_customPlot->yAxis->setAxisFormatShow(on);
+        if(m_customPlot->yAxis)
+            m_customPlot->yAxis->setAxisFormatShow(on);
     }
     replot();
 }
@@ -390,7 +418,8 @@ void PlotItemBase::setUnitsX(const QString& units)
     m_units_x = units;
     if(m_customPlot)
     {
-        m_customPlot->xAxis->setAxisFormat(units);
+        if(m_customPlot->xAxis)
+            m_customPlot->xAxis->setAxisFormat(units);
     }
     replot();
 }
@@ -400,7 +429,8 @@ void PlotItemBase::setUnitsY(const QString& units)
     m_units_y = units;
     if(m_customPlot)
     {
-        m_customPlot->yAxis->setAxisFormat(units);
+        if(m_customPlot->yAxis)
+            m_customPlot->yAxis->setAxisFormat(units);
     }
     replot();
 }
@@ -448,7 +478,8 @@ void PlotItemBase::setxAxisLabel(const QString& label)
     m_xAxisLabel = label;
     if(m_customPlot)
     {
-        m_customPlot->xAxis->setLabel(m_xAxisLabel);
+        if(m_customPlot->xAxis)
+            m_customPlot->xAxis->setLabel(m_xAxisLabel);
     }
     replot();
 }
@@ -458,7 +489,8 @@ void PlotItemBase::setyAxisLabel(const QString& label)
     m_yAxisLabel = label;
     if(m_customPlot)
     {
-        m_customPlot->yAxis->setLabel(m_yAxisLabel);
+        if(m_customPlot->yAxis)
+            m_customPlot->yAxis->setLabel(m_yAxisLabel);
     }
     replot();
 }
@@ -468,8 +500,11 @@ void PlotItemBase::setAxisLabelColor(const QColor& color)
     m_axisLabelColor = color;
     if(m_customPlot)
     {
-        m_customPlot->xAxis->setLabelColor(m_axisLabelColor);
-        m_customPlot->yAxis->setLabelColor(m_axisLabelColor);
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
+        {
+            m_customPlot->xAxis->setLabelColor(m_axisLabelColor);
+            m_customPlot->yAxis->setLabelColor(m_axisLabelColor);
+        }
     }
     replot();
 }
@@ -479,8 +514,11 @@ void PlotItemBase::setAxisLabelFont(const QFont& font)
     m_axisLabelFont = font;
     if(m_customPlot)
     {
-        m_customPlot->xAxis->setLabelFont(m_axisLabelFont);
-        m_customPlot->yAxis->setLabelFont(m_axisLabelFont);
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
+        {
+            m_customPlot->xAxis->setLabelFont(m_axisLabelFont);
+            m_customPlot->yAxis->setLabelFont(m_axisLabelFont);
+        }
     }
     replot();
 }
@@ -867,18 +905,21 @@ void PlotItemBase::mousePressEvent(QMouseEvent* event)
         {
             if(m_customPlot && m_measureLineItem && m_measureTextItem)
             {
-                m_originPoint = m_customPlot->mapFromParent(event->pos());
-                m_measureLineItem->start->setCoords(
-                    QPointF(m_customPlot->xAxis->pixelToCoord(m_originPoint.x()),
-                            m_customPlot->yAxis->pixelToCoord(m_originPoint.y())));
+                if(m_customPlot->xAxis && m_customPlot->yAxis)
+                {
+                    m_originPoint = m_customPlot->mapFromParent(event->pos());
+                    m_measureLineItem->start->setCoords(
+                        QPointF(m_customPlot->xAxis->pixelToCoord(m_originPoint.x()),
+                                m_customPlot->yAxis->pixelToCoord(m_originPoint.y())));
 
-                m_measureLineItem->end->setCoords(
-                    QPointF(m_customPlot->xAxis->pixelToCoord(m_originPoint.x()),
-                            m_customPlot->yAxis->pixelToCoord(m_originPoint.y())));
-                m_measureLineItem->setVisible(true);
-                m_measureTextItem->setText(QString());
-                m_measureTextItem->setVisible(true);
-                m_customPlot->replot();
+                    m_measureLineItem->end->setCoords(
+                        QPointF(m_customPlot->xAxis->pixelToCoord(m_originPoint.x()),
+                                m_customPlot->yAxis->pixelToCoord(m_originPoint.y())));
+                    m_measureLineItem->setVisible(true);
+                    m_measureTextItem->setText(QString());
+                    m_measureTextItem->setVisible(true);
+                    m_customPlot->replot();
+                }
             }
         }
     }
@@ -912,26 +953,29 @@ void PlotItemBase::mouseMoveEvent(QMouseEvent* event)
         {
             if(m_customPlot && m_measureLineItem && m_measureTextItem)
             {
-                auto point = m_customPlot->mapFromParent(event->pos());
-                double dx = 0.0;
-                double dy = 0.0;
-                double l = 0.0;
-                m_measureLineItem->end->setCoords(
-                    QPointF(m_customPlot->xAxis->pixelToCoord(point.x()),
-                            m_customPlot->yAxis->pixelToCoord(point.y())));
+                if(m_customPlot->xAxis && m_customPlot->yAxis)
+                {
+                    auto point = m_customPlot->mapFromParent(event->pos());
+                    double dx = 0.0;
+                    double dy = 0.0;
+                    double l = 0.0;
+                    m_measureLineItem->end->setCoords(
+                        QPointF(m_customPlot->xAxis->pixelToCoord(point.x()),
+                                m_customPlot->yAxis->pixelToCoord(point.y())));
 
-                m_measureTextItem->position->setCoords(QPointF(
-                    m_customPlot->xAxis->pixelToCoord((point.x() + m_originPoint.x()) / 2),
-                    m_customPlot->yAxis->pixelToCoord((point.y() + m_originPoint.y()) / 2)));
+                    m_measureTextItem->position->setCoords(QPointF(
+                        m_customPlot->xAxis->pixelToCoord((point.x() + m_originPoint.x()) / 2),
+                        m_customPlot->yAxis->pixelToCoord((point.y() + m_originPoint.y()) / 2)));
 
-                dx = m_customPlot->xAxis->pixelToCoord(point.x()) -
-                     m_customPlot->xAxis->pixelToCoord(m_originPoint.x());
-                dy = m_customPlot->yAxis->pixelToCoord(point.y()) -
-                     m_customPlot->yAxis->pixelToCoord(m_originPoint.y());
-                l = sqrt(pow(dx, 2) + pow(dy, 2));
-                m_measureTextItem->setText(
-                    QString("dx = %1\ndy = %2\nl = %3").arg(dx).arg(dy).arg(l));
-                m_customPlot->replot();
+                    dx = m_customPlot->xAxis->pixelToCoord(point.x()) -
+                         m_customPlot->xAxis->pixelToCoord(m_originPoint.x());
+                    dy = m_customPlot->yAxis->pixelToCoord(point.y()) -
+                         m_customPlot->yAxis->pixelToCoord(m_originPoint.y());
+                    l = sqrt(pow(dx, 2) + pow(dy, 2));
+                    m_measureTextItem->setText(
+                        QString("dx = %1\ndy = %2\nl = %3").arg(dx).arg(dy).arg(l));
+                    m_customPlot->replot();
+                }
             }
         }
     }
@@ -984,16 +1028,19 @@ void PlotItemBase::setNewTickOrigin(const QPoint& point)
 {
     if(m_customPlot)
     {
-        auto plotPoint = m_customPlot->mapFromParent(point);
-        m_customPlot->xAxis->setRange(m_customPlot->xAxis->pixelToCoord(plotPoint.x()) -
-                                          m_customPlot->xAxis->range().size() / 2,
-                                      m_customPlot->xAxis->pixelToCoord(plotPoint.x()) +
-                                          m_customPlot->xAxis->range().size() / 2);
-        m_customPlot->yAxis->setRange(m_customPlot->yAxis->pixelToCoord(plotPoint.y()) -
-                                          m_customPlot->yAxis->range().size() / 2,
-                                      m_customPlot->yAxis->pixelToCoord(plotPoint.y()) +
-                                          m_customPlot->yAxis->range().size() / 2);
-        m_customPlot->replot();
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
+        {
+            auto plotPoint = m_customPlot->mapFromParent(point);
+            m_customPlot->xAxis->setRange(m_customPlot->xAxis->pixelToCoord(plotPoint.x()) -
+                                              m_customPlot->xAxis->range().size() / 2,
+                                          m_customPlot->xAxis->pixelToCoord(plotPoint.x()) +
+                                              m_customPlot->xAxis->range().size() / 2);
+            m_customPlot->yAxis->setRange(m_customPlot->yAxis->pixelToCoord(plotPoint.y()) -
+                                              m_customPlot->yAxis->range().size() / 2,
+                                          m_customPlot->yAxis->pixelToCoord(plotPoint.y()) +
+                                              m_customPlot->yAxis->range().size() / 2);
+            m_customPlot->replot();
+        }
     }
 }
 
