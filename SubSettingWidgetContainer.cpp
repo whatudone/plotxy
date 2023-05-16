@@ -62,7 +62,13 @@ General::General(QWidget* parent)
 	connect(ui.pushButton_more, &QPushButton::clicked, this, &General::onPushbuttonMoreClicked);
 	connect(ui.pushButton_12, &QPushButton::clicked, this, &General::onPushButton_12Clicked);
 	connect(ui.checkBox_16, &QCheckBox::stateChanged, this, &General::onCheckBox_16StateChanged);
-	connect(ui.checkBox_14, &QCheckBox::stateChanged, this, &General::onCheckBox_14StateChanged);
+    connect(ui.checkBox_14, &QCheckBox::stateChanged, this, &General::onCheckBox_14StateChanged);
+    connect(ui.checkBoxLineMode,
+            &QCheckBox::stateChanged,
+            this,
+            &General::onCheckBoxLineModeStateChanged);
+    connect(
+        ui.lineEditWidth, &QLineEdit::editingFinished, this, &General::onLineEditWidthEditFinished);
 }
 
 General::~General() {}
@@ -147,7 +153,17 @@ void General::onPushButton_12Clicked()
 {
 	emit sigPushButton_12Clicked(ui.pushButton_12->color());
     if(ui.checkBox_14->isChecked())
-		emit sigCheckBox_14Color(ui.pushButton_12->color());
+        emit sigCheckBox_14Color(ui.pushButton_12->color());
+}
+
+void General::onCheckBoxLineModeStateChanged()
+{
+    emit lineModeChanged(ui.checkBoxLineMode->isChecked());
+}
+
+void General::onLineEditWidthEditFinished()
+{
+    emit lineWidthChanged(ui.lineEditWidth->text().toInt());
 }
 
 void General::setCheckBox_14CheckState(bool on)
@@ -162,7 +178,17 @@ void General::setCheckBox_16CheckState(bool on)
 
 void General::setPushButton_12Color(QColor color)
 {
-	ui.pushButton_12->setColor(color);
+    ui.pushButton_12->setColor(color);
+}
+
+void General::setLineMode(bool lineMode)
+{
+    ui.checkBoxLineMode->setChecked(lineMode);
+}
+
+void General::setLineWidth(int32_t width)
+{
+    ui.lineEditWidth->setText(QString::number(width));
 }
 
 void General::onPushbuttonMoreClicked()

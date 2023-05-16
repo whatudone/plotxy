@@ -154,8 +154,14 @@
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="labelLineMode">
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
        <property name="text">
-        <string> 线段模式</string>
+        <string>线段模式</string>
        </property>
       </widget>
      </item>
@@ -382,8 +388,14 @@
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="labelWidth">
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
        <property name="text">
-        <string> 线宽</string>
+        <string>线宽</string>
        </property>
       </widget>
      </item>

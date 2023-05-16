@@ -43,7 +43,8 @@ public slots:
 	void onGeneral_draw(bool);
 	void onGeneral_color(QColor);
 	void onGeneral_matchColor(bool);
-
+    void onLineModeChanged(bool lineMode);
+    void onLineWidthChanged(int32_t lineWidth);
 	//Label Settings
 	void onLabelSettings_draw(bool);
 	void onLabelSettings_color(QColor);

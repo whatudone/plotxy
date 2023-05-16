@@ -51,16 +51,22 @@ signals:
     void sigCheckBox_14Color(QColor); //当选中状态时，发送pushButton_12的颜色
 	void sigCheckBox_16StateChanged(bool);
 	void sigPushButton_12Clicked(QColor);
-
+    void lineModeChanged(bool lineMode);
+    void lineWidthChanged(int32_t lineWidth);
 public slots:
 	void onPushbuttonMoreClicked();
 	void onCheckBox_14StateChanged();
 	void onCheckBox_16StateChanged();
 	void onPushButton_12Clicked();
+    void onCheckBoxLineModeStateChanged();
+    void onLineEditWidthEditFinished();
 
+public:
 	void setCheckBox_14CheckState(bool);
 	void setCheckBox_16CheckState(bool);
 	void setPushButton_12Color(QColor);
+    void setLineMode(bool lineMode);
+    void setLineWidth(int32_t width);
 
 private:
 	Ui::General ui;

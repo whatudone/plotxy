@@ -133,7 +133,23 @@ void AdvancedDataManager::onGeneral_matchColor(bool on)
     if(m_curSelectDatapair == nullptr)
 		return;
 
-	m_curSelectDatapair->setMatchColor(on);
+    m_curSelectDatapair->setMatchColor(on);
+}
+
+void AdvancedDataManager::onLineModeChanged(bool lineMode)
+{
+    if(m_curSelectDatapair)
+    {
+        m_curSelectDatapair->setLineMode(lineMode);
+    }
+}
+
+void AdvancedDataManager::onLineWidthChanged(int32_t lineWidth)
+{
+    if(m_curSelectDatapair)
+    {
+        m_curSelectDatapair->setLineWidth(lineWidth);
+    }
 }
 
 void AdvancedDataManager::onLabelSettings_draw(bool on)
@@ -352,6 +368,8 @@ void AdvancedDataManager::refreshGeneral()
     general->setCheckBox_16CheckState(m_curSelectDatapair->isDraw());
     general->setPushButton_12Color(m_curSelectDatapair->dataColor());
     general->setCheckBox_14CheckState(m_curSelectDatapair->matchColor());
+    general->setLineMode(m_curSelectDatapair->isLineMode());
+    general->setLineWidth(m_curSelectDatapair->lineWidth());
 }
 
 void AdvancedDataManager::refreshIcon()
@@ -442,22 +460,15 @@ void AdvancedDataManager::initGeneralConnections()
     connect(ui.lineEdit, &QLineEdit::textChanged, this, &AdvancedDataManager::onLineEditChanged);
 
     //General
-    connect(subSettingWidgetContainer->m_general,
-            SIGNAL(sigBtnGenneralMoreclicked()),
-            this,
-            SLOT(onBtnMore()));
-    connect(subSettingWidgetContainer->m_general,
-            SIGNAL(sigCheckBox_16StateChanged(bool)),
-            this,
-            SLOT(onGeneral_draw(bool)));
-    connect(subSettingWidgetContainer->m_general,
-            SIGNAL(sigPushButton_12Clicked(QColor)),
-            this,
-            SLOT(onGeneral_color(QColor)));
-    connect(subSettingWidgetContainer->m_general,
-            SIGNAL(sigCheckBox_14StateChanged(bool)),
-            this,
-            SLOT(onGeneral_matchColor(bool)));
+    auto general = subSettingWidgetContainer->m_general;
+    connect(general, SIGNAL(sigBtnGenneralMoreclicked()), this, SLOT(onBtnMore()));
+    connect(general, SIGNAL(sigCheckBox_16StateChanged(bool)), this, SLOT(onGeneral_draw(bool)));
+    connect(general, SIGNAL(sigPushButton_12Clicked(QColor)), this, SLOT(onGeneral_color(QColor)));
+    connect(
+        general, SIGNAL(sigCheckBox_14StateChanged(bool)), this, SLOT(onGeneral_matchColor(bool)));
+
+    connect(general, &General::lineModeChanged, this, &AdvancedDataManager::onLineModeChanged);
+    connect(general, &General::lineWidthChanged, this, &AdvancedDataManager::onLineWidthChanged);
 }
 
 void AdvancedDataManager::initIconConnections()
