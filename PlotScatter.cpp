@@ -108,13 +108,11 @@ void PlotScatter::delPlotPairData(const QString& uuid)
 
 void PlotScatter::updateDataForDataPairsByTime(double secs)
 {
-    if(getDataPairs().isEmpty())
-        return;
-
+    m_dataHash.clear();
     int itemCnt = getDataPairs().size();
 
     for(int i = 0; i < itemCnt; ++i)
-	{
+    {
         QVector<double> x;
         QVector<double> y;
         auto data = getDataPairs().at(i);
@@ -147,7 +145,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
         m_dataHash.insert(uuid, qMakePair(x, y));
     }
     for(int i = 0; i < itemCnt; ++i)
-    {
+	{
         updateGraphByDataPair(m_dataPairs.at(i));
 	}
 
@@ -160,21 +158,20 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
 	{
         return;
     }
-    ScatterInfo info;
+    DrawComponents info;
     auto uuid = data->getUuid();
     if(!m_mapScatter.contains(uuid))
     {
         info.graph = m_customPlot->addGraph();
-        info.tracer = new QCPItemTracer(m_customPlot);
-        info.tracerText = new QCPItemText(m_customPlot);
-        info.tracer->setGraph(info.graph);
-        info.tracer->setInterpolating(false);
-        info.tracer->setStyle(QCPItemTracer::tsNone);
-        info.tracerText->position->setType(QCPItemPosition::ptPlotCoords);
-        info.tracerText->position->setParentAnchor(info.tracer->position);
+        //        info.tracer = new QCPItemTracer(m_customPlot);
+        //        info.tracer->setGraph(info.graph);
+        //        info.tracer->setInterpolating(false);
+        //        info.tracer->setStyle(QCPItemTracer::tsNone);
 
+        info.tracerText = new QCPItemText(m_customPlot);
+        info.tracerText->position->setType(QCPItemPosition::ptPlotCoords);
         info.pixmap = new QCPItemPixmap(m_customPlot); // 创建 QCPItemPixmap 对象
-        //        info.pixmap->setPixmap(icon.scaled(QSize(20, 20))); // 设置图标大小
+
         info.pixmap->setClipToAxisRect(false); // 允许图标超出坐标轴范围
         info.pixmap->setClipAxisRect(m_customPlot->axisRect()); // 设置图标显示范围
         info.pixmap->topLeft->setType(QCPItemPosition::ptPlotCoords);

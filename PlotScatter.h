@@ -3,8 +3,8 @@
 
 #include "BaseData.h"
 #include "PlotItemBase.h"
+#include "constdef.h"
 #include "qcustomplot.h"
-
 #include <QMap>
 #include <QString>
 
@@ -12,25 +12,14 @@ class PlotScatter : public PlotItemBase
 {
     Q_OBJECT
 public:
-    PlotScatter(QWidget* parent = nullptr);
-    ~PlotScatter() override;
-
-    enum AxisType
-    {
-        xAxis = 0,
-        yAxis,
-        xAxis2,
-        yAxis2
-    };
-
-    struct ScatterInfo
+    struct DrawComponents
     {
         QPointer<QCPGraph> graph;
         QPointer<QCPItemTracer> tracer;
         QPointer<QCPItemText> tracerText;
         QPointer<QCPItemPixmap> pixmap;
 
-        ScatterInfo()
+        DrawComponents()
         {
             graph = nullptr;
             tracer = nullptr;
@@ -38,6 +27,8 @@ public:
             pixmap = nullptr;
         }
     };
+    PlotScatter(QWidget* parent = nullptr);
+    ~PlotScatter() override;
 
     static int m_instanceCount; //Plot实体个数
 
@@ -72,7 +63,7 @@ private:
 private:
     QHash<QString, QPair<QVector<double>, QVector<double>>> m_dataHash;
     // <uuid,graph>
-    QMap<QString, ScatterInfo> m_mapScatter;
+    QMap<QString, DrawComponents> m_mapScatter;
 };
 
 #endif // PLOTSCATTER_H

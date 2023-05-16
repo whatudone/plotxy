@@ -1,5 +1,6 @@
 ﻿#ifndef CONST_DEF_H_
 #define CONST_DEF_H_
+
 #include <QString>
 
 enum PlotType : int32_t
@@ -143,4 +144,13 @@ enum class MouseMode : uint8_t
     MovePlot // 移动+缩放
 
 };
+
+enum AxisType
+{
+    xAxis = 0,
+    yAxis,
+    xAxis2,
+    yAxis2
+};
+
 #endif // _CONST_DEF_H_

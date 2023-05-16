@@ -16,7 +16,7 @@ PlotAScope::PlotAScope(QWidget* parent)
     m_axisLabelFont.setFamily("Microsoft YaHei");
     m_axisLabelFont.setPointSizeF(10.0);
     m_xAxisLabel = "Range(m)";
-    m_yAxisLabel = "Voltage(V)";
+    m_yAxisLabel = "Voltage(v)";
 
     m_coordBgn_x = 0;
     m_coordEnd_x = 100;
@@ -98,19 +98,27 @@ void PlotAScope::delPlotPairData(const QString& uuid)
 
 void PlotAScope::updateDataForDataPairsByTime(double secs)
 {
-    if(getDataPairs().isEmpty())
-        return;
-
+    m_dataHash.clear();
     int itemCnt = m_dataPairs.size();
-
     for(int i = 0; i < itemCnt; ++i)
     {
-        updateGraph(secs, m_dataPairs.at(i));
+        auto data = getDataPairs().at(i);
+        QString uuid = data->getUuid();
+        QVector<double> x, y;
+        int32_t eid = data->getEntityIDX();
+        auto pair = DataManagerInstance->getSliceDataByTime(eid, secs);
+        x = pair.first;
+        y = pair.second;
+        m_dataHash.insert(uuid, qMakePair(x, y));
+    }
+    for(int i = 0; i < itemCnt; ++i)
+    {
+        updateGraphByDataPair(m_dataPairs.at(i));
     }
     m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
-void PlotAScope::updateGraph(double secs, DataPair* data)
+void PlotAScope::updateGraphByDataPair(DataPair* data)
 {
     if(!data)
     {
@@ -133,14 +141,12 @@ void PlotAScope::updateGraph(double secs, DataPair* data)
     }
     if(data->isDraw())
     {
-        QVector<double> x, y;
-        int32_t eid = data->getEntityIDX();
-        auto pair = DataManagerInstance->getSliceDataByTime(eid, secs);
-        x = pair.first;
-        y = pair.second;
+        graph->setVisible(true);
+        auto x = m_dataHash.value(uuid).first;
+        auto y = m_dataHash.value(uuid).second;
         if(x.isEmpty() || y.isEmpty())
             return;
-        graph->setVisible(true);
+        graph->setData(x, y);
         graph->setPen(QPen(data->dataColor(), data->lineWidth()));
     }
     else
