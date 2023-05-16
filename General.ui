@@ -30,7 +30,7 @@
     <number>0</number>
    </property>
    <item>
-    <layout class="QGridLayout" name="gridLayout" rowstretch="1,1,1,1,1,1,1" columnstretch="0,1,0">
+    <layout class="QGridLayout" name="gridLayout" rowstretch="1,0,0,0,0,0,0,0,0" columnstretch="0,0,0">
      <property name="leftMargin">
       <number>2</number>
      </property>
@@ -46,22 +46,26 @@
      <property name="spacing">
       <number>5</number>
      </property>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_30">
-       <property name="minimumSize">
+     <item row="7" column="2">
+      <spacer name="horizontalSpacer_43">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
         <size>
-         <width>20</width>
-         <height>30</height>
+         <width>40</width>
+         <height>20</height>
         </size>
        </property>
-       <property name="frameShape">
-        <enum>QFrame::Box</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Sunken</enum>
-       </property>
-       <property name="text">
-        <string>绘制</string>
+      </spacer>
+     </item>
+     <item row="6" column="1" colspan="2">
+      <widget class="QSpinBox" name="spinBox_5">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>30</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -87,21 +91,8 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="2">
-      <spacer name="horizontalSpacer_44">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_31">
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_28">
        <property name="minimumSize">
         <size>
          <width>20</width>
@@ -115,12 +106,12 @@
         <enum>QFrame::Sunken</enum>
        </property>
        <property name="text">
-        <string>颜色匹配</string>
+        <string>点数约束</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QCheckBox" name="checkBox_14">
+     <item row="7" column="1">
+      <widget class="QCheckBox" name="checkBox_15">
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -135,8 +126,8 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="2">
-      <spacer name="horizontalSpacer_39">
+     <item row="4" column="2">
+      <spacer name="horizontalSpacer_40">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -148,7 +139,40 @@
        </property>
       </spacer>
      </item>
-     <item row="2" column="0">
+     <item row="8" column="2">
+      <spacer name="horizontalSpacer_45">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>38</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="labelLineMode">
+       <property name="text">
+        <string> 线段模式</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="1">
+      <widget class="QPushButton" name="pushButton_more">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>More&gt;&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
       <widget class="QLabel" name="label_26">
        <property name="minimumSize">
         <size>
@@ -167,7 +191,84 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="5" column="1" colspan="2">
+      <widget class="QLineEdit" name="lineEdit_7">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>30</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="3" column="1">
+      <widget class="QCheckBox" name="checkBox_14">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_31">
+       <property name="minimumSize">
+        <size>
+         <width>20</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="text">
+        <string>颜色匹配</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <widget class="QLabel" name="label_32">
+       <property name="minimumSize">
+        <size>
+         <width>20</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="text">
+        <string>利用脚本设置</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
       <widget class="ColorButton" name="pushButton_12">
        <property name="maximumSize">
         <size>
@@ -189,104 +290,15 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="2">
-      <spacer name="horizontalSpacer_40">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_27">
-       <property name="minimumSize">
-        <size>
-         <width>20</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::Box</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Sunken</enum>
-       </property>
-       <property name="text">
-        <string>第二约束</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1" colspan="2">
-      <widget class="QLineEdit" name="lineEdit_7">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>30</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_28">
-       <property name="minimumSize">
-        <size>
-         <width>20</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::Box</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Sunken</enum>
-       </property>
-       <property name="text">
-        <string>点约束</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="label_32">
-       <property name="minimumSize">
-        <size>
-         <width>20</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::Box</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Sunken</enum>
-       </property>
-       <property name="text">
-        <string>利用脚本设置</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1">
-      <widget class="QCheckBox" name="checkBox_15">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="layoutDirection">
-        <enum>Qt::LeftToRight</enum>
-       </property>
+     <item row="1" column="1">
+      <widget class="QCheckBox" name="checkBoxLineMode">
        <property name="text">
         <string/>
        </property>
       </widget>
      </item>
-     <item row="5" column="2">
-      <spacer name="horizontalSpacer_43">
+     <item row="3" column="2">
+      <spacer name="horizontalSpacer_39">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -298,7 +310,20 @@
        </property>
       </spacer>
      </item>
-     <item row="6" column="0">
+     <item row="0" column="2">
+      <spacer name="horizontalSpacer_44">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="8" column="0">
       <widget class="QLabel" name="label_29">
        <property name="minimumSize">
         <size>
@@ -317,41 +342,66 @@
        </property>
       </widget>
      </item>
-     <item row="6" column="1">
-      <widget class="QPushButton" name="pushButton_more">
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_27">
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>20</width>
          <height>30</height>
         </size>
        </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
        <property name="text">
-        <string>More&gt;&gt;</string>
+        <string>秒数约束</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="2">
-      <spacer name="horizontalSpacer_45">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_30">
+       <property name="minimumSize">
+        <size>
+         <width>20</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="text">
+        <string>绘制</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="labelWidth">
+       <property name="text">
+        <string> 线宽</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="lineEditWidth"/>
+     </item>
+     <item row="2" column="2">
+      <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>38</width>
+         <width>40</width>
          <height>20</height>
         </size>
        </property>
       </spacer>
-     </item>
-     <item row="4" column="1" colspan="2">
-      <widget class="QSpinBox" name="spinBox_5">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>30</height>
-        </size>
-       </property>
-      </widget>
      </item>
     </layout>
    </item>

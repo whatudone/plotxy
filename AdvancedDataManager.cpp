@@ -347,6 +347,8 @@ void AdvancedDataManager::refreshUI()
 void AdvancedDataManager::refreshGeneral()
 {
     auto general = subSettingWidgetContainer->m_general;
+    auto plotType = m_curSelectPlot->plotType();
+    general->updateVisibleOnPlotTypeChanged(plotType);
     general->setCheckBox_16CheckState(m_curSelectDatapair->isDraw());
     general->setPushButton_12Color(m_curSelectDatapair->dataColor());
     general->setCheckBox_14CheckState(m_curSelectDatapair->matchColor());

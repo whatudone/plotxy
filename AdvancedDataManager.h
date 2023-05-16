@@ -30,6 +30,7 @@ public slots:
 
 	void onEventBtnMoreClicked();
     void onUpdatePlotPair();
+    // 选中不同数据对
 	void onTableWidget_plotpairItemSelectionChanged();
 	void onLineEditChanged();
 	void onPushButton_addClicked();

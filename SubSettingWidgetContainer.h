@@ -1,15 +1,16 @@
 ﻿#ifndef _SUB_SETTING_WIDGET_CONTAINER_H
 #define _SUB_SETTING_WIDGET_CONTAINER_H
 
-#include <QMainWindow>
-#include "ui_General.h"
-#include "ui_Extrapolation.h"
-#include "ui_LabelSettings.h"
-#include "ui_LabelText.h"
-#include "ui_ColorRanges.h"
+#include "EventSetting.h"
 #include "IconSetting.h"
 #include "StippleSetting.h"
-#include "EventSetting.h"
+#include "constdef.h"
+#include "ui_ColorRanges.h"
+#include "ui_Extrapolation.h"
+#include "ui_General.h"
+#include "ui_LabelSettings.h"
+#include "ui_LabelText.h"
+#include <QMainWindow>
 
 class General;
 class ColorRanges;
@@ -35,18 +36,19 @@ public:
 	LabelText* m_labelText;
 };
 
-class General :public QWidget
+class General : public QWidget
 {
 	Q_OBJECT
 
 public:
 	explicit General(QWidget* parent = nullptr);
 	~General();
+    void updateVisibleOnPlotTypeChanged(PlotType curType);
 
 signals:
 	void sigBtnGenneralMoreclicked();
 	void sigCheckBox_14StateChanged(bool);
-	void sigCheckBox_14Color(QColor);	//当选中状态时，发送pushButton_12的颜色
+    void sigCheckBox_14Color(QColor); //当选中状态时，发送pushButton_12的颜色
 	void sigCheckBox_16StateChanged(bool);
 	void sigPushButton_12Clicked(QColor);
 
@@ -64,24 +66,26 @@ private:
 	Ui::General ui;
 };
 
-class Extrapolation :public QWidget
+class Extrapolation : public QWidget
 {
 	Q_OBJECT
 
 public:
 	explicit Extrapolation(QWidget* parent = nullptr);
 	~Extrapolation();
+
 private:
 	Ui::Extrapolation ui;
 };
 
-class LabelSettings :public QWidget
+class LabelSettings : public QWidget
 {
 	Q_OBJECT
 
 public:
 	explicit LabelSettings(QWidget* parent = nullptr);
 	~LabelSettings();
+
 private:
 	Ui::LabelSettings ui;
 
@@ -124,13 +128,14 @@ public slots:
 	void setSpinBox_3Value(int);
 };
 
-class LabelText :public QWidget
+class LabelText : public QWidget
 {
 	Q_OBJECT
 
 public:
 	explicit LabelText(QWidget* parent = nullptr);
 	~LabelText();
+
 private:
 	Ui::LabelText ui;
 
@@ -164,7 +169,7 @@ public slots:
 	void setLineEdit_4Text(QString);
 };
 
-class ColorRanges :public QWidget
+class ColorRanges : public QWidget
 {
 	Q_OBJECT
 
@@ -175,10 +180,9 @@ signals:
 	void sigBtnColorRangesMoreclicked();
 public slots:
 	void onBtnCRMoreclicked();
+
 private:
 	Ui::ColorRanges ui;
 };
-
-
 
 #endif // _SUB_SETTING_WIDGET_CONTAINER_H

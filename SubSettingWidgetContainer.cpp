@@ -67,6 +67,70 @@ General::General(QWidget* parent)
 
 General::~General() {}
 
+void General::updateVisibleOnPlotTypeChanged(PlotType curType)
+{
+    static QList<QWidget*> list =
+        QList<QWidget*>() << ui.label_30 << ui.checkBox_16 << ui.labelLineMode
+                          << ui.checkBoxLineMode << ui.labelWidth << ui.lineEditWidth << ui.label_31
+                          << ui.checkBox_14 << ui.label_26 << ui.pushButton_12 << ui.label_27
+                          << ui.lineEdit_7 << ui.label_28 << ui.spinBox_5 << ui.label_32
+                          << ui.checkBox_15 << ui.label_29 << ui.pushButton_more;
+    /*
+     * visibleList存储九行界面的visible属性，如果只有一个数据
+     * 表示所有行都是该属性
+    */
+    QList<bool> visibleList;
+    if(curType == PlotType::Type_PlotAScope || curType == PlotType::Type_PlotBar ||
+       curType == PlotType::Type_PlotDial || curType == PlotType::Type_PlotLight)
+    {
+        visibleList = QList<bool>()
+                      << true << false << false << true << true << true << true << true << true;
+    }
+    else if(curType == PlotType::Type_PlotAttitude)
+    {
+        visibleList = QList<bool>()
+                      << true << false << false << false << false << true << true << false << false;
+    }
+    else if(curType == PlotType::Type_PlotPolar || curType == PlotType::Type_PlotScatter)
+    {
+        visibleList = QList<bool>() << true;
+    }
+    else if(curType == PlotType::Type_PlotDoppler)
+    {
+        visibleList = QList<bool>() << true << false << false << false << false << false << false
+                                    << false << false;
+    }
+    else if(curType == PlotType::Type_PlotRTI)
+    {
+        visibleList = QList<bool>()
+                      << true << false << false << true << true << true << true << false << false;
+    }
+    else if(curType == PlotType::Type_PlotText)
+    {
+        visibleList = QList<bool>()
+                      << true << false << false << true << true << true << true << true << true;
+    }
+    else if(curType == PlotType::Type_PlotTrack)
+    {
+        visibleList = QList<bool>()
+                      << true << false << false << false << true << true << true << true << true;
+    }
+    for(int var = 0; var < list.size(); ++var)
+    {
+        int32_t index = 0;
+        if(visibleList.size() == 1)
+        {
+            index = 0;
+        }
+        else
+        {
+
+            index = var / 2;
+        }
+        list.at(var)->setVisible(visibleList.at(index));
+    }
+}
+
 void General::onCheckBox_14StateChanged()
 {
 	emit sigCheckBox_14StateChanged(ui.checkBox_14->checkState());
