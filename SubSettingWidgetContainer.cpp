@@ -6,7 +6,7 @@
 SubSettingWidgetContainer::SubSettingWidgetContainer(QWidget* parent)
 	: QMainWindow(parent)
 {
-	ToolBox* toolBox = new ToolBox(this);
+    toolBox = new ToolBox(this);
 
 	//General
 	m_general = new General(this);
@@ -22,11 +22,11 @@ SubSettingWidgetContainer::SubSettingWidgetContainer(QWidget* parent)
 
 	//Label Settings
 	m_labelSettings = new LabelSettings(this);
-	toolBox->addWidget("label Settings", m_labelSettings);
+    toolBox->addWidget("Label Settings", m_labelSettings);
 
 	//Label Text
 	m_labelText = new LabelText(this);
-	toolBox->addWidget("labelText", m_labelText);
+    toolBox->addWidget("LabelText", m_labelText);
 
 	//Stipple
 	m_stippleSetting = new StippleSetting(this);
@@ -38,7 +38,7 @@ SubSettingWidgetContainer::SubSettingWidgetContainer(QWidget* parent)
 
 	//Color Ranges
 	m_colorRanges = new ColorRanges(this);
-	toolBox->addWidget("colorRanges", m_colorRanges);
+    toolBox->addWidget("ColorRanges", m_colorRanges);
 
 	setCentralWidget(toolBox);
 
@@ -53,6 +53,65 @@ SubSettingWidgetContainer::SubSettingWidgetContainer(QWidget* parent)
 }
 
 SubSettingWidgetContainer::~SubSettingWidgetContainer() {}
+
+void SubSettingWidgetContainer::updateVisibleOnPlotTypeChanged(PlotType curType)
+{
+    QList<QWidget*> list;
+    list << toolBox->pageWidget("General") << toolBox->pageWidget("Extrapolation")
+         << toolBox->pageWidget("Icon") << toolBox->pageWidget("Label Settings")
+         << toolBox->pageWidget("LabelText") << toolBox->pageWidget("Stipple")
+         << toolBox->pageWidget("Events") << toolBox->pageWidget("ColorRanges");
+    QList<bool> visibleList;
+    if(curType == PlotType::Type_PlotAScope)
+    {
+        visibleList << true << true << false << false << false << true << false << false;
+    }
+    else if(curType == PlotType::Type_PlotAttitude)
+    {
+        visibleList << true << true << false << false << false << false << false << false;
+    }
+    else if(curType == PlotType::Type_PlotBar)
+    {
+        visibleList << true << true << false << true << true << false << false << true;
+    }
+    else if(curType == PlotType::Type_PlotDial)
+    {
+        visibleList << true << true << false << false << false << false << false << false;
+    }
+    else if(curType == PlotType::Type_PlotLight)
+    {
+        visibleList << true << true << false << true << true << false << false << false;
+    }
+    else if(curType == PlotType::Type_PlotPolar)
+    {
+        visibleList << true << true << true << true << true << true << false << false;
+    }
+    else if(curType == PlotType::Type_PlotDoppler)
+    {
+        visibleList << true << false << false << false << false << false << false << false;
+    }
+    else if(curType == PlotType::Type_PlotRTI)
+    {
+        visibleList << true << true << false << false << false << false << false << false;
+    }
+    else if(curType == PlotType::Type_PlotScatter)
+    {
+        visibleList << true << true << true << true << true << true << true << true;
+    }
+    else if(curType == PlotType::Type_PlotText)
+    {
+        visibleList << true << true << true << true << true << false << false << false;
+    }
+    else if(curType == PlotType::Type_PlotTrack)
+    {
+        visibleList << true << false << false << true << true << false << false << false;
+    }
+
+    for(int var = 0; var < list.size(); ++var)
+    {
+        list.at(var)->setVisible(visibleList.at(var));
+    }
+}
 
 /////////////////////////////General//////////////////////////////////
 General::General(QWidget* parent)

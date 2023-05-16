@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "constdef.h"
 #include "ui_IconSetting.h"
 #include <QWidget>
 
@@ -34,6 +35,7 @@ public slots:
 	void onSpinBox_2ValueChanged(int);
 	void onPushButton_2Clicked();
 
+public:
 	void setCheckBoxCheckState(bool);
 	void setLineEditText(QString);
 	void setComboBoxCurrentIndex(int);
@@ -41,5 +43,5 @@ public slots:
 	void setCheckBox_3CheckState(bool);
 	void setSpinBoxValue(int);
 	void setSpinBox_2Value(int);
-	void setPushButton_2Color(QColor);
+    void setPushButton_2Color(QColor);
 };

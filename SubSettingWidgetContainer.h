@@ -12,6 +12,7 @@
 #include "ui_LabelText.h"
 #include <QMainWindow>
 
+class ToolBox;
 class General;
 class ColorRanges;
 class Extrapolation;
@@ -25,7 +26,7 @@ class SubSettingWidgetContainer : public QMainWindow
 public:
 	SubSettingWidgetContainer(QWidget* parent = nullptr);
 	~SubSettingWidgetContainer();
-
+    ToolBox* toolBox;
 	General* m_general;
 	ColorRanges* m_colorRanges;
 	IconSetting* m_iconSetting;
@@ -34,6 +35,8 @@ public:
 	Extrapolation* m_extrapolation;
 	LabelSettings* m_labelSettings;
 	LabelText* m_labelText;
+    // 更新大的tab页显示情况，tab页内部调整需要每个业内自己实现
+    void updateVisibleOnPlotTypeChanged(PlotType curType);
 };
 
 class General : public QWidget

@@ -350,14 +350,21 @@ void AdvancedDataManager::onIconSetting_color(QColor color)
 
 void AdvancedDataManager::refreshUI()
 {
-	refreshGeneral();
-	refreshIcon();
-	refreshExtrapolation();
-	refreshLabelSettings();
-	refreshStipple();
-	refreshEvent();
-	refreshLabelText();
-	refreshColorRanges();
+    if(m_curSelectPlot && m_curSelectDatapair)
+    {
+        // 刷新visible
+        auto plotType = m_curSelectPlot->plotType();
+        subSettingWidgetContainer->updateVisibleOnPlotTypeChanged(plotType);
+        // 刷新内容
+        refreshGeneral();
+        refreshIcon();
+        refreshExtrapolation();
+        refreshLabelSettings();
+        refreshStipple();
+        refreshEvent();
+        refreshLabelText();
+        refreshColorRanges();
+    }
 }
 
 void AdvancedDataManager::refreshGeneral()
