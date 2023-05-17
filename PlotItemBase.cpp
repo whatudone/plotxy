@@ -439,36 +439,30 @@ void PlotItemBase::setTitleVisible(bool on)
 {
     m_titleVisible = on;
     updateTitle();
-    // title是自绘实现，需要调用update刷新，而不是replot
-    update();
 }
 
 void PlotItemBase::setTitle(const QString& title)
 {
     m_title = title;
     updateTitle();
-    update();
 }
 
 void PlotItemBase::setTitleColor(const QColor& color)
 {
     m_titleColor = color;
     updateTitle();
-    update();
 }
 
 void PlotItemBase::setTitleFillColor(const QColor& color)
 {
     m_titleFillColor = color;
     updateTitle();
-    update();
 }
 
 void PlotItemBase::setTitleFont(const QFont& font)
 {
     m_titleFont = font;
     updateTitle();
-    update();
 }
 
 void PlotItemBase::setTitleFontSize(int size)
@@ -476,7 +470,6 @@ void PlotItemBase::setTitleFontSize(int size)
     m_titleFontSize = size;
     m_titleFont.setPointSize(size);
     updateTitle();
-    update();
 }
 
 void PlotItemBase::setTitleOffset(int offsetX, int offsetY)
@@ -484,7 +477,6 @@ void PlotItemBase::setTitleOffset(int offsetX, int offsetY)
     m_titleOffsetX = offsetX;
     m_titleOffsetY = offsetY;
     updateTitle();
-    update();
 }
 
 void PlotItemBase::setxAxisLabel(const QString& label)
