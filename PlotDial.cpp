@@ -30,7 +30,10 @@ PlotDial::PlotDial(QWidget* parent)
     //	m_rightPadding = 20;
     //	m_topPadding = 0;
     //	m_bottomPadding = 20;
+
+    m_widget = new QWidget;
     updateCenterPoint();
+    setupLayout();
 }
 
 PlotDial::~PlotDial() {}
@@ -71,6 +74,7 @@ void PlotDial::updateDataForDataPairsByTime(double secs)
     m_clockHandPoints[1] = endPoint1;
     m_clockHandPoints[2] = endPoint;
     m_clockHandPoints[3] = endPoint2;
+    update();
 }
 
 void PlotDial::customPainting(QPainter& painter)
@@ -151,13 +155,6 @@ void PlotDial::customPainting(QPainter& painter)
 
 void PlotDial::updateCenterPoint()
 {
-    QFontMetricsF fm(m_titleFont);
-    double h = fm.size(Qt::TextSingleLine, m_title).height();
-
-    m_circleRadius =
-        (width() - m_leftPadding - m_rightPadding) < (height() - h - m_topPadding - m_bottomPadding)
-            ? (width() - m_leftPadding - m_rightPadding) / 2
-            : (height() - h - m_topPadding - m_bottomPadding) / 2;
-    m_centerPoint = QPoint((width() + m_leftPadding - m_rightPadding) / 2,
-                           (height() + h + m_topPadding - m_bottomPadding) / 2);
+    m_circleRadius = int(qMin(m_widget->width() * 0.95, m_widget->height() * 0.95) / 2);
+    m_centerPoint = QPoint((m_widget->width()) / 2, (m_widget->height()) / 2);
 }

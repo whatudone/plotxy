@@ -41,6 +41,7 @@ PlotDoppler::PlotDoppler(QWidget* parent)
     m_showUnits_y = false;
 
     initPlot();
+    setupLayout();
 #ifdef TEST_SCOPE_DATA
     loadCustomData();
 #endif

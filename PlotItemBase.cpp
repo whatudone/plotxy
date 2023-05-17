@@ -438,6 +438,7 @@ void PlotItemBase::setUnitsY(const QString& units)
 void PlotItemBase::setTitleVisible(bool on)
 {
     m_titleVisible = on;
+    updateTitle();
     // title是自绘实现，需要调用update刷新，而不是replot
     update();
 }
@@ -445,24 +446,28 @@ void PlotItemBase::setTitleVisible(bool on)
 void PlotItemBase::setTitle(const QString& title)
 {
     m_title = title;
+    updateTitle();
     update();
 }
 
 void PlotItemBase::setTitleColor(const QColor& color)
 {
     m_titleColor = color;
+    updateTitle();
     update();
 }
 
 void PlotItemBase::setTitleFillColor(const QColor& color)
 {
     m_titleFillColor = color;
+    updateTitle();
     update();
 }
 
 void PlotItemBase::setTitleFont(const QFont& font)
 {
     m_titleFont = font;
+    updateTitle();
     update();
 }
 
@@ -470,6 +475,15 @@ void PlotItemBase::setTitleFontSize(int size)
 {
     m_titleFontSize = size;
     m_titleFont.setPointSize(size);
+    updateTitle();
+    update();
+}
+
+void PlotItemBase::setTitleOffset(int offsetX, int offsetY)
+{
+    m_titleOffsetX = offsetX;
+    m_titleOffsetY = offsetY;
+    updateTitle();
     update();
 }
 
@@ -537,6 +551,17 @@ void PlotItemBase::setPaddings(double top, double bottom, double left, double ri
     m_leftPadding = left;
     m_rightPadding = right;
     update();
+}
+
+void PlotItemBase::updateTitle()
+{
+    pTitleLabel->setVisible(m_titleVisible);
+    pTitleLabel->setFont(m_titleFont);
+    pTitleLabel->setText(m_title);
+    QPalette pal(pTitleLabel->palette());
+    pal.setColor(QPalette::WindowText, m_titleColor);
+    pal.setColor(QPalette::Background, m_titleFillColor);
+    pTitleLabel->setPalette(pal);
 }
 
 // NOTE::其他地方不要直接创建DataPair对象，需要通过本接口创建，不然会导致丢失信号槽逻辑
@@ -819,41 +844,6 @@ void PlotItemBase::paintEvent(QPaintEvent* event)
 {
     // 绘制本身
     QWidget::paintEvent(event);
-    // 绘制通用的属性
-    int width = this->width();
-    int height = this->height();
-    QPainter painter(this);
-    painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
-
-    QFontMetricsF fm(m_titleFont);
-    double w = fm.size(Qt::TextSingleLine, m_title).width();
-    double h = fm.size(Qt::TextSingleLine, m_title).height();
-    double as = fm.ascent();
-    // 通用标题属性
-    if(m_titleVisible)
-    {
-        painter.setFont(m_titleFont);
-        painter.setPen(m_titleColor);
-        painter.fillRect(
-            (width - w + m_leftPadding - m_rightPadding) / 2, m_topPadding, w, h, m_titleFillColor);
-        painter.drawText(
-            QPoint((width + m_leftPadding - m_rightPadding - w) / 2, as + m_topPadding), m_title);
-    }
-    // 绘图分为两种，一种是qcustomplot绘制，一种是自绘
-    if(m_customPlot)
-    {
-        if(plotType() != PlotType::Type_PlotDoppler)
-        {
-            m_customPlot->setGeometry(m_leftPadding,
-                                      h + m_topPadding,
-                                      width - m_leftPadding - m_rightPadding,
-                                      height - h - m_topPadding - m_bottomPadding);
-        }
-    }
-    else
-    {
-        customPainting(painter);
-    }
     // 根据场景绘制外边框和控制点
     if(m_isNeedDrawBorder)
     {
@@ -982,6 +972,21 @@ void PlotItemBase::mouseMoveEvent(QMouseEvent* event)
     QWidget::mouseMoveEvent(event);
 }
 
+bool PlotItemBase::eventFilter(QObject* obj, QEvent* event)
+{
+    if(m_widget && obj == m_widget)
+    {
+        if(event->type() == QEvent::Paint)
+        {
+            QPainter painter(m_widget);
+            painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+            customPainting(painter);
+            return true;
+        }
+    }
+    return QWidget::eventFilter(obj, event);
+}
+
 bool PlotItemBase::getYIsAdaptive() const
 {
     return m_yIsAdaptive;
@@ -1078,6 +1083,51 @@ void PlotItemBase::setCustomPlotMouseTransparent(bool baseTransparent, bool cust
     }
     this->setAttribute(Qt::WA_TransparentForMouseEvents, baseTransparent);
 }
+
+void PlotItemBase::setupLayout()
+{
+    pTitleLabel = new QLabel;
+    pTitleLabel->setFont(m_titleFont);
+    pTitleLabel->setText(m_title);
+    pTitleLabel->setContentsMargins(0, 0, 0, 0);
+    pTitleLabel->setAlignment(Qt::AlignCenter);
+
+    titleLayout = new QHBoxLayout;
+    titleLayout->addSpacerItem(
+        new QSpacerItem(10, 10, QSizePolicy::Expanding, QSizePolicy::Preferred));
+    titleLayout->addWidget(pTitleLabel);
+    titleLayout->addSpacerItem(
+        new QSpacerItem(10, 10, QSizePolicy::Expanding, QSizePolicy::Preferred));
+
+    QPalette pe(pTitleLabel->palette());
+    pe.setColor(QPalette::WindowText, m_titleColor);
+    pe.setColor(QPalette::Background, m_titleFillColor);
+    pTitleLabel->setAutoFillBackground(true);
+    pTitleLabel->setPalette(pe);
+
+    mainLayout = new QVBoxLayout;
+    mainLayout->setContentsMargins(
+        int(m_leftPadding), int(m_topPadding), int(m_rightPadding), int(m_bottomPadding));
+
+    mainLayout->addLayout(titleLayout, 1);
+
+    pTitleLabel->setVisible(m_titleVisible);
+
+    // 绘图分为两种，一种是qcustomplot绘制，一种是自绘
+    if(m_customPlot)
+    {
+        mainLayout->addWidget(m_customPlot, 9);
+    }
+    else if(m_widget)
+    {
+        m_widget->installEventFilter(this);
+        mainLayout->addWidget(m_widget, 9);
+    }
+
+    delete layout();
+    setLayout(mainLayout);
+}
+
 void PlotItemBase::replot()
 {
     if(m_customPlot)

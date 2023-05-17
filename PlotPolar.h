@@ -6,7 +6,7 @@ class PlotPolar : public PlotItemBase
 	Q_OBJECT
 public:
 	PlotPolar(QWidget* parent = Q_NULLPTR);
-	~PlotPolar();
+    ~PlotPolar() override;
 
 	void initPlot();
 

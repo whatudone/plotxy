@@ -41,16 +41,14 @@ PlotAScope::PlotAScope(QWidget* parent)
     m_showUnits_y = false;
 
     initPlot();
+    setupLayout();
 }
 
 PlotAScope::~PlotAScope() {}
 
 void PlotAScope::initPlot()
 {
-    m_customPlot = new QCustomPlot(this);
-    QHBoxLayout* pLayout = new QHBoxLayout(this);
-    pLayout->addWidget(m_customPlot);
-    setLayout(pLayout);
+    m_customPlot = new QCustomPlot();
     m_customPlot->axisRect()->setupFullAxesBox(true);
 
     m_customPlot->xAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
@@ -79,8 +77,6 @@ void PlotAScope::initPlot()
     m_customPlot->yAxis->setLabelColor(m_axisLabelColor);
     m_customPlot->xAxis->setLabelFont(m_axisLabelFont);
     m_customPlot->yAxis->setLabelFont(m_axisLabelFont);
-
-    m_customPlot->replot();
 }
 
 void PlotAScope::delPlotPairData(const QString& uuid)

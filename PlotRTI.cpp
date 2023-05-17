@@ -46,6 +46,7 @@ PlotRTI::PlotRTI(QWidget* parent)
     m_showUnits_y = false;
 
     initPlot();
+    setupLayout();
 }
 
 PlotRTI::~PlotRTI() {}

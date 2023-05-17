@@ -134,6 +134,7 @@ public slots:
 	void onPushButton_23Clicked();
 	void onfontComboBox_2CurrentFontChanged(const QFont& font);
 	void onComboBox_Text_fontSizeCurrentTextChanged(const QString& text);
+    void onOffsetValueChanged();
 
 	//Attitude
 	void onPushButton_80Clicked();

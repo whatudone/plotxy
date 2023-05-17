@@ -53,6 +53,9 @@ PlotAttitude::PlotAttitude(QWidget* parent)
 	QString name = QString("Attitude%1").arg(m_instanceCount);
 	this->setName(name);
 	m_instanceCount += 1;
+
+    m_widget = new QWidget;
+    setupLayout();
 }
 
 PlotAttitude::~PlotAttitude() {}
@@ -526,21 +529,15 @@ void PlotAttitude::updateDataForDataPairsByTime(double secs)
 
 void PlotAttitude::customPainting(QPainter& painter)
 {
-    int width = this->width();
-    int height = this->height();
+    int width = m_widget->width();
+    int height = m_widget->height();
 
-    QFontMetricsF titleFm(m_titleFont);
-    double titleFontHeight = titleFm.size(Qt::TextSingleLine, m_title).height();
-    double titleAscent = titleFm.ascent();
-    QFontMetricsF tickLabelFm(m_tickLabelFont);
+    QFontMetricsF fm(m_axisLabelFont);
+    double h = fm.size(Qt::TextSingleLine, m_yAxisLabel).height();
+    double titleAscent = fm.ascent();
+    // 半径要减去（上下刻度文字的高度）
 
-    double tickFontHeight = tickLabelFm.size(Qt::TextSingleLine, m_title).height();
-    // 半径要减去（上下pad+上下文字的高度）
-
-    int radius = qMin(width - m_leftPadding - m_rightPadding,
-                      height - m_topPadding - m_bottomPadding - titleFontHeight - titleAscent -
-                          tickFontHeight * 2) /
-                 2;
+    int radius = int(qMin(double(width), height - titleAscent - h * 2) / 2);
     radius = radius * m_dialPercentage / 100;
 
     //画笔

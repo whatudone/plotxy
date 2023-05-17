@@ -77,6 +77,7 @@ public:
     virtual void setTitleFillColor(const QColor& color);
     virtual void setTitleFont(const QFont& font);
     virtual void setTitleFontSize(int size);
+    virtual void setTitleOffset(int offsetX, int offsetY);
     virtual void setxAxisLabel(const QString& label);
     virtual void setyAxisLabel(const QString& label);
     virtual void setAxisLabelColor(const QColor& color);
@@ -84,6 +85,7 @@ public:
     virtual void setAxisLabelFontSize(int size);
 
     void setPaddings(double top, double bottom, double left, double right);
+    void updateTitle();
 
     //getters:
     QColor getOuterFillColor()
@@ -264,6 +266,8 @@ public:
     void setCustomPlotMouseTransparent(bool on);
     void setCustomPlotMouseTransparent(bool baseTransparent, bool customplotTransparent);
 
+    void setupLayout();
+
 private:
     void updateResizeFocusPos();
     QRect getRectByDirection(ResizeDirection direction);
@@ -281,6 +285,8 @@ protected:
     virtual void mousePressEvent(QMouseEvent* event) override;
     virtual void mouseReleaseEvent(QMouseEvent* event) override;
     virtual void mouseMoveEvent(QMouseEvent* event) override;
+
+    virtual bool eventFilter(QObject* obj, QEvent* event) override;
 
 protected:
     QVector<DataPair*> m_dataPairs;
@@ -319,6 +325,8 @@ protected:
     QFont m_titleFont; //标题字体
     int m_titleFontSize; //标题字体尺寸
     QColor m_titleFillColor; //标题填充色
+    int m_titleOffsetX; //标题X偏移量
+    int m_titleOffsetY; //标题Y偏移量
 
     QString m_xAxisLabel; //x轴标题
     QString m_yAxisLabel; //y轴标题
@@ -354,6 +362,8 @@ signals:
 protected:
     // 部分为自绘,不需要这个控件就不需要创建，需要的子类自己初始化
     QCustomPlot* m_customPlot = nullptr;
+    // 自绘窗口，则初始化这个控件
+    QWidget* m_widget = nullptr;
 
 private:
     QPoint m_position;
@@ -377,6 +387,11 @@ private:
     QPoint m_originPoint;
     QCPItemLine* m_measureLineItem = nullptr;
     QCPItemText* m_measureTextItem = nullptr;
+
+    // 标题Label
+    QLabel* pTitleLabel = nullptr;
+    QVBoxLayout* mainLayout = nullptr;
+    QHBoxLayout* titleLayout = nullptr;
 };
 
 #endif // !
