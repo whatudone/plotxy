@@ -30,6 +30,9 @@ PlotText::PlotText(QWidget* parent)
 	QString name = QString("Text%1").arg(m_instanceCount);
 	this->setName(name);
 	m_instanceCount += 1;
+
+    m_widget = new QWidget;
+    setupLayout();
 }
 
 PlotText::~PlotText() {}
@@ -71,6 +74,7 @@ void PlotText::updateDataForDataPairsByTime(double secs)
         }
         m_dataVec.append(attrValueList);
     }
+    update();
 }
 
 void PlotText::customPainting(QPainter& painter)
@@ -80,16 +84,8 @@ void PlotText::customPainting(QPainter& painter)
         return;
     }
 
-    QFont titleFont;
-    titleFont.setPointSize(getTitleFontSize());
-    QFontMetricsF fm(titleFont);
-    double titleAs = fm.ascent();
-    double titleHeight = fm.height();
     // 图表绘制区域
-    QRect plotRect(m_leftPadding,
-                   m_topPadding + titleHeight + titleAs,
-                   width() - m_leftPadding - m_rightPadding,
-                   height() - m_topPadding - m_bottomPadding - titleHeight - titleAs);
+    QRect plotRect(0, 0, m_widget->width(), m_widget->height());
     drawCellData(painter, plotRect);
 }
 

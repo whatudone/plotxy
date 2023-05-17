@@ -7,7 +7,7 @@ class PlotAScope : public PlotItemBase
 
 public:
 	PlotAScope(QWidget* parent = Q_NULLPTR);
-	~PlotAScope();
+    ~PlotAScope() override;
 
 	void initPlot();
 

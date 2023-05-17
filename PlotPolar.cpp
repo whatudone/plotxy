@@ -39,6 +39,7 @@ PlotPolar::PlotPolar(QWidget* parent)
     m_gridDensity = GridDensity::LESS;
 
     initPlot();
+    setupLayout();
 }
 
 PlotPolar::~PlotPolar() {}
@@ -46,10 +47,6 @@ PlotPolar::~PlotPolar() {}
 void PlotPolar::initPlot()
 {
     m_customPlot = new QCustomPlot(this);
-    QHBoxLayout* pLayout = new QHBoxLayout(this);
-    pLayout->addWidget(m_customPlot);
-    setLayout(pLayout);
-
     m_customPlot->plotLayout()->clear();
 
     m_angularAxis = new QCPPolarAxisAngular(m_customPlot);

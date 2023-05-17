@@ -38,6 +38,7 @@ PlotBar::PlotBar(QWidget* parent)
     m_gridDensity = GridDensity::LESS;
 
     initPlot();
+    setupLayout();
 }
 
 PlotBar::~PlotBar() {}
@@ -149,11 +150,7 @@ void PlotBar::updateDataForDataPairsByTime(double secs)
 void PlotBar::initPlot()
 {
     m_customPlot = new QCustomPlot();
-    QHBoxLayout* pLayout = new QHBoxLayout(this);
-    pLayout->addWidget(m_customPlot);
-    setLayout(pLayout);
     m_customPlot->axisRect()->setupFullAxesBox(true);
-    m_customPlot->axisRect()->setMinimumMargins(QMargins(30, 15, 30, 15));
 
     m_customPlot->xAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
     m_customPlot->yAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
@@ -178,8 +175,6 @@ void PlotBar::initPlot()
 
     m_customPlot->xAxis->setPadding(30);
     m_customPlot->xAxis->setUpperEnding(QCPLineEnding::esSpikeArrow);
-
-    m_customPlot->replot();
 }
 
 void PlotBar::updateGraphByDataPair(DataPair* data)

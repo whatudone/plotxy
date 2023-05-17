@@ -13,7 +13,7 @@ class PlotDial : public PlotItemBase
 
 public:
     PlotDial(QWidget* parent = Q_NULLPTR);
-    ~PlotDial();
+    ~PlotDial() override;
 
     static int m_instanceCount; //实体个数
     PlotType plotType() const override

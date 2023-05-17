@@ -366,6 +366,8 @@ void PlotManager::initTextEditUI()
             &QComboBox::currentTextChanged,
             this,
             &PlotManager::onComboBox_Text_fontSizeCurrentTextChanged);
+    connect(ui.lineEdit_29, &QLineEdit::textChanged, this, &PlotManager::onOffsetValueChanged);
+    connect(ui.lineEdit_30, &QLineEdit::textChanged, this, &PlotManager::onOffsetValueChanged);
 }
 
 void PlotManager::initAttitudeUI()
@@ -1851,7 +1853,16 @@ void PlotManager::onComboBox_Text_fontSizeCurrentTextChanged(const QString& text
 	// 	QFont font = ui.fontComboBox_2->currentFont();
 	// 	font.setPointSizeF(text.toFloat());
 	// 	m_curSelectPlot->setTitleFont(font);
-	m_curSelectPlot->setTitleFontSize(text.toInt());
+    m_curSelectPlot->setTitleFontSize(text.toInt());
+}
+
+void PlotManager::onOffsetValueChanged()
+{
+    if(m_curSelectPlot == nullptr)
+    {
+        return;
+    }
+    m_curSelectPlot->setTitleOffset(ui.lineEdit_29->text().toInt(), ui.lineEdit_30->text().toInt());
 }
 
 void PlotManager::onPushButton_80Clicked()

@@ -21,6 +21,7 @@ PlotLight::PlotLight(QWidget* parent)
 	m_instanceCount += 1;
     m_title = "Events";
     initPlot();
+    setupLayout();
 }
 
 PlotLight::~PlotLight() {}
@@ -69,11 +70,7 @@ void PlotLight::processDataByConstraints()
 void PlotLight::initPlot()
 {
     m_customPlot = new QCustomPlot();
-    QHBoxLayout* pLayout = new QHBoxLayout(this);
-    pLayout->addWidget(m_customPlot);
     // top需要考虑标题栏的字体高度，先用60
-    pLayout->setContentsMargins(m_leftPadding, 60, m_rightPadding, m_bottomPadding);
-    setLayout(pLayout);
     // 将plot里面的坐标轴和中间的绘图矩形全部删除
     m_customPlot->plotLayout()->clear();
     m_customPlot->setBackground(m_outerFillColor);

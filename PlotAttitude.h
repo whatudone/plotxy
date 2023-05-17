@@ -12,7 +12,7 @@ class PlotAttitude : public PlotItemBase
 	Q_OBJECT
 public:
 	PlotAttitude(QWidget* parent = Q_NULLPTR);
-	~PlotAttitude();
+    ~PlotAttitude() override;
 
 public:
     void drawTitle(QPainter* painter, int radius);

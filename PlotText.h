@@ -20,7 +20,7 @@ class PlotText : public PlotItemBase
 	Q_OBJECT
 public:
 	PlotText(QWidget* parent = Q_NULLPTR);
-	~PlotText();
+    ~PlotText() override;
 
     static int m_instanceCount; //实体个数
     PlotType plotType() const override

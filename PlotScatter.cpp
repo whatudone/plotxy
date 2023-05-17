@@ -49,6 +49,7 @@ PlotScatter::PlotScatter(QWidget* parent)
     m_showUnits_y = false;
 
     initPlot();
+    setupLayout();
 }
 
 PlotScatter::~PlotScatter() {}
@@ -56,11 +57,7 @@ PlotScatter::~PlotScatter() {}
 void PlotScatter::initPlot()
 {
     m_customPlot = new QCustomPlot();
-    QHBoxLayout* pLayout = new QHBoxLayout(this);
-    pLayout->addWidget(m_customPlot);
-    setLayout(pLayout);
     m_customPlot->axisRect()->setupFullAxesBox(true);
-    m_customPlot->axisRect()->setMinimumMargins(QMargins(30, 15, 30, 15));
 
     m_customPlot->xAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
     m_customPlot->yAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
