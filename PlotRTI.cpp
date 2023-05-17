@@ -1,4 +1,5 @@
 ﻿#include "PlotRTI.h"
+#include "DataManager.h"
 
 int PlotRTI::m_instanceCount = 1;
 PlotRTI::PlotRTI(QWidget* parent)
@@ -98,74 +99,6 @@ void PlotRTI::initPlot()
     m_colorScale->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
 }
 
-void PlotRTI::loadCustomData()
-{
-    QString dataFileName = ":/AScope.csv";
-    QFile file(dataFileName);
-
-    QVector<double> rangeDatas;
-    QVector<int64_t> timeDatas;
-
-    if(file.open(QFile::Text | QFile::ReadOnly))
-    {
-        do
-        {
-            QString data = file.readLine();
-            if(data.isEmpty())
-            {
-                break;
-            }
-
-            QStringList dataList = data.split(",", QString::SkipEmptyParts);
-            if(dataList.size() != 3)
-            {
-                break;
-            }
-
-            if(dataList.at(0) == "Time")
-            {
-                continue;
-            }
-            int64_t time =
-                QDateTime::fromString(dataList.at(0), "yyyy/MM/dd hh:mm:ss").toSecsSinceEpoch();
-            double range = dataList.at(1).toDouble();
-            double voltage = dataList.at(2).toDouble();
-            if(!timeDatas.contains(time))
-            {
-                timeDatas.append(time);
-            }
-            if(!rangeDatas.contains(range))
-            {
-                rangeDatas.append(range);
-            }
-
-            m_dataMap.insert(qMakePair(range, time), voltage);
-        } while(true);
-    }
-    file.close();
-    std::sort(rangeDatas.begin(), rangeDatas.end());
-    std::sort(timeDatas.begin(), timeDatas.end());
-    int nx = rangeDatas.size();
-    int ny = timeDatas.size();
-    m_colorMap->data()->setSize(nx, ny);
-    m_colorMap->data()->setRange(QCPRange(rangeDatas.first(), rangeDatas.last()),
-                                 QCPRange(timeDatas.first(), timeDatas.last()));
-
-    for(int xIndex = 0; xIndex < nx; ++xIndex)
-    {
-        for(int yIndex = 0; yIndex < ny; ++yIndex)
-        {
-            auto coord = qMakePair(rangeDatas.at(xIndex), timeDatas.at(yIndex));
-            double voltage = m_dataMap.value(coord);
-            m_colorMap->data()->setCell(xIndex, yIndex, voltage);
-        }
-    }
-
-    m_colorMap->rescaleDataRange();
-
-    m_customPlot->rescaleAxes();
-}
-
 void PlotRTI::setAxisVisible(bool on, AxisType type)
 {
     switch(type)
@@ -212,13 +145,46 @@ void PlotRTI::setAxisTickLabelShow(bool on, AxisType type)
 
 void PlotRTI::updateDataForDataPairsByTime(double secs)
 {
-    if(getDataPairs().isEmpty())
-        return;
-    // 按照目录的理解，RTI暂时只能同事绘制一个数据对的数据
-    auto lastDataPair = getDataPairs().last();
-    updateGraph(secs, lastDataPair);
+    // 按照目前的理解，RTI暂时只能同时绘制一个数据对的数据
+    auto data = getDataPairs().last();
+    int32_t eid = data->getEntityIDX();
+    DataManagerInstance->getRTIDataByTime(eid, secs, m_rangeList, m_timeList, m_dataHash);
 
+    updateGraphByDataPair(data);
     m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
-void PlotRTI::updateGraph(double secs, DataPair* data) {}
+void PlotRTI::updateGraphByDataPair(DataPair* data)
+{
+    if(data->isDraw())
+    {
+        m_colorMap->setVisible(true);
+        m_colorScale->setVisible(true);
+        if(m_rangeList.isEmpty() || m_timeList.isEmpty())
+        {
+            return;
+        }
+        int nx = m_rangeList.size();
+        int ny = m_timeList.size();
+        m_colorMap->data()->setSize(nx, ny);
+        m_colorMap->data()->setRange(QCPRange(m_rangeList.first(), m_rangeList.last()),
+                                     QCPRange(m_timeList.first(), m_timeList.last()));
+
+        for(int xIndex = 0; xIndex < nx; ++xIndex)
+        {
+            for(int yIndex = 0; yIndex < ny; ++yIndex)
+            {
+                auto coord = qMakePair(xIndex, yIndex);
+                double voltage = m_dataHash.value(coord);
+                m_colorMap->data()->setCell(xIndex, yIndex, voltage);
+            }
+        }
+        m_colorMap->rescaleDataRange();
+        m_customPlot->rescaleAxes();
+    }
+    else
+    {
+        m_colorMap->setVisible(false);
+        m_colorScale->setVisible(false);
+    }
+}

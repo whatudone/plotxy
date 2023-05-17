@@ -49,6 +49,9 @@ public:
     static bool getIsLockingStack();
     static void setIsLockingStack(bool isLockingStack);
 
+    void updateSelectedPlotsBorderVisible();
+    void updatePlotsBorderVisible(bool visible);
+
 protected:
     void mouseReleaseEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
@@ -75,8 +78,6 @@ private:
     void handleBoxZoom(const QRect& rect);
     void handleZoomInOut(double factor);
     void handleMouseMoveWithPan(int offsetX, int offsetY);
-
-    static void updateSelectedPlotsBorderVisible(bool visible);
 
 private:
     // 框选缩放辅助矩形框

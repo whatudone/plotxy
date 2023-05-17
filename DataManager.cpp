@@ -513,7 +513,47 @@ QPair<QVector<double>, QVector<double>> DataManager::getSliceDataByTime(int32_t 
     return dataListPair;
 }
 
-void DataManager::getRTIDataByTime() {}
+void DataManager::getRTIDataByTime(int32_t entityID,
+                                   double secs,
+                                   QVector<double>& rangeList,
+                                   QVector<double>& timeList,
+                                   QHash<QPair<int32_t, int32_t>, double>& valueMap)
+{
+    rangeList.clear();
+    timeList.clear();
+    valueMap.clear();
+    if(m_newEntityDataMap.contains(entityID))
+    {
+        auto attrDataMap = m_newEntityDataMap.value(entityID);
+        // 没有去重的原始数据
+        rangeList = attrDataMap.value(QString("Range"));
+        //去重前需要排序
+        std::sort(rangeList.begin(), rangeList.end());
+        //去除容器内重复元素
+        auto it = std::unique(rangeList.begin(), rangeList.end());
+        rangeList.erase(it, rangeList.end());
+
+        timeList = attrDataMap.value(QString("Time"));
+        std::sort(timeList.begin(), timeList.end());
+        auto it1 = std::unique(timeList.begin(), timeList.end());
+        timeList.erase(it1, timeList.end());
+
+        QVector<double> volList = attrDataMap.value(QString("Voltage"));
+        int32_t rangeSize = rangeList.size();
+        int32_t timeSize = timeList.size();
+        for(int x = 0; x < rangeSize; ++x)
+        {
+            for(int y = 0; y < timeSize; ++y)
+            {
+                if(timeList.at(y) > secs)
+                {
+                    continue;
+                }
+                valueMap.insert(qMakePair(x, y), volList.at(x * timeSize + y));
+            }
+        }
+    }
+}
 
 QString DataManager::getEntityNameByID(int32_t id)
 {

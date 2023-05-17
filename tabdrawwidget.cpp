@@ -141,6 +141,8 @@ void TabDrawWidget::mouseReleaseEvent(QMouseEvent* event)
                 }
                 emit selectedPlotChanged(m_curSelectedPlots);
             }
+            // 更新所有图表的缩放控制绘制
+            updateSelectedPlotsBorderVisible();
         }
         QWidget::mouseReleaseEvent(event);
     }
@@ -197,14 +199,6 @@ MouseMode TabDrawWidget::mouseMode()
 void TabDrawWidget::setMouseMode(const MouseMode& mouseMode)
 {
     m_mouseMode = mouseMode;
-    if(m_mouseMode == MouseMode::MovePlot)
-    {
-        updateSelectedPlotsBorderVisible(true);
-    }
-    else
-    {
-        updateSelectedPlotsBorderVisible(false);
-    }
 }
 
 /*
@@ -292,9 +286,27 @@ void TabDrawWidget::handleMouseMoveWithPan(int offsetX, int offsetY)
     }
 }
 
-void TabDrawWidget::updateSelectedPlotsBorderVisible(bool visible)
+void TabDrawWidget::updateSelectedPlotsBorderVisible()
 {
-    for(auto plot : m_curSelectedPlots)
+    auto plots = findAllPlots();
+    for(auto plot : plots)
+    {
+        if(m_curSelectedPlots.contains(plot))
+        {
+            plot->setIsNeedDrawBorder(true);
+        }
+        else
+        {
+            plot->setIsNeedDrawBorder(false);
+        }
+        plot->update();
+    }
+}
+
+void TabDrawWidget::updatePlotsBorderVisible(bool visible)
+{
+    auto plots = findAllPlots();
+    for(auto plot : plots)
     {
         plot->setIsNeedDrawBorder(visible);
         plot->update();

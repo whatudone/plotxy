@@ -212,9 +212,19 @@ void PlotXYDemo::onStatusBtnClicked(int index)
     // 通知已经存在的图表刷新鼠标模式
     TabDrawWidget::setMouseMode(mode);
     // 刷新光标
-    auto plot = getCurDrawWidget();
-    if(!plot)
+    auto draw = getCurDrawWidget();
+    if(!draw)
         return;
+    // 切换到其他
+    if(m_mouseMode != MouseMode::MovePlot)
+    {
+        draw->updatePlotsBorderVisible(false);
+    }
+    else
+    {
+        draw->updatePlotsBorderVisible(true);
+    }
+
     if(!m_pCurSelectedPlot)
         return;
     m_pCurSelectedPlot->clearInter();
@@ -222,39 +232,39 @@ void PlotXYDemo::onStatusBtnClicked(int index)
     {
     // 移动缩放和测量的功能不能同时生效，有bug需要修改
     case MouseMode::SelectPlot:
-        plot->setCursor(Qt::ArrowCursor);
+        draw->setCursor(Qt::ArrowCursor);
         m_pCurSelectedPlot->setCustomPlotMouseTransparent(true);
         break;
     case MouseMode::Pan:
-        plot->setCursor(QCursor(QPixmap(":/pan.svg")));
+        draw->setCursor(QCursor(QPixmap(":/pan.svg")));
         m_pCurSelectedPlot->setCustomPlotMouseTransparent(false);
         m_pCurSelectedPlot->setInteract(QCP::iRangeDrag);
         break;
     case MouseMode::CenterPlot:
-        plot->setCursor(QCursor(QPixmap(":/center.svg")));
+        draw->setCursor(QCursor(QPixmap(":/center.svg")));
         m_pCurSelectedPlot->setAttribute(Qt::WA_TransparentForMouseEvents, true);
         break;
     case MouseMode::Zoom:
-        plot->setCursor(QCursor(QPixmap(":/zoom.svg")));
+        draw->setCursor(QCursor(QPixmap(":/zoom.svg")));
         m_pCurSelectedPlot->setAttribute(Qt::WA_TransparentForMouseEvents, false);
         m_pCurSelectedPlot->setZoom(1);
         break;
     case MouseMode::BoxZoom:
-        plot->setCursor(QCursor(QPixmap(":/box_zoom.svg")));
+        draw->setCursor(QCursor(QPixmap(":/box_zoom.svg")));
         m_pCurSelectedPlot->setAttribute(Qt::WA_TransparentForMouseEvents, false);
         m_pCurSelectedPlot->setZoom(2);
         break;
     case MouseMode::MeasureDistance:
-        plot->setCursor(QCursor(QPixmap(":/measure.svg")));
+        draw->setCursor(QCursor(QPixmap(":/measure.svg")));
         m_pCurSelectedPlot->setCustomPlotMouseTransparent(false, true);
         m_pCurSelectedPlot->setIsDrawMeasureLine(true);
         break;
     case MouseMode::CreatePlot:
-        plot->setCursor(QCursor(QPixmap(":/create_plot.svg")));
+        draw->setCursor(QCursor(QPixmap(":/create_plot.svg")));
         m_pCurSelectedPlot->setAttribute(Qt::WA_TransparentForMouseEvents, true);
         break;
     case MouseMode::MovePlot:
-        plot->setCursor(QCursor(QPixmap(":/move.svg")));
+        draw->setCursor(QCursor(QPixmap(":/move.svg")));
         m_pCurSelectedPlot->setAttribute(Qt::WA_TransparentForMouseEvents, true);
         break;
     }

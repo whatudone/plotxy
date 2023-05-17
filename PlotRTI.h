@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "PlotItemBase.h"
+#include "constdef.h"
 #include "qcustomplot.h"
 
 #include <QMap>
@@ -21,14 +22,6 @@ public:
 	PlotRTI(QWidget* parent = Q_NULLPTR);
 	~PlotRTI();
 
-    enum AxisType
-    {
-		xAxis = 0,
-		yAxis,
-		xAxis2,
-		yAxis2
-	};
-
 	void initPlot();
 
 	void setAxisVisible(bool on, AxisType type);
@@ -42,9 +35,7 @@ public:
 private:
     void updateDataForDataPairsByTime(double secs) override;
 
-    void updateGraph(double secs, DataPair* data);
-    // 加载测试数据
-    void loadCustomData();
+    void updateGraphByDataPair(DataPair* data);
 
 public:
     static int m_instanceCount; //实体个数
@@ -55,5 +46,9 @@ private:
     // 颜色对应的值
     QCPColorScale* m_colorScale = nullptr;
     // 三维数据
-    QMap<QPair<double, double>, double> m_dataMap;
+    QHash<QPair<int32_t, int32_t>, double> m_dataHash;
+    // range
+    QVector<double> m_rangeList;
+    // time
+    QVector<double> m_timeList;
 };
