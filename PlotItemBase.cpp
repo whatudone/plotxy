@@ -405,7 +405,7 @@ void PlotItemBase::setUnitsShowX(bool on)
     m_showUnits_x = on;
     if(m_customPlot)
     {
-        if(m_customPlot->xAxis && m_customPlot->xAxis)
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
         {
             if(!m_dataPairs.isEmpty())
             {
@@ -434,7 +434,7 @@ void PlotItemBase::setUnitsShowY(bool on)
     m_showUnits_y = on;
     if(m_customPlot)
     {
-        if(m_customPlot->xAxis && m_customPlot->xAxis)
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
         {
             if(!m_dataPairs.isEmpty())
             {

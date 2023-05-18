@@ -19,8 +19,6 @@ PlotText::PlotText(QWidget* parent)
 	m_bHorizontal = true;
     m_title = "Text";
 
-    m_interPadding = 20;
-
 	QString name = QString("Text%1").arg(m_instanceCount);
 	this->setName(name);
 	m_instanceCount += 1;
