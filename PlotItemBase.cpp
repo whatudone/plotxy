@@ -13,6 +13,9 @@
 
 PlotItemBase::PlotItemBase(QWidget* parent)
     : QWidget(parent)
+    , m_isHorizonBar(true)
+    , m_barLeftPadding(0.0)
+    , m_barRightPadding(0.0)
 {
     ui.setupUi(this);
 
@@ -36,7 +39,7 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     m_gridColor = Qt::white;
     m_gridVisible = true;
     m_tickLabelColor = Qt::white;
-    m_tickLabelFontSize = 20;
+    m_tickLabelFontSize = 10;
     m_tickLabelFont.setFamily("Microsoft YaHei");
     m_tickLabelFont.setPointSizeF(m_tickLabelFontSize);
     m_gridStyle = Qt::DotLine;
@@ -51,6 +54,11 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     m_titleFontSize = 16;
     m_titleFont.setFamily("Microsoft YaHei");
     m_titleFont.setPointSizeF(m_titleFontSize);
+
+    m_axisLabelColor = Qt::white;
+    m_axisLabelFontSize = 16.0;
+    m_axisLabelFont.setFamily("Microsoft YaHei");
+    m_axisLabelFont.setPointSizeF(m_axisLabelFontSize);
 
     m_leftPadding = 10;
     m_rightPadding = 10;
@@ -397,8 +405,26 @@ void PlotItemBase::setUnitsShowX(bool on)
     m_showUnits_x = on;
     if(m_customPlot)
     {
-        if(m_customPlot->xAxis)
+        if(m_customPlot->xAxis && m_customPlot->xAxis)
+        {
+            if(!m_dataPairs.isEmpty())
+            {
+                // PlotBar只有一个轴，只有X有单位，并且通过方向判断单位在哪个轴显示
+                if(plotType() == PlotType::Type_PlotBar)
+                {
+                    if(m_isHorizonBar)
+                    {
+                        m_customPlot->xAxis->setAxisFormat(m_dataPairs.at(0)->getUnit_x());
+                        m_customPlot->xAxis->setAxisFormatShow(on);
+                        m_customPlot->yAxis->setAxisFormatShow(false);
+                    }
+                    replot();
+                    return;
+                }
+                m_customPlot->xAxis->setAxisFormat(m_dataPairs.at(0)->getUnit_y());
+            }
             m_customPlot->xAxis->setAxisFormatShow(on);
+        }
     }
     replot();
 }
@@ -408,8 +434,26 @@ void PlotItemBase::setUnitsShowY(bool on)
     m_showUnits_y = on;
     if(m_customPlot)
     {
-        if(m_customPlot->yAxis)
+        if(m_customPlot->xAxis && m_customPlot->xAxis)
+        {
+            if(!m_dataPairs.isEmpty())
+            {
+                // PlotBar只有一个轴，只有X有单位，并且通过方向判断单位在哪个轴显示
+                if(plotType() == PlotType::Type_PlotBar)
+                {
+                    if(!m_isHorizonBar)
+                    {
+                        m_customPlot->yAxis->setAxisFormat(m_dataPairs.at(0)->getUnit_x());
+                        m_customPlot->yAxis->setAxisFormatShow(on);
+                        m_customPlot->xAxis->setAxisFormatShow(false);
+                    }
+                    replot();
+                    return;
+                }
+                m_customPlot->yAxis->setAxisFormat(m_dataPairs.at(0)->getUnit_y());
+            }
             m_customPlot->yAxis->setAxisFormatShow(on);
+        }
     }
     replot();
 }
@@ -978,6 +1022,46 @@ bool PlotItemBase::eventFilter(QObject* obj, QEvent* event)
         }
     }
     return QWidget::eventFilter(obj, event);
+}
+
+int PlotItemBase::getBarLeftPadding() const
+{
+    return m_barLeftPadding;
+}
+
+void PlotItemBase::setBarLeftPadding(int barLeftPadding)
+{
+    m_barLeftPadding = barLeftPadding;
+}
+
+int PlotItemBase::getBarRightPadding() const
+{
+    return m_barRightPadding;
+}
+
+void PlotItemBase::setBarRightPadding(int barRightPadding)
+{
+    m_barRightPadding = barRightPadding;
+}
+
+int PlotItemBase::getBarBetweenPadding() const
+{
+    return m_barBetweenPadding;
+}
+
+void PlotItemBase::setBarBetweenPadding(int barBetweenPadding)
+{
+    m_barBetweenPadding = barBetweenPadding;
+}
+
+bool PlotItemBase::getIsHorizonBar() const
+{
+    return m_isHorizonBar;
+}
+
+void PlotItemBase::setIsHorizonBar(bool isHorizonBar)
+{
+    m_isHorizonBar = isHorizonBar;
 }
 
 bool PlotItemBase::getYIsAdaptive() const

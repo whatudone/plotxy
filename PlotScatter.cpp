@@ -16,34 +16,10 @@ PlotScatter::PlotScatter(QWidget* parent)
     this->setName(name);
     m_instanceCount += 1;
 
-    m_outerFillColor = Qt::black;
-    m_gridFillColor = Qt::black;
     m_title = "Scatter Plot";
 
-    m_axisLabelColor = Qt::white;
-    m_axisLabelFont.setFamily("Microsoft YaHei");
-    m_axisLabelFont.setPointSizeF(10.0);
     m_xAxisLabel = "X Axis";
     m_yAxisLabel = "Y Axis";
-
-    m_coordBgn_x = std::numeric_limits<double>::min();
-    m_coordEnd_x = std::numeric_limits<double>::max();
-    m_coordBgn_y = std::numeric_limits<double>::min();
-    m_coordEnd_y = std::numeric_limits<double>::max();
-
-    m_horzGrids = 5;
-    m_vertGrids = 5;
-    m_axisWidth = 1;
-    m_gridWidth = 1;
-    m_axisColor = Qt::white;
-    m_gridColor = QColor(200, 200, 200);
-    m_gridVisible = true;
-    m_tickLabelColor = Qt::white;
-    m_tickLabelFontSize = 8;
-    m_tickLabelFont.setFamily("Microsoft YaHei");
-    m_tickLabelFont.setPointSizeF(m_tickLabelFontSize);
-    m_gridStyle = Qt::DotLine;
-    m_gridDensity = GridDensity::LESS;
 
     m_showUnits_x = false;
     m_showUnits_y = false;
@@ -109,7 +85,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
     int itemCnt = getDataPairs().size();
 
     for(int i = 0; i < itemCnt; ++i)
-    {
+	{
         QVector<double> x;
         QVector<double> y;
         auto data = getDataPairs().at(i);
@@ -142,7 +118,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
         m_dataHash.insert(uuid, qMakePair(x, y));
     }
     for(int i = 0; i < itemCnt; ++i)
-	{
+    {
         updateGraphByDataPair(m_dataPairs.at(i));
 	}
 
@@ -152,13 +128,13 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
 void PlotScatter::updateGraphByDataPair(DataPair* data)
 {
     if(!data)
-	{
+    {
         return;
     }
     DrawComponents info;
     auto uuid = data->getUuid();
     if(!m_mapScatter.contains(uuid))
-    {
+	{
         info.graph = m_customPlot->addGraph();
         //        info.tracer = new QCPItemTracer(m_customPlot);
         //        info.tracer->setGraph(info.graph);

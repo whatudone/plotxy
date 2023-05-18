@@ -18,18 +18,7 @@ PlotDial::PlotDial(QWidget* parent)
     this->setName(name);
     m_instanceCount += 1;
 
-	m_title = "Dial";
-	m_titleColor = Qt::white;
-	m_titleFont.setFamily("Microsoft YaHei");
-	m_titleFont.setPointSizeF(16.0);
-
-	m_axisFont.setFamily("Microsoft YaHei");
-	m_axisFont.setPointSizeF(12.0);
-
-    //	m_leftPadding = 20;
-    //	m_rightPadding = 20;
-    //	m_topPadding = 0;
-    //	m_bottomPadding = 20;
+    m_title = "Dial";
 
     m_widget = new QWidget;
     updateCenterPoint();
@@ -125,8 +114,8 @@ void PlotDial::customPainting(QPainter& painter)
     painter.drawLine(QPointF(0, m_circleRadius * 0.95), QPointF(0, m_circleRadius));
 
     // 绘制表盘文字
-    painter.setFont(m_axisFont);
-    QFontMetricsF fm1(m_axisFont);
+    painter.setFont(m_tickLabelFont);
+    QFontMetricsF fm1(m_tickLabelFont);
     double w = fm1.size(Qt::TextSingleLine, QString("-50°")).width();
     double h = fm1.size(Qt::TextSingleLine, QString("-50°")).height();
     painter.drawText(-m_circleRadius * 0.93, h / 3, QString("-50°"));

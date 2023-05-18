@@ -48,7 +48,8 @@ private:
 private:
     QColor m_defaultColor;
 
-    QMap<QString,QList<std::tuple<QString, double, QColor>>> m_allColorInfoList;//QString:colorname，double:lower limit,QColor:color
+    QMap<QString, QList<std::tuple<QString, double, QColor>>>
+        m_allColorInfoList; //QString:colorname，double:lower limit,QColor:color
 
     QVector<double> m_barTicks;
     QMap<QString, QMap<double, QColor>>

@@ -9,38 +9,14 @@ PlotRTI::PlotRTI(QWidget* parent)
     this->setName(name);
     m_instanceCount += 1;
 
-    m_outerFillColor = Qt::black;
-    m_gridFillColor = Qt::black;
     m_title = "RTI Display";
 
-    m_axisLabelFont.setFamily("Microsoft YaHei");
-    m_axisLabelFont.setPointSizeF(10.0);
     m_xAxisLabel = "Range(m)";
     m_yAxisLabel = "Time(s)";
-
-    m_coordBgn_x = 0;
-
-    m_coordEnd_x = 100;
-    m_coordBgn_y = 0;
-    m_coordEnd_y = 100;
 
     m_coordEnd_x = 5;
     m_coordBgn_y = 0;
     m_coordEnd_y = 5;
-
-    m_horzGrids = 5;
-    m_vertGrids = 5;
-    m_axisWidth = 1;
-    m_gridWidth = 1;
-    m_axisColor = Qt::white;
-    m_gridColor = QColor(200, 200, 200);
-    m_gridVisible = true;
-    m_tickLabelColor = Qt::white;
-    m_tickLabelFontSize = 8;
-    m_tickLabelFont.setFamily("Microsoft YaHei");
-    m_tickLabelFont.setPointSizeF(m_tickLabelFontSize);
-    m_gridStyle = Qt::DotLine;
-    m_gridDensity = GridDensity::LESS;
 
     m_showUnits_x = false;
     m_showUnits_y = false;

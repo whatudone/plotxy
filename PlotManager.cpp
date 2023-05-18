@@ -51,6 +51,7 @@ PlotManager::PlotManager(QWidget* parent)
             QOverload<int>::of(&QSpinBox::valueChanged),
             this,
             &PlotManager::spinboxRightChanged);
+    connect(ui.checkBox_32, &QCheckBox::stateChanged, this, &PlotManager::onBarHorizonChanged);
 }
 
 PlotManager::~PlotManager() {}
@@ -930,14 +931,19 @@ void PlotManager::onTWSclicked(QTreeWidgetItem* item, int column)
 void PlotManager::spinboxBetweenChanged()
 {
 	m_spinBoxBetween = ui.spinBox_between->value();
+    m_curSelectPlot->setBarBetweenPadding(m_spinBoxBetween);
 }
+
 void PlotManager::spinboxLeftChanged()
 {
-	m_spinBoxLeft = ui.spinBox_left->value();
+    m_spinBoxLeft = ui.spinBox_left->value();
+    m_curSelectPlot->setBarLeftPadding(m_spinBoxLeft);
 }
+
 void PlotManager::spinboxRightChanged()
 {
 	m_spinBoxRight = ui.spinBox_right->value();
+    m_curSelectPlot->setBarRightPadding(m_spinBoxRight);
 }
 
 void PlotManager::onRadioPixelClicked()
@@ -1017,7 +1023,15 @@ void PlotManager::onGetTabWidgetRect(QRect rect)
 
 void PlotManager::onBtnCloseClicked()
 {
-	close();
+    close();
+}
+
+void PlotManager::onBarHorizonChanged(int state)
+{
+    if(state == 2)
+        m_curSelectPlot->setIsHorizonBar(true);
+    else if(state == 0)
+        m_curSelectPlot->setIsHorizonBar(false);
 }
 
 void PlotManager::onPushButton_71Clicked()

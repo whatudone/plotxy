@@ -67,6 +67,7 @@ public slots:
     void onUpdatePlotManager(const QMap<QString, QList<PlotItemBase*>>& plotDataMap);
 	void onBtnCloseClicked();
 
+    void onBarHorizonChanged(int state);
 	void spinboxBetweenChanged();
 	void spinboxLeftChanged();
 	void spinboxRightChanged();

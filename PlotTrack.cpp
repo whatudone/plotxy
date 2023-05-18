@@ -19,30 +19,11 @@ PlotTrack::PlotTrack(QWidget* parent)
     m_defaultColorMap.insert(TrackStatus::Available, Qt::green);
     m_defaultColorMap.insert(TrackStatus::Invalid, Qt::gray);
     m_defaultColorMap.insert(TrackStatus::Unavailable, Qt::red);
-    m_gridColor = Qt::darkGray;
-    m_axisColor = Qt::white;
-    m_titleColor = Qt::white;
-    m_outerFillColor = Qt::black;
-    m_gridFillColor = Qt::black;
 
     m_title = "Track Status";
-    m_titleColor = Qt::white;
-    m_titleFont.setFamily("Microsoft YaHei");
-    m_titleFont.setPointSizeF(16.0);
 
-    m_horzGrids = 5;
-    m_vertGrids = 5;
-    m_axisWidth = 1;
-    m_gridWidth = 1;
-    m_axisColor = Qt::white;
-    m_gridColor = QColor(200, 200, 200);
-    m_gridVisible = true;
-    m_tickLabelColor = Qt::white;
-    m_tickLabelFontSize = 8.0;
-    m_tickLabelFont.setFamily("Microsoft YaHei");
-    m_tickLabelFont.setPointSizeF(m_tickLabelFontSize);
-    m_gridStyle = Qt::DotLine;
-    m_gridDensity = GridDensity::LESS;
+    m_xAxisLabel = "X Axis";
+    m_yAxisLabel = "Y Axis";
 
     initPlot();
     setupLayout();
@@ -78,6 +59,13 @@ void PlotTrack::initPlot()
 
     m_customPlot->xAxis->setPadding(30);
     m_customPlot->xAxis->setUpperEnding(QCPLineEnding::esSpikeArrow);
+
+    m_customPlot->xAxis->setLabel(m_xAxisLabel);
+    m_customPlot->yAxis->setLabel(m_yAxisLabel);
+    m_customPlot->xAxis->setLabelColor(m_axisLabelColor);
+    m_customPlot->yAxis->setLabelColor(m_axisLabelColor);
+    m_customPlot->xAxis->setLabelFont(m_axisLabelFont);
+    m_customPlot->yAxis->setLabelFont(m_axisLabelFont);
 }
 
 void PlotTrack::updateDataForDataPairsByTime(double secs)

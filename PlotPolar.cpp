@@ -10,14 +10,10 @@ PlotPolar::PlotPolar(QWidget* parent)
     this->setName(name);
     m_instanceCount += 1;
 
-    m_outerFillColor = Qt::black;
-    m_gridFillColor = Qt::black;
     m_title = "Polar";
 
     m_units_x = QString("X");
     m_units_y = QString("Y");
-    m_showUnits_x = true;
-    m_showUnits_y = true;
 
     m_angularRange_lower = 0.0;
     m_angularRange_upper = 360.0;
@@ -25,18 +21,8 @@ PlotPolar::PlotPolar(QWidget* parent)
     m_radialRange_upper = 2000.0;
 
     m_horzGrids = (m_angularRange_upper - m_angularRange_lower) / 30.0;
-    m_axisWidth = 1;
-    m_gridWidth = 1;
-    m_axisColor = Qt::white;
-    m_gridColor = QColor(200, 200, 200);
 
-    m_gridVisible = true;
-    m_tickLabelColor = Qt::white;
-    m_tickLabelFontSize = 8;
-    m_tickLabelFont.setFamily("Microsoft YaHei");
-    m_tickLabelFont.setPointSizeF(m_tickLabelFontSize);
     m_gridStyle = Qt::SolidLine;
-    m_gridDensity = GridDensity::LESS;
 
     initPlot();
     setupLayout();

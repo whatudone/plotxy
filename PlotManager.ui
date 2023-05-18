@@ -5305,6 +5305,9 @@ background-color: rgb(127, 127, 127);</string>
                 <property name="text">
                  <string>Horizontal Bars</string>
                 </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
                </widget>
               </item>
               <item>
@@ -5317,7 +5320,11 @@ background-color: rgb(127, 127, 127);</string>
                  </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="QSpinBox" name="spinBox_between"/>
+                 <widget class="QSpinBox" name="spinBox_between">
+                  <property name="maximum">
+                   <number>999</number>
+                  </property>
+                 </widget>
                 </item>
                 <item row="1" column="0">
                  <widget class="QLabel" name="label_117">
@@ -5327,7 +5334,11 @@ background-color: rgb(127, 127, 127);</string>
                  </widget>
                 </item>
                 <item row="1" column="1">
-                 <widget class="QSpinBox" name="spinBox_left"/>
+                 <widget class="QSpinBox" name="spinBox_left">
+                  <property name="maximum">
+                   <number>999</number>
+                  </property>
+                 </widget>
                 </item>
                 <item row="2" column="0">
                  <widget class="QLabel" name="label_118">
@@ -5337,7 +5348,11 @@ background-color: rgb(127, 127, 127);</string>
                  </widget>
                 </item>
                 <item row="2" column="1">
-                 <widget class="QSpinBox" name="spinBox_right"/>
+                 <widget class="QSpinBox" name="spinBox_right">
+                  <property name="maximum">
+                   <number>999</number>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </item>
