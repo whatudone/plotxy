@@ -1,5 +1,7 @@
 ﻿#include "PlotDoppler.h"
+#include "DataManager.h"
 #include "Utils.h"
+
 #include <QGridLayout>
 int PlotDoppler::m_instanceCount = 1;
 PlotDoppler::PlotDoppler(QWidget* parent)
@@ -42,9 +44,6 @@ PlotDoppler::PlotDoppler(QWidget* parent)
 
     initPlot();
     setupLayout();
-#ifdef TEST_SCOPE_DATA
-    loadCustomData();
-#endif
 }
 
 PlotDoppler::~PlotDoppler() {}
@@ -120,99 +119,9 @@ void PlotDoppler::initPlot()
     m_customPlot->setBackground(m_outerFillColor);
 }
 
-void PlotDoppler::loadCustomData()
-{
-    QString dataFileName = ":/AScope.csv";
-    QFile file(dataFileName);
-
-    QVector<double> rangeDatas;
-    QVector<double> timeDatas;
-
-    if(file.open(QFile::Text | QFile::ReadOnly))
-    {
-        do
-        {
-            QString data = file.readLine();
-            if(data.isEmpty())
-            {
-                break;
-            }
-
-            QStringList dataList = data.split(",", QString::SkipEmptyParts);
-            if(dataList.size() != 3)
-            {
-                break;
-            }
-
-            if(dataList.at(0) == "Time")
-            {
-                continue;
-            }
-            double time = static_cast<double>(
-                QDateTime::fromString(dataList.at(0), "yyyy/MM/dd hh:mm:ss").toSecsSinceEpoch());
-            double range = dataList.at(1).toDouble();
-            double voltage = dataList.at(2).toDouble();
-            if(!timeDatas.contains(time))
-            {
-                timeDatas.append(time);
-            }
-            if(!rangeDatas.contains(range))
-            {
-                rangeDatas.append(range);
-            }
-
-            m_dataMap.insert(qMakePair(range, time), voltage);
-            // 对于同一键值，会插入多个
-            m_horizonDataMap.insert(time, qMakePair(range, voltage));
-            m_verticalDataMap.insert(range, qMakePair(time, voltage));
-        } while(true);
-    }
-    file.close();
-    std::sort(rangeDatas.begin(), rangeDatas.end());
-    std::sort(timeDatas.begin(), timeDatas.end());
-
-    int nx = rangeDatas.size();
-    int ny = timeDatas.size();
-    // 中间主图加载数据
-    m_colorMap->data()->setSize(nx, ny);
-    m_colorMap->data()->setRange(QCPRange(rangeDatas.first(), rangeDatas.last()),
-                                 QCPRange(timeDatas.first(), timeDatas.last()));
-
-    for(int xIndex = 0; xIndex < nx; ++xIndex)
-    {
-        for(int yIndex = 0; yIndex < ny; ++yIndex)
-        {
-            auto coord = qMakePair(rangeDatas.at(xIndex), timeDatas.at(yIndex));
-            double voltage = m_dataMap.value(coord);
-            m_colorMap->data()->setCell(xIndex, yIndex, voltage);
-        }
-    }
-
-    m_colorMap->rescaleDataRange();
-
-    // 默认用第一个数据的切片显示水平、垂直图表
-    const auto& pair = m_dataMap.firstKey();
-    // 水平曲线图加载数据
-    QVector<double> hXDatas;
-    QVector<double> hValues;
-    getXToValueVecByY(pair.second, hXDatas, hValues);
-    m_customPlot->graph(1)->setData(hXDatas, hValues);
-    m_customPlot->graph(1)->rescaleAxes();
-
-    // 垂直曲线图加载数据
-    QVector<double> vYDatas;
-    QVector<double> vValues;
-    getYToValueVecByX(pair.first, vYDatas, vValues);
-    m_customPlot->graph(2)->setData(vYDatas, vValues);
-    m_customPlot->graph(2)->rescaleAxes();
-
-    m_customPlot->rescaleAxes();
-    m_customPlot->replot();
-}
-
 void PlotDoppler::getYToValueVecByX(double x, QVector<double>& yVec, QVector<double>& dataVec)
 {
-    const auto& pairList = m_verticalDataMap.values(x);
+    const auto& pairList = m_verticalDataHash.values(x);
     yVec.clear();
     dataVec.clear();
     for(const auto& pair : pairList)
@@ -224,7 +133,7 @@ void PlotDoppler::getYToValueVecByX(double x, QVector<double>& yVec, QVector<dou
 
 void PlotDoppler::getXToValueVecByY(double y, QVector<double>& xVec, QVector<double>& dataVec)
 {
-    const auto& pairList = m_horizonDataMap.values(y);
+    const auto& pairList = m_horizonDataHash.values(y);
     xVec.clear();
     dataVec.clear();
     for(const auto& pair : pairList)
@@ -232,4 +141,78 @@ void PlotDoppler::getXToValueVecByY(double y, QVector<double>& xVec, QVector<dou
         xVec.append(pair.first);
         dataVec.append(pair.second);
     }
+}
+
+void PlotDoppler::updateDataForDataPairsByTime(double secs)
+{
+    auto data = getDataPairs().last();
+    int32_t eid = data->getEntityIDX();
+    DataManagerInstance->getDopplerDataByTime(
+        eid, secs, m_rangeList, m_timeList, m_dataHash, m_horizonDataHash, m_verticalDataHash);
+    if(m_dataHash.isEmpty())
+    {
+        return;
+    }
+    // 默认用第一个数据的切片显示水平、垂直图表
+    const auto& pair = (*m_dataHash.keyBegin());
+    int32_t rangeIndex = pair.first;
+    int32_t timeIndex = pair.second;
+
+    m_slicePoint.setX(m_timeList.at(timeIndex));
+    m_slicePoint.setY(m_rangeList.at(rangeIndex));
+    updateGraphByDataPair(data);
+    m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
+}
+
+void PlotDoppler::updateGraphByDataPair(DataPair* data)
+{
+
+    if(data->isDraw())
+    {
+        m_colorMap->setVisible(true);
+        m_colorScale->setVisible(true);
+        if(m_rangeList.isEmpty() || m_timeList.isEmpty())
+        {
+            return;
+        }
+        int nx = m_rangeList.size();
+        int ny = m_timeList.size();
+        m_colorMap->data()->setSize(nx, ny);
+        m_colorMap->data()->setRange(QCPRange(m_rangeList.first(), m_rangeList.last()),
+                                     QCPRange(m_timeList.first(), m_timeList.last()));
+
+        for(int xIndex = 0; xIndex < nx; ++xIndex)
+        {
+            for(int yIndex = 0; yIndex < ny; ++yIndex)
+            {
+                auto coord = qMakePair(xIndex, yIndex);
+                double voltage = m_dataHash.value(coord);
+                m_colorMap->data()->setCell(xIndex, yIndex, voltage);
+            }
+        }
+
+        m_colorMap->rescaleDataRange();
+        updateAScopesBySlicePoint(m_slicePoint);
+        m_customPlot->rescaleAxes();
+    }
+    else
+    {
+        m_colorMap->setVisible(false);
+        m_colorScale->setVisible(false);
+    }
+}
+
+void PlotDoppler::updateAScopesBySlicePoint(const QPointF& point)
+{
+    // 水平曲线图加载数据
+    QVector<double> hXDatas;
+    QVector<double> hValues;
+    getXToValueVecByY(point.x(), hXDatas, hValues);
+    m_customPlot->graph(1)->setData(hXDatas, hValues);
+
+    // 垂直曲线图加载数据
+    QVector<double> vYDatas;
+    QVector<double> vValues;
+    getYToValueVecByX(point.y(), vYDatas, vValues);
+    m_customPlot->graph(2)->setData(vYDatas, vValues);
 }

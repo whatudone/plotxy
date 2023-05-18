@@ -27,22 +27,35 @@ public:
     static int m_instanceCount; //实体个数
 
 private:
-    void loadCustomData();
     // 通过指定X值获取对应的切片数据
     void getYToValueVecByX(double x, QVector<double>& yVec, QVector<double>& dataVec);
     // 通过指定Y值获取对应的切片数据
     void getXToValueVecByY(double y, QVector<double>& xVec, QVector<double>& dataVec);
+    // 响应时间变化刷新图表
+    void updateDataForDataPairsByTime(double secs) override;
+    // 响应DataPair的修改
+    void updateGraphByDataPair(DataPair* data);
+    // 响应游标移动时，切片点移动，更新水平和垂直的切片图表
+    void updateAScopesBySlicePoint(const QPointF& point);
 
 private:
     QCPColorMap* m_colorMap = nullptr;
     QCPColorScale* m_colorScale = nullptr;
-    // 水平和垂直的AScope图表
-    QCustomPlot* m_horizonAScope = nullptr;
-    QCustomPlot* m_verticalAScope = nullptr;
-    // 三维强度数据
-    QMap<QPair<double, double>, double> m_dataMap;
-    // 水平数据 y -> <x,value>
-    QMultiMap<double, QPair<double, double>> m_horizonDataMap;
-    // 垂直数据 x -> <y,value>
-    QMultiMap<double, QPair<double, double>> m_verticalDataMap;
+
+    // 三维数据
+    QHash<QPair<int32_t, int32_t>, double> m_dataHash;
+    // range
+    QVector<double> m_rangeList;
+    // time
+    QVector<double> m_timeList;
+    // 水平数据 time -> <range,value>
+    QMultiHash<double, QPair<double, double>> m_horizonDataHash;
+    // 垂直数据 range -> <time,value>
+    QMultiHash<double, QPair<double, double>> m_verticalDataHash;
+    // 切片点
+    QPointF m_slicePoint;
+    // 游标
+    QCPItemTracer* m_tracer = nullptr;
+    // 文本信息
+    QCPItemText* m_tracerText = nullptr;
 };

@@ -32,6 +32,7 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     m_axisWidth = 1;
     m_gridWidth = 1;
     m_axisColor = Qt::white;
+    m_axisLabelColor = Qt::white;
     m_gridColor = Qt::white;
     m_gridVisible = true;
     m_tickLabelColor = Qt::white;

@@ -98,12 +98,21 @@ public:
     QVector<double> getTimeDataSet();
     // 获取某个时间节点的切片数据list<range,voltage>，针对于ASCope
     QPair<QVector<double>, QVector<double>> getSliceDataByTime(int32_t entityID, double secs);
-    // 获取某个时间节点的三维数据，针对RTI图表
+    // 获取某个时间节点的三维数据，针对RTI和Doppler图表
     void getRTIDataByTime(int32_t entityID,
                           double secs,
                           QVector<double>& rangeList,
                           QVector<double>& timeList,
                           QHash<QPair<int32_t, int32_t>, double>& valueMap);
+    // 获取Doppler所需数据
+    void getDopplerDataByTime(int32_t entityID,
+                              double secs,
+                              QVector<double>& rangeList,
+                              QVector<double>& timeList,
+                              QHash<QPair<int32_t, int32_t>, double>& valueHash,
+                              QMultiHash<double, QPair<double, double>>& horizonDataHash,
+                              QMultiHash<double, QPair<double, double>>& verticalDataHash);
+
     // 根据id获取实例(数据里面称为Platform)名称
     QString getEntityNameByID(int32_t id);
     // 获取所有的实例名称
