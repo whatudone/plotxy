@@ -57,8 +57,11 @@ public:
 
 private:
     void initPlot();
-    void updateDataForDataPairsByTime(double secs);
-    void updateGraphByDataPair(DataPair* data);
+    void updateDataForDataPairsByTime(double secs) override;
+    void updateGraphByDataPair(DataPair* data) override;
+
+    // 文本标签坐标,特殊情况不调用DataPair里面的通用处理方式
+    QPair<double, double> processLabelTextPosition(const QString& text, DataPair* data);
 
 private:
     QHash<QString, QPair<QVector<double>, QVector<double>>> m_dataHash;

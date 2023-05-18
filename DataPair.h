@@ -287,10 +287,11 @@ public:
      */
     // 文本标签
     QString processLabelText(double xData, double yData);
-    // 文本标签坐标
-    QPair<double, double> processLabelTextPosition(const QString& text);
+
     // 图标icon
     QPixmap processIcon();
+    // 文本对齐
+    Qt::Alignment processLabelTextPosition();
 
 private:
     int m_lineWidth; //线宽
@@ -318,6 +319,7 @@ private:
     int m_labelFontSize; //文本字体大小
     int m_labelPrec_x; //x轴显示精度
     int m_labelPrec_y; //y轴显示精度
+
     TEXT_POSITION m_textPosition; //文本位置
     bool m_labelText_show; //文本是否显示
     bool m_prefix_show; //前缀是否显示

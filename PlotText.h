@@ -30,21 +30,16 @@ public:
 
 private:
     void updateDataForDataPairsByTime(double secs) override;
+    void updateGraphByDataPair(DataPair* data) override;
     void customPainting(QPainter& painter) override;
     // 绘制网格 坐标轴Label 数据
-    void drawCellData(QPainter& painter, const QRect& drawRect);
+    void drawCellData(QPainter& painter);
 
 private:
-	bool m_bHorizontal;
-    bool m_started;
-
     QStringList m_entityList;
     QStringList m_attrList;
     // 二维数组的数据
-    QVector<QVector<double>> m_dataVec;
-
-    // value字体颜色
-    QColor m_cellValueColor;
+    QHash<QPair<QString, QString>, double> m_dataHash;
 };
 
 #endif // _PLOT_TEXT_H_

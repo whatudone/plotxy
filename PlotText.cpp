@@ -16,7 +16,6 @@ int PlotText::m_instanceCount = 1;
 PlotText::PlotText(QWidget* parent)
     : PlotItemBase(parent)
 {
-	m_bHorizontal = true;
     m_title = "Text";
 
 	QString name = QString("Text%1").arg(m_instanceCount);
@@ -31,11 +30,11 @@ PlotText::~PlotText() {}
 
 void PlotText::updateDataForDataPairsByTime(double secs)
 {
-    int isize = getDataPairs().size();
-    m_dataVec.clear();
     m_entityList.clear();
-    QVector<int32_t> entityIDList;
     m_attrList.clear();
+    m_dataHash.clear();
+    QVector<int32_t> entityIDList;
+    int isize = getDataPairs().size();
     for(int i = 0; i < isize; i++)
     {
         auto dataPair = getDataPairs().at(i);
@@ -52,20 +51,17 @@ void PlotText::updateDataForDataPairsByTime(double secs)
         {
             m_attrList.append(xAttr);
         }
+        double value =
+            DataManager::getInstance()->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs);
+        m_dataHash.insert(qMakePair(xEntityName, xAttr), value);
     }
-    // 两层循环获取所有entity-attr对应的属性值
-    for(int i = 0; i < entityIDList.size(); ++i)
-    {
-        QVector<double> attrValueList;
-        for(int j = 0; j < m_attrList.size(); ++j)
-        {
-            double value = DataManager::getInstance()->getEntityAttrValueByMaxTime(
-                entityIDList.at(i), m_attrList.at(j), secs);
-            value = (value == std::numeric_limits<double>::max()) ? 0.0 : value;
-            attrValueList.append(value);
-        }
-        m_dataVec.append(attrValueList);
-    }
+    update();
+}
+
+void PlotText::updateGraphByDataPair(DataPair* data)
+{
+
+    // 暂时无法单独更新每个DataPair数据，只能全局刷新
     update();
 }
 
@@ -77,12 +73,13 @@ void PlotText::customPainting(QPainter& painter)
     }
 
     // 图表绘制区域
-    QRect plotRect(0, 0, m_widget->width(), m_widget->height());
-    drawCellData(painter, plotRect);
+
+    drawCellData(painter);
 }
 
-void PlotText::drawCellData(QPainter& painter, const QRect& drawRect)
+void PlotText::drawCellData(QPainter& painter)
 {
+    QRect drawRect(0, 0, m_widget->width(), m_widget->height());
     int entitySize = m_entityList.size();
     int attrSize = m_attrList.size();
     int horiGridWidth = drawRect.width() / (entitySize + 1);
@@ -116,6 +113,7 @@ void PlotText::drawCellData(QPainter& painter, const QRect& drawRect)
         painter.drawLine(vx1, vy1, vx1, vy2);
         painter.save();
         // 顺便画Entity Label，减少重复循环
+
         pen.setColor(getTickLabelColor());
         QFont font = getTickLabelFont();
         font.setPointSize(getTickLabelFontSize());
@@ -136,31 +134,44 @@ void PlotText::drawCellData(QPainter& painter, const QRect& drawRect)
         painter.save();
         // 顺便画Attr Label，减少重复循环
         pen.setColor(getTickLabelColor());
+        painter.setPen(pen);
         QFont font = getTickLabelFont();
         font.setPointSize(getTickLabelFontSize());
         painter.setFont(font);
-        painter.setPen(pen);
 
         cellRect.setRect(hx1, hy1, horiGridWidth, verGridWidth);
         painter.drawText(cellRect, Qt::AlignCenter | Qt::TextWordWrap, m_attrList.at(j));
         painter.restore();
     }
     // 绘制X和Y轴的value
-    m_cellValueColor = QColor(Qt::white);
-    pen.setColor(m_cellValueColor);
-    pen.setWidth(3);
-    pen.setStyle(Qt::SolidLine);
-    painter.setPen(pen);
-    for(int i = 0; i < entitySize; ++i)
+
+    auto dataPairList = getDataPairs();
+    for(DataPair* data : dataPairList)
     {
-        int x = drawRect.x() + horiGridWidth * (i + 1);
-        for(int j = 0; j < attrSize; ++j)
+        if(data->isDraw())
         {
-            int y = drawRect.y() + verGridWidth * (j + 1);
+
+            pen.setColor(data->getLabelColor());
+            pen.setWidth(3);
+            pen.setStyle(Qt::SolidLine);
+            painter.setPen(pen);
+            QFont font = data->getLabelFont();
+            font.setPointSize(data->getLabelFontSize());
+            painter.setFont(font);
+
+            auto xEntityName = data->getEntity_x();
+            auto xAttr = data->getAttr_x();
+            int32_t entityIndex = m_entityList.indexOf(xEntityName);
+            int32_t attrIndex = m_attrList.indexOf(xAttr);
+            int x = drawRect.x() + horiGridWidth * (entityIndex + 1);
+            int y = drawRect.y() + verGridWidth * (attrIndex + 1);
             cellRect.setRect(x, y, horiGridWidth, verGridWidth);
-            double value = m_dataVec.at(i).at(j);
-            painter.drawText(
-                cellRect, Qt::AlignCenter | Qt::TextWrapAnywhere, QString::number(value, 'f', 6));
+
+            double value = m_dataHash.value(qMakePair(xEntityName, xAttr));
+            auto alignFlag = data->processLabelTextPosition();
+            painter.drawText(cellRect,
+                             alignFlag | Qt::TextWrapAnywhere,
+                             QString::number(value, 'f', data->getLabelPrecision_x()));
         }
     }
 }

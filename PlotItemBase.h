@@ -347,15 +347,16 @@ protected:
     int m_axisLabelFontSize; //坐标轴标题字体尺寸
     double m_seconds; // 时间，用于筛选数据
 
-    double m_topPadding; //绘图间隔-top
-    double m_bottomPadding; //绘图间隔-bottom
-    double m_leftPadding; //绘图间隔-left
-    double m_rightPadding; //绘图间隔-right
-
     bool m_isHorizonBar; // Bar是否是水平
     int m_barBetweenPadding; // Bar之间的间隔
     int m_barLeftPadding; // Bar和左边的间隔
     int m_barRightPadding; // Bar和右边的间隔
+
+    int32_t m_topPadding; //绘图间隔-top
+    int32_t m_bottomPadding; //绘图间隔-bottom
+    int32_t m_leftPadding; //绘图间隔-left
+    int32_t m_rightPadding; //绘图间隔-right
+
 public slots:
     void slot_updateRect(const QRect&);
     void slot_setVisible(bool);

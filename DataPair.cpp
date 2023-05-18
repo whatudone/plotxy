@@ -281,48 +281,6 @@ QString DataPair::processLabelText(double xData, double yData)
     return labelText;
 }
 
-QPair<double, double> DataPair::processLabelTextPosition(const QString& text)
-{
-    QFontMetricsF fm(getLabelFont());
-    double wd = (fm.size(Qt::TextSingleLine, text).width()) / 3.0;
-    double ht = fm.size(Qt::TextSingleLine, text).height() / 1.0;
-    QPair<double, double> pair;
-    switch(getLabelPosition())
-    {
-    case DataPair::left_top: //left-top
-        pair = qMakePair(-wd, -ht);
-        break;
-    case DataPair::top: //top
-        pair = qMakePair(0, -ht);
-        break;
-    case DataPair::right_top: //right-top
-        pair = qMakePair(wd, -ht);
-        break;
-    case DataPair::left: //left
-        pair = qMakePair(-wd, 0);
-        break;
-    case DataPair::center: //center
-        pair = qMakePair(0, 0);
-        break;
-    case DataPair::right: //right
-        pair = qMakePair(wd, 0);
-        break;
-    case DataPair::left_bottom: //left-bottom
-        pair = qMakePair(-wd, ht);
-        break;
-    case DataPair::bottom: //bottom
-        pair = qMakePair(0, ht);
-        break;
-    case DataPair::right_bottom: //right-bottom
-        pair = qMakePair(wd, ht);
-        break;
-    default: //right
-        pair = qMakePair(wd, 0);
-        break;
-    }
-    return pair;
-}
-
 QPixmap DataPair::processIcon()
 {
     if(!QFileInfo(m_iconName).exists())
@@ -665,4 +623,43 @@ void DataPair::setUnitShow(bool show)
         m_unit_show = show;
         emit dataUpdate();
     }
+}
+
+Qt::Alignment DataPair::processLabelTextPosition()
+{
+    Qt::Alignment flag;
+    switch(getLabelPosition())
+    {
+    case DataPair::left_top: //left-top
+        flag = Qt::AlignTop | Qt::AlignLeft;
+        break;
+    case DataPair::top: //top
+        flag = Qt::AlignTop;
+        break;
+    case DataPair::right_top: //right-top
+        flag = Qt::AlignTop | Qt::AlignRight;
+        break;
+    case DataPair::left: //left
+        flag = Qt::AlignLeft;
+        break;
+    case DataPair::center: //center
+        flag = Qt::AlignCenter;
+        break;
+    case DataPair::right: //right
+        flag = Qt::AlignRight;
+        break;
+    case DataPair::left_bottom: //left-bottom
+        flag = Qt::AlignBottom | Qt::AlignLeft;
+        break;
+    case DataPair::bottom: //bottom
+        flag = Qt::AlignBottom;
+        break;
+    case DataPair::right_bottom: //right-bottom
+        flag = Qt::AlignBottom | Qt::AlignRight;
+        break;
+    default: //right
+        flag = Qt::AlignCenter;
+        break;
+    }
+    return flag;
 }

@@ -203,7 +203,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
             //			m_mapScatter[dataPair].tracer->setGraphKey(x.last());
             QString text = data->processLabelText(x.last(), y.last());
             tracerText->setText(text);
-            auto pair = data->processLabelTextPosition(text);
+            auto pair = processLabelTextPosition(text, data);
             tracerText->position->setCoords(pair.first, pair.second);
             tracerText->setPositionAlignment(Qt::AlignCenter);
             tracerText->setTextAlignment(Qt::AlignLeft);
@@ -379,4 +379,46 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
     m_customPlot->yAxis->setRange(m_coordBgn_y, m_coordEnd_y);
     return PlotItemBase::addPlotDataPair(
         xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName, extraParams);
+}
+
+QPair<double, double> PlotScatter::processLabelTextPosition(const QString& text, DataPair* data)
+{
+    QFontMetricsF fm(data->getLabelFont());
+    double wd = (fm.size(Qt::TextSingleLine, text).width()) / 3.0;
+    double ht = fm.size(Qt::TextSingleLine, text).height() / 1.0;
+    QPair<double, double> pair;
+    switch(data->getLabelPosition())
+    {
+    case DataPair::left_top: //left-top
+        pair = qMakePair(-wd, -ht);
+        break;
+    case DataPair::top: //top
+        pair = qMakePair(0, -ht);
+        break;
+    case DataPair::right_top: //right-top
+        pair = qMakePair(wd, -ht);
+        break;
+    case DataPair::left: //left
+        pair = qMakePair(-wd, 0);
+        break;
+    case DataPair::center: //center
+        pair = qMakePair(0, 0);
+        break;
+    case DataPair::right: //right
+        pair = qMakePair(wd, 0);
+        break;
+    case DataPair::left_bottom: //left-bottom
+        pair = qMakePair(-wd, ht);
+        break;
+    case DataPair::bottom: //bottom
+        pair = qMakePair(0, ht);
+        break;
+    case DataPair::right_bottom: //right-bottom
+        pair = qMakePair(wd, ht);
+        break;
+    default: //right
+        pair = qMakePair(wd, 0);
+        break;
+    }
+    return pair;
 }
