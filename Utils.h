@@ -269,4 +269,7 @@ namespace math
 // 判断两个double是否相等，按照默认精度
 bool doubleEqual(double x, double y);
 } // namespace math
+
+QString getDatasPath();
+QString getIconsPath();
 #endif /* SIMCORE_TIME_UTILS_H */

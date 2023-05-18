@@ -8,6 +8,7 @@
 
 #include "TimeClass.h"
 #include "Utils.h"
+#include <QApplication>
 #include <QDebug>
 #include <winsock2.h>
 
@@ -572,4 +573,14 @@ double simCore::getNextTimeStep(bool faster, double lastStep)
 bool math::doubleEqual(double x, double y)
 {
     return fabs(x - y) < 1e-8;
+}
+
+QString getDatasPath()
+{
+    return qApp->applicationDirPath() + "/Datas";
+}
+
+QString getIconsPath()
+{
+    return qApp->applicationDirPath() + "/Icons";
 }

@@ -26,6 +26,7 @@
 #include "PlotScatter.h"
 #include "PlotText.h"
 #include "PlotTrack.h"
+#include "Utils.h"
 #include "rename_tab_dialog.h"
 #include "tabdrawwidget.h"
 
@@ -167,8 +168,8 @@ void PlotXYDemo::onClassification() {}
 
 void PlotXYDemo::onOpenFile()
 {
-    QString path =
-        QFileDialog::getOpenFileName(this, "Open File", ".", tr("ASI(*.asi) ;; PXY(*.pxy)"));
+    QString path = QFileDialog::getOpenFileName(
+        this, "打开文件", getDatasPath(), tr("ASI(*.asi) ;; PXY(*.pxy)"));
     if(path.isEmpty())
     {
         return;

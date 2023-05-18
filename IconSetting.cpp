@@ -1,4 +1,6 @@
 ﻿#include "IconSetting.h"
+#include "Utils.h"
+
 #include <QFileDialog>
 
 IconSetting::IconSetting(QWidget* parent)
@@ -29,7 +31,7 @@ void IconSetting::onCheckBoxStateChanged(int state)
 void IconSetting::onPushButtonClicked()
 {
     QString fileName = QFileDialog::getOpenFileName(
-        this, "Select icon", QDir::currentPath(), "Images (*.png *.icon *.jpg *.bmp)");
+        this, "选择图标", getIconsPath(), "Images (*.png *.icon *.jpg *.bmp)");
     if(!fileName.isEmpty())
 	{
 		ui.lineEdit->setText(fileName);

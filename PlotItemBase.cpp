@@ -70,7 +70,7 @@ PlotItemBase::PlotItemBase(QWidget* parent)
 
     setAutoFillBackground(true);
     setMinimumSize(200, 150);
-    resize(1600, 800);
+    resize(1000, 600);
 
     //设置下背景颜色区别看
     QPalette palette = this->palette();
