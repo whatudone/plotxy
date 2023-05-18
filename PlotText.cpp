@@ -19,13 +19,7 @@ PlotText::PlotText(QWidget* parent)
 	m_bHorizontal = true;
     m_title = "Text";
 
-	m_interPadding = 20;
-
-	m_gridWidth = 1;
-	m_gridColor = Qt::white;
-
-	m_axisColor = Qt::white;
-	m_axisWidth = 1;
+    m_interPadding = 20;
 
 	QString name = QString("Text%1").arg(m_instanceCount);
 	this->setName(name);

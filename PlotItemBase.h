@@ -268,6 +268,18 @@ public:
 
     void setupLayout();
 
+    bool getIsHorizonBar() const;
+    void setIsHorizonBar(bool isHorizonBar);
+
+    int getBarBetweenPadding() const;
+    void setBarBetweenPadding(int barBetweenPadding);
+
+    int getBarRightPadding() const;
+    void setBarRightPadding(int barRightPadding);
+
+    int getBarLeftPadding() const;
+    void setBarLeftPadding(int barLeftPadding);
+
 private:
     void updateResizeFocusPos();
     QRect getRectByDirection(ResizeDirection direction);
@@ -339,6 +351,11 @@ protected:
     double m_bottomPadding; //绘图间隔-bottom
     double m_leftPadding; //绘图间隔-left
     double m_rightPadding; //绘图间隔-right
+
+    bool m_isHorizonBar; // Bar是否是水平
+    int m_barBetweenPadding; // Bar之间的间隔
+    int m_barLeftPadding; // Bar和左边的间隔
+    int m_barRightPadding; // Bar和右边的间隔
 public slots:
     void slot_updateRect(const QRect&);
     void slot_setVisible(bool);

@@ -8,12 +8,8 @@ int PlotAttitude::m_instanceCount = 1;
 PlotAttitude::PlotAttitude(QWidget* parent)
 	: PlotItemBase(parent)
 {
-
-	m_axisColor = Qt::white;
-	m_gridColor = QColor(200, 200, 200);
 	m_border_ColorStart = Qt::white;
 	m_border_ColorEnd = Qt::white;
-	m_gridFillColor = Qt::black;
 	m_rollColor = Qt::white;
 	m_pitchColor = Qt::red;
 
@@ -27,25 +23,17 @@ PlotAttitude::PlotAttitude(QWidget* parent)
 	m_coordBgn_y = 0.0;
 	m_coordEnd_y = 180;
 	m_coordBgn_x = 0;
-	m_coordEnd_x = 360;
-	m_horzGrids = 4;
-	m_vertGrids = 5;
+    m_coordEnd_x = 360;
 
 	m_units_x = QString("°");
-	m_units_y = QString("°");
-	m_showUnits_x = true;
-	m_showUnits_y = true;
+    m_units_y = QString("°");
 	m_decision_roll = 0;
 	m_decision_pitch = 0;
 	m_title = "Attitude";
 
 	m_tickLabelFontSize = 10;
 	m_tickLabelFont.setFamily("Microsoft YaHei");
-	m_tickLabelFont.setPointSizeF(m_tickLabelFontSize);
-
-	m_axisLabelFontSize = 10;
-	m_axisLabelFont.setFamily("Microsoft YaHei");
-	m_axisLabelFont.setPointSizeF(m_axisLabelFontSize);
+    m_tickLabelFont.setPointSizeF(m_tickLabelFontSize);
 
 	m_xAxisLabel = "Roll";
 	m_yAxisLabel = "Pitch";

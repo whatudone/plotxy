@@ -29,8 +29,6 @@ private:
 private:
     bool m_bThinStyle;
 
-    QFont m_axisFont; //坐标标题字体
-
     QColor m_dialColor;
     QColor m_pointColor;
 

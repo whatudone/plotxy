@@ -14,28 +14,10 @@ PlotBar::PlotBar(QWidget* parent)
     m_instanceCount += 1;
 
     m_defaultColor = Qt::green;
-    m_gridColor = Qt::darkGray;
-	m_axisColor = Qt::white;
-	m_titleColor = Qt::white;
-    m_outerFillColor = Qt::black;
-    m_gridFillColor = Qt::black;
-	m_title = "Bar";
-	m_titleFont.setFamily("Microsoft YaHei");
-    m_titleFont.setPointSizeF(16.0);
+    m_title = "Bar";
 
-    m_horzGrids = 5;
-    m_vertGrids = 5;
-    m_axisWidth = 1;
-    m_gridWidth = 1;
-    m_axisColor = Qt::white;
-    m_gridColor = QColor(200, 200, 200);
-    m_gridVisible = true;
-    m_tickLabelColor = Qt::white;
-    m_tickLabelFontSize = 8.0;
-    m_tickLabelFont.setFamily("Microsoft YaHei");
-    m_tickLabelFont.setPointSizeF(m_tickLabelFontSize);
-    m_gridStyle = Qt::DotLine;
-    m_gridDensity = GridDensity::LESS;
+    m_xAxisLabel = "X Axis";
+    m_yAxisLabel = "Y Axis";
 
     initPlot();
     setupLayout();
@@ -139,6 +121,24 @@ void PlotBar::updateDataForDataPairsByTime(double secs)
         }
     }
 
+    for(auto barList : m_allBar)
+    {
+        for(int i = 0; i < barList.size(); i++)
+        {
+            if(getIsHorizonBar())
+            {
+                barList.at(i)->setKeyAxis(m_customPlot->yAxis);
+                barList.at(i)->setValueAxis(m_customPlot->xAxis);
+            }
+            else
+            {
+                barList.at(i)->setKeyAxis(m_customPlot->xAxis);
+                barList.at(i)->setValueAxis(m_customPlot->yAxis);
+            }
+        }
+    }
+    updateLabelAndTick();
+
     for(int i = 0; i < itemCnt; ++i)
     {
         updateGraphByDataPair(m_dataPairs.at(i));
@@ -150,8 +150,8 @@ void PlotBar::updateDataForDataPairsByTime(double secs)
 void PlotBar::initPlot()
 {
     m_customPlot = new QCustomPlot();
-    m_customPlot->axisRect()->setupFullAxesBox(true);
 
+    m_customPlot->axisRect()->setMinimumMargins(QMargins(10, 10, 10, 10));
     m_customPlot->xAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
     m_customPlot->yAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
     m_customPlot->xAxis->ticker()->setTickCount(int(m_vertGrids));
@@ -175,6 +175,13 @@ void PlotBar::initPlot()
 
     m_customPlot->xAxis->setPadding(30);
     m_customPlot->xAxis->setUpperEnding(QCPLineEnding::esSpikeArrow);
+
+    m_customPlot->xAxis->setLabel(m_xAxisLabel);
+    m_customPlot->yAxis->setLabel(m_yAxisLabel);
+    m_customPlot->xAxis->setLabelColor(m_axisLabelColor);
+    m_customPlot->yAxis->setLabelColor(m_axisLabelColor);
+    m_customPlot->xAxis->setLabelFont(m_axisLabelFont);
+    m_customPlot->yAxis->setLabelFont(m_axisLabelFont);
 }
 
 void PlotBar::updateGraphByDataPair(DataPair* data)
@@ -268,9 +275,43 @@ void PlotBar::updateLabelAndTick()
 
     QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
     textTicker->addTicks(m_barTicks, labels);
-    m_customPlot->yAxis->setTicker(textTicker); // 设置为文字轴
-    m_customPlot->yAxis->setRange(0, index);
-    m_customPlot->xAxis->setRange(m_min, m_max);
+
+    int barLeftPadding = getBarLeftPadding();
+    int barRightPadding = getBarRightPadding();
+    int barPadding = barLeftPadding + barRightPadding;
+    double offset = 0.0;
+    if(getIsHorizonBar())
+    {
+        m_customPlot->yAxis->setTicker(textTicker); // 是水平轴，则x轴为数值，y轴为文字
+        if(barPadding != 0)
+        {
+            int axisHeight = m_customPlot->axisRect()->height();
+            offset = ((index - 1.3) * barPadding) / (axisHeight - barPadding);
+            double leftOffset = double(barLeftPadding) / barPadding * offset;
+            double rightOffset = double(barRightPadding) / barPadding * offset;
+            m_customPlot->yAxis->setRange(0.625 - leftOffset, index - 0.625 + rightOffset);
+        }
+        else
+            m_customPlot->yAxis->setRange(0.625, index - 0.625);
+        m_customPlot->xAxis->setRange(m_min, m_max);
+        m_customPlot->xAxis->setTicks(true);
+    }
+    else
+    {
+        m_customPlot->xAxis->setTicker(textTicker); // 是竖直轴，则y轴为数值，x轴为文字
+        if(barPadding != 0)
+        {
+            int axisWidth = m_customPlot->axisRect()->width();
+            offset = ((index - 1.3) * barPadding) / (axisWidth - barPadding);
+            double leftOffset = double(barLeftPadding) / barPadding * offset;
+            double rightOffset = double(barRightPadding) / barPadding * offset;
+            m_customPlot->xAxis->setRange(0.625 - leftOffset, index - 0.625 + rightOffset);
+        }
+        else
+            m_customPlot->xAxis->setRange(0.625, index - 0.625);
+        m_customPlot->yAxis->setRange(m_min, m_max);
+        m_customPlot->yAxis->setTicks(true);
+    }
     m_customPlot->replot();
 }
 
