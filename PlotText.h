@@ -38,8 +38,6 @@ private:
 	bool m_bHorizontal;
     bool m_started;
 
-	int m_interPadding;
-
     QStringList m_entityList;
     QStringList m_attrList;
     // 二维数组的数据
