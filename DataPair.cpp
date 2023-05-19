@@ -16,24 +16,25 @@ DataPair::DataPair(QObject* parent)
 	m_matchColor = false;
 
 	m_iconDraw = false;
-	m_iconName = nullptr;
-	m_iconRotation = ICON_ROTATION::no_rotation;
+
+    m_iconRotation = no_rotation;
 	m_iconFlipHorz = false;
 	m_iconFlipVert = false;
 	m_iconColor = Qt::white;
 	m_iconSize = QSize(64, 64);
 
-	m_format = TEXT_FROMAT::format_default;
+    m_format = format_default;
 
 	m_labelColor = Qt::green;
 	m_labelBackground = Qt::black;
 	m_backTransparent = true;
 	m_labelFontSize = 12;
 	m_labelFont.setFamily("Microsoft YaHei");
+
     m_labelFont.setPixelSize(m_labelFontSize);
-    m_textPosition = TEXT_POSITION::right;
-	m_labelPrec_x = 2;
-	m_labelPrec_y = 2;
+    m_textPosition = center;
+    m_labelPrec_x = 6;
+    m_labelPrec_y = 6;
 	m_labelText_show = true;
 	m_prefix_show = true;
 	m_object_show = true;
@@ -662,4 +663,14 @@ Qt::Alignment DataPair::processLabelTextPosition()
         break;
     }
     return flag;
+}
+
+QColor DataPair::getLabelSecColor() const
+{
+    return m_labelSecColor;
+}
+
+void DataPair::setLabelSecColor(const QColor& labelSecColor)
+{
+    m_labelSecColor = labelSecColor;
 }

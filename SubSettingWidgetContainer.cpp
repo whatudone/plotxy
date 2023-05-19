@@ -280,7 +280,10 @@ LabelSettings::LabelSettings(QWidget* parent)
         ui.checkBox_5, &QCheckBox::stateChanged, this, &LabelSettings::onCheckBox_5StateChanged);
 	connect(ui.pushButton_5, &QPushButton::clicked, this, &LabelSettings::onPushButton_5Clicked);
 	connect(ui.pushButton_6, &QPushButton::clicked, this, &LabelSettings::onPushButton_6Clicked);
-	connect(ui.checkBox, &QCheckBox::stateChanged, this, &LabelSettings::onCheckBoxStateChanged);
+    connect(ui.pushButtonSecColor,
+            &QPushButton::clicked,
+            this,
+            &LabelSettings::onPushButtonSecColorClicked);
     connect(ui.fontComboBox,
             &QFontComboBox::currentFontChanged,
             this,
@@ -307,6 +310,62 @@ LabelSettings::LabelSettings(QWidget* parent)
 
 LabelSettings::~LabelSettings() {}
 
+void LabelSettings::updateVisibleOnPlotTypeChanged(PlotType curType)
+{
+    QList<QList<QWidget*>> list = {{ui.label_13, ui.checkBox_5},
+                                   {ui.label_7, ui.pushButton_5},
+                                   {ui.label_8, ui.pushButton_6},
+                                   {ui.label_9, ui.pushButtonSecColor},
+                                   {ui.label_2, ui.fontComboBox, ui.comboBox_4},
+                                   {ui.label_10, ui.comboBox},
+                                   {ui.label_11, ui.spinBox_2},
+                                   {ui.label_15, ui.comboBox_3},
+                                   {ui.label_14, ui.spinBox_3},
+                                   {ui.label_12, ui.comboBox_2}};
+    /*
+         * visibleList存储九行界面的visible属性，如果只有一个数据
+         * 表示所有行都是该属性
+         * visibleList = QList<bool>() << true << true << true << true << true << true << true << true
+                                    << true << true;
+        */
+    QList<bool> visibleList;
+    if(curType == PlotType::Type_PlotBar)
+    {
+        visibleList = QList<bool>() << true << true << true << true << true << true << true << false
+                                    << false << true;
+    }
+    else if(curType == PlotType::Type_PlotLight)
+    {
+        visibleList = QList<bool>() << true << true << true << false << true << false << false
+                                    << false << false << true;
+    }
+    else if(curType == PlotType::Type_PlotPolar || curType == PlotType::Type_PlotScatter)
+    {
+        visibleList = QList<bool>() << true << true << true << false << true << true << true << true
+                                    << true << true;
+    }
+    else if(curType == PlotType::Type_PlotText)
+    {
+        visibleList = QList<bool>() << true << true << true << false << true << true << true
+                                    << false << false << true;
+    }
+    else if(curType == PlotType::Type_PlotTrack)
+    {
+        visibleList = QList<bool>() << true << true << true << true << true << false << false
+                                    << false << false << false;
+    }
+
+    for(int var = 0; var < list.size(); ++var)
+    {
+        bool visible = visibleList.at(var);
+        auto widgetList = list.at(var);
+        for(auto widget : widgetList)
+        {
+            widget->setVisible(visible);
+        }
+    }
+}
+
 void LabelSettings::onCheckBox_5StateChanged(int state)
 {
 	emit sigCheckBox_5StateChanged((bool)state);
@@ -322,9 +381,9 @@ void LabelSettings::onPushButton_6Clicked()
 	emit sigPushButton_6Clicked(ui.pushButton_6->color());
 }
 
-void LabelSettings::onCheckBoxStateChanged(int state)
+void LabelSettings::onPushButtonSecColorClicked()
 {
-	emit sigCheckBoxStateChanged((bool)state);
+    emit btnSecColorClicked(ui.pushButtonSecColor->color());
 }
 
 void LabelSettings::onFontComboBoxCurrentFontChanged(const QFont& font)
@@ -377,9 +436,9 @@ void LabelSettings::setPushButton_6Color(QColor color)
 	ui.pushButton_6->setColor(color);
 }
 
-void LabelSettings::setCheckBoxStateChanged(bool state)
+void LabelSettings::setSecColor(const QColor& color)
 {
-	ui.checkBox->setChecked(state);
+    ui.pushButtonSecColor->setColor(color);
 }
 
 void LabelSettings::setFontComboBoxFont(QFont font)

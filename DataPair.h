@@ -293,6 +293,9 @@ public:
     // 文本对齐
     Qt::Alignment processLabelTextPosition();
 
+    QColor getLabelSecColor() const;
+    void setLabelSecColor(const QColor& labelSecColor);
+
 private:
     int m_lineWidth; //线宽
     bool m_isDraw; //是否绘制
@@ -314,6 +317,7 @@ private:
     QString m_customText; //自定义文本
     QColor m_labelColor; //文本颜色
     QColor m_labelBackground; //文本背景色
+    QColor m_labelSecColor; //次要背景色
     bool m_backTransparent; //透明背景
     QFont m_labelFont; //文本字体
     int m_labelFontSize; //文本字体大小

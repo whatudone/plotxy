@@ -94,6 +94,7 @@ class LabelSettings : public QWidget
 public:
 	explicit LabelSettings(QWidget* parent = nullptr);
 	~LabelSettings();
+    void updateVisibleOnPlotTypeChanged(PlotType curType);
 
 private:
 	Ui::LabelSettings ui;
@@ -102,7 +103,8 @@ signals:
 	void sigCheckBox_5StateChanged(bool);
 	void sigPushButton_5Clicked(QColor);
 	void sigPushButton_6Clicked(QColor);
-	void sigCheckBoxStateChanged(bool);
+    // 次要颜色
+    void btnSecColorClicked(const QColor& color);
 	void sigFontComboBoxCurrentFontChanged(QFont);
 	void sigComboBoxCurrentTextChanged(QString);
 	void sigComboBox_2CurrentIndexChanged(int);
@@ -115,7 +117,7 @@ public slots:
 	void onCheckBox_5StateChanged(int);
 	void onPushButton_5Clicked();
 	void onPushButton_6Clicked();
-	void onCheckBoxStateChanged(int);
+    void onPushButtonSecColorClicked();
 	void onFontComboBoxCurrentFontChanged(const QFont&);
 	void onComboBoxCurrentTextChanged(QString);
 	void onComboBox_2CurrentIndexChanged(int);
@@ -127,7 +129,7 @@ public slots:
 	void setCheckBox_5CheckState(bool);
 	void setPushButton_5Color(QColor);
 	void setPushButton_6Color(QColor);
-	void setCheckBoxStateChanged(bool);
+    void setSecColor(const QColor& color);
 	void setFontComboBoxFont(QFont);
 	void setComboBoxText(QString);
 	void setComboBox_3Text(QString);

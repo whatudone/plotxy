@@ -70,7 +70,6 @@ void PlotLight::processDataByConstraints()
 void PlotLight::initPlot()
 {
     m_customPlot = new QCustomPlot();
-    // top需要考虑标题栏的字体高度，先用60
     // 将plot里面的坐标轴和中间的绘图矩形全部删除
     m_customPlot->plotLayout()->clear();
     m_customPlot->setBackground(m_outerFillColor);

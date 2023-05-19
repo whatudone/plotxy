@@ -1,10 +1,9 @@
 ﻿#include "PlotText.h"
-#include "AddPlotPair.h"
 #include "DataManager.h"
-#include "PlotItemBase.h"
-#include "PlotManager.h"
-#include "colorbutton.h"
+
+#include "Utils.h"
 #include "constdef.h"
+
 #include <QDebug>
 #include <QFont>
 #include <QList>
@@ -166,12 +165,18 @@ void PlotText::drawCellData(QPainter& painter)
             int x = drawRect.x() + horiGridWidth * (entityIndex + 1);
             int y = drawRect.y() + verGridWidth * (attrIndex + 1);
             cellRect.setRect(x, y, horiGridWidth, verGridWidth);
-
             double value = m_dataHash.value(qMakePair(xEntityName, xAttr));
+            QString text;
+            if(math::doubleEqual(value, std::numeric_limits<double>::max()))
+            {
+                text = "无数据";
+            }
+            else
+            {
+                text = QString::number(value, 'f', data->getLabelPrecision_x());
+            }
             auto alignFlag = data->processLabelTextPosition();
-            painter.drawText(cellRect,
-                             alignFlag | Qt::TextWrapAnywhere,
-                             QString::number(value, 'f', data->getLabelPrecision_x()));
+            painter.drawText(cellRect, alignFlag | Qt::TextWrapAnywhere, text);
         }
     }
 }

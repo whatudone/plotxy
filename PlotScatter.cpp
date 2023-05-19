@@ -128,13 +128,13 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
 void PlotScatter::updateGraphByDataPair(DataPair* data)
 {
     if(!data)
-    {
+	{
         return;
     }
     DrawComponents info;
     auto uuid = data->getUuid();
     if(!m_mapScatter.contains(uuid))
-	{
+    {
         info.graph = m_customPlot->addGraph();
         //        info.tracer = new QCPItemTracer(m_customPlot);
         //        info.tracer->setGraph(info.graph);
@@ -203,10 +203,9 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
             //			m_mapScatter[dataPair].tracer->setGraphKey(x.last());
             QString text = data->processLabelText(x.last(), y.last());
             tracerText->setText(text);
-            auto pair = processLabelTextPosition(text, data);
-            tracerText->position->setCoords(pair.first, pair.second);
-            tracerText->setPositionAlignment(Qt::AlignCenter);
-            tracerText->setTextAlignment(Qt::AlignLeft);
+            tracerText->position->setCoords(x.last(), y.last());
+            auto alignFlag = data->processLabelTextPosition();
+            tracerText->setTextAlignment(alignFlag);
             tracerText->setFont(data->getLabelFont());
             tracerText->setColor(data->getLabelColor());
             if(data->getLabelBackTransparent())

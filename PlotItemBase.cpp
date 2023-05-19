@@ -616,7 +616,7 @@ DataPair* PlotItemBase::addPlotDataPair(int32_t xEntityID,
         new DataPair(xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
     m_dataPairs.append(data);
     // 设置额外参数
-    if(plotType() == PlotType::Type_PlotLight)
+    if((extraParams.size() == 1) && (plotType() == PlotType::Type_PlotLight))
     {
         auto desc = extraParams.at(0).toString();
         data->setDesc(desc);

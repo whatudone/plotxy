@@ -49,7 +49,7 @@ public slots:
 	void onLabelSettings_draw(bool);
 	void onLabelSettings_color(QColor);
 	void onLabelSettings_background(QColor);
-	void onLabelSettings_transparent(bool);
+    void onLabelSettingsSecColor(const QColor& color);
 	void onLabelSettings_font(QFont);
 	void onLabelSettings_fontSize(int);
 	void onLabelSettings_position(int);

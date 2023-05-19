@@ -176,12 +176,12 @@ void AdvancedDataManager::onLabelSettings_background(QColor color)
 	m_curSelectDatapair->setLabelBackground(color);
 }
 
-void AdvancedDataManager::onLabelSettings_transparent(bool on)
+void AdvancedDataManager::onLabelSettingsSecColor(const QColor& color)
 {
     if(m_curSelectDatapair == nullptr)
 		return;
 
-	m_curSelectDatapair->setLabelBackTransparent(on);
+    m_curSelectDatapair->setLabelSecColor(color);
 }
 
 void AdvancedDataManager::onLabelSettings_font(QFont font)
@@ -397,9 +397,11 @@ void AdvancedDataManager::refreshExtrapolation() {}
 void AdvancedDataManager::refreshLabelSettings()
 {
     auto labelSettings = subSettingWidgetContainer->m_labelSettings;
+    auto plotType = m_curSelectPlot->plotType();
+    labelSettings->updateVisibleOnPlotTypeChanged(plotType);
     labelSettings->setPushButton_5Color(m_curSelectDatapair->getLabelColor());
     labelSettings->setPushButton_6Color(m_curSelectDatapair->getLabelBackground());
-    labelSettings->setCheckBoxStateChanged(m_curSelectDatapair->getLabelBackTransparent());
+    labelSettings->setSecColor(m_curSelectDatapair->getLabelSecColor());
     labelSettings->setCheckBox_5CheckState(m_curSelectDatapair->isLabelTextShow());
     labelSettings->setFontComboBoxFont(m_curSelectDatapair->getLabelFont());
     labelSettings->setComboBox_4Text(m_curSelectDatapair->getLabelFontSize());
@@ -531,9 +533,9 @@ void AdvancedDataManager::initLabelSettingsConnections()
             this,
             &AdvancedDataManager::onLabelSettings_background);
     connect(subSettingWidgetContainer->m_labelSettings,
-            &LabelSettings::sigCheckBoxStateChanged,
+            &LabelSettings::btnSecColorClicked,
             this,
-            &AdvancedDataManager::onLabelSettings_transparent);
+            &AdvancedDataManager::onLabelSettingsSecColor);
     connect(subSettingWidgetContainer->m_labelSettings,
             &LabelSettings::sigFontComboBoxCurrentFontChanged,
             this,
