@@ -149,9 +149,9 @@ void PlotManager::initGeneralUI()
 {
 	ui.pushButton_flipHeight->setVisible(false);
 	ui.pushButton_flipWidth->setVisible(false);
-	ui.radioButton_percent->setChecked(false);
-	ui.radioButton_pixel->setChecked(true);
-	m_radioPixelChecked = true;
+    ui.radioButton_percent->setChecked(true);
+    ui.radioButton_pixel->setChecked(false);
+
     connect(
         ui.radioButton_percent, &QRadioButton::clicked, this, &PlotManager::onRadioPercentClicked);
 	connect(ui.radioButton_pixel, &QRadioButton::clicked, this, &PlotManager::onRadioPixelClicked);
@@ -359,6 +359,7 @@ void PlotManager::initTextEditUI()
     {
 		ui.comboBox_Text_fontSize->addItem(QString::number(size));
 	}
+    ui.comboBox_Text_fontSize->setCurrentText("36");
     connect(ui.fontComboBox_2,
             &QFontComboBox::currentFontChanged,
             this,
@@ -369,6 +370,9 @@ void PlotManager::initTextEditUI()
             &PlotManager::onComboBox_Text_fontSizeCurrentTextChanged);
     connect(ui.lineEdit_29, &QLineEdit::textChanged, this, &PlotManager::onOffsetValueChanged);
     connect(ui.lineEdit_30, &QLineEdit::textChanged, this, &PlotManager::onOffsetValueChanged);
+
+    // TODO:先只在这里添加一条Title，以后再根据不同的对象进行设置
+    ui.listWidget->addItem("Title");
 }
 
 void PlotManager::initAttitudeUI()
@@ -956,29 +960,25 @@ void PlotManager::onRadioPixelClicked()
     if(ui.lineEdit_plotPositionX->text() == nullptr ||
        ui.lineEdit_plotPositionY->text() == nullptr || ui.lineEdit_plotWidth->text() == nullptr ||
        ui.lineEdit_plotHeight->text() == nullptr)
-	{
-		m_radioPixelChecked = true;
+    {
 		return;
-	}
-    if(!m_radioPixelChecked)
-	{
-		float percent = ui.lineEdit_plotPositionX->text().toFloat();
-		int pixel = (int)(percent * m_tabWidgetRect.width());
-		ui.lineEdit_plotPositionX->setText(QString("%1").arg(pixel));
+    }
 
-		percent = ui.lineEdit_plotPositionY->text().toFloat();
-		pixel = (int)(percent * m_tabWidgetRect.height());
-		ui.lineEdit_plotPositionY->setText(QString("%1").arg(pixel));
+    float percent = ui.lineEdit_plotPositionX->text().toFloat();
+    int pixel = (int)(percent * m_tabWidgetRect.width());
+    ui.lineEdit_plotPositionX->setText(QString("%1").arg(pixel));
 
-		percent = ui.lineEdit_plotWidth->text().toFloat();
-		pixel = (int)(percent * m_tabWidgetRect.width());
-		ui.lineEdit_plotWidth->setText(QString("%1").arg(pixel));
+    percent = ui.lineEdit_plotPositionY->text().toFloat();
+    pixel = (int)(percent * m_tabWidgetRect.height());
+    ui.lineEdit_plotPositionY->setText(QString("%1").arg(pixel));
 
-		percent = ui.lineEdit_plotHeight->text().toFloat();
-		pixel = (int)(percent * m_tabWidgetRect.height());
-		ui.lineEdit_plotHeight->setText(QString("%1").arg(pixel));
-	}
-	m_radioPixelChecked = true;
+    percent = ui.lineEdit_plotWidth->text().toFloat();
+    pixel = (int)(percent * m_tabWidgetRect.width());
+    ui.lineEdit_plotWidth->setText(QString("%1").arg(pixel));
+
+    percent = ui.lineEdit_plotHeight->text().toFloat();
+    pixel = (int)(percent * m_tabWidgetRect.height());
+    ui.lineEdit_plotHeight->setText(QString("%1").arg(pixel));
 }
 
 void PlotManager::onRadioPercentClicked()
@@ -991,29 +991,25 @@ void PlotManager::onRadioPercentClicked()
     if(ui.lineEdit_plotPositionX->text() == nullptr ||
        ui.lineEdit_plotPositionY->text() == nullptr || ui.lineEdit_plotWidth->text() == nullptr ||
        ui.lineEdit_plotHeight->text() == nullptr)
-	{
-		m_radioPixelChecked = false;
+    {
 		return;
-	}
-    if(m_radioPixelChecked)
-	{
-		int pixel = ui.lineEdit_plotPositionX->text().toInt();
-		float percent = (float)pixel / m_tabWidgetRect.width();
-		ui.lineEdit_plotPositionX->setText(QString("%1").arg(percent));
+    }
 
-		pixel = ui.lineEdit_plotPositionY->text().toInt();
-		percent = (float)pixel / m_tabWidgetRect.height();
-		ui.lineEdit_plotPositionY->setText(QString("%1").arg(percent));
+    int pixel = ui.lineEdit_plotPositionX->text().toInt();
+    float percent = (float)pixel / m_tabWidgetRect.width();
+    ui.lineEdit_plotPositionX->setText(QString("%1").arg(percent));
 
-		pixel = ui.lineEdit_plotWidth->text().toInt();
-		percent = (float)pixel / m_tabWidgetRect.width();
-		ui.lineEdit_plotWidth->setText(QString("%1").arg(percent));
+    pixel = ui.lineEdit_plotPositionY->text().toInt();
+    percent = (float)pixel / m_tabWidgetRect.height();
+    ui.lineEdit_plotPositionY->setText(QString("%1").arg(percent));
 
-		pixel = ui.lineEdit_plotHeight->text().toInt();
-		percent = (float)pixel / m_tabWidgetRect.height();
-		ui.lineEdit_plotHeight->setText(QString("%1").arg(percent));
-	}
-	m_radioPixelChecked = false;
+    pixel = ui.lineEdit_plotWidth->text().toInt();
+    percent = (float)pixel / m_tabWidgetRect.width();
+    ui.lineEdit_plotWidth->setText(QString("%1").arg(percent));
+
+    pixel = ui.lineEdit_plotHeight->text().toInt();
+    percent = (float)pixel / m_tabWidgetRect.height();
+    ui.lineEdit_plotHeight->setText(QString("%1").arg(percent));
 }
 
 void PlotManager::onGetTabWidgetRect(QRect rect)
@@ -1075,7 +1071,7 @@ void PlotManager::onPlotRectEditFinished()
 
 	bool bX, bY, bW, bH;
 	int x, y, w, h;
-    if(m_radioPixelChecked)
+    if(ui.radioButton_pixel->isChecked())
 	{
 		x = ui.lineEdit_plotPositionX->text().toInt(&bX);
 		y = ui.lineEdit_plotPositionY->text().toInt(&bY);
@@ -1334,7 +1330,7 @@ void PlotManager::onfontComboBox_3CurrentFontChanged(const QFont& font)
 	int fontSize = ui.comboBox_AxisGrid_FontSize->currentText().toInt();
 	QFont newFont;
 	newFont.setFamily(font.family());
-	newFont.setPointSize(fontSize);
+    newFont.setPixelSize(fontSize);
 	m_curSelectPlot->setTickLabelFont(newFont);
 }
 
@@ -1853,7 +1849,7 @@ void PlotManager::onfontComboBox_2CurrentFontChanged(const QFont& font)
 	float fontSize = ui.comboBox_Text_fontSize->currentText().toFloat();
 	QFont newFont;
 	newFont.setFamily(font.family());
-	newFont.setPointSizeF(fontSize);
+    newFont.setPixelSize(fontSize);
 	m_curSelectPlot->setTitleFont(newFont);
 }
 
@@ -1865,7 +1861,7 @@ void PlotManager::onComboBox_Text_fontSizeCurrentTextChanged(const QString& text
 	}
 
 	// 	QFont font = ui.fontComboBox_2->currentFont();
-	// 	font.setPointSizeF(text.toFloat());
+    // 	font.setPixelSize(text.toFloat());
 	// 	m_curSelectPlot->setTitleFont(font);
     m_curSelectPlot->setTitleFontSize(text.toInt());
 }

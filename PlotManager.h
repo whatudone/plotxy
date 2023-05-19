@@ -175,7 +175,6 @@ private:
 	QTreeWidgetItem* m_itemTrackStatus;
 	QTreeWidgetItem* m_itemRangeDoppler;
 
-	bool m_radioPixelChecked;
 	QRect m_tabWidgetRect;
     // 本界面当前选中图表，不影响主界面选中图表
     PlotItemBase* m_curSelectPlot = nullptr;

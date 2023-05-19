@@ -30,7 +30,7 @@ DataPair::DataPair(QObject* parent)
 	m_backTransparent = true;
 	m_labelFontSize = 12;
 	m_labelFont.setFamily("Microsoft YaHei");
-	m_labelFont.setPointSize(m_labelFontSize);
+    m_labelFont.setPixelSize(m_labelFontSize);
     m_textPosition = TEXT_POSITION::right;
 	m_labelPrec_x = 2;
 	m_labelPrec_y = 2;
@@ -548,7 +548,7 @@ void DataPair::setLabelFontSize(int size)
     if(m_labelFontSize != size)
     {
         m_labelFontSize = size;
-        m_labelFont.setPointSize(size);
+        m_labelFont.setPixelSize(size);
         emit dataUpdate();
     }
 }

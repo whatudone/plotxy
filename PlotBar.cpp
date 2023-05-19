@@ -275,43 +275,51 @@ void PlotBar::updateLabelAndTick()
 
     QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
     textTicker->addTicks(m_barTicks, labels);
-
-    int barLeftPadding = getBarLeftPadding();
-    int barRightPadding = getBarRightPadding();
-    int barPadding = barLeftPadding + barRightPadding;
-    double offset = 0.0;
     if(getIsHorizonBar())
     {
-        m_customPlot->yAxis->setTicker(textTicker); // 是水平轴，则x轴为数值，y轴为文字
-        if(barPadding != 0)
-        {
-            int axisHeight = m_customPlot->axisRect()->height();
-            offset = ((index - 1.3) * barPadding) / (axisHeight - barPadding);
-            double leftOffset = double(barLeftPadding) / barPadding * offset;
-            double rightOffset = double(barRightPadding) / barPadding * offset;
-            m_customPlot->yAxis->setRange(0.625 - leftOffset, index - 0.625 + rightOffset);
-        }
-        else
-            m_customPlot->yAxis->setRange(0.625, index - 0.625);
-        m_customPlot->xAxis->setRange(m_min, m_max);
-        m_customPlot->xAxis->setTicks(true);
+        m_customPlot->yAxis->setTicker(textTicker);
     }
     else
-    {
-        m_customPlot->xAxis->setTicker(textTicker); // 是竖直轴，则y轴为数值，x轴为文字
-        if(barPadding != 0)
-        {
-            int axisWidth = m_customPlot->axisRect()->width();
-            offset = ((index - 1.3) * barPadding) / (axisWidth - barPadding);
-            double leftOffset = double(barLeftPadding) / barPadding * offset;
-            double rightOffset = double(barRightPadding) / barPadding * offset;
-            m_customPlot->xAxis->setRange(0.625 - leftOffset, index - 0.625 + rightOffset);
-        }
-        else
-            m_customPlot->xAxis->setRange(0.625, index - 0.625);
-        m_customPlot->yAxis->setRange(m_min, m_max);
-        m_customPlot->yAxis->setTicks(true);
-    }
+        m_customPlot->xAxis->setTicker(textTicker);
+
+    // 坐标轴范围由绘图管理器统一控制
+    // 关于间隔的设置，和坐标轴范围设置功能重叠，以后再将这两个功能改善一下
+    //    int barLeftPadding = getBarLeftPadding();
+    //    int barRightPadding = getBarRightPadding();
+    //    int barPadding = barLeftPadding + barRightPadding;
+    //    double offset = 0.0;
+    //    if(getIsHorizonBar())
+    //    {
+    //        m_customPlot->yAxis->setTicker(textTicker); // 是水平轴，则x轴为数值，y轴为文字
+    //        if(barPadding != 0)
+    //        {
+    //            int axisHeight = m_customPlot->axisRect()->height();
+    //            offset = ((index - 1.3) * barPadding) / (axisHeight - barPadding);
+    //            double leftOffset = double(barLeftPadding) / barPadding * offset;
+    //            double rightOffset = double(barRightPadding) / barPadding * offset;
+    //            m_customPlot->yAxis->setRange(0.625 - leftOffset, index - 0.625 + rightOffset);
+    //        }
+    //        else
+    //            m_customPlot->yAxis->setRange(0.625, index - 0.625);
+    //        m_customPlot->xAxis->setRange(m_min, m_max);
+    //        m_customPlot->xAxis->setTicks(true);
+    //    }
+    //    else
+    //    {
+    //        m_customPlot->xAxis->setTicker(textTicker); // 是竖直轴，则y轴为数值，x轴为文字
+    //        if(barPadding != 0)
+    //        {
+    //            int axisWidth = m_customPlot->axisRect()->width();
+    //            offset = ((index - 1.3) * barPadding) / (axisWidth - barPadding);
+    //            double leftOffset = double(barLeftPadding) / barPadding * offset;
+    //            double rightOffset = double(barRightPadding) / barPadding * offset;
+    //            m_customPlot->xAxis->setRange(0.625 - leftOffset, index - 0.625 + rightOffset);
+    //        }
+    //        else
+    //            m_customPlot->xAxis->setRange(0.625, index - 0.625);
+    //        m_customPlot->yAxis->setRange(m_min, m_max);
+    //        m_customPlot->yAxis->setTicks(true);
+    //    }
     m_customPlot->replot();
 }
 

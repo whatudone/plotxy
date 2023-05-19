@@ -116,7 +116,7 @@ void PlotText::drawCellData(QPainter& painter)
 
         pen.setColor(getTickLabelColor());
         QFont font = getTickLabelFont();
-        font.setPointSize(getTickLabelFontSize());
+        font.setPixelSize(getTickLabelFontSize());
         painter.setFont(font);
         painter.setPen(pen);
         cellRect.setRect(vx1, vy1, horiGridWidth, verGridWidth);
@@ -136,7 +136,7 @@ void PlotText::drawCellData(QPainter& painter)
         pen.setColor(getTickLabelColor());
         painter.setPen(pen);
         QFont font = getTickLabelFont();
-        font.setPointSize(getTickLabelFontSize());
+        font.setPixelSize(getTickLabelFontSize());
         painter.setFont(font);
 
         cellRect.setRect(hx1, hy1, horiGridWidth, verGridWidth);

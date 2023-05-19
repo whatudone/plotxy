@@ -159,7 +159,7 @@ void PlotPolar::setTickLabelFont(QFont& font)
 void PlotPolar::setTickLabelFontSize(int size)
 {
     m_tickLabelFontSize = size;
-    m_tickLabelFont.setPointSize(size);
+    m_tickLabelFont.setPixelSize(size);
     setTickLabelFont(m_tickLabelFont);
 }
 
@@ -215,7 +215,7 @@ void PlotPolar::setTitleFont(QFont& font)
 void PlotPolar::setTitleFontSize(int size)
 {
     m_titleFontSize = size;
-    m_titleFont.setPointSize(size);
+    m_titleFont.setPixelSize(size);
     update();
 }
 

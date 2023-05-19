@@ -33,7 +33,7 @@ PlotAttitude::PlotAttitude(QWidget* parent)
 
 	m_tickLabelFontSize = 10;
 	m_tickLabelFont.setFamily("Microsoft YaHei");
-    m_tickLabelFont.setPointSizeF(m_tickLabelFontSize);
+    m_tickLabelFont.setPixelSize(m_tickLabelFontSize);
 
 	m_xAxisLabel = "Roll";
 	m_yAxisLabel = "Pitch";
@@ -443,7 +443,7 @@ void PlotAttitude::setTitleFont(QFont& font)
 void PlotAttitude::setTitleFontSize(int size)
 {
 	m_titleFontSize = size;
-	m_titleFont.setPointSize(size);
+    m_titleFont.setPixelSize(size);
 	update();
 }
 
@@ -456,7 +456,7 @@ void PlotAttitude::setTickLabelFont(QFont& font)
 void PlotAttitude::setTickLabelFontSize(int size)
 {
 	m_tickLabelFontSize = size;
-	m_tickLabelFont.setPointSize(size);
+    m_tickLabelFont.setPixelSize(size);
 	update();
 }
 
@@ -469,7 +469,7 @@ void PlotAttitude::setAxisLabelFont(QFont& font)
 void PlotAttitude::setAxisLabelFontSize(int size)
 {
 	m_axisLabelFontSize = size;
-	m_axisLabelFont.setPointSize(size);
+    m_axisLabelFont.setPixelSize(size);
 	update();
 }
 
