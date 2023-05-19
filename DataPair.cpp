@@ -9,10 +9,10 @@
 DataPair::DataPair(QObject* parent)
 	: QObject(parent)
 {
-	m_lineWidth = 2;
 	m_isDraw = true;
 	m_color = Qt::white;
-	m_isLineMode = false;
+    m_isLineMode = true;
+    m_lineWidth = 2;
 	m_matchColor = false;
 
 	m_iconDraw = false;

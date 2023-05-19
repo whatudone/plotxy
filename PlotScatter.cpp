@@ -23,6 +23,10 @@ PlotScatter::PlotScatter(QWidget* parent)
 
     m_showUnits_x = false;
     m_showUnits_y = false;
+    m_coordBgn_x = std::numeric_limits<double>::min();
+    m_coordEnd_x = std::numeric_limits<double>::max();
+    m_coordBgn_y = std::numeric_limits<double>::min();
+    m_coordEnd_y = std::numeric_limits<double>::max();
 
     initPlot();
     setupLayout();
@@ -116,12 +120,11 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
             y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(yEntityID, yAttr, secs);
         }
         m_dataHash.insert(uuid, qMakePair(x, y));
-    }
+	}
     for(int i = 0; i < itemCnt; ++i)
     {
         updateGraphByDataPair(m_dataPairs.at(i));
-	}
-
+    }
 	m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
@@ -136,15 +139,11 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
     if(!m_mapScatter.contains(uuid))
     {
         info.graph = m_customPlot->addGraph();
-        //        info.tracer = new QCPItemTracer(m_customPlot);
-        //        info.tracer->setGraph(info.graph);
-        //        info.tracer->setInterpolating(false);
-        //        info.tracer->setStyle(QCPItemTracer::tsNone);
 
         info.tracerText = new QCPItemText(m_customPlot);
         info.tracerText->position->setType(QCPItemPosition::ptPlotCoords);
-        info.pixmap = new QCPItemPixmap(m_customPlot); // 创建 QCPItemPixmap 对象
 
+        info.pixmap = new QCPItemPixmap(m_customPlot); // 创建 QCPItemPixmap 对象
         info.pixmap->setClipToAxisRect(false); // 允许图标超出坐标轴范围
         info.pixmap->setClipAxisRect(m_customPlot->axisRect()); // 设置图标显示范围
         info.pixmap->topLeft->setType(QCPItemPosition::ptPlotCoords);
@@ -160,9 +159,9 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
         auto y = m_dataHash.value(uuid).second;
         if(x.isEmpty() || y.isEmpty())
             return;
+        graph->setVisible(true);
         graph->setData(x, y);
 
-        graph->setVisible(true);
         graph->setPen(QPen(data->dataColor(), data->lineWidth()));
 		//line mode
         if(data->isLineMode())
@@ -196,11 +195,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
         {
 
             // 游标功能先注释掉
-
-            //			m_mapScatter[dataPair].tracer->setVisible(true);
-            tracerText->setVisible(true);
-			//设置锚点
-            //			m_mapScatter[dataPair].tracer->setGraphKey(x.last());
+            tracerText->setVisible(false);
             QString text = data->processLabelText(x.last(), y.last());
             tracerText->setText(text);
             tracerText->position->setCoords(x.last(), y.last());
@@ -215,14 +210,12 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
 		}
 		else
 		{
-            //			m_mapScatter[dataPair].tracer->setVisible(false);
             tracerText->setVisible(false);
 		}
 	}
 	else
 	{
         graph->setVisible(false);
-        //		m_mapScatter[dataPair].tracer->setVisible(false);
         tracerText->setVisible(false);
     }
 }
