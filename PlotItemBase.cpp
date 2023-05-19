@@ -39,9 +39,9 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     m_gridColor = Qt::white;
     m_gridVisible = true;
     m_tickLabelColor = Qt::white;
-    m_tickLabelFontSize = 10;
+    m_tickLabelFontSize = 20;
     m_tickLabelFont.setFamily("Microsoft YaHei");
-    m_tickLabelFont.setPointSizeF(m_tickLabelFontSize);
+    m_tickLabelFont.setPixelSize(m_tickLabelFontSize);
     m_gridStyle = Qt::DotLine;
     m_gridDensity = GridDensity::LESS;
     m_gridFillColor = Qt::black;
@@ -51,14 +51,14 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     m_titleVisible = true;
     m_titleColor = Qt::white;
     m_titleFillColor = Qt::black;
-    m_titleFontSize = 16;
+    m_titleFontSize = 32;
     m_titleFont.setFamily("Microsoft YaHei");
-    m_titleFont.setPointSizeF(m_titleFontSize);
+    m_titleFont.setPixelSize(m_titleFontSize);
 
     m_axisLabelColor = Qt::white;
-    m_axisLabelFontSize = 16.0;
+    m_axisLabelFontSize = 32.0;
     m_axisLabelFont.setFamily("Microsoft YaHei");
-    m_axisLabelFont.setPointSizeF(m_axisLabelFontSize);
+    m_axisLabelFont.setPixelSize(m_axisLabelFontSize);
 
     m_leftPadding = 10;
     m_rightPadding = 10;
@@ -185,6 +185,7 @@ void PlotItemBase::setOuterFillColor(const QColor& color)
 void PlotItemBase::setOutlineColor(const QColor& color)
 {
     m_outlineColor = color;
+    update();
 }
 
 void PlotItemBase::setCoordRangeX(double lower, double upper)
@@ -513,7 +514,7 @@ void PlotItemBase::setTitleFont(const QFont& font)
 void PlotItemBase::setTitleFontSize(int size)
 {
     m_titleFontSize = size;
-    m_titleFont.setPointSize(size);
+    m_titleFont.setPixelSize(size);
     updateTitle();
 }
 
@@ -577,7 +578,7 @@ void PlotItemBase::setAxisLabelFont(const QFont& font)
 void PlotItemBase::setAxisLabelFontSize(int size)
 {
     m_axisLabelFontSize = size;
-    m_axisLabelFont.setPointSize(size);
+    m_axisLabelFont.setPixelSize(size);
     replot();
 }
 
@@ -881,6 +882,14 @@ void PlotItemBase::paintEvent(QPaintEvent* event)
 {
     // 绘制本身
     QWidget::paintEvent(event);
+    QPainter painter(this);
+    QPen pen;
+    pen.setColor(m_outlineColor);
+    pen.setWidth(5);
+    pen.setStyle(Qt::SolidLine);
+    painter.setPen(pen);
+    painter.drawRect(0, 0, width(), height());
+
     // 根据场景绘制外边框和控制点
     if(m_isNeedDrawBorder)
     {

@@ -167,8 +167,9 @@ void PlotTrack::updateLabelAndTick()
     QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
     textTicker->addTicks(m_barTicks, labels);
     m_customPlot->yAxis->setTicker(textTicker); // 设置为文字轴
-    m_customPlot->yAxis->setRange(0, index);
-    m_customPlot->xAxis->setRange(m_minTime, m_maxTime);
+    // 坐标轴的范围由绘图管理器统一控制
+    //    m_customPlot->yAxis->setRange(0, index);
+    //    m_customPlot->xAxis->setRange(m_minTime, m_maxTime);
     m_customPlot->replot();
 }
 
