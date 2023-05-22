@@ -96,8 +96,9 @@ public:
     {
         return m_outlineColor;
     }
-    void getCoordRangeX(double& lower, double& upper);
-    void getCoordRangeY(double& lower, double& upper);
+    // 某些图坐标系不一样，比如polar
+    virtual void getCoordRangeX(double& lower, double& upper);
+    virtual void getCoordRangeY(double& lower, double& upper);
     uint getHorzGrids()
     {
         return m_horzGrids;

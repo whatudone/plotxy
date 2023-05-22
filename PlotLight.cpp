@@ -150,6 +150,19 @@ void PlotLight::updateGraphByDataPair(DataPair* data)
     }
 }
 
+void PlotLight::delPlotPairData(const QString& uuid)
+{
+    if(m_drawDataHash.contains(uuid))
+    {
+        m_drawDataHash.remove(uuid);
+    }
+    if(m_drawItemHash.contains(uuid))
+    {
+        m_drawItemHash.remove(uuid);
+    }
+    PlotItemBase::delPlotPairData(uuid);
+}
+
 void PlotLight::processDataByConstraints()
 {
     m_drawDataHash.clear();

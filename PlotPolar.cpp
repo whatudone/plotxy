@@ -39,9 +39,7 @@ void PlotPolar::initPlot()
     m_angularAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
     m_customPlot->plotLayout()->addElement(0, 0, m_angularAxis);
     m_customPlot->setBackground(m_outerFillColor);
-    //  m_angularAxis->setBackground(m_gridFillColor);
 
-    //  m_customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
     m_angularAxis->setRangeDrag(false);
     m_angularAxis->setTickLabelMode(QCPPolarAxisAngular::lmUpright);
     m_angularAxis->setFormat(m_units_x);
@@ -126,13 +124,6 @@ void PlotPolar::setVertGrids(uint count)
     m_customPlot->replot();
 }
 
-void PlotPolar::setGridFillColor(QColor color)
-{
-    m_gridFillColor = color;
-    //  m_angularAxis->setBackground(color);
-    //  m_customPlot->replot();
-}
-
 void PlotPolar::setGridVisible(bool enable)
 {
     m_gridVisible = enable;
@@ -188,43 +179,6 @@ void PlotPolar::setGridStyle(GridStyle style)
     m_customPlot->replot();
 }
 
-void PlotPolar::setTitle(QString& title)
-{
-    m_title = title;
-    update();
-}
-
-void PlotPolar::setTitleColor(QColor& color)
-{
-    m_titleColor = color;
-    update();
-}
-
-void PlotPolar::setTitleFillColor(QColor& color)
-{
-    m_titleFillColor = color;
-    update();
-}
-
-void PlotPolar::setTitleFont(QFont& font)
-{
-    m_titleFont = font;
-    update();
-}
-
-void PlotPolar::setTitleFontSize(int size)
-{
-    m_titleFontSize = size;
-    m_titleFont.setPixelSize(size);
-    update();
-}
-
-void PlotPolar::setTitleVisible(bool show)
-{
-    m_titleVisible = show;
-    update();
-}
-
 void PlotPolar::setUnitsShowX(bool on)
 {
     m_showUnits_x = on;
@@ -265,6 +219,18 @@ void PlotPolar::setCoordRangeY(double lower, double upper)
     m_customPlot->replot();
 }
 
+void PlotPolar::getCoordRangeX(double& lower, double& upper)
+{
+    lower = m_angularRange_lower;
+    upper = m_angularRange_upper;
+}
+
+void PlotPolar::getCoordRangeY(double& lower, double& upper)
+{
+    lower = m_radialRange_lower;
+    upper = m_radialRange_upper;
+}
+
 void PlotPolar::slot_setRangeDrag(bool enabled)
 {
     m_customPlot->setInteraction(QCP::iRangeDrag, enabled);
@@ -281,7 +247,6 @@ void PlotPolar::updateDataForDataPairsByTime(double secs)
 {
     // TODO:使用map把graph变量存起来，不要动态创建graph
     int isize = getDataPairs().size();
-    QVector<QCPPolarGraph*> graph;
 
     for(int i = 0; i < isize; ++i)
     {
@@ -296,15 +261,56 @@ void PlotPolar::updateDataForDataPairsByTime(double secs)
         QVector<double> y =
             DataManager::getInstance()->getEntityAttrValueListByMaxTime(yEntityID, yAttr, secs);
 
-        QCPPolarGraph* g = new QCPPolarGraph(m_angularAxis, m_angularAxis->radialAxis());
-        g->setScatterStyle(QCPScatterStyle::ssDisc);
-        g->setLineStyle(QCPPolarGraph::lsNone);
-        g->setPen(QPen(QColor(255, 0, 0), 2));
-        g->addData(x, y);
-        graph.append(g);
+        m_dataHash.insert(dataPair->getUuid(), qMakePair(x, y));
+    }
+    for(int i = 0; i < isize; ++i)
+    {
+        updateGraphByDataPair(m_dataPairs.at(i));
     }
     m_customPlot->replot();
+}
 
-    qDeleteAll(graph);
-    graph.clear();
+void PlotPolar::updateGraphByDataPair(DataPair* data)
+{
+    auto uuid = data->getUuid();
+    QCPPolarGraph* graph = nullptr;
+    if(!m_graphHash.contains(uuid))
+    {
+        graph = new QCPPolarGraph(m_angularAxis, m_angularAxis->radialAxis());
+        graph->setPen(QPen(data->dataColor(), data->lineWidth()));
+    }
+    else
+    {
+        graph = m_graphHash.value(uuid);
+    }
+    if(data->isDraw())
+    {
+        graph->setVisible(true);
+        auto x = m_dataHash.value(uuid).first;
+        auto y = m_dataHash.value(uuid).second;
+        graph->setData(x, y);
+        if(data->isLineMode())
+        {
+            graph->setScatterStyle(QCPScatterStyle::ssDisc);
+            graph->setLineStyle(QCPPolarGraph::lsLine);
+        }
+        else
+        {
+            graph->setScatterStyle(QCPScatterStyle::ssDisc);
+            graph->setLineStyle(QCPPolarGraph::lsNone);
+        }
+    }
+    else
+    {
+        graph->setVisible(false);
+    }
+}
+
+void PlotPolar::delPlotPairData(const QString& uuid)
+{
+    if(m_graphHash.contains(uuid))
+    {
+        m_graphHash.remove(uuid);
+    }
+    PlotItemBase::delPlotPairData(uuid);
 }

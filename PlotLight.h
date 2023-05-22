@@ -45,6 +45,7 @@ public slots:
 private:
     void updateDataForDataPairsByTime(double secs) override;
     void updateGraphByDataPair(DataPair* data) override;
+    void delPlotPairData(const QString& uuid) override;
 
     // 通过约束信息解析数据，生成最终需要的绘制数据
     void processDataByConstraints();

@@ -46,7 +46,7 @@ public:
                                       const QString& yAttrName,
                                       const QString& yAttrUnitName,
                                       const QVariantList& extraParams) override;
-    void delPlotPairData(const QString& uuid);
+    void delPlotPairData(const QString& uuid) override;
 
     PlotType plotType() const override
     {

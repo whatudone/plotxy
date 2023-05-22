@@ -22,13 +22,6 @@ public:
     void setTickLabelFontSize(int size);
     void setGridStyle(GridStyle style);
 
-	//title
-	void setTitle(QString&);
-    void setTitleColor(QColor& color);
-    void setTitleFillColor(QColor& color);
-    void setTitleFont(QFont& font);
-    void setTitleFontSize(int size);
-	void setTitleVisible(bool show);
 	//unit
 	void setUnitsShowX(bool on);
 	void setUnitsShowY(bool on);
@@ -39,12 +32,15 @@ public:
     {
         return Type_PlotPolar;
     }
+    void setCoordRangeX(double lower, double upper) override;
+    void setCoordRangeY(double lower, double upper) override;
+
+    void getCoordRangeX(double& lower, double& upper) override;
+    void getCoordRangeY(double& lower, double& upper) override;
 
 public slots:
 
 	//axis
-    void setCoordRangeX(double lower, double upper) override;
-    void setCoordRangeY(double lower, double upper) override;
 
 	//style
 	void slot_setRangeDrag(bool);
@@ -52,17 +48,20 @@ public slots:
 
 private:
     void updateDataForDataPairsByTime(double secs) override;
+    void updateGraphByDataPair(DataPair* data) override;
+    void delPlotPairData(const QString& uuid) override;
 
 public:
     static int m_instanceCount; //实体个数
 private:
     QCPPolarAxisAngular* m_angularAxis;
-	QMap<QString, QMap<int, QColor>> m_thresholdColorMap;
 
 	double m_angularRange_lower;
 	double m_angularRange_upper;
 	double m_radialRange_lower;
 	double m_radialRange_upper;
-
-	QList<double> m_valueList;
+    // <uuid,polar>
+    QHash<QString, QCPPolarGraph*> m_graphHash;
+    // <uuid,data>
+    QHash<QString, QPair<QVector<double>, QVector<double>>> m_dataHash;
 };
