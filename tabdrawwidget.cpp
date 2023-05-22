@@ -148,11 +148,6 @@ void TabDrawWidget::mouseReleaseEvent(QMouseEvent* event)
     }
 }
 
-void TabDrawWidget::paintEvent(QPaintEvent* event)
-{
-    QWidget::paintEvent(event);
-}
-
 PlotItemBase* TabDrawWidget::findPlotByMousePos(const QPoint& mouseEventPoint)
 {
     // 获取最上层的控件,需要将坐标转化为全局坐标

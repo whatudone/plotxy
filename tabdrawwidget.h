@@ -56,8 +56,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
-    void hoverMoveEvent();
-    void paintEvent(QPaintEvent* event) override;
+
 signals:
     void mouseRelease(QPoint point);
     void selectedPlotChanged(const QList<PlotItemBase*>& plots);

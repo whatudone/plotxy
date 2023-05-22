@@ -20,15 +20,19 @@ PlotAttitude::PlotAttitude(QWidget* parent)
 	m_pitchValue = 0.0;
 	m_rollValue = 0.0;
 
-	m_coordBgn_y = 0.0;
-	m_coordEnd_y = 180;
+    m_coordBgn_y = -90.0;
+    m_coordEnd_y = 90.0;
 	m_coordBgn_x = 0;
     m_coordEnd_x = 360;
 
+    // 本图初始特定设置
+    m_horzGrids = 4;
+    m_vertGrids = 3;
+
 	m_units_x = QString("°");
     m_units_y = QString("°");
-	m_decision_roll = 0;
-	m_decision_pitch = 0;
+    m_decision_roll = 0;
+    m_decision_pitch = 0;
 	m_title = "Attitude";
 
 	m_tickLabelFontSize = 10;
@@ -47,27 +51,6 @@ PlotAttitude::PlotAttitude(QWidget* parent)
 }
 
 PlotAttitude::~PlotAttitude() {}
-
-void PlotAttitude::drawTitle(QPainter* painter, int radius)
-{
-	painter->save();
-	QFontMetricsF fm(m_titleFont);
-	double w = fm.size(Qt::TextSingleLine, m_title).width();
-	double h0 = fm.size(Qt::TextSingleLine, m_title).height();
-	double as = fm.ascent();
-	QFontMetricsF fm1(m_tickLabelFont);
-	double h = fm1.size(Qt::TextSingleLine, m_title).height();
-
-	painter->setFont(m_titleFont);
-	painter->setPen(m_titleColor);
-    if(m_titleVisible)
-	{
-        painter->fillRect(-w / 2, -radius - 1.25 * h - h0, w, h0 + 0.25 * h, m_titleFillColor);
-        painter->drawText(QPoint(-w / 2, -radius - h * 1.5), m_title);
-	}
-
-	painter->restore();
-}
 
 void PlotAttitude::drawBorder(QPainter* painter, int radius)
 {
@@ -107,7 +90,13 @@ void PlotAttitude::drawScale_roll(QPainter* painter, int radius)
 
     for(uint i = 0; i < m_horzGrids; ++i)
 	{
-		strNum = QString::number(eachMajor_roll * i + m_coordBgn_x, 'f', m_decision_roll);
+        double rollTickNum = eachMajor_roll * i + m_coordBgn_x;
+        // roll刻度不超过180
+        if(rollTickNum > 180.0)
+        {
+            rollTickNum = rollTickNum - 360;
+        }
+        strNum = QString::number(rollTickNum, 'f', m_decision_roll);
         if(m_showUnits_x)
 			str = QString("%1%2").arg(strNum).arg(m_units_x);
 		else
@@ -133,14 +122,18 @@ void PlotAttitude::drawScale_roll(QPainter* painter, int radius)
 
 void PlotAttitude::drawScale_pitch(QPainter* painter, int radius)
 {
-	QFontMetricsF fm(m_tickLabelFont);
-
 	painter->save();
+    QFontMetricsF fm(m_tickLabelFont);
+    double x, y;
+
 	painter->setFont(m_tickLabelFont);
 	painter->setPen(QPen(m_pitchColor));
-	double x, y, w, h;
 	QString str, strNum;
-	double eachMajor_pitch = (m_coordEnd_y - m_coordBgn_y) / (double)(m_vertGrids - 1);
+    double eachMajor_pitch = (m_coordEnd_y - m_coordBgn_y) / (m_vertGrids - 1);
+    // 最底下的刻度点
+    QPointF tickPoint(0, radius);
+    int32_t step = 2 * radius / (m_vertGrids - 1);
+    // 从上往下绘制
     for(uint i = 0; i < m_vertGrids; ++i)
 	{
 		strNum = QString::number(eachMajor_pitch * i + m_coordBgn_y, 'f', m_decision_pitch);
@@ -148,18 +141,11 @@ void PlotAttitude::drawScale_pitch(QPainter* painter, int radius)
 			str = QString("%1%2").arg(strNum).arg(m_units_y);
 		else
 			str = QString("%1").arg(strNum);
-		w = fm.size(Qt::TextSingleLine, str).width() + 10;
-		h = fm.size(Qt::TextSingleLine, str).height();
-        //		double rad = qDegreesToRadians(eachMajor_pitch * i);
-        x = -w;
-        if(i == 0)
-			y = radius - 2 * radius / (m_vertGrids - 1) * i - h / 4;
-		else if(i == (m_vertGrids - 1))
-			y = radius - 2 * radius / (m_vertGrids - 1) * i + h;
-		else
-			y = radius - 2 * radius / (m_vertGrids - 1) * i + h / 4;
-
-		painter->drawText(x, y, str);
+        double tickLabelWidth = fm.size(Qt::TextSingleLine, str).width() + 10;
+        double tickLabelHeight = fm.size(Qt::TextSingleLine, str).height();
+        x = -tickLabelWidth;
+        y = tickPoint.y() - i * step - tickLabelHeight;
+        painter->drawText(QPointF(x, y), str);
 	}
 
 	painter->restore();
@@ -182,13 +168,10 @@ void PlotAttitude::drawLine_pitch(QPainter* painter, int radius)
 	painter->save();
 	painter->setPen(QPen(m_pitchColor, 4));
 	double range = abs(m_coordEnd_y - m_coordBgn_y);
-    //	if (fmodf(m_pitchValue, range) > m_coordBgn_y && fmodf(m_pitchValue, range) < m_coordEnd_y)
-    //	{
+
 	double translate_y = radius - (fmodf(m_pitchValue, range) - m_coordBgn_y) / range * 2 * radius;
 	painter->translate(0, translate_y);
 	painter->drawLine(QPoint(-radius / 2, 0), QPoint(radius / 2, 0));
-    //	}
-
 	painter->restore();
 }
 
@@ -204,8 +187,9 @@ void PlotAttitude::drawText_roll(QPainter* painter, int radius)
 	double h = fm.size(Qt::TextSingleLine, m_xAxisLabel).height();
 	double w = fm.size(Qt::TextSingleLine, m_xAxisLabel).width();
 	double rad = qDegreesToRadians(45.0);
-	int xPos = (-1) * radius * cos(rad) - w / 2;
-	int yPos = radius * sin(rad);
+
+    int xPos = radius * cos(rad) - w / 2;
+    int yPos = radius * sin(rad);
 	painter->drawText(QPoint(xPos, yPos), m_xAxisLabel);
 
 	QString str, strNum;
@@ -230,8 +214,9 @@ void PlotAttitude::drawText_pitch(QPainter* painter, int radius)
 	double h = fm.size(Qt::TextSingleLine, m_yAxisLabel).height();
 	double w = fm.size(Qt::TextSingleLine, m_yAxisLabel).width();
 	double rad = qDegreesToRadians(45.0);
-	int xPos = radius * cos(rad) - w / 2;
-	int yPos = radius * sin(rad);
+
+    int xPos = (-1) * radius * cos(rad) - w / 2;
+    int yPos = radius * sin(rad);
 	painter->drawText(QPoint(xPos, yPos), m_yAxisLabel);
 
 	QString str, strNum;
@@ -341,37 +326,6 @@ void PlotAttitude::setUnitsY(const QString& units)
 {
 	m_units_y = units;
 	update();
-}
-
-void PlotAttitude::updateGraph()
-{
-	int xSize = m_xValueList.size();
-	int ySize = m_yValueList.size();
-
-    if(xSize <= ySize)
-	{
-        for(int i = 0; i < xSize; ++i)
-		{
-			slot_setRollValue(m_xValueList.at(i));
-			slot_setPitchValue(m_yValueList.at(i));
-		}
-        for(int i = xSize; i < ySize; i++)
-		{
-			slot_setPitchValue(m_yValueList.at(i));
-		}
-	}
-	else
-	{
-        for(int i = 0; i < ySize; ++i)
-		{
-			slot_setRollValue(m_xValueList.at(i));
-			slot_setPitchValue(m_yValueList.at(i));
-		}
-        for(int i = ySize; i < xSize; i++)
-		{
-			slot_setRollValue(m_xValueList.at(i));
-		}
-	}
 }
 
 void PlotAttitude::setTickRadiusPercentage(int value)
@@ -485,18 +439,6 @@ void PlotAttitude::setTitleVisible(bool show)
 	update();
 }
 
-void PlotAttitude::slot_setPitchValue(double pitchValue)
-{
-	m_pitchValue = pitchValue;
-	update();
-}
-
-void PlotAttitude::slot_setRollValue(double rollValue)
-{
-	m_rollValue = rollValue;
-	update();
-}
-
 void PlotAttitude::updateDataForDataPairsByTime(double secs)
 {
     if(getDataPairs().isEmpty())
@@ -508,24 +450,26 @@ void PlotAttitude::updateDataForDataPairsByTime(double secs)
     auto yEntityID = dataPair->getEntityIDY();
     auto xAttr = dataPair->getAttr_x();
     auto yAttr = dataPair->getAttr_y();
-    m_xValueList =
-        DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
-    m_yValueList =
-        DataManager::getInstance()->getEntityAttrValueListByMaxTime(yEntityID, yAttr, secs);
-    updateGraph();
+    m_rollValue = DataManager::getInstance()->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs);
+    m_pitchValue = DataManager::getInstance()->getEntityAttrValueByMaxTime(yEntityID, yAttr, secs);
+    update();
+}
+
+void PlotAttitude::updateGraphByDataPair(DataPair* data)
+{
+    Q_UNUSED(data)
+    // 暂时无法单独更新每个DataPair数据，只能全局刷新
+    update();
 }
 
 void PlotAttitude::customPainting(QPainter& painter)
 {
     int width = m_widget->width();
     int height = m_widget->height();
-
     QFontMetricsF fm(m_axisLabelFont);
     double h = fm.size(Qt::TextSingleLine, m_yAxisLabel).height();
-    double titleAscent = fm.ascent();
-    // 半径要减去（上下刻度文字的高度）
-
-    int radius = int(qMin(double(width), height - titleAscent - h * 2) / 2);
+    double yLabelAscent = fm.ascent();
+    int radius = qMin(width, static_cast<int>(height - h - yLabelAscent)) / 2;
     radius = radius * m_dialPercentage / 100;
 
     //画笔

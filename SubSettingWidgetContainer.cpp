@@ -354,6 +354,10 @@ void LabelSettings::updateVisibleOnPlotTypeChanged(PlotType curType)
         visibleList = QList<bool>() << true << true << true << true << true << false << false
                                     << false << false << false;
     }
+    {
+        // 其他类型图表不存在此设置，直接跳过
+        return;
+    }
 
     for(int var = 0; var < list.size(); ++var)
     {

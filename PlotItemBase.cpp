@@ -75,6 +75,7 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     //设置下背景颜色区别看
     QPalette palette = this->palette();
     palette.setColor(QPalette::Window, getOuterFillColor());
+    //    palette.setColor(QPalette::Window, Qt::transparent);
     setPalette(palette);
 
     updateResizeFocusPos();

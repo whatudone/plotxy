@@ -15,7 +15,6 @@ public:
     ~PlotAttitude() override;
 
 public:
-    void drawTitle(QPainter* painter, int radius);
 	void drawBorder(QPainter* painted, int radius);
     void drawBg(QPainter* painter, int radius);
     void drawScale_roll(QPainter* painter, int radius);
@@ -88,7 +87,6 @@ public:
         return m_dialPercentage;
     }
 
-    void updateGraph();
     PlotType plotType() const override
     {
         return Type_PlotAttitude;
@@ -118,14 +116,8 @@ public:
     void setAxisLabelFont(QFont& font);
 	void setAxisLabelFontSize(int size);
 
-public slots:
-	//设置旋转角度值
-	void slot_setPitchValue(double pitchValue);
-
-	//设置前进旋转值
-	void slot_setRollValue(double rollValue);
-
 private:
     void updateDataForDataPairsByTime(double secs) override;
+    void updateGraphByDataPair(DataPair* data) override;
     void customPainting(QPainter& painter) override;
 };
