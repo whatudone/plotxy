@@ -35,10 +35,6 @@ public:
     void setAxisVisible(bool on, AxisType type);
     void setAxisTickLabelShow(bool on, AxisType type);
 
-    void rescale_xAxis(bool);
-    void rescale_yAxis(bool);
-    void rescaleAxis(bool);
-
     virtual DataPair* addPlotDataPair(int32_t xEntityID,
                                       const QString& xAttrName,
                                       const QString& xAttrUnitName,

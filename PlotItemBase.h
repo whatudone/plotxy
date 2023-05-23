@@ -281,6 +281,10 @@ public:
     int getBarLeftPadding() const;
     void setBarLeftPadding(int barLeftPadding);
 
+    void rescaleXAxis(bool on);
+    void rescaleYAxis(bool on);
+    void rescaleAxis(bool on);
+
 private:
     void updateResizeFocusPos();
     QRect getRectByDirection(ResizeDirection direction);

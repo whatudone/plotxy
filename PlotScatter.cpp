@@ -294,24 +294,6 @@ void PlotScatter::setAxisTickLabelShow(bool on, AxisType type)
     m_customPlot->replot();
 }
 
-void PlotScatter::rescale_xAxis(bool on)
-{
-    m_customPlot->xAxis->rescale(on);
-    m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
-}
-
-void PlotScatter::rescale_yAxis(bool on)
-{
-    m_customPlot->yAxis->rescale(on);
-    m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
-}
-
-void PlotScatter::rescaleAxis(bool on)
-{
-    m_customPlot->rescaleAxes(on);
-    m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
-}
-
 DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
                                        const QString& xAttrName,
                                        const QString& xAttrUnitName,

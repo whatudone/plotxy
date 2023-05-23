@@ -506,11 +506,29 @@ void PlotXYDemo::onAddPlot()
     addPlotWidget(m_lastSelectedType);
 }
 
-void PlotXYDemo::onAutofit_Full() {}
+void PlotXYDemo::onAutofit_Full(bool checked)
+{
+    if(m_pCurSelectedPlot)
+    {
+        m_pCurSelectedPlot->rescaleAxis(checked);
+    }
+}
 
-void PlotXYDemo::onAutofit_X() {}
+void PlotXYDemo::onAutofit_X(bool checked)
+{
+    if(m_pCurSelectedPlot)
+    {
+        m_pCurSelectedPlot->rescaleXAxis(checked);
+    }
+}
 
-void PlotXYDemo::onAutofit_Y() {}
+void PlotXYDemo::onAutofit_Y(bool checked)
+{
+    if(m_pCurSelectedPlot)
+    {
+        m_pCurSelectedPlot->rescaleYAxis(checked);
+    }
+}
 
 void PlotXYDemo::onOneToOne() {}
 

@@ -1044,6 +1044,33 @@ void PlotItemBase::setBarLeftPadding(int barLeftPadding)
     m_barLeftPadding = barLeftPadding;
 }
 
+void PlotItemBase::rescaleXAxis(bool on)
+{
+    if(m_customPlot && m_customPlot->xAxis)
+    {
+        m_customPlot->xAxis->rescale(on);
+        m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
+    }
+}
+
+void PlotItemBase::rescaleYAxis(bool on)
+{
+    if(m_customPlot && m_customPlot->yAxis)
+    {
+        m_customPlot->yAxis->rescale(on);
+        m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
+    }
+}
+
+void PlotItemBase::rescaleAxis(bool on)
+{
+    if(m_customPlot)
+    {
+        m_customPlot->rescaleAxes(on);
+        m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
+    }
+}
+
 int PlotItemBase::getBarRightPadding() const
 {
     return m_barRightPadding;
