@@ -106,6 +106,10 @@ void SubSettingWidgetContainer::updateVisibleOnPlotTypeChanged(PlotType curType)
     {
         visibleList << true << false << false << true << true << false << false << false;
     }
+    else
+    {
+        return;
+    }
 
     for(int var = 0; var < list.size(); ++var)
     {

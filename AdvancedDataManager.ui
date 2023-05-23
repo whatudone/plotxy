@@ -509,7 +509,7 @@ p, li { white-space: pre-wrap; }
                </layout>
               </item>
               <item>
-               <widget class="QTreeWidget" name="treeWidget_union">
+               <widget class="QTreeWidget" name="treeWidgetColorRange">
                 <property name="indentation">
                  <number>0</number>
                 </property>

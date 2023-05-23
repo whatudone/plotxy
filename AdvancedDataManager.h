@@ -23,10 +23,12 @@ signals:
 	void sgnFilterSort(QString);
 
 public slots:
+    // ColorRange
     void onBtnMore();
     void onBtnColorMore();
     void onBtnAddColorRange();
     void onBtnUpdateColorRange();
+    void onBtnRemoveColorRange();
 
 	void onEventBtnMoreClicked();
     void onUpdatePlotPair();

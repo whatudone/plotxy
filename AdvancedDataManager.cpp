@@ -428,7 +428,31 @@ void AdvancedDataManager::refreshLabelText()
     labelText->setLineEdit_4Text(m_curSelectDatapair->getCustomText());
 }
 
-void AdvancedDataManager::refreshColorRanges() {}
+void AdvancedDataManager::refreshColorRanges()
+{
+    if(m_curSelectDatapair)
+    {
+        ui.treeWidgetColorRange->clear();
+
+        QList<std::tuple<QString, double, QColor>> colorInfoList =
+            m_curSelectDatapair->getColorInfoList();
+        int32_t count = colorInfoList.size();
+        for(int var = 0; var < count; ++var)
+        {
+            auto tuple = colorInfoList.at(var);
+
+            QString name = std::get<0>(tuple);
+            double value = std::get<1>(tuple);
+            QColor color = std::get<2>(tuple);
+
+            QTreeWidgetItem* addUnion = new QTreeWidgetItem;
+            addUnion->setText(0, name);
+            addUnion->setText(1, QString::number(value));
+            addUnion->setBackgroundColor(2, color);
+            ui.treeWidgetColorRange->addTopLevelItem(addUnion);
+        }
+    }
+}
 
 void AdvancedDataManager::initConnections()
 {
@@ -607,11 +631,18 @@ void AdvancedDataManager::initLabelTextConnections()
 void AdvancedDataManager::initColorRangeConnections()
 {
     //Color Ranges
-    connect(ui.pushButtonAddColorRange, SIGNAL(clicked()), this, SLOT(onBtnAddColorRange()));
+    connect(ui.pushButtonAddColorRange,
+            &QPushButton::clicked,
+            this,
+            &AdvancedDataManager::onBtnAddColorRange);
     connect(ui.pushButtonUpdateColorRange,
             &QPushButton::clicked,
             this,
             &AdvancedDataManager::onBtnUpdateColorRange);
+    connect(ui.pushButtonRemoveColorRange,
+            &QPushButton::clicked,
+            this,
+            &AdvancedDataManager::onBtnRemoveColorRange);
     connect(subSettingWidgetContainer->m_colorRanges,
             SIGNAL(sigBtnColorRangesMoreclicked()),
             this,
@@ -639,7 +670,7 @@ void AdvancedDataManager::onBtnAddColorRange()
 	addUnion->setText(1, ui.lineEdit_value->text());
     addUnion->setBackgroundColor(2, color);
 
-	ui.treeWidget_union->addTopLevelItem(addUnion);
+    ui.treeWidgetColorRange->addTopLevelItem(addUnion);
 }
 
 void AdvancedDataManager::onBtnUpdateColorRange()
@@ -648,16 +679,29 @@ void AdvancedDataManager::onBtnUpdateColorRange()
     if(m_curSelectDatapair)
     {
         QList<std::tuple<QString, double, QColor>> colorInfoList;
-        int32_t count = ui.treeWidget_union->topLevelItemCount();
+        int32_t count = ui.treeWidgetColorRange->topLevelItemCount();
         for(int var = 0; var < count; ++var)
         {
-            auto item = ui.treeWidget_union->topLevelItem(var);
+            auto item = ui.treeWidgetColorRange->topLevelItem(var);
             QString name = item->text(0);
             double value = item->text(1).toDouble();
             QColor color = item->backgroundColor(2);
             colorInfoList.append(std::make_tuple(name, value, color));
         }
         m_curSelectDatapair->setColorInfoList(colorInfoList);
+    }
+}
+
+void AdvancedDataManager::onBtnRemoveColorRange()
+{
+    if(m_curSelectDatapair)
+    {
+        if(ui.treeWidgetColorRange->currentIndex().isValid())
+        {
+            auto item = ui.treeWidgetColorRange->takeTopLevelItem(
+                ui.treeWidgetColorRange->currentIndex().row());
+            delete item;
+        }
     }
 }
 
