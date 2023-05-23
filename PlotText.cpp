@@ -59,7 +59,7 @@ void PlotText::updateDataForDataPairsByTime(double secs)
 
 void PlotText::updateGraphByDataPair(DataPair* data)
 {
-
+    Q_UNUSED(data)
     // 暂时无法单独更新每个DataPair数据，只能全局刷新
     update();
 }

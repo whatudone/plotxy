@@ -1877,40 +1877,40 @@ void PlotManager::onOffsetValueChanged()
 
 void PlotManager::onPushButton_80Clicked()
 {
-    if(m_curSelectPlot == nullptr)
-		return;
-
-	dynamic_cast<PlotAttitude*>(m_curSelectPlot)->setRollColor(ui.pushButton_80->color());
+    if(auto plot = dynamic_cast<PlotAttitude*>(m_curSelectPlot))
+    {
+        plot->setRollColor(ui.pushButton_80->color());
+    }
 }
 
 void PlotManager::onPushButton_81Clicked()
 {
-    if(m_curSelectPlot == nullptr)
-		return;
-
-	dynamic_cast<PlotAttitude*>(m_curSelectPlot)->setPitchColor(ui.pushButton_81->color());
+    if(auto plot = dynamic_cast<PlotAttitude*>(m_curSelectPlot))
+    {
+        plot->setPitchColor(ui.pushButton_81->color());
+    }
 }
 
 void PlotManager::onSpinBox_29ValueChanged(int value)
 {
-    if(m_curSelectPlot == nullptr)
-		return;
-
-	dynamic_cast<PlotAttitude*>(m_curSelectPlot)->setTickRadiusPercentage(value);
+    if(auto plot = dynamic_cast<PlotAttitude*>(m_curSelectPlot))
+    {
+        plot->setTickRadiusPercentage(value);
+    }
 }
 
 void PlotManager::onSpinBox_30ValueChanged(int value)
 {
-    if(m_curSelectPlot == nullptr)
-		return;
-
-	dynamic_cast<PlotAttitude*>(m_curSelectPlot)->setTextPercentage(value);
+    if(auto plot = dynamic_cast<PlotAttitude*>(m_curSelectPlot))
+    {
+        plot->setTextPercentage(value);
+    }
 }
 
 void PlotManager::onSpinBox_31ValueChanged(int value)
 {
-    if(m_curSelectPlot == nullptr)
-		return;
-
-	dynamic_cast<PlotAttitude*>(m_curSelectPlot)->setDialPercentage(value);
+    if(auto plot = dynamic_cast<PlotAttitude*>(m_curSelectPlot))
+    {
+        plot->setDialPercentage(value);
+    }
 }

@@ -482,10 +482,18 @@ void PlotAttitude::customPainting(QPainter& painter)
     drawScale_pitch(&painter, radius);
     //绘制外边框
     drawBorder(&painter, radius);
-    //绘制线条
-    drawLine_roll(&painter, radius);
-    drawLine_pitch(&painter, radius);
-    //绘制文本
-    drawText_roll(&painter, radius);
-    drawText_pitch(&painter, radius);
+    if(getDataPairs().isEmpty())
+    {
+        return;
+    }
+    auto dataPair = getDataPairs().last();
+    if(dataPair->isDraw())
+    {
+        //绘制线条
+        drawLine_roll(&painter, radius);
+        drawLine_pitch(&painter, radius);
+        //绘制文本
+        drawText_roll(&painter, radius);
+        drawText_pitch(&painter, radius);
+    }
 }
