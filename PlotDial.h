@@ -24,6 +24,8 @@ public:
 private:
     void updateDataForDataPairsByTime(double secs) override;
     void customPainting(QPainter& painter) override;
+    void updateGraphByDataPair(DataPair* data) override;
+    void setCoordRangeX(double lower, double upper) override;
     void updateCenterPoint();
 
 private:
@@ -31,13 +33,16 @@ private:
 
     QColor m_dialColor;
     QColor m_pointColor;
+    QColor m_capColor;
 
     QPoint m_centerPoint;
     int m_circleRadius;
+    int m_tickCount;
+
     int m_startAngle;
     int m_endAngle;
-    // 四个点形成的钟表指针
-    QPoint m_clockHandPoints[4];
+
+    QMap<QString, QVector<QPointF>> m_valueMap;
 };
 
 #endif // PLOTDIAL_H

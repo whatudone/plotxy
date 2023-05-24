@@ -13,10 +13,16 @@ PlotDial::PlotDial(QWidget* parent)
 
     m_dialColor = Qt::white;
     m_pointColor = Qt::green;
+    m_capColor = Qt::red;
 
     QString name = QString("Dial%1").arg(m_instanceCount);
     this->setName(name);
     m_instanceCount += 1;
+
+    // 临时写死，后期适配
+    m_startAngle = -135;
+    m_endAngle = 135;
+    m_tickCount = 7;
 
     m_title = "Dial";
 
@@ -31,39 +37,49 @@ void PlotDial::updateDataForDataPairsByTime(double secs)
 {
     if(getDataPairs().isEmpty())
         return;
-    auto dataPair = getDataPairs().last();
-    auto xEntityID = dataPair->getEntityIDX();
-    auto xAttr = dataPair->getAttr_x();
-    QVector<double> m_valueList =
-        DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
 
-    if(m_valueList.isEmpty())
-        return;
+    auto dataPairList = getDataPairs();
+    for(auto dataPair : dataPairList)
+    {
+        auto xEntityID = dataPair->getEntityIDX();
+        auto xAttr = dataPair->getAttr_x();
+        auto uuid = dataPair->getUuid();
+        QVector<double> m_valueList =
+            DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
 
-    double currValue = m_valueList.last();
+        if(m_valueList.isEmpty())
+            return;
 
-    //根据当前值计算指针终点
-    double angle = (int)currValue % 360;
+        double currValue = m_valueList.last();
 
-    QPoint endPoint;
-    endPoint.setX(m_circleRadius * cos(qDegreesToRadians(angle)) + m_centerPoint.x());
-    endPoint.setY(-m_circleRadius * sin(qDegreesToRadians(angle)) + m_centerPoint.y());
+        //根据当前值计算指针终点
+        double angle = 225 - (currValue - m_coordBgn_x) / (m_coordEnd_x - m_coordBgn_x) *
+                                 (m_endAngle - m_startAngle);
+        //        qDebug() << currValue << angle;
 
-    QVector2D vec(endPoint.x() - m_centerPoint.x(), endPoint.y() - m_centerPoint.y());
-    QPoint midPoint;
-    midPoint.setX(m_centerPoint.x() + vec.x() * 0.1);
-    midPoint.setY(m_centerPoint.y() + vec.y() * 0.1);
+        QPointF endPoint;
+        endPoint.setX(m_circleRadius * cos(qDegreesToRadians(angle)) + m_centerPoint.x());
+        endPoint.setY(-m_circleRadius * sin(qDegreesToRadians(angle)) + m_centerPoint.y());
 
-    QVector2D normalVec(-0.1 * ((double)endPoint.y() - (double)m_centerPoint.y()),
-                        0.1 * ((double)endPoint.x() - (double)m_centerPoint.x()));
+        QVector2D vec(endPoint.x() - m_centerPoint.x(), endPoint.y() - m_centerPoint.y());
+        QPointF midPoint;
+        midPoint.setX(m_centerPoint.x() + vec.x() * 0.1);
+        midPoint.setY(m_centerPoint.y() + vec.y() * 0.1);
 
-    QPoint endPoint1(midPoint.x() + normalVec.x(), midPoint.y() + normalVec.y());
-    QPoint endPoint2(midPoint.x() - normalVec.x(), midPoint.y() - normalVec.y());
-    m_clockHandPoints[0] = m_centerPoint;
-    m_clockHandPoints[1] = endPoint1;
-    m_clockHandPoints[2] = endPoint;
-    m_clockHandPoints[3] = endPoint2;
-    update();
+        QVector2D normalVec(-0.1 * ((double)endPoint.y() - (double)m_centerPoint.y()),
+                            0.1 * ((double)endPoint.x() - (double)m_centerPoint.x()));
+
+        QPointF endPoint1(midPoint.x() + normalVec.x(), midPoint.y() + normalVec.y());
+        QPointF endPoint2(midPoint.x() - normalVec.x(), midPoint.y() - normalVec.y());
+
+        m_valueMap.insert(
+            uuid, QVector<QPointF>() << m_centerPoint << endPoint1 << endPoint << endPoint2);
+    }
+
+    for(int i = 0; i < dataPairList.size(); i++)
+    {
+        updateGraphByDataPair(dataPairList.at(i));
+    }
 }
 
 void PlotDial::customPainting(QPainter& painter)
@@ -71,79 +87,130 @@ void PlotDial::customPainting(QPainter& painter)
     // TODO:理论上是在控件尺寸上发生变换时才需要调用updateCenterPoint
     updateCenterPoint();
     painter.save();
-    //绘制表盘圆圈
-    QPen pen;
-    pen.setColor(m_dialColor);
-    pen.setWidth(2);
-    painter.setPen(pen);
-
-    painter.drawEllipse(m_centerPoint, m_circleRadius, m_circleRadius);
-
-    // 绘制表盘圆弧
     double arcHeight = m_circleRadius / 20;
     painter.translate(m_centerPoint);
-    QRectF rect(-m_circleRadius, -m_circleRadius, m_circleRadius << 1, m_circleRadius << 1);
-    QPainterPath pathGreen;
-    pathGreen.arcTo(rect, 30, 180);
-    QPainterPath subPath;
-    subPath.addEllipse(rect.adjusted(arcHeight, arcHeight, -arcHeight, -arcHeight));
-    pathGreen -= subPath;
-    painter.setPen(Qt::NoPen);
-    painter.setBrush(QColor(0, 128, 0));
-    painter.drawPath(pathGreen);
 
-    QPainterPath pathYellow;
-    pathYellow.arcTo(rect, 30, -45);
-    pathYellow -= subPath;
-    painter.setBrush(QColor(128, 128, 0));
-    painter.drawPath(pathYellow);
+    QRectF rect(-m_circleRadius, -m_circleRadius, m_circleRadius * 2, m_circleRadius * 2);
+    //绘制表盘圆圈
+    QPen pen;
 
-    QPainterPath pathRed;
-    pathRed.arcTo(rect, -15, -75);
-    pathRed -= subPath;
-    painter.setBrush(QColor(128, 0, 0));
-    painter.drawPath(pathRed);
+    QPainterPath outLinePath;
+    outLinePath.arcTo(rect, 90 - m_endAngle, m_endAngle - m_startAngle);
 
-    // 绘制刻度
+    QPainterPath polyPath;
+    QVector<QPointF> polyPoint;
+    polyPoint.push_back(QPointF(0, 0));
+    polyPoint.push_back(QPointF(m_circleRadius * sin(m_startAngle * M_PI / 180),
+                                m_circleRadius * (-cos(m_startAngle * M_PI / 180))));
+    polyPoint.push_back(QPointF(m_circleRadius * sin(m_endAngle * M_PI / 180),
+                                m_circleRadius * (-cos(m_endAngle * M_PI / 180))));
+    outLinePath.addPolygon(QPolygonF(polyPoint));
+
+    painter.setBrush(m_capColor);
+    pen.setColor(m_capColor);
+    pen.setWidth(2);
+    painter.setPen(pen);
+    painter.drawPath(outLinePath);
+
+    pen.setColor(m_dialColor);
+    painter.setPen(pen);
+    painter.drawArc(rect, 16 * (90 - m_endAngle), 16 * (m_endAngle - m_startAngle));
+    painter.drawLine(QPointF(m_circleRadius * sin(m_startAngle * M_PI / 180),
+                             m_circleRadius * (-cos(m_startAngle * M_PI / 180))),
+                     QPointF(m_circleRadius * sin(m_endAngle * M_PI / 180),
+                             m_circleRadius * (-cos(m_endAngle * M_PI / 180))));
+
+    // 绘制表盘圆弧
+    //    QPainterPath pathGreen;
+    //    pathGreen.arcTo(rect, 30, 180);
+    //    QPainterPath subPath;
+    //    subPath.addEllipse(rect.adjusted(arcHeight, arcHeight, -arcHeight, -arcHeight));
+    //    pathGreen -= subPath;
+    //    painter.setPen(Qt::NoPen);
+    //    painter.setBrush(QColor(0, 128, 0));
+    //    painter.drawPath(pathGreen);
+
+    //    QPainterPath pathYellow;
+    //    pathYellow.arcTo(rect, 30, -45);
+    //    pathYellow -= subPath;
+    //    painter.setBrush(QColor(128, 128, 0));
+    //    painter.drawPath(pathYellow);
+
+    //    QPainterPath pathRed;
+    //    pathRed.arcTo(rect, -15, -75);
+    //    pathRed -= subPath;
+    //    painter.setBrush(QColor(128, 0, 0));
+    //    painter.drawPath(pathRed);
+
+    // 绘制刻度和表盘文字
+    if(m_tickCount < 2)
+        m_tickCount = 2;
+    double curAngle = (m_endAngle - m_startAngle) / (m_tickCount - 1);
+    double curSpan = (m_coordEnd_x - m_coordBgn_x) / (m_tickCount - 1);
+
     pen.setWidth(2);
     pen.setColor(m_dialColor);
     painter.setPen(pen);
-    painter.drawLine(QPointF(-m_circleRadius, 0), QPointF(-m_circleRadius * 0.95, 0));
-    painter.drawLine(QPointF(m_circleRadius, 0), QPointF(m_circleRadius * 0.95, 0));
-    painter.drawLine(QPointF(0, -m_circleRadius * 0.95), QPointF(0, -m_circleRadius));
-    painter.drawLine(QPointF(0, m_circleRadius * 0.95), QPointF(0, m_circleRadius));
-
-    // 绘制表盘文字
     painter.setFont(m_tickLabelFont);
-    QFontMetricsF fm1(m_tickLabelFont);
-    double w = fm1.size(Qt::TextSingleLine, QString("-50°")).width();
-    double h = fm1.size(Qt::TextSingleLine, QString("-50°")).height();
-    painter.drawText(-m_circleRadius * 0.93, h / 3, QString("-50°"));
+    double posX;
+    double posY;
+    for(int i = 0; i < m_tickCount; i++)
+    {
+        posX = m_circleRadius * cos((m_endAngle - curAngle * i - 90) * M_PI / 180);
+        posY = m_circleRadius * sin((m_endAngle - curAngle * i - 90) * M_PI / 180);
+        painter.drawLine(QPointF(posX, posY), QPointF(posX * 0.95, posY * 0.95));
+        painter.drawText(QPointF(posX * 0.9, posY * 0.9),
+                         QString("%1").arg(m_coordEnd_x - curSpan * i));
+    }
 
-    w = fm1.size(Qt::TextSingleLine, QString("0°")).width();
-    h = fm1.size(Qt::TextSingleLine, QString("0°")).height();
-    painter.drawText(-w / 2, -m_circleRadius * 0.95 + h, QString("0°"));
-
-    w = fm1.size(Qt::TextSingleLine, QString("50°")).width();
-    h = fm1.size(Qt::TextSingleLine, QString("50°")).height();
-    painter.drawText(m_circleRadius * 0.93 - w, h / 3, QString("50°"));
-
-    w = fm1.size(Qt::TextSingleLine, QString("100°")).width();
-    h = fm1.size(Qt::TextSingleLine, QString("100°")).height();
-    painter.drawText(-w / 2, m_circleRadius * 0.93, QString("100°"));
     // 绘制上面的图形坐标轴是基于平移之后的，需要还原，指针的坐标是没有平移过的
     painter.restore();
     // 绘制图表的指针
-    if(!getDataPairs().isEmpty())
+
+    auto dataPairList = getDataPairs();
+
+    if(!dataPairList.isEmpty())
     {
         QBrush pointerBrush(m_pointColor, Qt::SolidPattern);
-        painter.setBrush(pointerBrush);
-        painter.drawPolygon(m_clockHandPoints, 4);
+        for(auto data : dataPairList)
+        {
+            if(data->isDraw())
+            {
+                auto uuid = data->getUuid();
+                if(m_valueMap.contains(uuid))
+                {
+                    if(m_valueMap[uuid].size() == 4)
+                    {
+                        QPointF clockPoint[4];
+                        for(int i = 0; i < m_valueMap[uuid].size(); i++)
+                        {
+                            clockPoint[i] = m_valueMap[uuid].at(i);
+                        }
+                        pointerBrush.setColor(data->dataColor());
+                        painter.setBrush(pointerBrush);
+                        painter.drawPolygon(clockPoint, 4);
+                    }
+                }
+            }
+        }
     }
+}
+
+void PlotDial::updateGraphByDataPair(DataPair* data)
+{
+    Q_UNUSED(data)
+    // 暂时无法单独更新每个DataPair数据，只能全局刷新
+    update();
+}
+
+void PlotDial::setCoordRangeX(double lower, double upper)
+{
+    m_coordBgn_x = lower;
+    m_coordEnd_x = upper;
 }
 
 void PlotDial::updateCenterPoint()
 {
-    m_circleRadius = int(qMin(m_widget->width() * 0.95, m_widget->height() * 0.95) / 2);
-    m_centerPoint = QPoint((m_widget->width()) / 2, (m_widget->height()) / 2);
+    m_circleRadius = int(m_widget->height() * 0.95 / (1 - cos(m_endAngle * M_PI / 180)));
+    m_centerPoint = QPoint((m_widget->width()) / 2, m_circleRadius);
 }

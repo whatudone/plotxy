@@ -8,6 +8,7 @@
 
 
 HEADERS += $$PWD/TimeClass.h \
+    $$PWD/mydialpointer.h \
     $$PWD/rename_tab_dialog.h \
     $$PWD/tabdrawwidget.h \
     $$PWD/Utils.h \
@@ -45,6 +46,7 @@ HEADERS += $$PWD/TimeClass.h \
     $$PWD/choose_plot_type_dialog.h \
 
 SOURCES += $$PWD/AddPlotPair.cpp \
+    $$PWD/mydialpointer.cpp \
     $$PWD/rename_tab_dialog.cpp \
     $$PWD/tabdrawwidget.cpp \
     $$PWD/AdvancedDataManager.cpp \
