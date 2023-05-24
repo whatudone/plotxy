@@ -5469,7 +5469,11 @@ background-color: rgb(127, 127, 127);</string>
                    </widget>
                   </item>
                   <item row="1" column="1">
-                   <widget class="QSpinBox" name="spinBox_22"/>
+                   <widget class="QSpinBox" name="spinBox_22">
+                    <property name="maximum">
+                     <number>1000</number>
+                    </property>
+                   </widget>
                   </item>
                   <item row="2" column="0">
                    <widget class="QLabel" name="label_122">
@@ -5479,7 +5483,11 @@ background-color: rgb(127, 127, 127);</string>
                    </widget>
                   </item>
                   <item row="2" column="1">
-                   <widget class="QSpinBox" name="spinBox_23"/>
+                   <widget class="QSpinBox" name="spinBox_23">
+                    <property name="maximum">
+                     <number>1000</number>
+                    </property>
+                   </widget>
                   </item>
                   <item row="3" column="0">
                    <widget class="QLabel" name="label_123">
@@ -5489,7 +5497,11 @@ background-color: rgb(127, 127, 127);</string>
                    </widget>
                   </item>
                   <item row="3" column="1">
-                   <widget class="QSpinBox" name="spinBox_24"/>
+                   <widget class="QSpinBox" name="spinBox_24">
+                    <property name="maximum">
+                     <number>1000</number>
+                    </property>
+                   </widget>
                   </item>
                   <item row="4" column="0">
                    <widget class="QLabel" name="label_124">
@@ -5499,7 +5511,11 @@ background-color: rgb(127, 127, 127);</string>
                    </widget>
                   </item>
                   <item row="4" column="1">
-                   <widget class="QSpinBox" name="spinBox_25"/>
+                   <widget class="QSpinBox" name="spinBox_25">
+                    <property name="maximum">
+                     <number>1000</number>
+                    </property>
+                   </widget>
                   </item>
                   <item row="5" column="0">
                    <widget class="QLabel" name="label_125">
@@ -5549,6 +5565,9 @@ background-color: rgb(127, 127, 127);</string>
                       <height>0</height>
                      </size>
                     </property>
+                    <property name="maximum">
+                     <number>1000</number>
+                    </property>
                    </widget>
                   </item>
                   <item row="6" column="1">
@@ -5591,6 +5610,12 @@ background-color: rgb(127, 127, 127);</string>
                         <height>0</height>
                        </size>
                       </property>
+                      <property name="minimum">
+                       <number>-180</number>
+                      </property>
+                      <property name="maximum">
+                       <number>179</number>
+                      </property>
                      </widget>
                     </item>
                     <item row="0" column="2">
@@ -5609,12 +5634,19 @@ background-color: rgb(127, 127, 127);</string>
                     <item row="1" column="0">
                      <widget class="QLabel" name="label_128">
                       <property name="text">
-                       <string>Sweep:</string>
+                       <string>End Angle:</string>
                       </property>
                      </widget>
                     </item>
                     <item row="1" column="1">
-                     <widget class="QSpinBox" name="spinBox_27"/>
+                     <widget class="QSpinBox" name="spinBox_27">
+                      <property name="minimum">
+                       <number>-179</number>
+                      </property>
+                      <property name="maximum">
+                       <number>180</number>
+                      </property>
+                     </widget>
                     </item>
                     <item row="1" column="2">
                      <spacer name="horizontalSpacer_67">
