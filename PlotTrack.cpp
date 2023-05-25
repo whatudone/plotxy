@@ -106,7 +106,7 @@ void PlotTrack::updateGraphByDataPair(DataPair* dataPair)
 
     int index = 0;
     int cnt = 0; // 标记是哪一条Target对应的Bar
-    for(auto it = m_itemInfo.constBegin(); it != m_itemInfo.constEnd(); it++)
+    for(auto it = m_tickLabelMap.constBegin(); it != m_tickLabelMap.constEnd(); it++)
     {
         index++;
         if(it.key() == uuid)
@@ -147,9 +147,9 @@ void PlotTrack::updateGraphByDataPair(DataPair* dataPair)
     }
 }
 
-void PlotTrack::updateLabelAndTick()
+void PlotTrack::updateKeyAxisTickLabel()
 {
-    if(m_itemInfo.isEmpty())
+    if(m_tickLabelMap.isEmpty())
     {
         return;
     }
@@ -158,7 +158,7 @@ void PlotTrack::updateLabelAndTick()
     QVector<QString> labels;
 
     int index = 1;
-    for(auto it = m_itemInfo.constBegin(); it != m_itemInfo.constEnd(); it++)
+    for(auto it = m_tickLabelMap.constBegin(); it != m_tickLabelMap.constEnd(); it++)
     {
         m_barTicks << index++;
         labels << it.value();
@@ -232,9 +232,9 @@ DataPair* PlotTrack::addPlotDataPair(int32_t xEntityID,
     pBarAva->moveAbove(pBarUna);
     pBarInv->moveAbove(pBarAva);
     m_allBar.insert(uuid, barList);
-    m_itemInfo.insert(uuid, data->getEntity_x() + '_' + xAttrName);
+    m_tickLabelMap.insert(uuid, data->getEntity_x() + '_' + xAttrName);
 
-    updateLabelAndTick();
+    updateKeyAxisTickLabel();
     emit dataPairsChanged(this);
 
     return data;
@@ -248,8 +248,8 @@ void PlotTrack::delPlotPairData(const QString& uuid)
         m_trackDrawDataMap.remove(uuid);
     if(m_itemData.contains(uuid))
         m_itemData.remove(uuid);
-    if(m_itemInfo.contains(uuid))
-        m_itemInfo.remove(uuid);
+    if(m_tickLabelMap.contains(uuid))
+        m_tickLabelMap.remove(uuid);
     if(m_allBar.contains(uuid))
     {
         for(int i = 0; i < m_allBar[uuid].size(); i++)
@@ -258,6 +258,6 @@ void PlotTrack::delPlotPairData(const QString& uuid)
         }
         m_allBar.remove(uuid);
     }
-    updateLabelAndTick();
+    updateKeyAxisTickLabel();
     PlotItemBase::delPlotPairData(uuid);
 }

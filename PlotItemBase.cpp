@@ -193,10 +193,9 @@ void PlotItemBase::setCoordRangeX(double lower, double upper)
 {
     m_coordBgn_x = lower;
     m_coordEnd_x = upper;
-    if(m_customPlot)
+    if(m_customPlot && m_customPlot->xAxis)
     {
-        if(m_customPlot->xAxis && m_customPlot->yAxis)
-            m_customPlot->xAxis->setRange(lower, upper);
+        m_customPlot->xAxis->setRange(lower, upper);
     }
     replot();
 }
@@ -205,10 +204,9 @@ void PlotItemBase::setCoordRangeY(double lower, double upper)
 {
     m_coordBgn_y = lower;
     m_coordEnd_y = upper;
-    if(m_customPlot)
+    if(m_customPlot && m_customPlot->yAxis)
     {
-        if(m_customPlot->xAxis && m_customPlot->yAxis)
-            m_customPlot->yAxis->setRange(lower, upper);
+        m_customPlot->yAxis->setRange(lower, upper);
     }
     replot();
 }

@@ -33,7 +33,12 @@ protected:
 
 private:
     void initPlot();
-    void updateLabelAndTick();
+    void updateKeyAxisTickLabel();
+
+    // 交换keyAxis 和valueAxis上的ticker,仅在切换水平和垂直时才使用
+    void exchangeKeyAndValueAxisTickLabel();
+
+    bool isValidColorRange(DataPair* data);
 
     virtual DataPair* addPlotDataPair(int32_t xEntityID,
                                       const QString& xAttrName,
@@ -45,25 +50,28 @@ private:
     virtual void delPlotPairData(const QString& uuid) override;
     virtual void updateGraphByDataPair(DataPair* dataPair) override;
 
+    void setCoordRangeX(double lower, double upper) override;
+    void setCoordRangeY(double lower, double upper) override;
+    void setIsHorizonBar(bool isHorizonBar) override;
+    // 针对target-属性轴
+    QCPAxis* keyAxis();
+    // 针对数字value轴
+    QCPAxis* valueAxis();
+
 private:
     QColor m_defaultColor;
 
     QMap<QString, QList<std::tuple<QString, double, QColor>>>
         m_allColorInfoList; //QString:colorname，double:lower limit,QColor:color
 
-    QVector<double> m_barTicks;
     QMap<QString, QMap<double, QColor>>
         m_barColorInfoMap; // 最终界面上的所有QCPBar  QString:uuid  内层QMap对应当前目标上的所有QCPBar：double:阈值 QColor:显示的颜色
 
     QMap<QString, QList<QCPBars*>> m_allBar;
     QMap<QString, QString>
-        m_itemInfo; // 用来存放每个item对应的描述，显示在y轴左边 QString:uuid  QString:target_attr
+        m_tickLabelMap; // 用来存放每个item对应的描述，显示在y轴左边 QString:uuid  QString:target_attr
     QMap<QString, double> m_itemData; //用来存放每个target对应的最小值
     QMap<QString, double> m_curValue; //用来存放当前secs对应的数据
-
-    // 范围的最小值和最大值，用于缩放图表坐标范围，保证图表始终能完全显示
-    double m_min;
-    double m_max;
 };
 
 #endif // _PLOT_BAR_H_

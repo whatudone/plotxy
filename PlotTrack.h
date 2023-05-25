@@ -33,7 +33,7 @@ public:
 protected:
     void initPlot();
     void updateDataForDataPairsByTime(double secs) override;
-    void updateLabelAndTick();
+    void updateKeyAxisTickLabel();
 
     virtual DataPair* addPlotDataPair(int32_t xEntityID,
                                       const QString& xAttrName,
@@ -54,7 +54,7 @@ private:
     QVector<double> m_barTicks;
 
     QMap<QString, QList<QCPBars*>> m_allBar;
-    QMap<QString, QString> m_itemInfo;
+    QMap<QString, QString> m_tickLabelMap;
     QMap<QString, QList<double>> m_itemData;
     double m_minTime;
     double m_maxTime;

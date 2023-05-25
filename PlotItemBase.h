@@ -270,7 +270,7 @@ public:
     void setupLayout();
 
     bool getIsHorizonBar() const;
-    void setIsHorizonBar(bool isHorizonBar);
+    virtual void setIsHorizonBar(bool isHorizonBar);
 
     int getBarBetweenPadding() const;
     void setBarBetweenPadding(int barBetweenPadding);

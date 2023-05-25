@@ -209,12 +209,16 @@ void PlotPolar::setUnitsY(const QString& units)
 
 void PlotPolar::setCoordRangeX(double lower, double upper)
 {
+    m_angularRange_lower = lower;
+    m_angularRange_upper = upper;
     m_angularAxis->setRange(lower, upper);
     m_customPlot->replot();
 }
 
 void PlotPolar::setCoordRangeY(double lower, double upper)
 {
+    m_radialRange_lower = lower;
+    m_radialRange_upper = upper;
     m_angularAxis->radialAxis()->setRange(lower, upper);
     m_customPlot->replot();
 }
