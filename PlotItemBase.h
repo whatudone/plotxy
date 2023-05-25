@@ -40,7 +40,7 @@ public:
     void setPosition(int x, int y); //设置包围盒左上角位置
     void setWidth(int width); //设置宽度
     void setHeight(int height); //设置包围盒高度
-    void setRect(QRect rect);
+    void setRect(const QRect& rect);
     void setName(const QString&);
     void setTabName(const QString&);
 

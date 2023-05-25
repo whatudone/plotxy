@@ -185,6 +185,8 @@ private:
     void savePXYData(const QString& pxyFileName);
     // 加载PXY格式工程信息，里面带了图表空间信息和数据信息
     void loadPXYData(const QString& pxyFileName);
+    // 保存图表信息到Json
+    void savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject);
     // 保存数据对信息
     void saveDataPairToJson(DataPair* dataPair, QJsonObject& object);
     // 清理历史创建的tab页和其中的图表

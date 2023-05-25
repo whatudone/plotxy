@@ -834,25 +834,8 @@ void PlotXYDemo::savePXYData(const QString& pxyFileName)
         QJsonArray plotArray;
         for(auto plot : plotList)
         {
-            QString plotName = plot->getName();
             QJsonObject plotObject;
-
-            plotObject.insert("PlotName", plotName);
-            plotObject.insert("X", plot->x());
-            plotObject.insert("Y", plot->y());
-            plotObject.insert("Width", plot->width());
-            plotObject.insert("Height", plot->height());
-            plotObject.insert("PlotType", plot->plotType());
-            // 图表存在多个数据对
-            QJsonArray dataPairArray;
-            auto dataPairs = plot->getDataPairs();
-            for(DataPair* dataPair : dataPairs)
-            {
-                QJsonObject dataPairObject;
-                saveDataPairToJson(dataPair, dataPairObject);
-                dataPairArray.append(dataPairObject);
-            }
-            plotObject.insert("DataPairs", dataPairArray);
+            savePlotInfoToJson(plot, plotObject);
             plotArray.append(plotObject);
         }
         tabObjct.insert("TabName", tabName);
@@ -932,6 +915,27 @@ void PlotXYDemo::loadPXYData(const QString& pxyFileName)
             }
         }
     }
+}
+
+void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
+{
+    QString plotName = plot->getName();
+    plotObject.insert("PlotName", plotName);
+    plotObject.insert("X", plot->x());
+    plotObject.insert("Y", plot->y());
+    plotObject.insert("Width", plot->width());
+    plotObject.insert("Height", plot->height());
+    plotObject.insert("PlotType", plot->plotType());
+    // 图表存在多个数据对
+    QJsonArray dataPairArray;
+    auto dataPairs = plot->getDataPairs();
+    for(DataPair* dataPair : dataPairs)
+    {
+        QJsonObject dataPairObject;
+        saveDataPairToJson(dataPair, dataPairObject);
+        dataPairArray.append(dataPairObject);
+    }
+    plotObject.insert("DataPairs", dataPairArray);
 }
 
 void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object)

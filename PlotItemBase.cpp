@@ -65,9 +65,6 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     m_topPadding = 10;
     m_bottomPadding = 10;
 
-    //设置无边框属性
-    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Widget);
-
     setAutoFillBackground(true);
     setMinimumSize(200, 150);
     resize(1000, 600);
@@ -114,7 +111,7 @@ void PlotItemBase::setHeight(int height)
     update();
 }
 
-void PlotItemBase::setRect(QRect rect)
+void PlotItemBase::setRect(const QRect& rect)
 {
     m_position.setX(rect.x());
     m_position.setY(rect.y());
