@@ -235,21 +235,8 @@ void PlotPolar::getCoordRangeY(double& lower, double& upper)
     upper = m_radialRange_upper;
 }
 
-void PlotPolar::slot_setRangeDrag(bool enabled)
-{
-    m_customPlot->setInteraction(QCP::iRangeDrag, enabled);
-    m_customPlot->replot();
-}
-
-void PlotPolar::slot_setRangeZoom(bool enabled)
-{
-    m_customPlot->setInteraction(QCP::iRangeZoom, enabled);
-    m_customPlot->replot();
-}
-
 void PlotPolar::updateDataForDataPairsByTime(double secs)
 {
-    // TODO:使用map把graph变量存起来，不要动态创建graph
     int isize = getDataPairs().size();
 
     for(int i = 0; i < isize; ++i)
@@ -295,7 +282,17 @@ void PlotPolar::updateGraphByDataPair(DataPair* data)
         graph->setData(x, y);
         if(data->isLineMode())
         {
-            graph->setScatterStyle(QCPScatterStyle::ssDisc);
+            Qt::PenStyle style = Qt::SolidLine;
+            // 线性模式下才支持stipple
+            if(data->getIsStippleEnable())
+            {
+                style = data->getStipplePattern();
+            }
+            QPen pen = graph->pen();
+            pen.setStyle(style);
+            graph->setPen(pen);
+
+            graph->setScatterStyle(QCPScatterStyle::ssNone);
             graph->setLineStyle(QCPPolarGraph::lsLine);
         }
         else

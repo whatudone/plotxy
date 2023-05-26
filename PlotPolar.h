@@ -38,14 +38,6 @@ public:
     void getCoordRangeX(double& lower, double& upper) override;
     void getCoordRangeY(double& lower, double& upper) override;
 
-public slots:
-
-	//axis
-
-	//style
-	void slot_setRangeDrag(bool);
-	void slot_setRangeZoom(bool);
-
 private:
     void updateDataForDataPairsByTime(double secs) override;
     void updateGraphByDataPair(DataPair* data) override;
