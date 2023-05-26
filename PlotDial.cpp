@@ -44,13 +44,8 @@ void PlotDial::updateDataForDataPairsByTime(double secs)
         auto xEntityID = dataPair->getEntityIDX();
         auto xAttr = dataPair->getAttr_x();
         auto uuid = dataPair->getUuid();
-        QVector<double> m_valueList =
-            DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
-
-        if(m_valueList.isEmpty())
-            return;
-
-        double currValue = m_valueList.last();
+        double currValue =
+            DataManager::getInstance()->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs);
 
         //根据当前值计算指针终点
         double angle = 225 - (currValue - m_coordBgn_x) / (m_coordEnd_x - m_coordBgn_x) *
@@ -76,10 +71,7 @@ void PlotDial::updateDataForDataPairsByTime(double secs)
             uuid, QVector<QPointF>() << m_centerPoint << endPoint1 << endPoint << endPoint2);
     }
 
-    for(int i = 0; i < dataPairList.size(); i++)
-    {
-        updateGraphByDataPair(dataPairList.at(i));
-    }
+    update();
 }
 
 void PlotDial::customPainting(QPainter& painter)
@@ -87,7 +79,6 @@ void PlotDial::customPainting(QPainter& painter)
     // TODO:理论上是在控件尺寸上发生变换时才需要调用updateCenterPoint
     updateCenterPoint();
     painter.save();
-    double arcHeight = m_circleRadius / 20;
     painter.translate(m_centerPoint);
 
     QRectF rect(-m_circleRadius, -m_circleRadius, m_circleRadius * 2, m_circleRadius * 2);
@@ -121,6 +112,7 @@ void PlotDial::customPainting(QPainter& painter)
                              m_circleRadius * (-cos(m_endAngle * M_PI / 180))));
 
     // 绘制表盘圆弧
+    //    double arcHeight = m_circleRadius / 20;
     //    QPainterPath pathGreen;
     //    pathGreen.arcTo(rect, 30, 180);
     //    QPainterPath subPath;
@@ -201,12 +193,6 @@ void PlotDial::updateGraphByDataPair(DataPair* data)
     Q_UNUSED(data)
     // 暂时无法单独更新每个DataPair数据，只能全局刷新
     update();
-}
-
-void PlotDial::setCoordRangeX(double lower, double upper)
-{
-    m_coordBgn_x = lower;
-    m_coordEnd_x = upper;
 }
 
 void PlotDial::updateCenterPoint()
