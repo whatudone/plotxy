@@ -108,7 +108,7 @@ void PlotBar::updateGraphByDataPair(DataPair* data)
     // 有效的ColorRange需要将原始的单个Bar拆分成多个Bar,无效的则直接使用添加数据对时产生的默认单个Bar
     if(isValidColorRange(data))
     {
-        QList<std::tuple<QString, double, QColor>> colorList = data->getColorInfoList();
+        QList<std::tuple<QString, double, QColor>> colorList = data->getColorRanges();
 
         if(!m_allColorInfoList.contains(uuid) || m_allColorInfoList[uuid] != colorList)
         {
@@ -365,7 +365,7 @@ void PlotBar::exchangeKeyAndValueAxisTickLabel()
 
 bool PlotBar::isValidColorRange(DataPair* data)
 {
-    QList<std::tuple<QString, double, QColor>> colorList = data->getColorInfoList();
+    QList<std::tuple<QString, double, QColor>> colorList = data->getColorRanges();
     if(colorList.isEmpty())
     {
         // 表示未设置显示范围，则全用默认颜色绘制

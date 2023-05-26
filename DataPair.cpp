@@ -180,14 +180,18 @@ void DataPair::setDesc(const QString& desc)
     m_desc = desc;
 }
 
-QList<std::tuple<QString, double, QColor>> DataPair::getColorInfoList() const
+QList<std::tuple<QString, double, QColor>> DataPair::getColorRanges() const
 {
     return m_colorInfoList;
 }
 
-void DataPair::setColorInfoList(const QList<std::tuple<QString, double, QColor>>& colorInfoList)
+void DataPair::setColorRanges(const QList<std::tuple<QString, double, QColor>>& colorInfoList)
 {
-    m_colorInfoList = colorInfoList;
+    if(m_colorInfoList != colorInfoList)
+    {
+        m_colorInfoList = colorInfoList;
+        emit dataUpdate();
+    }
 }
 
 QString DataPair::processLabelText(double xData, double yData)
@@ -672,5 +676,65 @@ QColor DataPair::getLabelSecColor() const
 
 void DataPair::setLabelSecColor(const QColor& labelSecColor)
 {
-    m_labelSecColor = labelSecColor;
+    if(m_labelSecColor != labelSecColor)
+    {
+        m_labelSecColor = labelSecColor;
+        emit dataUpdate();
+    }
+}
+
+bool DataPair::getIsStippleEnable() const
+{
+    return m_isStippleEnable;
+}
+
+void DataPair::setIsStippleEnable(bool isStippleEnable)
+{
+    if(m_isStippleEnable != isStippleEnable)
+    {
+        m_isStippleEnable = isStippleEnable;
+        emit dataUpdate();
+    }
+}
+
+Qt::PenStyle DataPair::getStipplePattern() const
+{
+    return m_stipplePattern;
+}
+
+void DataPair::setStipplePattern(const Qt::PenStyle& stipplePattern)
+{
+    if(m_stipplePattern != stipplePattern)
+    {
+        m_stipplePattern = stipplePattern;
+        emit dataUpdate();
+    }
+}
+
+QString DataPair::getCustomPattern() const
+{
+    return m_customPattern;
+}
+
+void DataPair::setCustomPattern(const QString& customPattern)
+{
+    if(m_customPattern != customPattern)
+    {
+        m_customPattern = customPattern;
+        emit dataUpdate();
+    }
+}
+
+int DataPair::getCustomPatternFactor() const
+{
+    return m_customPatternFactor;
+}
+
+void DataPair::setCustomPatternFactor(double customPatternFactor)
+{
+    if(m_customPatternFactor != customPatternFactor)
+    {
+        m_customPatternFactor = customPatternFactor;
+        emit dataUpdate();
+    }
 }

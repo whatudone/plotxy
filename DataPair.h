@@ -278,8 +278,8 @@ public:
     QString getDesc() const;
     void setDesc(const QString& desc);
 
-    QList<std::tuple<QString, double, QColor>> getColorInfoList() const;
-    void setColorInfoList(const QList<std::tuple<QString, double, QColor>>& colorInfoList);
+    QList<std::tuple<QString, double, QColor>> getColorRanges() const;
+    void setColorRanges(const QList<std::tuple<QString, double, QColor>>& colorInfoList);
 
     /*
      * 下面一系列接口
@@ -295,6 +295,18 @@ public:
 
     QColor getLabelSecColor() const;
     void setLabelSecColor(const QColor& labelSecColor);
+
+    bool getIsStippleEnable() const;
+    void setIsStippleEnable(bool isStippleEnable);
+
+    Qt::PenStyle getStipplePattern() const;
+    void setStipplePattern(const Qt::PenStyle& stipplePattern);
+
+    QString getCustomPattern() const;
+    void setCustomPattern(const QString& customPattern);
+
+    int getCustomPatternFactor() const;
+    void setCustomPatternFactor(double customPatternFactor);
 
 private:
     int m_lineWidth; //线宽
@@ -339,6 +351,13 @@ private:
     bool m_attr_show; //属性是否显示
     bool m_data_show; //数据是否显示
     bool m_unit_show; //单位是否显示
+
+    // stipple
+    bool m_isStippleEnable = false;
+    Qt::PenStyle m_stipplePattern = Qt::SolidLine;
+    QString m_customPattern;
+    int m_customPatternFactor;
+
     // 数据对描述信息，目前仅限于light图表使用
     QString m_desc;
     // 自动生成的唯一标识符

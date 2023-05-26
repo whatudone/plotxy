@@ -167,6 +167,15 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
         if(data->isLineMode())
 		{
             graph->setLineStyle(QCPGraph::lsLine);
+            Qt::PenStyle style = Qt::SolidLine;
+            // 线性模式下才支持stipple
+            if(data->getIsStippleEnable())
+            {
+                style = data->getStipplePattern();
+            }
+            QPen pen = graph->pen();
+            pen.setStyle(style);
+            graph->setPen(pen);
             graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssNone));
 		}
 		else

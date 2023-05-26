@@ -345,7 +345,39 @@ void AdvancedDataManager::onIconSetting_color(QColor color)
     if(m_curSelectDatapair == nullptr)
 		return;
 
-	m_curSelectDatapair->setIconColor(color);
+    m_curSelectDatapair->setIconColor(color);
+}
+
+void AdvancedDataManager::onStippleEnableChanged(bool enable)
+{
+    if(m_curSelectDatapair)
+    {
+        m_curSelectDatapair->setIsStippleEnable(enable);
+    }
+}
+
+void AdvancedDataManager::onStipplePatternChanged(Qt::PenStyle style)
+{
+    if(m_curSelectDatapair)
+    {
+        m_curSelectDatapair->setStipplePattern(style);
+    }
+}
+
+void AdvancedDataManager::onStippleCustomPatternChanged(const QString& pattern)
+{
+    if(m_curSelectDatapair)
+    {
+        m_curSelectDatapair->setCustomPattern(pattern);
+    }
+}
+
+void AdvancedDataManager::onStippleFactorChanged(int factor)
+{
+    if(m_curSelectDatapair)
+    {
+        m_curSelectDatapair->setCustomPatternFactor(factor);
+    }
 }
 
 void AdvancedDataManager::refreshUI()
@@ -412,7 +444,14 @@ void AdvancedDataManager::refreshLabelSettings()
     labelSettings->setComboBox_3Text(m_curSelectDatapair->getUnit_y());
 }
 
-void AdvancedDataManager::refreshStipple() {}
+void AdvancedDataManager::refreshStipple()
+{
+    auto stipple = subSettingWidgetContainer->m_stippleSetting;
+    stipple->setStippleEnable(m_curSelectDatapair->getIsStippleEnable());
+    stipple->setStipplePattern(m_curSelectDatapair->getStipplePattern());
+    stipple->setStippleCustomPattern(m_curSelectDatapair->getCustomPattern());
+    stipple->setStippleFactor(m_curSelectDatapair->getCustomPatternFactor());
+}
 
 void AdvancedDataManager::refreshEvent() {}
 
@@ -435,7 +474,7 @@ void AdvancedDataManager::refreshColorRanges()
         ui.treeWidgetColorRange->clear();
 
         QList<std::tuple<QString, double, QColor>> colorInfoList =
-            m_curSelectDatapair->getColorInfoList();
+            m_curSelectDatapair->getColorRanges();
         int32_t count = colorInfoList.size();
         for(int var = 0; var < count; ++var)
         {
@@ -462,6 +501,7 @@ void AdvancedDataManager::initConnections()
     initLabelTextConnections();
     initColorRangeConnections();
     initEventConnections();
+    initStippleConnections();
 }
 
 void AdvancedDataManager::initGeneralConnections()
@@ -662,6 +702,27 @@ void AdvancedDataManager::initEventConnections()
             &AdvancedDataManager::onUpdatePlotPair);
 }
 
+void AdvancedDataManager::initStippleConnections()
+{
+    //stipple
+    connect(subSettingWidgetContainer->m_stippleSetting,
+            &StippleSetting::stippleEnableChanged,
+            this,
+            &AdvancedDataManager::onStippleEnableChanged);
+    connect(subSettingWidgetContainer->m_stippleSetting,
+            &StippleSetting::stipplePatternChanged,
+            this,
+            &AdvancedDataManager::onStipplePatternChanged);
+    connect(subSettingWidgetContainer->m_stippleSetting,
+            &StippleSetting::stippleCustomPatternChanged,
+            this,
+            &AdvancedDataManager::onStippleCustomPatternChanged);
+    connect(subSettingWidgetContainer->m_stippleSetting,
+            &StippleSetting::stippleFactorChanged,
+            this,
+            &AdvancedDataManager::onStippleFactorChanged);
+}
+
 void AdvancedDataManager::onBtnAddColorRange()
 {
     QColor color = ui.pushButton_color->color();
@@ -688,7 +749,7 @@ void AdvancedDataManager::onBtnUpdateColorRange()
             QColor color = item->backgroundColor(2);
             colorInfoList.append(std::make_tuple(name, value, color));
         }
-        m_curSelectDatapair->setColorInfoList(colorInfoList);
+        m_curSelectDatapair->setColorRanges(colorInfoList);
     }
 }
 

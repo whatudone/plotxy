@@ -79,6 +79,12 @@ public slots:
 	void onIconSetting_height(int);
 	void onIconSetting_color(QColor);
 
+    // stipple
+    void onStippleEnableChanged(bool enable);
+    void onStipplePatternChanged(Qt::PenStyle style);
+    void onStippleCustomPatternChanged(const QString& pattern);
+    void onStippleFactorChanged(int factor);
+
 private:
     // 根据数据对数据刷新UI
 	void refreshUI();
@@ -98,6 +104,7 @@ private:
     void initLabelTextConnections();
     void initColorRangeConnections();
     void initEventConnections();
+    void initStippleConnections();
 
 private:
     Ui::AdvancedDataManager ui;
