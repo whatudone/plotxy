@@ -25,7 +25,6 @@ private:
     void updateDataForDataPairsByTime(double secs) override;
     void customPainting(QPainter& painter) override;
     void updateGraphByDataPair(DataPair* data) override;
-    void setCoordRangeX(double lower, double upper) override;
     void updateCenterPoint();
 
 private:

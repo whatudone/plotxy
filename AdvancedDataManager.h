@@ -46,7 +46,7 @@ public slots:
 	void onGeneral_color(QColor);
 	void onGeneral_matchColor(bool);
     void onLineModeChanged(bool lineMode);
-    void onLineWidthChanged(int32_t lineWidth);
+    void onLineWidthChanged(int32_t width);
 	//Label Settings
 	void onLabelSettings_draw(bool);
 	void onLabelSettings_color(QColor);
@@ -57,8 +57,8 @@ public slots:
 	void onLabelSettings_position(int);
 	void onLabelSettings_precision_x(int);
 	void onLabelSettings_precision_y(int);
-	void onLabelSettings_xUnit(QString);
-	void onLabelSettings_yUnit(QString);
+    void onLabelSettings_xUnit(const QString& xUnit);
+    void onLabelSettings_yUnit(const QString& yUnit);
 
 	//Label Text
 	void onLabelText_format(int);

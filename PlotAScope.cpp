@@ -120,7 +120,7 @@ void PlotAScope::updateGraphByDataPair(DataPair* data)
         if(x.isEmpty() || y.isEmpty())
             return;
         graph->setData(x, y);
-        graph->setPen(QPen(data->dataColor(), data->lineWidth()));
+        graph->setPen(QPen(data->dataColor(), data->width()));
     }
     else
     {

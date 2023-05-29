@@ -12,7 +12,7 @@ DataPair::DataPair(QObject* parent)
 	m_isDraw = true;
 	m_color = Qt::white;
     m_isLineMode = true;
-    m_lineWidth = 2;
+    m_dataWidth = 2;
 	m_matchColor = false;
 
 	m_iconDraw = false;
@@ -185,6 +185,40 @@ QList<std::tuple<QString, double, QColor>> DataPair::getColorRanges() const
     return m_colorInfoList;
 }
 
+QString DataPair::colorRangesToString() const
+{
+    QString colorRanges;
+    for(const auto& tuple : m_colorInfoList)
+    {
+        QString name = std::get<0>(tuple);
+        double value = std::get<1>(tuple);
+        QColor color = std::get<2>(tuple);
+        colorRanges += QString("%1|%2|%3;").arg(name).arg(value).arg(color.name());
+    }
+    return colorRanges;
+}
+
+void DataPair::colorRangesFromString(const QString& str)
+{
+    if(str.isEmpty())
+    {
+        return;
+    }
+    m_colorInfoList.clear();
+    QStringList list = str.split(";", QString::SkipEmptyParts);
+    for(const auto& colorRange : list)
+    {
+        QStringList rangeList = colorRange.split("|", QString::SkipEmptyParts);
+        if(rangeList.size() == 3)
+        {
+            QString name = rangeList.at(0);
+            double value = rangeList.at(1).toDouble();
+            QColor color = QColor(rangeList.at(2));
+            m_colorInfoList.append(std::make_tuple(name, value, color));
+        }
+    }
+}
+
 void DataPair::setColorRanges(const QList<std::tuple<QString, double, QColor>>& colorInfoList)
 {
     if(m_colorInfoList != colorInfoList)
@@ -197,7 +231,7 @@ void DataPair::setColorRanges(const QList<std::tuple<QString, double, QColor>>& 
 QString DataPair::processLabelText(double xData, double yData)
 {
     QString labelText;
-    if(DataPair::format_default == this->getTextFormat())
+    if(DataPair::format_default == getTextFormat())
     { //default
         QString prefix_x, prefix_y;
         QString object_x, object_y, attr_x, attr_y;
@@ -333,11 +367,11 @@ QPixmap DataPair::processIcon()
     return pix;
 }
 
-void DataPair::setLineWidth(int width)
+void DataPair::setWidth(int width)
 {
-    if(m_lineWidth != width)
+    if(m_dataWidth != width)
     {
-        m_lineWidth = width;
+        m_dataWidth = width;
         emit dataUpdate();
     }
 }
@@ -737,4 +771,34 @@ void DataPair::setCustomPatternFactor(double customPatternFactor)
         m_customPatternFactor = customPatternFactor;
         emit dataUpdate();
     }
+}
+
+bool DataPair::getColorRangeEnable() const
+{
+    return m_colorRangeEnable;
+}
+
+void DataPair::setColorRangeEnable(bool colorRangeEnable)
+{
+    m_colorRangeEnable = colorRangeEnable;
+}
+
+QColor DataPair::getColorRangeDefaultColor() const
+{
+    return m_colorRangeDefaultColor;
+}
+
+void DataPair::setColorRangeDefaultColor(const QColor& colorRangeDefaultColor)
+{
+    m_colorRangeDefaultColor = colorRangeDefaultColor;
+}
+
+DataPair::ColorRangeMode DataPair::getColorRangeMode() const
+{
+    return m_colorRangeMode;
+}
+
+void DataPair::setColorRangeMode(const ColorRangeMode& colorRangeMode)
+{
+    m_colorRangeMode = colorRangeMode;
 }

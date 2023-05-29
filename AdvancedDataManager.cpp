@@ -144,11 +144,11 @@ void AdvancedDataManager::onLineModeChanged(bool lineMode)
     }
 }
 
-void AdvancedDataManager::onLineWidthChanged(int32_t lineWidth)
+void AdvancedDataManager::onLineWidthChanged(int32_t width)
 {
     if(m_curSelectDatapair)
     {
-        m_curSelectDatapair->setLineWidth(lineWidth);
+        m_curSelectDatapair->setWidth(width);
     }
 }
 
@@ -224,9 +224,21 @@ void AdvancedDataManager::onLabelSettings_precision_y(int prec)
 	m_curSelectDatapair->setLabelPrecision_y(prec);
 }
 
-void AdvancedDataManager::onLabelSettings_xUnit(QString) {}
+void AdvancedDataManager::onLabelSettings_xUnit(const QString& xUnit)
+{
+    if(m_curSelectDatapair)
+    {
+        m_curSelectDatapair->setUnit_x(xUnit);
+    }
+}
 
-void AdvancedDataManager::onLabelSettings_yUnit(QString) {}
+void AdvancedDataManager::onLabelSettings_yUnit(const QString& yUnit)
+{
+    if(m_curSelectDatapair)
+    {
+        m_curSelectDatapair->setUnit_y(yUnit);
+    }
+}
 
 void AdvancedDataManager::onLabelText_format(int format)
 {
@@ -408,7 +420,7 @@ void AdvancedDataManager::refreshGeneral()
     general->setPushButton_12Color(m_curSelectDatapair->dataColor());
     general->setCheckBox_14CheckState(m_curSelectDatapair->matchColor());
     general->setLineMode(m_curSelectDatapair->isLineMode());
-    general->setLineWidth(m_curSelectDatapair->lineWidth());
+    general->setLineWidth(m_curSelectDatapair->width());
 }
 
 void AdvancedDataManager::refreshIcon()
@@ -471,6 +483,10 @@ void AdvancedDataManager::refreshColorRanges()
 {
     if(m_curSelectDatapair)
     {
+        auto colorRanges = subSettingWidgetContainer->m_colorRanges;
+        colorRanges->setColorRangesEnable(m_curSelectDatapair->getColorRangeEnable());
+        colorRanges->setColorRangesDefaultColor(m_curSelectDatapair->getColorRangeDefaultColor());
+        colorRanges->setColorRangesMode(m_curSelectDatapair->getColorRangeMode());
         ui.treeWidgetColorRange->clear();
 
         QList<std::tuple<QString, double, QColor>> colorInfoList =

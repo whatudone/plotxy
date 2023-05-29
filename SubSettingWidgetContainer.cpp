@@ -642,12 +642,51 @@ ColorRanges::ColorRanges(QWidget* parent)
     : QWidget(parent)
 {
 	ui.setupUi(this);
-	connect(ui.pushButton_more, &QPushButton::clicked, this, &ColorRanges::onBtnCRMoreclicked);
+    initComboBox();
+
+    connect(ui.pushButton_more,
+            &QPushButton::clicked,
+            this,
+            &ColorRanges::sigBtnColorRangesMoreclicked);
+    connect(ui.checkBoxEnable, &QCheckBox::toggled, this, &ColorRanges::colorRangesEnable);
+    connect(ui.pushButtonColor, &ColorButton::clicked, this, [this]() {
+        emit colorRangesDefaultColorChange(ui.pushButtonColor->color());
+    });
+    connect(
+        ui.comboBoxMode, QOverload<int32_t>::of(&QComboBox::currentIndexChanged), this, [this]() {
+            DataPair::ColorRangeMode mode =
+                static_cast<DataPair::ColorRangeMode>(ui.comboBoxMode->currentData().toInt());
+            emit colorRangesModeChange(mode);
+        });
 }
 
 ColorRanges::~ColorRanges() {}
 
-void ColorRanges::onBtnCRMoreclicked()
+void ColorRanges::setColorRangesEnable(bool enable)
 {
-	emit sigBtnColorRangesMoreclicked();
+    ui.checkBoxEnable->setChecked(enable);
+}
+
+void ColorRanges::setColorRangesDefaultColor(const QColor& color)
+{
+    ui.pushButtonColor->setColor(color);
+}
+
+void ColorRanges::setColorRangesMode(DataPair::ColorRangeMode mode)
+{
+    int32_t index = m_comboMap.value(mode);
+    ui.comboBoxMode->setCurrentIndex(index);
+}
+
+void ColorRanges::initComboBox()
+{
+    ui.comboBoxMode->clear();
+    ui.comboBoxMode->addItem("单色显示",
+                             QVariant::fromValue(static_cast<int32_t>(DataPair::SingleColor)));
+    m_comboMap.insert(DataPair::SingleColor, 0);
+    ui.comboBoxMode->addItem("多段显示",
+                             QVariant::fromValue(static_cast<int32_t>(DataPair::MutilColor)));
+    m_comboMap.insert(DataPair::MutilColor, 1);
+    ui.comboBoxMode->addItem("渐变", QVariant::fromValue(static_cast<int32_t>(DataPair::Gradient)));
+    m_comboMap.insert(DataPair::Gradient, 2);
 }

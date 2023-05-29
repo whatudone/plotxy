@@ -59,8 +59,6 @@ private:
     QCPAxis* valueAxis();
 
 private:
-    QColor m_defaultColor;
-
     QMap<QString, QList<std::tuple<QString, double, QColor>>>
         m_allColorInfoList; //QString:colorname，double:lower limit,QColor:color
 

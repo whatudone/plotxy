@@ -268,7 +268,7 @@ void PlotPolar::updateGraphByDataPair(DataPair* data)
     if(!m_graphHash.contains(uuid))
     {
         graph = new QCPPolarGraph(m_angularAxis, m_angularAxis->radialAxis());
-        graph->setPen(QPen(data->dataColor(), data->lineWidth()));
+        graph->setPen(QPen(data->dataColor(), data->width()));
     }
     else
     {

@@ -175,20 +175,26 @@ signals:
     // 状态栏鼠标模式切换
     void mouseModeChanged(MouseMode mode);
 
+public:
+    // 保存PXY格式工程信息
+    void savePXYData(const QString& pxyFileName);
+    // 加载PXY格式工程信息，里面带了图表空间信息和数据信息
+    void loadPXYData(const QString& pxyFileName);
+
 private:
     void addTabPage(const QString& tabName = QString());
     // 将添加图表控件操作合并到一个函数
     PlotItemBase*
     addPlotWidget(PlotType type, const QRect& geo = QRect(), const QString& plotName = QString());
     TabDrawWidget* getCurDrawWidget();
-    // 保存PXY格式工程信息
-    void savePXYData(const QString& pxyFileName);
-    // 加载PXY格式工程信息，里面带了图表空间信息和数据信息
-    void loadPXYData(const QString& pxyFileName);
     // 保存图表信息到Json
     void savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject);
     // 保存数据对信息
-    void saveDataPairToJson(DataPair* dataPair, QJsonObject& object);
+    void saveDataPairToJson(DataPair* dataPair, QJsonObject& object, PlotType type);
+    // 加载图表信息
+    PlotItemBase* loadPlotJson(const QJsonObject& plotObject);
+    // 加载数据对信息
+    void loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBase* plot);
     // 清理历史创建的tab页和其中的图表
     void clearAllTab();
 

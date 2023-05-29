@@ -162,7 +162,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
         graph->setVisible(true);
         graph->setData(x, y);
 
-        graph->setPen(QPen(data->dataColor(), data->lineWidth()));
+        graph->setPen(QPen(data->dataColor(), data->width()));
 		//line mode
         if(data->isLineMode())
 		{
@@ -181,7 +181,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
 		else
 		{
             graph->setLineStyle(QCPGraph::lsNone);
-            graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, data->lineWidth()));
+            graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, data->width()));
 		}
 		//icon
         if(data->isIconDraw())

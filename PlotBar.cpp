@@ -12,7 +12,6 @@ PlotBar::PlotBar(QWidget* parent)
     this->setName(name);
     m_instanceCount += 1;
 
-    m_defaultColor = Qt::green;
     m_title = "Bar";
 
     m_xAxisLabel = "X Axis";
@@ -135,8 +134,8 @@ void PlotBar::updateGraphByDataPair(DataPair* data)
 
             // colorRange下限前面的部分，用默认颜色绘制
             QCPBars* subBar = new QCPBars(keyAxis(), valueAxis());
-            subBar->setPen(QPen(m_defaultColor.lighter(130)));
-            subBar->setBrush(m_defaultColor);
+            subBar->setPen(QPen(data->getColorRangeDefaultColor().lighter(130)));
+            subBar->setBrush(data->getColorRangeDefaultColor());
             tarBar.push_back(subBar);
 
             for(auto it = m_barColorInfoMap[uuid].constBegin();
@@ -406,13 +405,14 @@ DataPair* PlotBar::addPlotDataPair(int32_t xEntityID,
 
     QString uuid = data->getUuid();
 
+    QColor dataColor = data->dataColor();
     QCPBars* pBar = new QCPBars(keyAxis(), valueAxis());
     pBar->setAntialiased(false); // 为了更好的边框效果，关闭抗齿锯
-    pBar->setPen(QPen(m_defaultColor.lighter(130)));
-    pBar->setBrush(m_defaultColor);
+    pBar->setPen(QPen(dataColor.lighter(130)));
+    pBar->setBrush(dataColor);
 
     QMap<double, QColor> baseBarMap;
-    baseBarMap.insert(0.0, m_defaultColor);
+    baseBarMap.insert(0.0, dataColor);
     m_barColorInfoMap.insert(uuid, baseBarMap);
     QList<QCPBars*> baseBar;
     baseBar.push_back(pBar);

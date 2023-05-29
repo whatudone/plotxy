@@ -1,6 +1,7 @@
 ﻿#ifndef _SUB_SETTING_WIDGET_CONTAINER_H
 #define _SUB_SETTING_WIDGET_CONTAINER_H
 
+#include "DataPair.h"
 #include "EventSetting.h"
 #include "IconSetting.h"
 #include "StippleSetting.h"
@@ -10,6 +11,7 @@
 #include "ui_General.h"
 #include "ui_LabelSettings.h"
 #include "ui_LabelText.h"
+
 #include <QMainWindow>
 
 class ToolBox;
@@ -188,12 +190,23 @@ public:
 	explicit ColorRanges(QWidget* parent = nullptr);
 	~ColorRanges();
 signals:
+    void colorRangesEnable(bool enable);
+    void colorRangesDefaultColorChange(const QColor& color);
+    void colorRangesModeChange(DataPair::ColorRangeMode mode);
 	void sigBtnColorRangesMoreclicked();
-public slots:
-	void onBtnCRMoreclicked();
+
+public:
+    void setColorRangesEnable(bool enable);
+    void setColorRangesDefaultColor(const QColor& color);
+    void setColorRangesMode(DataPair::ColorRangeMode mode);
+
+private:
+    void initComboBox();
 
 private:
 	Ui::ColorRanges ui;
+
+    QHash<DataPair::ColorRangeMode, int32_t> m_comboMap;
 };
 
 #endif // _SUB_SETTING_WIDGET_CONTAINER_H

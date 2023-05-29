@@ -1475,7 +1475,7 @@ void PlotManager::onTableWidget_plotDataItemSelectionChanged()
 		return;
 
     auto dataPair = m_curSelectPlot->getDataPairs().at(row);
-    ui.lineEdit_24->setText(QString("%1").arg(dataPair->lineWidth()));
+    ui.lineEdit_24->setText(QString("%1").arg(dataPair->width()));
     ui.pushButton_21->setColor(dataPair->dataColor());
     ui.checkBox_11->setChecked(dataPair->isDraw());
     ui.checkBox_10->setChecked(dataPair->isLineMode());
@@ -1490,7 +1490,7 @@ void PlotManager::onLineEdit_24EditingFinished()
 		return;
 
 	int width = ui.lineEdit_24->text().toInt();
-    m_curSelectPlot->getDataPairs().at(row)->setLineWidth(width);
+    m_curSelectPlot->getDataPairs().at(row)->setWidth(width);
 }
 
 void PlotManager::onPushButton_21Clicked()

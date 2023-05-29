@@ -38,6 +38,14 @@ public:
         rotation_180,
         rotation_270
     };
+
+    enum ColorRangeMode
+    {
+        SingleColor = 0,
+        MutilColor,
+        Gradient
+    };
+
     DataPair(QObject* parent = nullptr);
     DataPair(int32_t xEntityID,
              const QString& xAttrName,
@@ -47,11 +55,11 @@ public:
              const QString& yAttrUnitName);
 	~DataPair();
 
-    int lineWidth()
+    int width()
     {
-        return m_lineWidth;
+        return m_dataWidth;
     }
-	void setLineWidth(int width);
+    void setWidth(int width);
 
     bool isDraw()
     {
@@ -280,6 +288,10 @@ public:
 
     QList<std::tuple<QString, double, QColor>> getColorRanges() const;
     void setColorRanges(const QList<std::tuple<QString, double, QColor>>& colorInfoList);
+    // 获取ColorRanges字符串，方便存储到Json
+    QString colorRangesToString() const;
+    // 从Json解析字符串还原ColorRanges
+    void colorRangesFromString(const QString& str);
 
     /*
      * 下面一系列接口
@@ -308,11 +320,20 @@ public:
     int getCustomPatternFactor() const;
     void setCustomPatternFactor(double customPatternFactor);
 
+    bool getColorRangeEnable() const;
+    void setColorRangeEnable(bool colorRangeEnable);
+
+    QColor getColorRangeDefaultColor() const;
+    void setColorRangeDefaultColor(const QColor& colorRangeDefaultColor);
+
+    ColorRangeMode getColorRangeMode() const;
+    void setColorRangeMode(const ColorRangeMode& colorRangeMode);
+
 private:
-    int m_lineWidth; //线宽
     bool m_isDraw; //是否绘制
     QColor m_color; //数据颜色
     bool m_isLineMode; //是否为线模式
+    int m_dataWidth; //线宽或者点宽度
     bool m_matchColor; //颜色匹配
 
     bool m_iconDraw; //是否显示图标
@@ -324,9 +345,7 @@ private:
     QSize m_iconSize; //图标大小
     QPixmap m_icon; //图标
 
-    TEXT_FROMAT m_format; //文本格式
-    QString m_labelText; //显示文本
-    QString m_customText; //自定义文本
+    bool m_labelText_show; //文本是否显示
     QColor m_labelColor; //文本颜色
     QColor m_labelBackground; //文本背景色
     QColor m_labelSecColor; //次要背景色
@@ -335,9 +354,13 @@ private:
     int m_labelFontSize; //文本字体大小
     int m_labelPrec_x; //x轴显示精度
     int m_labelPrec_y; //y轴显示精度
-
+    QString m_unit_x; //x轴单位
+    QString m_unit_y; //y轴单位
     TEXT_POSITION m_textPosition; //文本位置
-    bool m_labelText_show; //文本是否显示
+
+    QString m_labelText; //显示文本
+    QString m_customText; //自定义文本
+    TEXT_FROMAT m_format; //文本格式
     bool m_prefix_show; //前缀是否显示
     int32_t m_entityIDX; //x轴实体ID
     int32_t m_entityIDY; //y轴实体ID
@@ -345,8 +368,6 @@ private:
     QString m_entity_y; //y轴实体名
     QString m_attr_x; //x轴属性
     QString m_attr_y; //y轴属性
-    QString m_unit_x; //x轴单位
-    QString m_unit_y; //y轴单位
     bool m_object_show; //实体名是否显示
     bool m_attr_show; //属性是否显示
     bool m_data_show; //数据是否显示
@@ -358,12 +379,16 @@ private:
     QString m_customPattern;
     int m_customPatternFactor;
 
+    //  Bar等图表需要设置ColorRange QString:colorname，double:lower limit,QColor:color
+    bool m_colorRangeEnable = false;
+    QColor m_colorRangeDefaultColor = Qt::green;
+    ColorRangeMode m_colorRangeMode = SingleColor;
+    QList<std::tuple<QString, double, QColor>> m_colorInfoList;
+
     // 数据对描述信息，目前仅限于light图表使用
     QString m_desc;
     // 自动生成的唯一标识符
     QString m_uuid;
-    //  Bar等图表需要设置ColorRange QString:colorname，double:lower limit,QColor:color
-    QList<std::tuple<QString, double, QColor>> m_colorInfoList;
 signals:
 	void dataUpdate();
 };

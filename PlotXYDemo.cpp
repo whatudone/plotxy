@@ -886,32 +886,13 @@ void PlotXYDemo::loadPXYData(const QString& pxyFileName)
         for(int j = 0; j < plotSize; ++j)
         {
             auto plotObject = plotArray.at(j).toObject();
-            int32_t x = plotObject.value("X").toInt();
-            int32_t y = plotObject.value("Y").toInt();
-            int32_t width = plotObject.value("Width").toInt();
-            int32_t height = plotObject.value("Height").toInt();
-            PlotType type = static_cast<PlotType>(plotObject.value("PlotType").toInt());
-            QString plotName = plotObject.value("PlotName").toString();
-            auto plot = addPlotWidget(type, QRect(x, y, width, height), plotName);
+            auto plot = loadPlotJson(plotObject);
             QJsonArray dataPairArray = plotObject.value("DataPairs").toArray();
             auto dataPairSize = dataPairArray.size();
             for(int m = 0; m < dataPairSize; ++m)
             {
                 QJsonObject dataPairObject = dataPairArray.at(m).toObject();
-                QString uuid = dataPairObject.value("UUID").toString();
-                bool visible = dataPairObject.value("Visible").toBool();
-                int32_t xEntityID = dataPairObject.value("XEntityID").toInt();
-                QString xAttrName = dataPairObject.value("XAttrName").toString();
-                QString xAttrUnitName = dataPairObject.value("XAttrUnitName").toString();
-
-                int32_t yEntityID = dataPairObject.value("YEntityID").toInt();
-                QString yAttrName = dataPairObject.value("YAttrName").toString();
-                QString yAttrUnitName = dataPairObject.value("YAttrUnitName").toString();
-
-                auto dataPair = plot->addPlotDataPair(
-                    xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
-                dataPair->setUuid(uuid);
-                dataPair->setDraw(visible);
+                loadDataPairJson(dataPairObject, plot);
             }
         }
     }
@@ -932,14 +913,26 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
     for(DataPair* dataPair : dataPairs)
     {
         QJsonObject dataPairObject;
-        saveDataPairToJson(dataPair, dataPairObject);
+        saveDataPairToJson(dataPair, dataPairObject, plot->plotType());
         dataPairArray.append(dataPairObject);
     }
     plotObject.insert("DataPairs", dataPairArray);
 }
 
-void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object)
+PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
 {
+    int32_t x = plotObject.value("X").toInt();
+    int32_t y = plotObject.value("Y").toInt();
+    int32_t width = plotObject.value("Width").toInt();
+    int32_t height = plotObject.value("Height").toInt();
+    PlotType type = static_cast<PlotType>(plotObject.value("PlotType").toInt());
+    QString plotName = plotObject.value("PlotName").toString();
+    return addPlotWidget(type, QRect(x, y, width, height), plotName);
+}
+
+void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object, PlotType type)
+{
+    // 通用数据对信息
     object.insert("UUID", dataPair->getUuid());
     object.insert("Visible", dataPair->isDraw());
     object.insert("XEntityID", dataPair->getEntityIDX());
@@ -948,6 +941,58 @@ void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object)
     object.insert("YAttrName", dataPair->getAttr_y());
     object.insert("XAttrUnitName", dataPair->getUnit_x());
     object.insert("YAttrUnitName", dataPair->getUnit_y());
+    // 图表特殊信息,先保存已经支持的信息
+    if(type == PlotType::Type_PlotAScope)
+    {
+        // general
+        object.insert("LineMode", dataPair->isLineMode());
+        object.insert("Width", dataPair->width());
+        object.insert("MatchColors", dataPair->matchColor());
+        object.insert("Color", dataPair->dataColor().name());
+        // stipple
+        object.insert("StippleEnable", dataPair->getIsStippleEnable());
+        object.insert("StipplePattern", dataPair->getStipplePattern());
+    }
+    else if(type == PlotType::Type_PlotAttitude)
+    {}
+    else if(type == PlotType::Type_PlotBar)
+    {
+        object.insert("MatchColors", dataPair->matchColor());
+        object.insert("Color", dataPair->dataColor().name());
+
+        object.insert("LabelSettingsEnable", dataPair->isLabelTextShow());
+        object.insert("LabelColor", dataPair->getLabelColor().name());
+        object.insert("LabelBackground", dataPair->getLabelBackground().name());
+        object.insert("LabelSecondColor", dataPair->getLabelSecColor().name());
+        object.insert("LabelFont", dataPair->getLabelFont().family());
+        object.insert("LabelFontSize", dataPair->getLabelFontSize());
+        object.insert("LabelXUint", dataPair->getUnit_x());
+        object.insert("LabelXPrecision", dataPair->getLabelPrecision_x());
+        object.insert("LabelPosition", dataPair->getLabelPosition());
+
+        object.insert("ColorRangesEnable", dataPair->getColorRangeEnable());
+        object.insert("ColorRangesDefColor", dataPair->getColorRangeDefaultColor().name());
+        object.insert("ColorRangesMode", dataPair->getColorRangeMode());
+        object.insert("ColorRangesDesc", dataPair->colorRangesToString());
+    }
+}
+
+void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBase* plot)
+{
+    QString uuid = dataPairObject.value("UUID").toString();
+    bool visible = dataPairObject.value("Visible").toBool();
+    int32_t xEntityID = dataPairObject.value("XEntityID").toInt();
+    QString xAttrName = dataPairObject.value("XAttrName").toString();
+    QString xAttrUnitName = dataPairObject.value("XAttrUnitName").toString();
+
+    int32_t yEntityID = dataPairObject.value("YEntityID").toInt();
+    QString yAttrName = dataPairObject.value("YAttrName").toString();
+    QString yAttrUnitName = dataPairObject.value("YAttrUnitName").toString();
+
+    auto dataPair = plot->addPlotDataPair(
+        xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
+    dataPair->setUuid(uuid);
+    dataPair->setDraw(visible);
 }
 
 void PlotXYDemo::clearAllTab()
