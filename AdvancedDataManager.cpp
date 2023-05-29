@@ -699,10 +699,21 @@ void AdvancedDataManager::initColorRangeConnections()
             &QPushButton::clicked,
             this,
             &AdvancedDataManager::onBtnRemoveColorRange);
-    connect(subSettingWidgetContainer->m_colorRanges,
-            SIGNAL(sigBtnColorRangesMoreclicked()),
+    auto colorRanges = subSettingWidgetContainer->m_colorRanges;
+    connect(colorRanges, SIGNAL(sigBtnColorRangesMoreclicked()), this, SLOT(onBtnColorMore()));
+
+    connect(colorRanges,
+            &ColorRanges::colorRangesEnable,
             this,
-            SLOT(onBtnColorMore()));
+            &AdvancedDataManager::onColorRangesEnable);
+    connect(colorRanges,
+            &ColorRanges::colorRangesDefaultColorChange,
+            this,
+            &AdvancedDataManager::onColorRangesDefColorChanged);
+    connect(colorRanges,
+            &ColorRanges::colorRangesModeChange,
+            this,
+            &AdvancedDataManager::onColorRangesModeChanged);
 }
 
 void AdvancedDataManager::initEventConnections()
@@ -789,7 +800,31 @@ void AdvancedDataManager::onBtnMore()
 
 void AdvancedDataManager::onBtnColorMore()
 {
-	ui.stackedWidget_aDMrpart->setCurrentIndex(2);
+    ui.stackedWidget_aDMrpart->setCurrentIndex(2);
+}
+
+void AdvancedDataManager::onColorRangesEnable(bool enable)
+{
+    if(m_curSelectDatapair)
+    {
+        m_curSelectDatapair->setColorRangeEnable(enable);
+    }
+}
+
+void AdvancedDataManager::onColorRangesDefColorChanged(const QColor& color)
+{
+    if(m_curSelectDatapair)
+    {
+        m_curSelectDatapair->setColorRangeDefaultColor(color);
+    }
+}
+
+void AdvancedDataManager::onColorRangesModeChanged(DataPair::ColorRangeMode mode)
+{
+    if(m_curSelectDatapair)
+    {
+        m_curSelectDatapair->setColorRangeMode(mode);
+    }
 }
 
 void AdvancedDataManager::onEventBtnMoreClicked()

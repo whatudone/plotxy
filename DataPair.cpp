@@ -780,7 +780,11 @@ bool DataPair::getColorRangeEnable() const
 
 void DataPair::setColorRangeEnable(bool colorRangeEnable)
 {
-    m_colorRangeEnable = colorRangeEnable;
+    if(m_colorRangeEnable != colorRangeEnable)
+    {
+        m_colorRangeEnable = colorRangeEnable;
+        emit dataUpdate();
+    }
 }
 
 QColor DataPair::getColorRangeDefaultColor() const
@@ -790,7 +794,11 @@ QColor DataPair::getColorRangeDefaultColor() const
 
 void DataPair::setColorRangeDefaultColor(const QColor& colorRangeDefaultColor)
 {
-    m_colorRangeDefaultColor = colorRangeDefaultColor;
+    if(m_colorRangeDefaultColor != colorRangeDefaultColor)
+    {
+        m_colorRangeDefaultColor = colorRangeDefaultColor;
+        emit dataUpdate();
+    }
 }
 
 DataPair::ColorRangeMode DataPair::getColorRangeMode() const
@@ -800,5 +808,9 @@ DataPair::ColorRangeMode DataPair::getColorRangeMode() const
 
 void DataPair::setColorRangeMode(const ColorRangeMode& colorRangeMode)
 {
-    m_colorRangeMode = colorRangeMode;
+    if(m_colorRangeMode != colorRangeMode)
+    {
+        m_colorRangeMode = colorRangeMode;
+        emit dataUpdate();
+    }
 }

@@ -26,6 +26,10 @@ public slots:
     // ColorRange
     void onBtnMore();
     void onBtnColorMore();
+    void onColorRangesEnable(bool enable);
+    void onColorRangesDefColorChanged(const QColor& color);
+    void onColorRangesModeChanged(DataPair::ColorRangeMode mode);
+
     void onBtnAddColorRange();
     void onBtnUpdateColorRange();
     void onBtnRemoveColorRange();
@@ -102,9 +106,9 @@ private:
     void initIconConnections();
     void initLabelSettingsConnections();
     void initLabelTextConnections();
-    void initColorRangeConnections();
     void initEventConnections();
     void initStippleConnections();
+    void initColorRangeConnections();
 
 private:
     Ui::AdvancedDataManager ui;

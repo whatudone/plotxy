@@ -103,28 +103,28 @@ void PlotBar::updateGraphByDataPair(DataPair* data)
     }
 
     auto uuid = data->getUuid();
-
-    // 有效的ColorRange需要将原始的单个Bar拆分成多个Bar,无效的则直接使用添加数据对时产生的默认单个Bar
-    if(isValidColorRange(data))
+    // 清理原始数据对对应Bar
+    if(m_allBar.contains(uuid))
     {
-        QList<std::tuple<QString, double, QColor>> colorList = data->getColorRanges();
-
-        if(!m_allColorInfoList.contains(uuid) || m_allColorInfoList[uuid] != colorList)
+        for(int i = 0; i < m_allBar[uuid].size(); i++)
         {
+            m_customPlot->removePlottable(m_allBar[uuid].at(i));
+        }
+        m_allBar.remove(uuid);
+    }
+    if(m_barColorInfoMap.contains(uuid))
+    {
+        m_barColorInfoMap[uuid].clear();
+    }
+    // 有效的ColorRange需要将原始的单个Bar拆分成多个Bar,无效的则直接使用添加数据对时产生的默认单个Bar
+    if(data->getColorRangeEnable())
+    {
+        auto mode = data->getColorRangeMode();
+        if(mode == DataPair::MutilColor && isValidColorRange(data))
+        {
+            QList<std::tuple<QString, double, QColor>> colorList = data->getColorRanges();
             m_allColorInfoList.insert(uuid, colorList);
-            m_barColorInfoMap[uuid].clear();
 
-            // 清理原始数据对对应Bar,避免水平
-            if(m_allBar.contains(uuid))
-            {
-                for(int i = 0; i < m_allBar[uuid].size(); i++)
-                {
-                    m_customPlot->removePlottable(m_allBar[uuid].at(i));
-                }
-                m_allBar.remove(uuid);
-            }
-
-            QList<QCPBars*> tarBar;
             for(int i = 0; i < m_allColorInfoList[uuid].size(); i++)
             {
                 double thresholdValue = std::get<1>(m_allColorInfoList[uuid].at(i));
@@ -132,6 +132,7 @@ void PlotBar::updateGraphByDataPair(DataPair* data)
                 m_barColorInfoMap[uuid].insert(thresholdValue, color);
             }
 
+            QList<QCPBars*> tarBar;
             // colorRange下限前面的部分，用默认颜色绘制
             QCPBars* subBar = new QCPBars(keyAxis(), valueAxis());
             subBar->setPen(QPen(data->getColorRangeDefaultColor().lighter(130)));
@@ -147,6 +148,7 @@ void PlotBar::updateGraphByDataPair(DataPair* data)
                 subBar->setBrush(it.value());
                 tarBar.push_back(subBar);
             }
+            m_allBar.insert(uuid, tarBar);
 
             if(tarBar.size() > 1)
             {
@@ -155,8 +157,33 @@ void PlotBar::updateGraphByDataPair(DataPair* data)
                     tarBar.at(i)->moveAbove(tarBar.at(i - 1));
                 }
             }
-            m_allBar.insert(uuid, tarBar);
         }
+        // 渐变先按照单色处理
+        if(mode == DataPair::SingleColor || mode == DataPair::Gradient)
+        {
+            QList<QCPBars*> tarBar;
+            QCPBars* subBar = new QCPBars(keyAxis(), valueAxis());
+            subBar->setPen(QPen(data->getColorRangeDefaultColor().lighter(130)));
+            subBar->setBrush(data->getColorRangeDefaultColor());
+            tarBar.push_back(subBar);
+            m_allBar.insert(uuid, tarBar);
+            QMap<double, QColor> baseBarMap;
+            baseBarMap.insert(0.0, data->getColorRangeDefaultColor());
+            m_barColorInfoMap.insert(uuid, baseBarMap);
+        }
+    }
+    else
+    {
+        // 没有启动ColorRange就使用数据颜色绘制
+        QList<QCPBars*> tarBar;
+        QCPBars* subBar = new QCPBars(keyAxis(), valueAxis());
+        subBar->setPen(QPen(data->dataColor().lighter(130)));
+        subBar->setBrush(data->dataColor());
+        tarBar.push_back(subBar);
+        m_allBar.insert(uuid, tarBar);
+        QMap<double, QColor> baseBarMap;
+        baseBarMap.insert(0.0, data->dataColor());
+        m_barColorInfoMap.insert(uuid, baseBarMap);
     }
     /*
      * 没有进行ColorRange处理使用默认生成的Bar
