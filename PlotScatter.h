@@ -41,7 +41,7 @@ public:
                                       int32_t yEntityID,
                                       const QString& yAttrName,
                                       const QString& yAttrUnitName,
-                                      const QVariantList& extraParams) override;
+                                      const QHash<QString, QVariant>& extraParams) override;
     void delPlotPairData(const QString& uuid) override;
 
     PlotType plotType() const override

@@ -41,14 +41,14 @@ protected:
                                       int32_t yEntityID,
                                       const QString& yAttrName,
                                       const QString& yAttrUnitName,
-                                      const QVariantList& extraParams) override;
+                                      const QHash<QString, QVariant>& extraParams) override;
     virtual void delPlotPairData(const QString& uuid) override;
     virtual void updateGraphByDataPair(DataPair* dataPair) override;
 
 private:
     QMap<QString, QMap<double, QColor>>
         m_trackDrawDataMap; //key:entityType+entityAttr, threshold,QColor
-    QMap<QString,double> m_curValue;
+    QMap<QString, double> m_curValue;
     QMap<TrackStatus, QColor> m_defaultColorMap;
 
     QVector<double> m_barTicks;

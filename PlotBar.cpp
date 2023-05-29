@@ -416,7 +416,7 @@ DataPair* PlotBar::addPlotDataPair(int32_t xEntityID,
                                    int32_t yEntityID,
                                    const QString& yAttrName,
                                    const QString& yAttrUnitName,
-                                   const QVariantList& extraParams)
+                                   const QHash<QString, QVariant>& extraParams)
 {
     Q_UNUSED(extraParams)
     DataPair* data =

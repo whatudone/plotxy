@@ -953,7 +953,7 @@ void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object, Plo
         object.insert("StippleEnable", dataPair->getIsStippleEnable());
         object.insert("StipplePattern", dataPair->getStipplePattern());
     }
-    else if(type == PlotType::Type_PlotAttitude)
+    else if(type == PlotType::Type_PlotAttitude || type == PlotType::Type_PlotDoppler)
     {}
     else if(type == PlotType::Type_PlotBar)
     {
@@ -975,6 +975,111 @@ void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object, Plo
         object.insert("ColorRangesMode", dataPair->getColorRangeMode());
         object.insert("ColorRangesDesc", dataPair->colorRangesToString());
     }
+    else if(type == PlotType::Type_PlotDial)
+    {
+        object.insert("MatchColors", dataPair->matchColor());
+        object.insert("Color", dataPair->dataColor().name());
+    }
+    else if(type == PlotType::Type_PlotLight)
+    {
+        object.insert("MatchColors", dataPair->matchColor());
+        object.insert("Color", dataPair->dataColor().name());
+
+        object.insert("LabelSettingsEnable", dataPair->isLabelTextShow());
+        object.insert("LabelColor", dataPair->getLabelColor().name());
+        object.insert("LabelBackground", dataPair->getLabelBackground().name());
+        object.insert("LabelFont", dataPair->getLabelFont().family());
+        object.insert("LabelFontSize", dataPair->getLabelFontSize());
+        object.insert("LabelPosition", dataPair->getLabelPosition());
+    }
+    else if(type == PlotType::Type_PlotPolar)
+    {
+        object.insert("LineMode", dataPair->isLineMode());
+        object.insert("Width", dataPair->width());
+        object.insert("MatchColors", dataPair->matchColor());
+        object.insert("Color", dataPair->dataColor().name());
+
+        object.insert("LabelSettingsEnable", dataPair->isLabelTextShow());
+        object.insert("LabelColor", dataPair->getLabelColor().name());
+        object.insert("LabelBackground", dataPair->getLabelBackground().name());
+        object.insert("LabelFont", dataPair->getLabelFont().family());
+        object.insert("LabelFontSize", dataPair->getLabelFontSize());
+        object.insert("LabelXUint", dataPair->getUnit_x());
+        object.insert("LabelXPrecision", dataPair->getLabelPrecision_x());
+        object.insert("LabelYUint", dataPair->getUnit_y());
+        object.insert("LabelYPrecision", dataPair->getLabelPrecision_y());
+        object.insert("LabelPosition", dataPair->getLabelPosition());
+    }
+    else if(type == PlotType::Type_PlotRTI)
+    {
+        object.insert("MatchColors", dataPair->matchColor());
+        object.insert("Color", dataPair->dataColor().name());
+    }
+    else if(type == PlotType::Type_PlotScatter)
+    {
+        object.insert("LineMode", dataPair->isLineMode());
+        object.insert("Width", dataPair->width());
+        object.insert("MatchColors", dataPair->matchColor());
+        object.insert("Color", dataPair->dataColor().name());
+
+        // icon
+        object.insert("IconEnable", dataPair->isIconDraw());
+        object.insert("IconFileName", dataPair->iconName());
+        object.insert("IconRotation", dataPair->iconRotation());
+        object.insert("IconFlipHoriz", dataPair->iconFlipHorz());
+        object.insert("IconFlipVert", dataPair->iconFlipVert());
+        object.insert("IconWidth", dataPair->iconWidth());
+        object.insert("IconHeight", dataPair->iconHeight());
+        object.insert("IconOverrideColor", dataPair->iconColor().name());
+
+        object.insert("LabelSettingsEnable", dataPair->isLabelTextShow());
+        object.insert("LabelColor", dataPair->getLabelColor().name());
+        object.insert("LabelBackground", dataPair->getLabelBackground().name());
+        object.insert("LabelFont", dataPair->getLabelFont().family());
+        object.insert("LabelFontSize", dataPair->getLabelFontSize());
+        object.insert("LabelXUint", dataPair->getUnit_x());
+        object.insert("LabelXPrecision", dataPair->getLabelPrecision_x());
+        object.insert("LabelYUint", dataPair->getUnit_y());
+        object.insert("LabelYPrecision", dataPair->getLabelPrecision_y());
+        object.insert("LabelPosition", dataPair->getLabelPosition());
+
+        object.insert("StippleEnable", dataPair->getIsStippleEnable());
+        object.insert("StipplePattern", dataPair->getStipplePattern());
+    }
+    else if(type == PlotType::Type_PlotText)
+    {
+        object.insert("MatchColors", dataPair->matchColor());
+        object.insert("Color", dataPair->dataColor().name());
+
+        object.insert("IconEnable", dataPair->isIconDraw());
+        object.insert("IconFileName", dataPair->iconName());
+        object.insert("IconRotation", dataPair->iconRotation());
+        object.insert("IconFlipHoriz", dataPair->iconFlipHorz());
+        object.insert("IconFlipVert", dataPair->iconFlipVert());
+        object.insert("IconWidth", dataPair->iconWidth());
+        object.insert("IconHeight", dataPair->iconHeight());
+        object.insert("IconOverrideColor", dataPair->iconColor().name());
+
+        object.insert("LabelSettingsEnable", dataPair->isLabelTextShow());
+        object.insert("LabelColor", dataPair->getLabelColor().name());
+        object.insert("LabelBackground", dataPair->getLabelBackground().name());
+        object.insert("LabelFont", dataPair->getLabelFont().family());
+        object.insert("LabelFontSize", dataPair->getLabelFontSize());
+        object.insert("LabelXUint", dataPair->getUnit_x());
+        object.insert("LabelXPrecision", dataPair->getLabelPrecision_x());
+        object.insert("LabelPosition", dataPair->getLabelPosition());
+    }
+    else if(type == PlotType::Type_PlotTrack)
+    {
+        object.insert("Color", dataPair->dataColor().name());
+
+        object.insert("LabelSettingsEnable", dataPair->isLabelTextShow());
+        object.insert("LabelColor", dataPair->getLabelColor().name());
+        object.insert("LabelBackground", dataPair->getLabelBackground().name());
+        object.insert("LabelSecondColor", dataPair->getLabelSecColor().name());
+        object.insert("LabelFont", dataPair->getLabelFont().family());
+        object.insert("LabelFontSize", dataPair->getLabelFontSize());
+    }
 }
 
 void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBase* plot)
@@ -991,8 +1096,160 @@ void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBas
 
     auto dataPair = plot->addPlotDataPair(
         xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
+    dataPair->blockSignals(true);
     dataPair->setUuid(uuid);
     dataPair->setDraw(visible);
+    PlotType type = plot->plotType();
+    if(type == PlotType::Type_PlotAScope)
+    {
+        dataPair->setLineMode(dataPairObject.value("LineMode").toBool());
+        dataPair->setWidth(dataPairObject.value("Width").toInt());
+        dataPair->setMatchColor(dataPairObject.value("MatchColors").toBool());
+        dataPair->setColor(QColor(dataPairObject.value("Color").toString()));
+
+        dataPair->setIsStippleEnable(dataPairObject.value("StippleEnable").toBool());
+        dataPair->setStipplePattern(
+            static_cast<Qt::PenStyle>(dataPairObject.value("StipplePattern").toInt()));
+    }
+    else if(type == PlotType::Type_PlotAttitude || type == PlotType::Type_PlotDoppler)
+    {}
+    else if(type == PlotType::Type_PlotBar)
+    {
+        dataPair->setMatchColor(dataPairObject.value("MatchColors").toBool());
+        dataPair->setColor(QColor(dataPairObject.value("Color").toString()));
+
+        dataPair->setLabelTextShow(dataPairObject.value("LabelSettingsEnable").toBool());
+        dataPair->setLabelColor(QColor(dataPairObject.value("LabelColor").toString()));
+        dataPair->setLabelBackground(QColor(dataPairObject.value("LabelBackground").toString()));
+        dataPair->setLabelSecColor(QColor(dataPairObject.value("LabelSecondColor").toString()));
+        dataPair->setLabelFont(QFont(dataPairObject.value("LabelFont").toString()));
+        dataPair->setLabelFontSize(dataPairObject.value("LabelFontSize").toInt());
+        dataPair->setUnit_x(dataPairObject.value("LabelXUint").toString());
+        dataPair->setLabelPrecision_x(dataPairObject.value("LabelXPrecision").toInt());
+        dataPair->setLabelPosition(
+            static_cast<DataPair::TEXT_POSITION>(dataPairObject.value("LabelPosition").toInt()));
+
+        dataPair->setColorRangeEnable(dataPairObject.value("ColorRangesEnable").toBool());
+        dataPair->setColorRangeDefaultColor(
+            QColor(dataPairObject.value("ColorRangesDefColor").toString()));
+        dataPair->setColorRangeMode(
+            static_cast<DataPair::ColorRangeMode>(dataPairObject.value("ColorRangesMode").toInt()));
+        dataPair->colorRangesFromString(dataPairObject.value("ColorRangesDesc").toString());
+    }
+    else if(type == PlotType::Type_PlotDial)
+    {
+        dataPair->setMatchColor(dataPairObject.value("MatchColors").toBool());
+        dataPair->setColor(QColor(dataPairObject.value("Color").toString()));
+    }
+    else if(type == PlotType::Type_PlotLight)
+    {
+        dataPair->setMatchColor(dataPairObject.value("MatchColors").toBool());
+        dataPair->setColor(QColor(dataPairObject.value("Color").toString()));
+
+        dataPair->setLabelTextShow(dataPairObject.value("LabelSettingsEnable").toBool());
+        dataPair->setLabelColor(QColor(dataPairObject.value("LabelColor").toString()));
+        dataPair->setLabelBackground(QColor(dataPairObject.value("LabelBackground").toString()));
+        dataPair->setLabelFont(QFont(dataPairObject.value("LabelFont").toString()));
+        dataPair->setLabelFontSize(dataPairObject.value("LabelFontSize").toInt());
+        dataPair->setLabelPosition(
+            static_cast<DataPair::TEXT_POSITION>(dataPairObject.value("LabelPosition").toInt()));
+    }
+    else if(type == PlotType::Type_PlotPolar)
+    {
+        dataPair->setLineMode(dataPairObject.value("LineMode").toBool());
+        dataPair->setWidth(dataPairObject.value("Width").toInt());
+        dataPair->setMatchColor(dataPairObject.value("MatchColors").toBool());
+        dataPair->setColor(QColor(dataPairObject.value("Color").toString()));
+
+        dataPair->setLabelTextShow(dataPairObject.value("LabelSettingsEnable").toBool());
+        dataPair->setLabelColor(QColor(dataPairObject.value("LabelColor").toString()));
+        dataPair->setLabelBackground(QColor(dataPairObject.value("LabelBackground").toString()));
+        dataPair->setLabelFont(QFont(dataPairObject.value("LabelFont").toString()));
+        dataPair->setLabelFontSize(dataPairObject.value("LabelFontSize").toInt());
+        dataPair->setUnit_x(dataPairObject.value("LabelXUint").toString());
+        dataPair->setLabelPrecision_x(dataPairObject.value("LabelXPrecision").toInt());
+        dataPair->setUnit_y(dataPairObject.value("LabelYUint").toString());
+        dataPair->setLabelPrecision_y(dataPairObject.value("LabelYPrecision").toInt());
+        dataPair->setLabelPosition(
+            static_cast<DataPair::TEXT_POSITION>(dataPairObject.value("LabelPosition").toInt()));
+    }
+    else if(type == PlotType::Type_PlotRTI)
+    {
+        dataPair->setMatchColor(dataPairObject.value("MatchColors").toBool());
+        dataPair->setColor(QColor(dataPairObject.value("Color").toString()));
+    }
+    else if(type == PlotType::Type_PlotScatter)
+    {
+        dataPair->setLineMode(dataPairObject.value("LineMode").toBool());
+        dataPair->setWidth(dataPairObject.value("Width").toInt());
+        dataPair->setMatchColor(dataPairObject.value("MatchColors").toBool());
+        dataPair->setColor(QColor(dataPairObject.value("Color").toString()));
+
+        dataPair->setIconDraw(dataPairObject.value("IconEnable").toBool());
+        dataPair->setIconName(dataPairObject.value("IconFileName").toString());
+        dataPair->setIconRotation(
+            static_cast<DataPair::ICON_ROTATION>(dataPairObject.value("IconRotation").toInt()));
+        dataPair->setIconFlipHorz(dataPairObject.value("IconFlipHoriz").toBool());
+        dataPair->setIconFlipVert(dataPairObject.value("IconFlipVert").toBool());
+        dataPair->setIconWidth(dataPairObject.value("IconWidth").toInt());
+        dataPair->setIconHeight(dataPairObject.value("IconHeight").toInt());
+        dataPair->setIconColor(QColor(dataPairObject.value("IconOverrideColor").toString()));
+
+        dataPair->setLabelTextShow(dataPairObject.value("LabelSettingsEnable").toBool());
+        dataPair->setLabelColor(QColor(dataPairObject.value("LabelColor").toString()));
+        dataPair->setLabelBackground(QColor(dataPairObject.value("LabelBackground").toString()));
+        dataPair->setLabelFont(QFont(dataPairObject.value("LabelFont").toString()));
+        dataPair->setLabelFontSize(dataPairObject.value("LabelFontSize").toInt());
+        dataPair->setUnit_x(dataPairObject.value("LabelXUint").toString());
+        dataPair->setLabelPrecision_x(dataPairObject.value("LabelXPrecision").toInt());
+        dataPair->setUnit_y(dataPairObject.value("LabelYUint").toString());
+        dataPair->setLabelPrecision_y(dataPairObject.value("LabelYPrecision").toInt());
+        dataPair->setLabelPosition(
+            static_cast<DataPair::TEXT_POSITION>(dataPairObject.value("LabelPosition").toInt()));
+
+        dataPair->setIsStippleEnable(dataPairObject.value("StippleEnable").toBool());
+        dataPair->setStipplePattern(
+            static_cast<Qt::PenStyle>(dataPairObject.value("StipplePattern").toInt()));
+    }
+    else if(type == PlotType::Type_PlotText)
+    {
+        dataPair->setMatchColor(dataPairObject.value("MatchColors").toBool());
+        dataPair->setColor(QColor(dataPairObject.value("Color").toString()));
+
+        dataPair->setIconDraw(dataPairObject.value("IconEnable").toBool());
+        dataPair->setIconName(dataPairObject.value("IconFileName").toString());
+        dataPair->setIconRotation(
+            static_cast<DataPair::ICON_ROTATION>(dataPairObject.value("IconRotation").toInt()));
+        dataPair->setIconFlipHorz(dataPairObject.value("IconFlipHoriz").toBool());
+        dataPair->setIconFlipVert(dataPairObject.value("IconFlipVert").toBool());
+        dataPair->setIconWidth(dataPairObject.value("IconWidth").toInt());
+        dataPair->setIconHeight(dataPairObject.value("IconHeight").toInt());
+        dataPair->setIconColor(QColor(dataPairObject.value("IconOverrideColor").toString()));
+
+        dataPair->setLabelTextShow(dataPairObject.value("LabelSettingsEnable").toBool());
+        dataPair->setLabelColor(QColor(dataPairObject.value("LabelColor").toString()));
+        dataPair->setLabelBackground(QColor(dataPairObject.value("LabelBackground").toString()));
+        dataPair->setLabelFont(QFont(dataPairObject.value("LabelFont").toString()));
+        dataPair->setLabelFontSize(dataPairObject.value("LabelFontSize").toInt());
+        dataPair->setUnit_x(dataPairObject.value("LabelXUint").toString());
+        dataPair->setLabelPrecision_x(dataPairObject.value("LabelXPrecision").toInt());
+        dataPair->setLabelPosition(
+            static_cast<DataPair::TEXT_POSITION>(dataPairObject.value("LabelPosition").toInt()));
+    }
+    else if(type == PlotType::Type_PlotTrack)
+    {
+        dataPair->setColor(QColor(dataPairObject.value("Color").toString()));
+
+        dataPair->setLabelTextShow(dataPairObject.value("LabelSettingsEnable").toBool());
+        dataPair->setLabelColor(QColor(dataPairObject.value("LabelColor").toString()));
+        dataPair->setLabelBackground(QColor(dataPairObject.value("LabelBackground").toString()));
+        dataPair->setLabelSecColor(QColor(dataPairObject.value("LabelSecondColor").toString()));
+        dataPair->setLabelFont(QFont(dataPairObject.value("LabelFont").toString()));
+        dataPair->setLabelFontSize(dataPairObject.value("LabelFontSize").toInt());
+    }
+    dataPair->blockSignals(false);
+    // 每次set接口会调用一次刷新，为了提高性能，这里等到全部参数设置完成才进行通知刷新
+    emit dataPair->dataUpdate();
 }
 
 void PlotXYDemo::clearAllTab()

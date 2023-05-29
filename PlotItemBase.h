@@ -212,13 +212,14 @@ public:
         return m_axisLabelFontSize;
     }
 
-    virtual DataPair* addPlotDataPair(int32_t xEntityID,
-                                      const QString& xAttrName,
-                                      const QString& xAttrUnitName,
-                                      int32_t yEntityID,
-                                      const QString& yAttrName,
-                                      const QString& yAttrUnitName,
-                                      const QVariantList& extraParams = QVariantList());
+    virtual DataPair*
+    addPlotDataPair(int32_t xEntityID,
+                    const QString& xAttrName,
+                    const QString& xAttrUnitName,
+                    int32_t yEntityID,
+                    const QString& yAttrName,
+                    const QString& yAttrUnitName,
+                    const QHash<QString, QVariant>& extraParams = QHash<QString, QVariant>());
     virtual void delPlotPairData(const QString& uuid);
     virtual void updatePlotPairData(const QString& uuid,
                                     int32_t xEntityID,

@@ -591,14 +591,14 @@ void AddPlotPair::onBtnAddClicked()
     // TODO:m_pCurSelectedPlot初始化的没有值，需要完善
     if(m_pCurSelectedPlot)
     {
-        QVariantList list;
+        QHash<QString, QVariant> dataHash;
         if(m_pCurSelectedPlot->plotType() == PlotType::Type_PlotLight)
         {
-            list.append(ui.lineEdit_LightDesc->text());
+            dataHash.insert("Desc", ui.lineEdit_LightDesc->text());
         }
         // 数据对触发的DataPairsChanged信号会在后续触发数据对表格的刷新操作
         m_pCurSelectedPlot->addPlotDataPair(
-            xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName, list);
+            xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName, dataHash);
     }
 }
 

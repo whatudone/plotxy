@@ -46,7 +46,7 @@ private:
                                       int32_t yEntityID,
                                       const QString& yAttrName,
                                       const QString& yAttrUnitName,
-                                      const QVariantList& extraParams) override;
+                                      const QHash<QString, QVariant>& extraParams) override;
     virtual void delPlotPairData(const QString& uuid) override;
     virtual void updateGraphByDataPair(DataPair* dataPair) override;
 

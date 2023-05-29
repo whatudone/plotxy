@@ -309,7 +309,7 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
                                        int32_t yEntityID,
                                        const QString& yAttrName,
                                        const QString& yAttrUnitName,
-                                       const QVariantList& extraParams)
+                                       const QHash<QString, QVariant>& extraParams)
 {
     // 更新range
     QPair<double, double> xlimit =

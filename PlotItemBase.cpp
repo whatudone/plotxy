@@ -605,16 +605,16 @@ DataPair* PlotItemBase::addPlotDataPair(int32_t xEntityID,
                                         int32_t yEntityID,
                                         const QString& yAttrName,
                                         const QString& yAttrUnitName,
-                                        const QVariantList& extraParams)
+                                        const QHash<QString, QVariant>& extraParams)
 {
     // TODO:需要完善重复添加逻辑
     DataPair* data =
         new DataPair(xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
     m_dataPairs.append(data);
     // 设置额外参数
-    if((extraParams.size() == 1) && (plotType() == PlotType::Type_PlotLight))
+    if(plotType() == PlotType::Type_PlotLight)
     {
-        auto desc = extraParams.at(0).toString();
+        auto desc = extraParams.value("Desc").toString();
         data->setDesc(desc);
     }
 
