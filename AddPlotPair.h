@@ -27,7 +27,7 @@ class AddPlotPair : public QWidget
     Q_OBJECT
 
 public:
-    explicit AddPlotPair(QWidget* parent = 0);
+    explicit AddPlotPair(QWidget* parent = nullptr);
     ~AddPlotPair();
     void init(PlotType index = PlotType::Type_PlotScatter);
 
