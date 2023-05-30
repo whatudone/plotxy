@@ -2,6 +2,7 @@
 #include "AddPlotPair.h"
 
 #include "PlotAttitude.h"
+#include "PlotDial.h"
 #include "PlotItemBase.h"
 #include "PlotManagerData.h"
 #include <QAction>
@@ -66,6 +67,7 @@ void PlotManager::init()
 	initTextEditUI();
 	initAttitudeUI();
 	initTextLightUI();
+    initDialUI();
 }
 
 void PlotManager::addPlot(const QString& tabName, PlotItemBase* plotItem)
@@ -381,7 +383,35 @@ void PlotManager::initAttitudeUI()
 	connect(ui.pushButton_81, &QPushButton::clicked, this, &PlotManager::onPushButton_81Clicked);
 	connect(ui.spinBox_29, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_29ValueChanged(int)));
 	connect(ui.spinBox_30, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_30ValueChanged(int)));
-	connect(ui.spinBox_31, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_31ValueChanged(int)));
+    connect(ui.spinBox_31, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_31ValueChanged(int)));
+}
+
+void PlotManager::initDialUI()
+{
+    connect(ui.spinBox_21, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_21ValueChanged(int)));
+    connect(ui.spinBox_22, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_22ValueChanged(int)));
+    connect(ui.spinBox_23, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_23ValueChanged(int)));
+    connect(ui.spinBox_24, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_24ValueChanged(int)));
+    connect(ui.spinBox_25, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_25ValueChanged(int)));
+    connect(ui.spinBox_26, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_26ValueChanged(int)));
+    connect(ui.spinBox_27, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_27ValueChanged(int)));
+    connect(ui.spinBox_28, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_28ValueChanged(int)));
+    connect(ui.pushButton_74, &QPushButton::clicked, this, &PlotManager::onPushButton_74Clicked);
+    connect(ui.pushButton_75, &QPushButton::clicked, this, &PlotManager::onPushButton_75Clicked);
+    connect(ui.pushButton_76, &QPushButton::clicked, this, &PlotManager::onPushButton_76Clicked);
+    connect(ui.pushButton_77, &QPushButton::clicked, this, &PlotManager::onPushButton_77Clicked);
+    connect(ui.comboBox_20,
+            &QComboBox::currentTextChanged,
+            this,
+            &PlotManager::onComboBox_dialStyleCurrentTextChanged);
+    connect(
+        ui.checkBox_34, &QCheckBox::stateChanged, this, &PlotManager::onCheckBox_34StateChanged);
+    connect(
+        ui.checkBox_35, &QCheckBox::stateChanged, this, &PlotManager::onCheckBox_35StateChanged);
+    connect(
+        ui.checkBox_36, &QCheckBox::stateChanged, this, &PlotManager::onCheckBox_36StateChanged);
+    connect(
+        ui.checkBox_37, &QCheckBox::stateChanged, this, &PlotManager::onCheckBox_37StateChanged);
 }
 
 void PlotManager::refreshTreeWidgetSettingEnabled(PlotItemBase* plot)
@@ -422,6 +452,7 @@ void PlotManager::refreshTreeWidgetSettingEnabled(PlotItemBase* plot)
     else if(type == PlotType::Type_PlotDial)
 	{
 		enableItem_Dial();
+        refreshDialUI(m_curSelectPlot);
 	}
     else if(type == PlotType::Type_PlotAttitude)
 	{
@@ -588,7 +619,27 @@ void PlotManager::refreshAttitudeUI(PlotItemBase* plot)
 	ui.pushButton_81->setColor(dynamic_cast<PlotAttitude*>(plot)->getPitchColor());
 	ui.spinBox_29->setValue(dynamic_cast<PlotAttitude*>(plot)->getTickRadiusPercentage());
 	ui.spinBox_30->setValue(dynamic_cast<PlotAttitude*>(plot)->getTextPercentage());
-	ui.spinBox_31->setValue(dynamic_cast<PlotAttitude*>(plot)->getDialPercentage());
+    ui.spinBox_31->setValue(dynamic_cast<PlotAttitude*>(plot)->getDialPercentage());
+}
+
+void PlotManager::refreshDialUI(PlotItemBase* plot)
+{
+    auto item = dynamic_cast<PlotDial*>(plot);
+    if(item == nullptr)
+        return;
+    ui.spinBox_21->setValue(item->getTickRadiusRate());
+    ui.spinBox_22->setValue(item->getColorRate());
+    ui.spinBox_23->setValue(item->getTextRate());
+    ui.spinBox_24->setValue(item->getDialRate());
+    ui.spinBox_25->setValue(item->getDialCapRate());
+    ui.spinBox_26->setValue(item->getStartAngle());
+    ui.spinBox_27->setValue(item->getEndAngle());
+    ui.pushButton_74->setColor(item->getCapColor());
+    ui.checkBox_34->setChecked(item->getDrawFirstTick());
+    ui.checkBox_35->setChecked(item->getDrawLastTick());
+    ui.checkBox_36->setChecked(item->getDrawFirstTextLabel());
+    ui.checkBox_37->setChecked(item->getDrawLastTextLabel());
+    ui.comboBox_20->setCurrentText(item->getDialStyle());
 }
 
 void PlotManager::enableItem_Scatter()
@@ -1912,5 +1963,162 @@ void PlotManager::onSpinBox_31ValueChanged(int value)
     if(auto plot = dynamic_cast<PlotAttitude*>(m_curSelectPlot))
     {
         plot->setDialPercentage(value);
+    }
+}
+
+void PlotManager::onSpinBox_21ValueChanged(int value)
+{
+    if(auto plot = dynamic_cast<PlotDial*>(m_curSelectPlot))
+    {
+        plot->setTickRadiusRate(value);
+    }
+}
+
+void PlotManager::onSpinBox_22ValueChanged(int value)
+{
+    if(auto plot = dynamic_cast<PlotDial*>(m_curSelectPlot))
+    {
+        plot->setColorRate(value);
+    }
+}
+
+void PlotManager::onSpinBox_23ValueChanged(int value)
+{
+    if(auto plot = dynamic_cast<PlotDial*>(m_curSelectPlot))
+    {
+        plot->setTextRate(value);
+    }
+}
+
+void PlotManager::onSpinBox_24ValueChanged(int value)
+{
+    if(auto plot = dynamic_cast<PlotDial*>(m_curSelectPlot))
+    {
+        plot->setDialRate(value);
+    }
+}
+
+void PlotManager::onSpinBox_25ValueChanged(int value)
+{
+    if(auto plot = dynamic_cast<PlotDial*>(m_curSelectPlot))
+    {
+        plot->setDialCapRate(value);
+    }
+}
+
+void PlotManager::onSpinBox_26ValueChanged(int value)
+{
+    if(auto plot = dynamic_cast<PlotDial*>(m_curSelectPlot))
+    {
+        plot->setStartAngle(value);
+    }
+}
+
+void PlotManager::onSpinBox_27ValueChanged(int value)
+{
+    if(auto plot = dynamic_cast<PlotDial*>(m_curSelectPlot))
+    {
+        plot->setEndAngle(value);
+    }
+}
+
+void PlotManager::onSpinBox_28ValueChanged(int) {}
+
+void PlotManager::onPushButton_74Clicked()
+{
+    if(auto plot = dynamic_cast<PlotDial*>(m_curSelectPlot))
+    {
+        plot->setCapColor(ui.pushButton_74->color());
+    }
+}
+
+void PlotManager::onPushButton_75Clicked()
+{
+    double begin = ui.lineEdit_49->text().toDouble();
+    double end = ui.lineEdit_50->text().toDouble();
+    QColor clr = ui.pushButton_78->color();
+    QColor outline = ui.pushButton_79->color();
+    int outLineWidth = ui.spinBox_28->value();
+    QTreeWidgetItem* item = new QTreeWidgetItem;
+    item->setData(0, Qt::DisplayRole, begin);
+    item->setData(1, Qt::DisplayRole, end);
+    item->setData(2, Qt::DisplayRole, clr);
+    item->setData(3, Qt::DisplayRole, outline);
+    item->setData(4, Qt::DisplayRole, outLineWidth);
+    ui.treeWidget_colorRanges->addTopLevelItem(item);
+}
+
+void PlotManager::onPushButton_76Clicked()
+{
+    QList<DialColorInfo> dialInfoList;
+    int cnt = ui.treeWidget_colorRanges->topLevelItemCount();
+    if(cnt < 2)
+        return;
+    for(int i = 1; i < cnt; i++)
+    {
+        DialColorInfo dialInfo;
+        dialInfo.start =
+            ui.treeWidget_colorRanges->topLevelItem(i)->data(0, Qt::DisplayRole).toDouble();
+        dialInfo.end =
+            ui.treeWidget_colorRanges->topLevelItem(i)->data(1, Qt::DisplayRole).toDouble();
+        dialInfo.clr =
+            ui.treeWidget_colorRanges->topLevelItem(i)->data(2, Qt::DisplayRole).value<QColor>();
+        dialInfo.outline =
+            ui.treeWidget_colorRanges->topLevelItem(i)->data(3, Qt::DisplayRole).value<QColor>();
+        dialInfo.width =
+            ui.treeWidget_colorRanges->topLevelItem(i)->data(4, Qt::DisplayRole).toInt();
+        dialInfoList.push_back(dialInfo);
+    }
+    if(auto plot = dynamic_cast<PlotDial*>(m_curSelectPlot))
+    {
+        plot->setColorInfoList(dialInfoList);
+    }
+}
+
+void PlotManager::onPushButton_77Clicked()
+{
+    for(auto item : ui.treeWidget_colorRanges->selectedItems())
+        ui.treeWidget_colorRanges->takeTopLevelItem(
+            ui.treeWidget_colorRanges->indexOfTopLevelItem(item));
+}
+
+void PlotManager::onComboBox_dialStyleCurrentTextChanged(const QString& text)
+{
+    if(auto plot = dynamic_cast<PlotDial*>(m_curSelectPlot))
+    {
+        plot->setDialStyle(text);
+    }
+}
+
+void PlotManager::onCheckBox_34StateChanged(int state)
+{
+    if(auto plot = dynamic_cast<PlotDial*>(m_curSelectPlot))
+    {
+        // 2表示选中，0表示未选中
+        plot->setDrawFirstTick(state == 2);
+    }
+}
+
+void PlotManager::onCheckBox_35StateChanged(int state)
+{
+    if(auto plot = dynamic_cast<PlotDial*>(m_curSelectPlot))
+    {
+        plot->setDrawLastTick(state == 2);
+    }
+}
+
+void PlotManager::onCheckBox_36StateChanged(int state)
+{
+    if(auto plot = dynamic_cast<PlotDial*>(m_curSelectPlot))
+    {
+        plot->setDrawFirstTextLabel(state == 2);
+    }
+}
+
+void PlotManager::onCheckBox_37StateChanged(int state)
+{
+    if(auto plot = dynamic_cast<PlotDial*>(m_curSelectPlot))
+    {
+        plot->setDrawLastTextLabel(state == 2);
     }
 }

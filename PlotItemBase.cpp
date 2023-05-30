@@ -420,6 +420,7 @@ void PlotItemBase::setUnitsShowX(bool on)
                 }
                 m_customPlot->xAxis->setAxisFormat(m_dataPairs.at(0)->getUnit_y());
             }
+            m_customPlot->xAxis->setAxisFormat(m_units_x);
             m_customPlot->xAxis->setAxisFormatShow(on);
         }
     }
@@ -449,6 +450,7 @@ void PlotItemBase::setUnitsShowY(bool on)
                 }
                 m_customPlot->yAxis->setAxisFormat(m_dataPairs.at(0)->getUnit_y());
             }
+            m_customPlot->yAxis->setAxisFormat(m_units_y);
             m_customPlot->yAxis->setAxisFormatShow(on);
         }
     }
@@ -458,22 +460,12 @@ void PlotItemBase::setUnitsShowY(bool on)
 void PlotItemBase::setUnitsX(const QString& units)
 {
     m_units_x = units;
-    if(m_customPlot)
-    {
-        if(m_customPlot->xAxis)
-            m_customPlot->xAxis->setAxisFormat(units);
-    }
     replot();
 }
 
 void PlotItemBase::setUnitsY(const QString& units)
 {
     m_units_y = units;
-    if(m_customPlot)
-    {
-        if(m_customPlot->yAxis)
-            m_customPlot->yAxis->setAxisFormat(units);
-    }
     replot();
 }
 

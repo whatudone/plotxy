@@ -12,6 +12,16 @@ class PlotManager : public QWidget
     Q_OBJECT
 
 public:
+    struct DialColorInfo
+    {
+        double start;
+        double end;
+        QColor clr;
+        QColor outline;
+        int width;
+    };
+
+public:
     explicit PlotManager(QWidget* parent = Q_NULLPTR);
     ~PlotManager();
 
@@ -36,6 +46,7 @@ private:
 	void initPlotDataUI();
 	void initTextEditUI();
 	void initAttitudeUI();
+    void initDialUI();
 
 	void initTextLightUI();
 
@@ -47,6 +58,7 @@ private:
 
 	void refreshTextEditUI(PlotItemBase* plot);
 	void refreshAttitudeUI(PlotItemBase* plot);
+    void refreshDialUI(PlotItemBase* plot);
 
 	void enableItem_Scatter();
 	void enableItem_AScope();
@@ -143,6 +155,25 @@ public slots:
 	void onSpinBox_29ValueChanged(int);
 	void onSpinBox_30ValueChanged(int);
 	void onSpinBox_31ValueChanged(int);
+
+    //Dial
+    void onSpinBox_21ValueChanged(int);
+    void onSpinBox_22ValueChanged(int);
+    void onSpinBox_23ValueChanged(int);
+    void onSpinBox_24ValueChanged(int);
+    void onSpinBox_25ValueChanged(int);
+    void onSpinBox_26ValueChanged(int);
+    void onSpinBox_27ValueChanged(int);
+    void onSpinBox_28ValueChanged(int);
+    void onPushButton_74Clicked();
+    void onPushButton_75Clicked();
+    void onPushButton_76Clicked();
+    void onPushButton_77Clicked();
+    void onComboBox_dialStyleCurrentTextChanged(const QString& text);
+    void onCheckBox_34StateChanged(int state);
+    void onCheckBox_35StateChanged(int state);
+    void onCheckBox_36StateChanged(int state);
+    void onCheckBox_37StateChanged(int state);
 
 signals:
     void sigAddPlotPair();

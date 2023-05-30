@@ -1,5 +1,6 @@
 ﻿#include "PlotDial.h"
-#include "DataManager.h"
+#include "Utils.h"
+
 #include <QDebug>
 #include <QPainter>
 #include <QVector2D>
@@ -12,7 +13,6 @@ PlotDial::PlotDial(QWidget* parent)
     m_bThinStyle = true;
 
     m_dialColor = Qt::white;
-    m_pointColor = Qt::green;
     m_capColor = Qt::red;
 
     QString name = QString("Dial%1").arg(m_instanceCount);
@@ -20,9 +20,19 @@ PlotDial::PlotDial(QWidget* parent)
     m_instanceCount += 1;
 
     // 临时写死，后期适配
-    m_startAngle = -135;
-    m_endAngle = 135;
-    m_tickCount = 7;
+    m_startAngle = -120;
+    m_endAngle = 120;
+    m_radiusRate = 1000;
+    m_colorRangeRate = 50;
+    m_textRate = 1000;
+    m_dialRate = 50;
+    m_dialCapRate = 950;
+    m_dialStyle = "Thin";
+
+    m_drawFirstTick = true;
+    m_drawLastTick = true;
+    m_drawFirstTextLabel = true;
+    m_drawLastTextLabel = true;
 
     m_title = "Dial";
 
@@ -32,6 +42,163 @@ PlotDial::PlotDial(QWidget* parent)
 }
 
 PlotDial::~PlotDial() {}
+
+void PlotDial::setTickRadiusRate(int rate)
+{
+    m_radiusRate = rate;
+    update();
+}
+
+int PlotDial::getTickRadiusRate()
+{
+    return m_radiusRate;
+}
+
+void PlotDial::setColorRate(int rate)
+{
+    m_colorRangeRate = rate;
+    update();
+}
+
+int PlotDial::getColorRate()
+{
+    return m_colorRangeRate;
+}
+
+void PlotDial::setTextRate(int rate)
+{
+    m_textRate = rate;
+    update();
+}
+
+int PlotDial::getTextRate()
+{
+    return m_textRate;
+}
+
+void PlotDial::setDialRate(int rate)
+{
+    m_dialRate = rate;
+    update();
+}
+
+int PlotDial::getDialRate()
+{
+    return m_dialRate;
+}
+
+void PlotDial::setDialCapRate(int rate)
+{
+    m_dialCapRate = rate;
+    update();
+}
+
+int PlotDial::getDialCapRate()
+{
+    return m_dialCapRate;
+}
+
+void PlotDial::setStartAngle(int angle)
+{
+    m_startAngle = angle;
+    update();
+}
+
+int PlotDial::getStartAngle()
+{
+    return m_startAngle;
+}
+
+void PlotDial::setEndAngle(int angle)
+{
+    m_endAngle = angle;
+    update();
+}
+
+int PlotDial::getEndAngle()
+{
+    return m_endAngle;
+}
+
+void PlotDial::setCapColor(QColor color)
+{
+    m_capColor = color;
+    update();
+}
+
+const QColor PlotDial::getCapColor()
+{
+    return m_capColor;
+}
+
+void PlotDial::setDrawFirstTick(bool draw)
+{
+    m_drawFirstTick = draw;
+    update();
+}
+
+bool PlotDial::getDrawFirstTick()
+{
+    return m_drawFirstTick;
+}
+
+void PlotDial::setDrawLastTick(bool draw)
+{
+
+    m_drawLastTick = draw;
+    update();
+}
+
+bool PlotDial::getDrawLastTick()
+{
+    return m_drawLastTick;
+}
+
+void PlotDial::setDrawFirstTextLabel(bool draw)
+{
+
+    m_drawFirstTextLabel = draw;
+    update();
+}
+
+bool PlotDial::getDrawFirstTextLabel()
+{
+    return m_drawFirstTextLabel;
+}
+
+void PlotDial::setDrawLastTextLabel(bool draw)
+{
+
+    m_drawLastTextLabel = draw;
+    update();
+}
+
+bool PlotDial::getDrawLastTextLabel()
+{
+    return m_drawLastTextLabel;
+}
+
+void PlotDial::setColorInfoList(QList<PlotManager::DialColorInfo> colorInfoList)
+{
+    m_colorInfoList = colorInfoList;
+    update();
+}
+
+const QList<PlotManager::DialColorInfo> PlotDial::getColorInfoList()
+{
+    return m_colorInfoList;
+}
+
+void PlotDial::setDialStyle(const QString& style)
+{
+    m_dialStyle = style;
+    update();
+}
+
+const QString PlotDial::getDialStyle()
+{
+    return m_dialStyle;
+}
 
 void PlotDial::updateDataForDataPairsByTime(double secs)
 {
@@ -46,29 +213,8 @@ void PlotDial::updateDataForDataPairsByTime(double secs)
         auto uuid = dataPair->getUuid();
         double currValue =
             DataManager::getInstance()->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs);
-
-        //根据当前值计算指针终点
-        double angle = 225 - (currValue - m_coordBgn_x) / (m_coordEnd_x - m_coordBgn_x) *
-                                 (m_endAngle - m_startAngle);
-        //        qDebug() << currValue << angle;
-
-        QPointF endPoint;
-        endPoint.setX(m_circleRadius * cos(qDegreesToRadians(angle)) + m_centerPoint.x());
-        endPoint.setY(-m_circleRadius * sin(qDegreesToRadians(angle)) + m_centerPoint.y());
-
-        QVector2D vec(endPoint.x() - m_centerPoint.x(), endPoint.y() - m_centerPoint.y());
-        QPointF midPoint;
-        midPoint.setX(m_centerPoint.x() + vec.x() * 0.1);
-        midPoint.setY(m_centerPoint.y() + vec.y() * 0.1);
-
-        QVector2D normalVec(-0.1 * ((double)endPoint.y() - (double)m_centerPoint.y()),
-                            0.1 * ((double)endPoint.x() - (double)m_centerPoint.x()));
-
-        QPointF endPoint1(midPoint.x() + normalVec.x(), midPoint.y() + normalVec.y());
-        QPointF endPoint2(midPoint.x() - normalVec.x(), midPoint.y() - normalVec.y());
-
-        m_valueMap.insert(
-            uuid, QVector<QPointF>() << m_centerPoint << endPoint1 << endPoint << endPoint2);
+        m_valueMap.insert(uuid, currValue);
+        m_unit = dataPair->getUnit_x();
     }
 
     update();
@@ -86,15 +232,22 @@ void PlotDial::customPainting(QPainter& painter)
     QPen pen;
 
     QPainterPath outLinePath;
-    outLinePath.arcTo(rect, 90 - m_endAngle, m_endAngle - m_startAngle);
+    QRectF capRect;
+    capRect.setRect(rect.x() * m_dialCapRate / 1000.0,
+                    rect.y() * m_dialCapRate / 1000.0,
+                    rect.width() * m_dialCapRate / 1000.0,
+                    rect.height() * m_dialCapRate / 1000.0);
+    outLinePath.arcTo(capRect, 90 - m_endAngle, m_endAngle - m_startAngle);
 
     QPainterPath polyPath;
     QVector<QPointF> polyPoint;
     polyPoint.push_back(QPointF(0, 0));
-    polyPoint.push_back(QPointF(m_circleRadius * sin(m_startAngle * M_PI / 180),
-                                m_circleRadius * (-cos(m_startAngle * M_PI / 180))));
-    polyPoint.push_back(QPointF(m_circleRadius * sin(m_endAngle * M_PI / 180),
-                                m_circleRadius * (-cos(m_endAngle * M_PI / 180))));
+    polyPoint.push_back(
+        QPointF(m_circleRadius * m_dialCapRate / 1000.0 * sin(m_startAngle * M_PI / 180),
+                m_circleRadius * m_dialCapRate / 1000.0 * (-cos(m_startAngle * M_PI / 180))));
+    polyPoint.push_back(
+        QPointF(m_circleRadius * m_dialCapRate / 1000.0 * sin(m_endAngle * M_PI / 180),
+                m_circleRadius * m_dialCapRate / 1000.0 * (-cos(m_endAngle * M_PI / 180))));
     outLinePath.addPolygon(QPolygonF(polyPoint));
 
     painter.setBrush(m_capColor);
@@ -111,59 +264,142 @@ void PlotDial::customPainting(QPainter& painter)
                      QPointF(m_circleRadius * sin(m_endAngle * M_PI / 180),
                              m_circleRadius * (-cos(m_endAngle * M_PI / 180))));
 
-    // 绘制表盘圆弧
-    //    double arcHeight = m_circleRadius / 20;
-    //    QPainterPath pathGreen;
-    //    pathGreen.arcTo(rect, 30, 180);
-    //    QPainterPath subPath;
-    //    subPath.addEllipse(rect.adjusted(arcHeight, arcHeight, -arcHeight, -arcHeight));
-    //    pathGreen -= subPath;
-    //    painter.setPen(Qt::NoPen);
-    //    painter.setBrush(QColor(0, 128, 0));
-    //    painter.drawPath(pathGreen);
-
-    //    QPainterPath pathYellow;
-    //    pathYellow.arcTo(rect, 30, -45);
-    //    pathYellow -= subPath;
-    //    painter.setBrush(QColor(128, 128, 0));
-    //    painter.drawPath(pathYellow);
-
-    //    QPainterPath pathRed;
-    //    pathRed.arcTo(rect, -15, -75);
-    //    pathRed -= subPath;
-    //    painter.setBrush(QColor(128, 0, 0));
-    //    painter.drawPath(pathRed);
+    if(m_dialStyle == "Thick")
+    {
+        // 绘制表盘圆弧
+        double arcHeight = m_circleRadius * m_colorRangeRate / 1000.0;
+        for(int i = 0; i < m_colorInfoList.size(); i++)
+        {
+            QPainterPath path;
+            double start = m_colorInfoList.at(i).start;
+            double end = m_colorInfoList.at(i).end;
+            double startAngle = (m_endAngle + 90) - (start - m_coordBgn_x) /
+                                                        (m_coordEnd_x - m_coordBgn_x) *
+                                                        (m_endAngle - m_startAngle);
+            double endAngle = (m_endAngle + 90) - (end - m_coordBgn_x) /
+                                                      (m_coordEnd_x - m_coordBgn_x) *
+                                                      (m_endAngle - m_startAngle);
+            path.arcTo(rect, startAngle, endAngle - startAngle);
+            QPainterPath subPath;
+            subPath.addEllipse(rect.adjusted(arcHeight, arcHeight, -arcHeight, -arcHeight));
+            path -= subPath;
+            QPen arcPen;
+            arcPen.setWidth(m_colorInfoList.at(i).width);
+            arcPen.setColor(m_colorInfoList.at(i).outline);
+            painter.setPen(arcPen);
+            painter.setBrush(m_colorInfoList.at(i).clr);
+            painter.drawPath(path);
+        }
+    }
 
     // 绘制刻度和表盘文字
-    if(m_tickCount < 2)
-        m_tickCount = 2;
-    double curAngle = (m_endAngle - m_startAngle) / (m_tickCount - 1);
-    double curSpan = (m_coordEnd_x - m_coordBgn_x) / (m_tickCount - 1);
+    if(m_horzGrids < 2)
+        m_horzGrids = 2;
+    double perAngle = (m_endAngle - m_startAngle) / (m_horzGrids - 1);
+    double perSpan = (m_coordEnd_x - m_coordBgn_x) / (m_horzGrids - 1);
 
-    pen.setWidth(2);
-    pen.setColor(m_dialColor);
+    pen.setWidth(int(m_gridWidth));
+    pen.setColor(m_axisColor);
     painter.setPen(pen);
-    painter.setFont(m_tickLabelFont);
+    QFont font = m_tickLabelFont;
+
+    // pixelSize = 0的时候，设置不生效
+    if(int(m_tickLabelFont.pixelSize() * m_textRate / 1000.0) == 0)
+    {
+        font.setPixelSize(1);
+    }
+    else
+    {
+        font.setPixelSize(int(m_tickLabelFont.pixelSize() * m_textRate / 1000.0));
+    }
+    painter.setFont(font);
+
     double posX;
     double posY;
-    for(int i = 0; i < m_tickCount; i++)
+    QFontMetrics fm(font);
+    int w = 0;
+    for(int i = 1; i < m_horzGrids - 1; i++)
     {
-        posX = m_circleRadius * cos((m_endAngle - curAngle * i - 90) * M_PI / 180);
-        posY = m_circleRadius * sin((m_endAngle - curAngle * i - 90) * M_PI / 180);
-        painter.drawLine(QPointF(posX, posY), QPointF(posX * 0.95, posY * 0.95));
-        painter.drawText(QPointF(posX * 0.9, posY * 0.9),
-                         QString("%1").arg(m_coordEnd_x - curSpan * i));
+        posX = m_circleRadius * cos((m_endAngle - perAngle * i - 90) * M_PI / 180);
+        posY = m_circleRadius * sin((m_endAngle - perAngle * i - 90) * M_PI / 180);
+        painter.drawLine(
+            QPointF(posX, posY),
+            QPointF(posX * (1000 - m_dialRate) / 1000, posY * (1000 - m_dialRate) / 1000));
+        if(!m_showUnits_x)
+        {
+            w = fm.width(QString("%1").arg(m_coordEnd_x - perSpan * i));
+            painter.drawText(QPointF(posX < 0 ? posX * 0.95 : posX * 0.95 - w, posY * 0.9),
+                             QString("%1").arg(m_coordEnd_x - perSpan * i));
+        }
+        else
+        {
+            w = fm.width(QString("%1%2").arg(m_coordEnd_x - perSpan * i).arg(m_unit));
+            painter.drawText(QPointF(posX < 0 ? posX * 0.95 : posX * 0.95 - w, posY * 0.9),
+                             QString("%1%2").arg(m_coordEnd_x - perSpan * i).arg(m_unit));
+        }
+    }
+
+    if(m_drawFirstTick)
+    {
+        posX = m_circleRadius * cos((m_endAngle - perAngle * (m_horzGrids - 1) - 90) * M_PI / 180);
+        posY = m_circleRadius * sin((m_endAngle - perAngle * (m_horzGrids - 1) - 90) * M_PI / 180);
+        painter.drawLine(
+            QPointF(posX, posY),
+            QPointF(posX * (1000 - m_dialRate) / 1000, posY * (1000 - m_dialRate) / 1000));
+    }
+    if(m_drawFirstTextLabel)
+    {
+        posX = m_circleRadius * cos((m_endAngle - perAngle * (m_horzGrids - 1) - 90) * M_PI / 180);
+        posY = m_circleRadius * sin((m_endAngle - perAngle * (m_horzGrids - 1) - 90) * M_PI / 180);
+        if(!m_showUnits_x)
+        {
+            w = fm.width(QString("%1").arg(m_coordEnd_x - perSpan * (m_horzGrids - 1)));
+            painter.drawText(QPointF(posX < 0 ? posX * 0.95 : posX * 0.95 - w, posY * 0.9),
+                             QString("%1").arg(m_coordEnd_x - perSpan * (m_horzGrids - 1)));
+        }
+        else
+        {
+            w = fm.width(
+                QString("%1%2").arg(m_coordEnd_x - perSpan * (m_horzGrids - 1)).arg(m_unit));
+            painter.drawText(
+                QPointF(posX < 0 ? posX * 0.95 : posX * 0.95 - w, posY * 0.9),
+                QString("%1%2").arg(m_coordEnd_x - perSpan * (m_horzGrids - 1)).arg(m_unit));
+        }
+    }
+    if(m_drawLastTick)
+    {
+        posX = m_circleRadius * cos((m_endAngle - 90) * M_PI / 180);
+        posY = m_circleRadius * sin((m_endAngle - 90) * M_PI / 180);
+        painter.drawLine(
+            QPointF(posX, posY),
+            QPointF(posX * (1000 - m_dialRate) / 1000, posY * (1000 - m_dialRate) / 1000));
+    }
+    if(m_drawLastTextLabel)
+    {
+        posX = m_circleRadius * cos((m_endAngle - 90) * M_PI / 180);
+        posY = m_circleRadius * sin((m_endAngle - 90) * M_PI / 180);
+        if(!m_showUnits_x)
+        {
+            w = fm.width(QString("%1").arg(m_coordEnd_x));
+            painter.drawText(QPointF(posX < 0 ? posX * 0.95 : posX * 0.95 - w, posY * 0.9),
+                             QString("%1").arg(m_coordEnd_x));
+        }
+        else
+        {
+            w = fm.width(QString("%1%2").arg(m_coordEnd_x).arg(m_unit));
+            painter.drawText(QPointF(posX < 0 ? posX * 0.95 : posX * 0.95 - w, posY * 0.9),
+                             QString("%1%2").arg(m_coordEnd_x).arg(m_unit));
+        }
     }
 
     // 绘制上面的图形坐标轴是基于平移之后的，需要还原，指针的坐标是没有平移过的
     painter.restore();
-    // 绘制图表的指针
 
+    // 绘制图表的指针
     auto dataPairList = getDataPairs();
 
     if(!dataPairList.isEmpty())
     {
-        QBrush pointerBrush(m_pointColor, Qt::SolidPattern);
         for(auto data : dataPairList)
         {
             if(data->isDraw())
@@ -171,17 +407,39 @@ void PlotDial::customPainting(QPainter& painter)
                 auto uuid = data->getUuid();
                 if(m_valueMap.contains(uuid))
                 {
-                    if(m_valueMap[uuid].size() == 4)
-                    {
-                        QPointF clockPoint[4];
-                        for(int i = 0; i < m_valueMap[uuid].size(); i++)
-                        {
-                            clockPoint[i] = m_valueMap[uuid].at(i);
-                        }
-                        pointerBrush.setColor(data->dataColor());
-                        painter.setBrush(pointerBrush);
-                        painter.drawPolygon(clockPoint, 4);
-                    }
+                    //根据当前值计算指针终点
+                    if(math::doubleEqual(m_valueMap[uuid], std::numeric_limits<double>::max()))
+                        continue;
+                    double angle = (m_endAngle + 90) - (m_valueMap[uuid] - m_coordBgn_x) /
+                                                           (m_coordEnd_x - m_coordBgn_x) *
+                                                           (m_endAngle - m_startAngle);
+
+                    QPointF endPoint;
+                    endPoint.setX(m_circleRadius * cos(qDegreesToRadians(angle)) +
+                                  m_centerPoint.x());
+                    endPoint.setY(-m_circleRadius * sin(qDegreesToRadians(angle)) +
+                                  m_centerPoint.y());
+
+                    QVector2D vec(float(endPoint.x()) - m_centerPoint.x(),
+                                  float(endPoint.y()) - m_centerPoint.y());
+                    QPointF midPoint;
+                    midPoint.setX(m_centerPoint.x() + vec.x() * 0.1);
+                    midPoint.setY(m_centerPoint.y() + vec.y() * 0.1);
+
+                    QVector2D normalVec(-0.1 * (endPoint.y() - double(m_centerPoint.y())),
+                                        0.1 * (endPoint.x() - double(m_centerPoint.x())));
+
+                    QPointF endPoint1(midPoint.x() + normalVec.x(), midPoint.y() + normalVec.y());
+                    QPointF endPoint2(midPoint.x() - normalVec.x(), midPoint.y() - normalVec.y());
+
+                    QPointF clockPoint[4];
+                    clockPoint[0] = m_centerPoint;
+                    clockPoint[1] = endPoint1;
+                    clockPoint[2] = endPoint;
+                    clockPoint[3] = endPoint2;
+                    QBrush pointerBrush(data->dataColor(), Qt::SolidPattern);
+                    painter.setBrush(pointerBrush);
+                    painter.drawPolygon(clockPoint, 4);
                 }
             }
         }
@@ -197,6 +455,7 @@ void PlotDial::updateGraphByDataPair(DataPair* data)
 
 void PlotDial::updateCenterPoint()
 {
-    m_circleRadius = int(m_widget->height() * 0.95 / (1 - cos(m_endAngle * M_PI / 180)));
+    m_circleRadius =
+        int(m_widget->height() * 0.95 / (1 - cos(m_endAngle * M_PI / 180)) * m_radiusRate / 1000);
     m_centerPoint = QPoint((m_widget->width()) / 2, m_circleRadius);
 }
