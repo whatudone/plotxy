@@ -1,6 +1,7 @@
 ﻿#ifndef CONST_DEF_H_
 #define CONST_DEF_H_
 
+#include <QColor>
 #include <QString>
 
 enum PlotType : int32_t
@@ -151,6 +152,15 @@ enum AxisType
     yAxis,
     xAxis2,
     yAxis2
+};
+
+struct DialColorInfo
+{
+    double start;
+    double end;
+    QColor clr;
+    QColor outline;
+    int width;
 };
 
 #endif // _CONST_DEF_H_

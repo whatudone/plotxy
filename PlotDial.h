@@ -2,9 +2,9 @@
 #define PLOTDIAL_H
 
 #include "BaseData.h"
-#include "DataManager.h"
 #include "PlotItemBase.h"
-#include "PlotManager.h"
+#include "constdef.h"
+
 #include <QMap>
 #include <QString>
 #include <QTimer>
@@ -35,7 +35,7 @@ public:
     void setDrawLastTick(bool draw);
     void setDrawFirstTextLabel(bool draw);
     void setDrawLastTextLabel(bool draw);
-    void setColorInfoList(QList<PlotManager::DialColorInfo> colorInfoList);
+    void setColorInfoList(const QList<DialColorInfo>& colorInfoList);
     void setDialStyle(const QString& style);
 
     int getTickRadiusRate();
@@ -50,7 +50,7 @@ public:
     bool getDrawLastTick();
     bool getDrawFirstTextLabel();
     bool getDrawLastTextLabel();
-    const QList<PlotManager::DialColorInfo> getColorInfoList();
+    const QList<DialColorInfo> getColorInfoList();
     const QString getDialStyle();
 
 private:
@@ -60,8 +60,6 @@ private:
     void updateCenterPoint();
 
 private:
-    bool m_bThinStyle;
-
     QColor m_dialColor;
     QColor m_capColor;
 
@@ -75,16 +73,15 @@ private:
     int m_dialCapRate;
     int m_startAngle;
     int m_endAngle;
-    QString m_unit;
 
-    bool m_drawFirstTick;
-    bool m_drawLastTick;
-    bool m_drawFirstTextLabel;
-    bool m_drawLastTextLabel;
+    bool m_drawFirstTick = true;
+    bool m_drawLastTick = true;
+    bool m_drawFirstTextLabel = true;
+    bool m_drawLastTextLabel = true;
     QString m_dialStyle;
 
     QMap<QString, double> m_valueMap;
-    QList<PlotManager::DialColorInfo> m_colorInfoList;
+    QList<DialColorInfo> m_colorInfoList;
 };
 
 #endif // PLOTDIAL_H

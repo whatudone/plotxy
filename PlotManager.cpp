@@ -612,14 +612,15 @@ void PlotManager::refreshTextEditUI(PlotItemBase* plot)
 
 void PlotManager::refreshAttitudeUI(PlotItemBase* plot)
 {
-    if(dynamic_cast<PlotAttitude*>(plot) == nullptr)
+    auto item = dynamic_cast<PlotAttitude*>(plot);
+    if(item == nullptr)
 		return;
 
-	ui.pushButton_80->setColor(dynamic_cast<PlotAttitude*>(plot)->getRollColor());
-	ui.pushButton_81->setColor(dynamic_cast<PlotAttitude*>(plot)->getPitchColor());
-	ui.spinBox_29->setValue(dynamic_cast<PlotAttitude*>(plot)->getTickRadiusPercentage());
-	ui.spinBox_30->setValue(dynamic_cast<PlotAttitude*>(plot)->getTextPercentage());
-    ui.spinBox_31->setValue(dynamic_cast<PlotAttitude*>(plot)->getDialPercentage());
+    ui.pushButton_80->setColor(item->getRollColor());
+    ui.pushButton_81->setColor(item->getPitchColor());
+    ui.spinBox_29->setValue(item->getTickRadiusPercentage());
+    ui.spinBox_30->setValue(item->getTextPercentage());
+    ui.spinBox_31->setValue(item->getDialPercentage());
 }
 
 void PlotManager::refreshDialUI(PlotItemBase* plot)

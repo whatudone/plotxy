@@ -12,16 +12,6 @@ class PlotManager : public QWidget
     Q_OBJECT
 
 public:
-    struct DialColorInfo
-    {
-        double start;
-        double end;
-        QColor clr;
-        QColor outline;
-        int width;
-    };
-
-public:
     explicit PlotManager(QWidget* parent = Q_NULLPTR);
     ~PlotManager();
 
