@@ -248,8 +248,7 @@ public:
     bool operator==(const DataPair& other) const
     {
         return (m_entityIDX == other.m_entityIDX) && (m_entityIDY == other.m_entityIDY) &&
-               (m_attr_x == other.m_attr_x) && (m_attr_y == other.m_attr_y) &&
-               (m_unit_x == other.m_unit_x) && (m_unit_y == other.m_unit_y);
+               (m_attr_x == other.m_attr_x) && (m_attr_y == other.m_attr_y);
     }
 
     QString getUuid() const;

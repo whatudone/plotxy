@@ -34,7 +34,6 @@ public slots:
     void onBtnUpdateColorRange();
     void onBtnRemoveColorRange();
 
-	void onEventBtnMoreClicked();
     void onUpdatePlotPair();
     // 选中不同数据对
 	void onTableWidget_plotpairItemSelectionChanged();
@@ -88,6 +87,11 @@ public slots:
     void onStipplePatternChanged(Qt::PenStyle style);
     void onStippleCustomPatternChanged(const QString& pattern);
     void onStippleFactorChanged(int factor);
+
+    // Event
+    void onEventBtnMoreClicked();
+    // 刷新当前实体中包含的所有通用数据标签
+    void onGenericDataEntityChanged(int32_t row, int32_t col);
 
 private:
     // 根据数据对数据刷新UI

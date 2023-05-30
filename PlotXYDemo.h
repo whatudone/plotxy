@@ -189,10 +189,10 @@ private:
     TabDrawWidget* getCurDrawWidget();
     // 保存图表信息到Json
     void savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject);
-    // 保存数据对信息
-    void saveDataPairToJson(DataPair* dataPair, QJsonObject& object, PlotType type);
     // 加载图表信息
     PlotItemBase* loadPlotJson(const QJsonObject& plotObject);
+    // 保存数据对信息
+    void saveDataPairToJson(DataPair* dataPair, QJsonObject& object, PlotType type);
     // 加载数据对信息
     void loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBase* plot);
     // 清理历史创建的tab页和其中的图表

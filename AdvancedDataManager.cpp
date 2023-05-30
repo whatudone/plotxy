@@ -1,5 +1,7 @@
 ﻿#include "AdvancedDataManager.h"
+#include "DataManager.h"
 #include "PlotManagerData.h"
+
 #include <QColor>
 #include <QColorDialog>
 #include <QTableWidgetSelectionRange>
@@ -18,6 +20,7 @@ AdvancedDataManager::AdvancedDataManager(QWidget* parent)
 	subSettingWidgetContainer->setEnabled(false);
 
 	ui.stackedWidget_aDMrpart->setCurrentIndex(0);
+
     initConnections();
 }
 
@@ -465,7 +468,25 @@ void AdvancedDataManager::refreshStipple()
     stipple->setStippleFactor(m_curSelectDatapair->getCustomPatternFactor());
 }
 
-void AdvancedDataManager::refreshEvent() {}
+void AdvancedDataManager::refreshEvent()
+{
+    // 刷新实体表格
+    auto entityMap = DataManagerInstance->getEntityIDAndNameMap();
+    ui.tableWidgetEventEntity->clearContents();
+    ui.tableWidgetEventEntity->setRowCount(entityMap.size());
+    auto idList = entityMap.keys();
+    int32_t row = 0;
+    for(auto id : idList)
+    {
+        QTableWidgetItem* item = new QTableWidgetItem(entityMap.value(id));
+        item->setData(Qt::UserRole + 1, id);
+        ui.tableWidgetEventEntity->setItem(row, 0, item);
+        ++row;
+    }
+    // 刷新实体对应的generic data tag
+
+    // 刷新已经添加的事件
+}
 
 void AdvancedDataManager::refreshLabelText()
 {
@@ -547,6 +568,11 @@ void AdvancedDataManager::initGeneralConnections()
             this,
             &AdvancedDataManager::onPushButton_closeClicked);
     connect(ui.lineEdit, &QLineEdit::textChanged, this, &AdvancedDataManager::onLineEditChanged);
+
+    connect(PlotManagerData::getInstance(),
+            &PlotManagerData::plotDataChanged,
+            this,
+            &AdvancedDataManager::onUpdatePlotPair);
 
     //General
     auto general = subSettingWidgetContainer->m_general;
@@ -723,10 +749,11 @@ void AdvancedDataManager::initEventConnections()
             SIGNAL(sgn_BtnMoreClicked()),
             this,
             SLOT(onEventBtnMoreClicked()));
-    connect(PlotManagerData::getInstance(),
-            &PlotManagerData::plotDataChanged,
+
+    connect(ui.tableWidgetEventEntity,
+            &QTableWidget::cellClicked,
             this,
-            &AdvancedDataManager::onUpdatePlotPair);
+            &AdvancedDataManager::onGenericDataEntityChanged);
 }
 
 void AdvancedDataManager::initStippleConnections()
@@ -829,7 +856,25 @@ void AdvancedDataManager::onColorRangesModeChanged(DataPair::ColorRangeMode mode
 
 void AdvancedDataManager::onEventBtnMoreClicked()
 {
-	ui.stackedWidget_aDMrpart->setCurrentIndex(3);
+    ui.stackedWidget_aDMrpart->setCurrentIndex(3);
+}
+
+void AdvancedDataManager::onGenericDataEntityChanged(int32_t row, int32_t col)
+{
+    QTableWidgetItem* entityItem = ui.tableWidgetEventEntity->item(row, col);
+    if(entityItem)
+    {
+        int32_t id = entityItem->data(Qt::UserRole + 1).toInt();
+        QStringList tags = DataManagerInstance->getGenericDataTagsByID(id);
+        auto size = tags.size();
+        ui.tableWidgetGenericTag->clearContents();
+        ui.tableWidgetGenericTag->setRowCount(size);
+        for(int var = 0; var < size; ++var)
+        {
+            QTableWidgetItem* item = new QTableWidgetItem(tags.at(var));
+            ui.tableWidgetGenericTag->setItem(var, 0, item);
+        }
+    }
 }
 
 void AdvancedDataManager::onUpdatePlotPair()

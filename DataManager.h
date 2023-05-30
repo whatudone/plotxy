@@ -34,7 +34,7 @@ public:
         }
     };
 
-    struct Event
+    struct GenericData
     {
         // 事件名称
         QString m_name;
@@ -60,7 +60,7 @@ private:
     // 平台map数据
     QMap<int32_t, Platform> m_platformMap;
     // 事件map数据
-    QMap<int32_t, QList<Event>> m_eventMap;
+    QMap<int32_t, QMap<QString, QList<GenericData>>> m_genericMap;
     // 时间以s为计算单位，小数位表示ms
     double m_minTime = 0.0;
     double m_maxTime = 0.0;
@@ -119,7 +119,11 @@ public:
     QStringList getEntityNameList();
     // 根据id获取实例对应的属性和单位列表
     QList<QPair<QString, QString>> getAttrAndUnitPairList(int32_t id);
-
+    // 获取所有<entityId,entityName>键值对
+    QMap<int32_t, QString> getEntityIDAndNameMap();
+    // 获取某个实体对应的所有generic data tags
+    QStringList getGenericDataTagsByID(int32_t entityID);
+    // 获取数据路径
     QString getDataFileName() const;
     void setDataFileName(const QString& dataFileName);
 

@@ -195,7 +195,7 @@ void DataManager::loadASIData(const QString& asiFileName)
     m_attrUnitHash.clear();
     m_timeDataSet.clear();
     m_platformMap.clear();
-    m_eventMap.clear();
+    m_genericMap.clear();
     m_gogFileList.clear();
 
     // 循环读取每一行，避免一次性读取内存占用过大
@@ -339,9 +339,6 @@ void DataManager::loadASIData(const QString& asiFileName)
                         }
                         else
                         {
-                            // 结束本Platform的数据读取
-                            //                            m_newEntityDataMap.insert(p.m_platformDataID, attrDataMap);
-                            //                            m_platformMap.insert(p.m_platformDataID, p);
                             break;
                         }
                     }
@@ -360,19 +357,22 @@ void DataManager::loadASIData(const QString& asiFileName)
                         {
                             continue;
                         }
-                        Event e;
-                        e.m_name = eventDataList.at(3).trimmed();
-                        e.m_relativeTime = OrdinalTimeFormatter::getSecondsFromTimeStr(
+                        GenericData g;
+                        g.m_name = eventDataList.at(3).trimmed();
+                        g.m_relativeTime = OrdinalTimeFormatter::getSecondsFromTimeStr(
                             eventDataList.at(4).trimmed(), m_refYear);
-                        e.m_timeOffset = eventDataList.at(5).trimmed().toInt();
-                        if(m_eventMap.contains(p.m_platformDataID))
+                        g.m_timeOffset = eventDataList.at(5).trimmed().toInt();
+                        if(m_genericMap.contains(p.m_platformDataID) &&
+                           m_genericMap.value(p.m_platformDataID).contains("Event"))
                         {
                             // 直接通过引用修改值
-                            m_eventMap[p.m_platformDataID].append(e);
+                            m_genericMap[p.m_platformDataID]["Event"].append(g);
                         }
                         else
                         {
-                            m_eventMap.insert(p.m_platformDataID, QList<Event>() << e);
+                            QMap<QString, QList<GenericData>> tmpMap;
+                            tmpMap.insert("Event", QList<GenericData>() << g);
+                            m_genericMap.insert(p.m_platformDataID, tmpMap);
                         }
                     }
                 }
@@ -633,6 +633,26 @@ QList<QPair<QString, QString>> DataManager::getAttrAndUnitPairList(int32_t id)
     return list;
 }
 
+QMap<int32_t, QString> DataManager::getEntityIDAndNameMap()
+{
+    QMap<int32_t, QString> map;
+    for(const auto& p : m_platformMap)
+    {
+        map.insert(p.m_platformDataID, p.m_platformName);
+    }
+    return map;
+}
+
+QStringList DataManager::getGenericDataTagsByID(int32_t entityID)
+{
+    QStringList tags;
+    if(m_genericMap.contains(entityID))
+    {
+        tags = m_genericMap.value(entityID).keys();
+    }
+    return tags;
+}
+
 int DataManager::getEntityAttrMaxIndexByTime(int32_t entityID, double secs)
 {
 	int index = 0;
@@ -681,7 +701,7 @@ void DataManager::clearData()
 {
     m_newEntityDataMap.clear();
     m_platformMap.clear();
-    m_eventMap.clear();
+    m_genericMap.clear();
     m_timeDataSet.clear();
     m_gogFileList.clear();
     m_dataFileName.clear();

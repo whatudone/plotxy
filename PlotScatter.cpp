@@ -66,12 +66,29 @@ void PlotScatter::initPlot()
 
 void PlotScatter::delPlotPairData(const QString& uuid)
 {
-    if(m_dataPairs.isEmpty())
-        return;
     //scatter
     if(m_mapScatter.contains(uuid))
     {
-        m_mapScatter.remove(uuid);
+        auto draw = m_mapScatter.take(uuid);
+        if(!draw.graph.isNull())
+        {
+
+            m_customPlot->removeGraph(draw.graph);
+        }
+        if(!draw.pixmap.isNull())
+        {
+
+            m_customPlot->removeItem(draw.pixmap);
+        }
+        if(!draw.tracer.isNull())
+        {
+            m_customPlot->removeItem(draw.tracer);
+        }
+        if(!draw.tracerText.isNull())
+        {
+            m_customPlot->removeItem(draw.tracerText);
+        }
+        m_customPlot->replot();
     }
     PlotItemBase::delPlotPairData(uuid);
     if(m_dataPairs.isEmpty())
@@ -89,7 +106,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
     int itemCnt = getDataPairs().size();
 
     for(int i = 0; i < itemCnt; ++i)
-	{
+    {
         QVector<double> x;
         QVector<double> y;
         auto data = getDataPairs().at(i);
@@ -120,24 +137,24 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
             y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(yEntityID, yAttr, secs);
         }
         m_dataHash.insert(uuid, qMakePair(x, y));
-	}
-    for(int i = 0; i < itemCnt; ++i)
-    {
-        updateGraphByDataPair(m_dataPairs.at(i));
     }
+    for(int i = 0; i < itemCnt; ++i)
+	{
+        updateGraphByDataPair(m_dataPairs.at(i));
+	}
 	m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
 void PlotScatter::updateGraphByDataPair(DataPair* data)
 {
     if(!data)
-	{
+    {
         return;
     }
     DrawComponents info;
     auto uuid = data->getUuid();
     if(!m_mapScatter.contains(uuid))
-    {
+	{
         info.graph = m_customPlot->addGraph();
 
         info.tracerText = new QCPItemText(m_customPlot);

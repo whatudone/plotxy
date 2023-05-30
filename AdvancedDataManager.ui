@@ -223,7 +223,7 @@
           <item>
            <widget class="QStackedWidget" name="stackedWidget_aDMrpart">
             <property name="currentIndex">
-             <number>2</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="page_4"/>
             <widget class="QWidget" name="page">
@@ -564,35 +564,52 @@ p, li { white-space: pre-wrap; }
                    </widget>
                   </item>
                   <item>
-                   <widget class="QTableWidget" name="tableWidget"/>
+                   <widget class="QTableWidget" name="tableWidgetEventEntity">
+                    <property name="editTriggers">
+                     <set>QAbstractItemView::NoEditTriggers</set>
+                    </property>
+                    <property name="columnCount">
+                     <number>1</number>
+                    </property>
+                    <attribute name="horizontalHeaderVisible">
+                     <bool>false</bool>
+                    </attribute>
+                    <attribute name="horizontalHeaderStretchLastSection">
+                     <bool>true</bool>
+                    </attribute>
+                    <attribute name="verticalHeaderVisible">
+                     <bool>false</bool>
+                    </attribute>
+                    <column/>
+                   </widget>
                   </item>
                   <item>
                    <layout class="QHBoxLayout" name="horizontalLayout_7">
                     <item>
                      <widget class="QPushButton" name="pushButton">
                       <property name="text">
-                       <string>Filter...</string>
+                       <string>过滤...</string>
                       </property>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QPushButton" name="pushButton_2">
+                     <widget class="QPushButton" name="pushButtonEventSort">
                       <property name="text">
-                       <string>Sort</string>
+                       <string>排序</string>
                       </property>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QPushButton" name="pushButton_3">
+                     <widget class="QPushButton" name="pushButtonEventRefresh">
                       <property name="text">
-                       <string>Refresh</string>
+                       <string>刷新</string>
                       </property>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QCheckBox" name="checkBox">
+                     <widget class="QCheckBox" name="checkBoxLimit">
                       <property name="text">
-                       <string>Limit:</string>
+                       <string>限制:</string>
                       </property>
                      </widget>
                     </item>
@@ -612,7 +629,7 @@ p, li { white-space: pre-wrap; }
                   <item>
                    <widget class="QLabel" name="label_3">
                     <property name="text">
-                     <string>事件标签</string>
+                     <string>通用数据标签</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -620,14 +637,31 @@ p, li { white-space: pre-wrap; }
                    </widget>
                   </item>
                   <item>
-                   <widget class="QTableWidget" name="tableWidget_2"/>
+                   <widget class="QTableWidget" name="tableWidgetGenericTag">
+                    <property name="editTriggers">
+                     <set>QAbstractItemView::NoEditTriggers</set>
+                    </property>
+                    <property name="columnCount">
+                     <number>1</number>
+                    </property>
+                    <attribute name="horizontalHeaderVisible">
+                     <bool>false</bool>
+                    </attribute>
+                    <attribute name="horizontalHeaderStretchLastSection">
+                     <bool>true</bool>
+                    </attribute>
+                    <attribute name="verticalHeaderVisible">
+                     <bool>false</bool>
+                    </attribute>
+                    <column/>
+                   </widget>
                   </item>
                   <item>
                    <layout class="QHBoxLayout" name="horizontalLayout_4">
                     <item>
                      <widget class="QCheckBox" name="checkBox_2">
                       <property name="text">
-                       <string>Show Reserved Tags</string>
+                       <string>显示保留的标签</string>
                       </property>
                      </widget>
                     </item>
@@ -662,7 +696,7 @@ p, li { white-space: pre-wrap; }
                    </widget>
                   </item>
                   <item>
-                   <widget class="ColorButton" name="pushButton_4">
+                   <widget class="ColorButton" name="pushButtonEventColor">
                     <property name="maximumSize">
                      <size>
                       <width>20</width>
@@ -685,7 +719,7 @@ p, li { white-space: pre-wrap; }
                    </widget>
                   </item>
                   <item>
-                   <widget class="QComboBox" name="comboBox">
+                   <widget class="QComboBox" name="comboBoxEventStyle">
                     <item>
                      <property name="text">
                       <string>Small X</string>
@@ -720,10 +754,10 @@ p, li { white-space: pre-wrap; }
                  </widget>
                 </item>
                 <item>
-                 <widget class="QFontComboBox" name="fontComboBox"/>
+                 <widget class="QFontComboBox" name="comboBoxEventFont"/>
                 </item>
                 <item>
-                 <widget class="QComboBox" name="comboBox_2">
+                 <widget class="QComboBox" name="comboBoxEventFontSize">
                   <property name="minimumSize">
                    <size>
                     <width>70</width>
@@ -738,9 +772,9 @@ p, li { white-space: pre-wrap; }
                  </widget>
                 </item>
                 <item>
-                 <widget class="QCheckBox" name="checkBox_3">
+                 <widget class="QCheckBox" name="checkBoxIncludeTag">
                   <property name="text">
-                   <string>Include Tag in Text</string>
+                   <string>文本中包含标签</string>
                   </property>
                  </widget>
                 </item>
@@ -750,12 +784,12 @@ p, li { white-space: pre-wrap; }
                <widget class="QTableWidget" name="tableWidget_3">
                 <column>
                  <property name="text">
-                  <string>实体Entity</string>
+                  <string>实体</string>
                  </property>
                 </column>
                 <column>
                  <property name="text">
-                  <string>标签Tag</string>
+                  <string>标签</string>
                  </property>
                 </column>
                 <column>
