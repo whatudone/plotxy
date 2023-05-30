@@ -1,4 +1,5 @@
 ﻿#include "PlotDial.h"
+#include "DataManager.h"
 #include "Utils.h"
 
 #include <QDebug>
@@ -10,8 +11,6 @@ int PlotDial::m_instanceCount = 1;
 PlotDial::PlotDial(QWidget* parent)
     : PlotItemBase(parent)
 {
-    m_bThinStyle = true;
-
     m_dialColor = Qt::white;
     m_capColor = Qt::red;
 
@@ -28,11 +27,6 @@ PlotDial::PlotDial(QWidget* parent)
     m_dialRate = 50;
     m_dialCapRate = 950;
     m_dialStyle = "Thin";
-
-    m_drawFirstTick = true;
-    m_drawLastTick = true;
-    m_drawFirstTextLabel = true;
-    m_drawLastTextLabel = true;
 
     m_title = "Dial";
 
@@ -173,18 +167,18 @@ void PlotDial::setDrawLastTextLabel(bool draw)
     update();
 }
 
-bool PlotDial::getDrawLastTextLabel()
-{
-    return m_drawLastTextLabel;
-}
-
-void PlotDial::setColorInfoList(QList<PlotManager::DialColorInfo> colorInfoList)
+void PlotDial::setColorInfoList(const QList<DialColorInfo>& colorInfoList)
 {
     m_colorInfoList = colorInfoList;
     update();
 }
 
-const QList<PlotManager::DialColorInfo> PlotDial::getColorInfoList()
+bool PlotDial::getDrawLastTextLabel()
+{
+    return m_drawLastTextLabel;
+}
+
+const QList<DialColorInfo> PlotDial::getColorInfoList()
 {
     return m_colorInfoList;
 }
@@ -214,7 +208,6 @@ void PlotDial::updateDataForDataPairsByTime(double secs)
         double currValue =
             DataManager::getInstance()->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs);
         m_valueMap.insert(uuid, currValue);
-        m_unit = dataPair->getUnit_x();
     }
 
     update();
@@ -314,6 +307,14 @@ void PlotDial::customPainting(QPainter& painter)
     }
     painter.setFont(font);
 
+    auto dataPairList = getDataPairs();
+    QString strUnit;
+    if(!dataPairList.isEmpty())
+    {
+        auto firData = dataPairList.at(0);
+        strUnit = firData->getUnit_x();
+    }
+
     double posX;
     double posY;
     QFontMetrics fm(font);
@@ -333,9 +334,9 @@ void PlotDial::customPainting(QPainter& painter)
         }
         else
         {
-            w = fm.width(QString("%1%2").arg(m_coordEnd_x - perSpan * i).arg(m_unit));
+            w = fm.width(QString("%1%2").arg(m_coordEnd_x - perSpan * i).arg(strUnit));
             painter.drawText(QPointF(posX < 0 ? posX * 0.95 : posX * 0.95 - w, posY * 0.9),
-                             QString("%1%2").arg(m_coordEnd_x - perSpan * i).arg(m_unit));
+                             QString("%1%2").arg(m_coordEnd_x - perSpan * i).arg(strUnit));
         }
     }
 
@@ -360,10 +361,10 @@ void PlotDial::customPainting(QPainter& painter)
         else
         {
             w = fm.width(
-                QString("%1%2").arg(m_coordEnd_x - perSpan * (m_horzGrids - 1)).arg(m_unit));
+                QString("%1%2").arg(m_coordEnd_x - perSpan * (m_horzGrids - 1)).arg(strUnit));
             painter.drawText(
                 QPointF(posX < 0 ? posX * 0.95 : posX * 0.95 - w, posY * 0.9),
-                QString("%1%2").arg(m_coordEnd_x - perSpan * (m_horzGrids - 1)).arg(m_unit));
+                QString("%1%2").arg(m_coordEnd_x - perSpan * (m_horzGrids - 1)).arg(strUnit));
         }
     }
     if(m_drawLastTick)
@@ -386,9 +387,9 @@ void PlotDial::customPainting(QPainter& painter)
         }
         else
         {
-            w = fm.width(QString("%1%2").arg(m_coordEnd_x).arg(m_unit));
+            w = fm.width(QString("%1%2").arg(m_coordEnd_x).arg(strUnit));
             painter.drawText(QPointF(posX < 0 ? posX * 0.95 : posX * 0.95 - w, posY * 0.9),
-                             QString("%1%2").arg(m_coordEnd_x).arg(m_unit));
+                             QString("%1%2").arg(m_coordEnd_x).arg(strUnit));
         }
     }
 
@@ -396,51 +397,44 @@ void PlotDial::customPainting(QPainter& painter)
     painter.restore();
 
     // 绘制图表的指针
-    auto dataPairList = getDataPairs();
-
-    if(!dataPairList.isEmpty())
+    for(auto data : dataPairList)
     {
-        for(auto data : dataPairList)
+        if(data->isDraw())
         {
-            if(data->isDraw())
+            auto uuid = data->getUuid();
+            if(m_valueMap.contains(uuid))
             {
-                auto uuid = data->getUuid();
-                if(m_valueMap.contains(uuid))
-                {
-                    //根据当前值计算指针终点
-                    if(math::doubleEqual(m_valueMap[uuid], std::numeric_limits<double>::max()))
-                        continue;
-                    double angle = (m_endAngle + 90) - (m_valueMap[uuid] - m_coordBgn_x) /
-                                                           (m_coordEnd_x - m_coordBgn_x) *
-                                                           (m_endAngle - m_startAngle);
+                //根据当前值计算指针终点
+                if(math::doubleEqual(m_valueMap[uuid], std::numeric_limits<double>::max()))
+                    continue;
+                double angle = (m_endAngle + 90) - (m_valueMap[uuid] - m_coordBgn_x) /
+                                                       (m_coordEnd_x - m_coordBgn_x) *
+                                                       (m_endAngle - m_startAngle);
 
-                    QPointF endPoint;
-                    endPoint.setX(m_circleRadius * cos(qDegreesToRadians(angle)) +
-                                  m_centerPoint.x());
-                    endPoint.setY(-m_circleRadius * sin(qDegreesToRadians(angle)) +
-                                  m_centerPoint.y());
+                QPointF endPoint;
+                endPoint.setX(m_circleRadius * cos(qDegreesToRadians(angle)) + m_centerPoint.x());
+                endPoint.setY(-m_circleRadius * sin(qDegreesToRadians(angle)) + m_centerPoint.y());
 
-                    QVector2D vec(float(endPoint.x()) - m_centerPoint.x(),
-                                  float(endPoint.y()) - m_centerPoint.y());
-                    QPointF midPoint;
-                    midPoint.setX(m_centerPoint.x() + vec.x() * 0.1);
-                    midPoint.setY(m_centerPoint.y() + vec.y() * 0.1);
+                QVector2D vec(float(endPoint.x()) - m_centerPoint.x(),
+                              float(endPoint.y()) - m_centerPoint.y());
+                QPointF midPoint;
+                midPoint.setX(m_centerPoint.x() + vec.x() * 0.1);
+                midPoint.setY(m_centerPoint.y() + vec.y() * 0.1);
 
-                    QVector2D normalVec(-0.1 * (endPoint.y() - double(m_centerPoint.y())),
-                                        0.1 * (endPoint.x() - double(m_centerPoint.x())));
+                QVector2D normalVec(-0.1 * (endPoint.y() - double(m_centerPoint.y())),
+                                    0.1 * (endPoint.x() - double(m_centerPoint.x())));
 
-                    QPointF endPoint1(midPoint.x() + normalVec.x(), midPoint.y() + normalVec.y());
-                    QPointF endPoint2(midPoint.x() - normalVec.x(), midPoint.y() - normalVec.y());
+                QPointF endPoint1(midPoint.x() + normalVec.x(), midPoint.y() + normalVec.y());
+                QPointF endPoint2(midPoint.x() - normalVec.x(), midPoint.y() - normalVec.y());
 
-                    QPointF clockPoint[4];
-                    clockPoint[0] = m_centerPoint;
-                    clockPoint[1] = endPoint1;
-                    clockPoint[2] = endPoint;
-                    clockPoint[3] = endPoint2;
-                    QBrush pointerBrush(data->dataColor(), Qt::SolidPattern);
-                    painter.setBrush(pointerBrush);
-                    painter.drawPolygon(clockPoint, 4);
-                }
+                QPointF clockPoint[4];
+                clockPoint[0] = m_centerPoint;
+                clockPoint[1] = endPoint1;
+                clockPoint[2] = endPoint;
+                clockPoint[3] = endPoint2;
+                QBrush pointerBrush(data->dataColor(), Qt::SolidPattern);
+                painter.setBrush(pointerBrush);
+                painter.drawPolygon(clockPoint, 4);
             }
         }
     }
