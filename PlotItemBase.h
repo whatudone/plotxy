@@ -294,6 +294,7 @@ public:
 
     bool getBVisible() const;
     void setBVisible(bool bVisible);
+    virtual void drawGOGData();
 
 private:
     void updateResizeFocusPos();

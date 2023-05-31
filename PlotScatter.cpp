@@ -168,7 +168,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
 void PlotScatter::updateGraphByDataPair(DataPair* data)
 {
     if(!data)
-    {
+	{
         return;
     }
     if(m_isTimeLine)
@@ -306,6 +306,54 @@ void PlotScatter::exportDataToFile(const QString& filename) const
         }
     }
     file.close();
+}
+
+void PlotScatter::drawGOGData()
+{
+    QMap<QString, QList<GOGDataInfo>> gogDataMap = DataManager::getInstance()->getAllGOGFileMap();
+    QList<QString> keyList = gogDataMap.keys();
+    for(auto graph : m_gogGraphList)
+    {
+        m_customPlot->removeGraph(graph);
+    }
+    for(auto item : m_gogEllipseList)
+    {
+        m_customPlot->removeItem(item);
+    }
+    m_gogGraphList.clear();
+    m_gogEllipseList.clear();
+    for(auto fileName : keyList)
+    {
+        QList<GOGDataInfo> dataList = gogDataMap[fileName];
+        for(auto data : dataList)
+        {
+            if(data.type == "line")
+            {
+                QCPGraph* graph = m_customPlot->addGraph();
+                graph->setBrush(Qt::NoBrush);
+                graph->setVisible(true);
+                graph->setPen(QPen(QColor(data.lineColor), data.lineWidth));
+                graph->setLineStyle(QCPGraph::lsLine);
+                graph->setData(data.xList, data.yList, true);
+                m_gogGraphList.append(graph);
+            }
+            else if(data.type == "circle")
+            {
+                QCPItemEllipse* ellipse = new QCPItemEllipse(m_customPlot);
+                ellipse->topLeft->setCoords(data.xList.at(0) - data.radius,
+                                            data.yList.at(0) + data.radius);
+                ellipse->bottomRight->setCoords(data.xList.at(0) + data.radius,
+                                                data.yList.at(0) - data.radius);
+                ellipse->setPen(QPen(QColor(data.lineColor), data.lineWidth));
+                if(data.isFill)
+                    ellipse->setBrush(QColor(data.fillColor));
+                else
+                    ellipse->setBrush(Qt::NoBrush);
+                m_gogEllipseList.append(ellipse);
+            }
+        }
+    }
+    m_customPlot->replot();
 }
 
 void PlotScatter::setAxisVisible(bool on, AxisType type)

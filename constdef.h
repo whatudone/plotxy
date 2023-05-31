@@ -2,7 +2,9 @@
 #define CONST_DEF_H_
 
 #include <QColor>
+#include <QPoint>
 #include <QString>
+#include <QVector>
 
 enum PlotType : int32_t
 {
@@ -282,5 +284,22 @@ struct GenericDataExcect
     int timeOffset; //事件类型（-1）
 };
 #pragma pack(pop)
+
+struct GOGDataInfo
+{
+    QString type;
+    QVector<double> xList;
+    QVector<double> yList;
+    double radius;
+    QString rangeUnits;
+    QString altitudeUnits;
+    QString triDName;
+    QColor lineColor;
+    QColor fillColor;
+    int lineWidth;
+    bool isFill;
+    bool depthBuffer;
+    bool tessellate;
+};
 
 #endif // _CONST_DEF_H_

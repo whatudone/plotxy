@@ -288,7 +288,7 @@ void PlotDial::customPainting(QPainter& painter)
     // 绘制刻度和表盘文字
     if(m_horzGrids < 2)
         m_horzGrids = 2;
-    double perAngle = (m_endAngle - m_startAngle) / (m_horzGrids - 1);
+    double perAngle = double(m_endAngle - m_startAngle) / (m_horzGrids - 1);
     double perSpan = (m_coordEnd_x - m_coordBgn_x) / (m_horzGrids - 1);
 
     pen.setWidth(int(m_gridWidth));
@@ -319,7 +319,7 @@ void PlotDial::customPainting(QPainter& painter)
     double posY;
     QFontMetrics fm(font);
     int w = 0;
-    for(uint32_t i = 1; i < m_horzGrids - 1; i++)
+    for(int i = 1; i < int(m_horzGrids) - 1; i++)
     {
         posX = m_circleRadius * cos((m_endAngle - perAngle * i - 90) * M_PI / 180);
         posY = m_circleRadius * sin((m_endAngle - perAngle * i - 90) * M_PI / 180);

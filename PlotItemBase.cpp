@@ -5,6 +5,7 @@
 *  */
 
 #include "PlotItemBase.h"
+#include "DataManager.h"
 #include "PlotXYDemo.h"
 
 #include <QDebug>
@@ -14,7 +15,7 @@
 
 PlotItemBase::PlotItemBase(QWidget* parent)
     : QWidget(parent)
-    , m_isHorizonBar(true)
+    , m_isHorizonBar(false)
     , m_barLeftPadding(0.0)
     , m_barRightPadding(0.0)
 {
@@ -78,6 +79,12 @@ PlotItemBase::PlotItemBase(QWidget* parent)
             &PlotItemBase::dataPairsChanged,
             this,
             &PlotItemBase::onDataPairsChanged,
+            Qt::UniqueConnection);
+
+    connect(DataManager::getInstance(),
+            &DataManager::repaintGOGData,
+            this,
+            &PlotItemBase::drawGOGData,
             Qt::UniqueConnection);
 }
 
@@ -886,6 +893,7 @@ void PlotItemBase::paintEvent(QPaintEvent* event)
         updateResizeFocusPos();
         drawBorderAndControls();
     }
+    drawGOGData();
     QWidget::paintEvent(event);
 }
 
@@ -1102,6 +1110,8 @@ void PlotItemBase::setEventList(const QList<EventSettings>& eventList)
 {
     m_eventList = eventList;
 }
+
+void PlotItemBase::drawGOGData() {}
 
 int PlotItemBase::getBarRightPadding() const
 {
