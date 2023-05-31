@@ -50,8 +50,6 @@ private:
     virtual void delPlotPairData(const QString& uuid) override;
     virtual void updateGraphByDataPair(DataPair* dataPair) override;
 
-    void setCoordRangeX(double lower, double upper) override;
-    void setCoordRangeY(double lower, double upper) override;
     void setIsHorizonBar(bool isHorizonBar) override;
     // 针对target-属性轴
     QCPAxis* keyAxis();

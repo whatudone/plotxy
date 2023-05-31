@@ -63,29 +63,29 @@ void PlotBar::initPlot()
 {
     // 开始默认是水平方向，所以keyAxis为yAxis
     m_customPlot = new QCustomPlot();
-    m_customPlot->xAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
-    m_customPlot->yAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
-    m_customPlot->xAxis->ticker()->setTickCount(int(m_vertGrids));
-    m_customPlot->yAxis->ticker()->setTickCount(int(m_horzGrids));
-    m_customPlot->xAxis->setTickLabelColor(m_tickLabelColor);
-    m_customPlot->yAxis->setTickLabelColor(m_tickLabelColor);
-    m_customPlot->xAxis->setTickLabelFont(m_tickLabelFont);
-    m_customPlot->yAxis->setTickLabelFont(m_tickLabelFont);
-    m_customPlot->xAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
-    m_customPlot->yAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
-    m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
-    m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+    valueAxis()->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
+    keyAxis()->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
+    valueAxis()->ticker()->setTickCount(int(m_vertGrids));
+    keyAxis()->ticker()->setTickCount(int(m_horzGrids));
+    valueAxis()->setTickLabelColor(m_tickLabelColor);
+    keyAxis()->setTickLabelColor(m_tickLabelColor);
+    valueAxis()->setTickLabelFont(m_tickLabelFont);
+    keyAxis()->setTickLabelFont(m_tickLabelFont);
+    valueAxis()->setBasePen(QPen(m_axisColor, m_axisWidth));
+    keyAxis()->setBasePen(QPen(m_axisColor, m_axisWidth));
+    valueAxis()->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+    keyAxis()->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
 
     m_customPlot->setBackground(m_outerFillColor);
     m_customPlot->axisRect()->setBackground(m_gridFillColor);
 
-    m_customPlot->yAxis->setTickLabelRotation(45); // 轴刻度文字旋转45度
-    m_customPlot->yAxis->setSubTicks(false); // 不显示子刻度
-    m_customPlot->yAxis->setTickLength(0, 4); // 轴内外刻度的长度分别是0,4,也就是轴内的刻度线不显示
-    m_customPlot->yAxis->setUpperEnding(QCPLineEnding::esSpikeArrow);
+    keyAxis()->setTickLabelRotation(45); // 轴刻度文字旋转45度
+    keyAxis()->setSubTicks(false); // 不显示子刻度
+    keyAxis()->setTickLength(0, 4); // 轴内外刻度的长度分别是0,4,也就是轴内的刻度线不显示
+    keyAxis()->setUpperEnding(QCPLineEnding::esSpikeArrow);
 
-    m_customPlot->xAxis->setPadding(30);
-    m_customPlot->xAxis->setUpperEnding(QCPLineEnding::esSpikeArrow);
+    valueAxis()->setPadding(30);
+    valueAxis()->setUpperEnding(QCPLineEnding::esSpikeArrow);
 
     m_customPlot->xAxis->setLabel(m_xAxisLabel);
     m_customPlot->yAxis->setLabel(m_yAxisLabel);
@@ -255,24 +255,6 @@ void PlotBar::updateGraphByDataPair(DataPair* data)
             bar->setVisible(false);
         }
     }
-}
-
-void PlotBar::setCoordRangeX(double lower, double upper)
-{
-    m_coordBgn_x = lower;
-    m_coordEnd_x = upper;
-
-    keyAxis()->setRange(lower, upper);
-    m_customPlot->replot();
-}
-
-void PlotBar::setCoordRangeY(double lower, double upper)
-{
-    m_coordBgn_y = lower;
-    m_coordEnd_y = upper;
-
-    valueAxis()->setRange(lower, upper);
-    m_customPlot->replot();
 }
 
 void PlotBar::setIsHorizonBar(bool isHorizonBar)

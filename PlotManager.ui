@@ -2044,13 +2044,7 @@ color: rgb(255, 255, 255);</string>
             </widget>
            </item>
            <item>
-            <widget class="QListWidget" name="listWidget_2">
-             <item>
-              <property name="text">
-               <string>D:\plotxysc\test01.gog(7/7)                                          //zdw example</string>
-              </property>
-             </item>
-            </widget>
+            <widget class="QListWidget" name="listWidget_2"/>
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_38">
@@ -2179,6 +2173,12 @@ color: rgb(255, 255, 255);</string>
                  <widget class="QCheckBox" name="checkBox_16">
                   <property name="text">
                    <string>Filled</string>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="checked">
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>
@@ -5306,7 +5306,7 @@ background-color: rgb(127, 127, 127);</string>
                  <string>Horizontal Bars</string>
                 </property>
                 <property name="checked">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </property>
                </widget>
               </item>

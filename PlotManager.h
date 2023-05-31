@@ -1,6 +1,7 @@
 ﻿#ifndef _PLOT_MANAGER_H_
 #define _PLOT_MANAGER_H_
 
+#include "PlotItemBase.h"
 #include "constdef.h"
 #include "ui_PlotManager.h"
 #include <QtWidgets/QMainWindow>
@@ -36,6 +37,7 @@ private:
 	void initPlotDataUI();
 	void initTextEditUI();
 	void initAttitudeUI();
+    void initGOGUI();
     void initDialUI();
 
 	void initTextLightUI();
@@ -103,6 +105,14 @@ public slots:
 	void onComboBox_AxisGrid_FontSizeCurrentTextChanged(const QString& text);
 	void onComboBox_2CurrentIndexChanged(int index);
 	void onComboBox_3CurrentIndexChanged(int index);
+
+    //GOG
+    void onPushButton_24Clicked();
+    void onPushButton_25Clicked();
+    void onPushButton_26Clicked();
+    void onPushButton_27Clicked();
+
+    void addGOGTableItem(const QString& fileName);
 
 	//Light/Text
 	void onPushButton_71Clicked();

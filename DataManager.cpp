@@ -235,10 +235,16 @@ void DataManager::loadASIData(const QString& asiFileName)
             QStringList list = lineData.split(" ", QString::SkipEmptyParts);
             if(list.size() == 2)
             {
-                QDir dir(asiFileName);
+                QFileInfo info(asiFileName);
+                QString gogFileName = list.at(1);
+                gogFileName.remove("\"");
+
                 // 将相对路径转化为绝对路径
-                auto absFilePath = dir.absoluteFilePath(list.at(1));
-                m_gogFileList.append(absFilePath);
+                auto absFilePath = info.dir().absoluteFilePath(gogFileName.simplified());
+                if(QFileInfo::exists(absFilePath))
+                {
+                    m_gogFileList.append(absFilePath);
+                }
             }
         }
 
@@ -421,7 +427,141 @@ void DataManager::getMinMaxRealTime(double& minTime, double& maxTime)
 
 int DataManager::getRefYear()
 {
-	return m_refYear;
+    return m_refYear;
+}
+
+void DataManager::addGOGFile(const QString& fileName)
+{
+    m_allGOGFileList.push_back(fileName);
+    updateGOGDataMap();
+}
+
+void DataManager::removeGOGFile(const QString& fileName)
+{
+    int cnt = m_allGOGFileList.size();
+    for(int i = 0; i < cnt; i++)
+    {
+        if(m_allGOGFileList.at(i) == fileName)
+        {
+            m_allGOGFileList.removeAt(i);
+            break;
+        }
+    }
+    updateGOGDataMap();
+}
+
+QList<QString> DataManager::getGOGFileList()
+{
+    return m_gogFileList;
+}
+
+QMap<QString, QList<GOGDataInfo>> DataManager::getAllGOGFileMap()
+{
+    return m_gogDataMap;
+}
+
+void DataManager::loadGOGFile(const QString& fileName)
+{
+    QFile file(fileName);
+    if(!file.open(QIODevice::ReadOnly))
+    {
+        qDebug() << "PlotManager::loadGOGFile read file failure:" << fileName;
+        return;
+    }
+    QList<GOGDataInfo> gogFileList;
+    while(!file.atEnd())
+    {
+        GOGDataInfo data;
+        QString lineData;
+        lineData = file.readLine();
+        if(lineData.startsWith("start"))
+        {
+            lineData = file.readLine();
+            data.type = lineData.simplified();
+
+            lineData = file.readLine();
+            while(!lineData.startsWith("end"))
+            {
+                if(lineData.startsWith("ll") || lineData.startsWith("centerll"))
+                {
+                    if(lineData.startsWith("ll"))
+                    {
+                        QStringList lineInfo = lineData.split(" ");
+                        data.xList.append(lineInfo.at(1).toDouble());
+                        data.yList.append(lineInfo.at(2).toDouble());
+                    }
+                    else if(lineData.startsWith("centerll"))
+                    {
+                        QStringList circleInfo = lineData.split(" ");
+                        data.xList.append(circleInfo.at(1).toDouble());
+                        data.yList.append(circleInfo.at(2).toDouble());
+
+                        lineData = file.readLine();
+                        if(lineData.startsWith("radius"))
+                            data.radius = lineData.split(" ").at(1).toDouble();
+                    }
+                }
+
+                if(lineData.startsWith("rangeUnits"))
+                {
+                    data.rangeUnits = lineData.split(" ").at(1).simplified();
+                }
+                if(lineData.startsWith("altitudeUnits"))
+                {
+                    data.altitudeUnits = lineData.split(" ").at(1).simplified();
+                }
+                if(lineData.startsWith("3d"))
+                {
+                    data.triDName = lineData.split(" ").at(2).simplified();
+                }
+
+                if(lineData.startsWith("linecolor"))
+                {
+                    data.lineColor = lineData.split(" ").at(2).simplified().toUInt(nullptr, 16);
+                }
+
+                if(lineData.startsWith("fillcolor"))
+                {
+                    data.fillColor = lineData.split(" ").at(2).simplified();
+                }
+
+                if(lineData.startsWith("linewidth"))
+                {
+                    data.lineWidth = lineData.split(" ").at(1).toInt();
+                }
+
+                if(lineData.startsWith("depthBuffer"))
+                {
+                    data.depthBuffer = (lineData.split(" ").at(1).simplified() == "true");
+                }
+
+                if(lineData.startsWith("tessellate"))
+                {
+                    data.tessellate = (lineData.split(" ").at(1).simplified() == "true");
+                }
+                lineData = file.readLine();
+            }
+            gogFileList.push_back(data);
+        }
+    }
+    file.close();
+    m_gogDataMap.insert(fileName, gogFileList);
+}
+
+void DataManager::updateGOGDataMap()
+{
+    m_gogDataMap.clear();
+    int cnt = m_allGOGFileList.size();
+    if(cnt == 0)
+        return;
+    else
+    {
+        for(int i = 0; i < cnt; i++)
+        {
+            loadGOGFile(m_allGOGFileList.at(i));
+        }
+    }
+    emit repaintGOGData();
 }
 
 QVector<double> DataManager::getEntityAttrValueList(int32_t entityID, const QString& attr)

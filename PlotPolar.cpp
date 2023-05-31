@@ -247,6 +247,59 @@ void PlotPolar::rescaleAxis()
     m_customPlot->rescaleAxes();
 }
 
+void PlotPolar::drawGOGData()
+{
+    QMap<QString, QList<GOGDataInfo>> gogDataMap = DataManager::getInstance()->getAllGOGFileMap();
+    QList<QString> keyList = gogDataMap.keys();
+    for(auto graph : m_gogGraphList)
+    {
+        m_angularAxis->removeGraph(graph);
+    }
+    m_gogGraphList.clear();
+    for(auto fileName : keyList)
+    {
+        QList<GOGDataInfo> dataList = gogDataMap[fileName];
+        for(auto data : dataList)
+        {
+            QCPPolarGraph* graph = new QCPPolarGraph(m_angularAxis, m_angularAxis->radialAxis());
+            if(data.type == "line")
+            {
+                graph->setBrush(Qt::NoBrush);
+                graph->setVisible(true);
+                QPen pen = graph->pen();
+                pen.setStyle(Qt::SolidLine);
+                pen.setColor(QColor(data.lineColor));
+                pen.setWidth(data.lineWidth);
+                graph->setPen(pen);
+
+                graph->setScatterStyle(QCPScatterStyle::ssNone);
+                graph->setLineStyle(QCPPolarGraph::lsLine);
+                graph->setData(data.xList, data.yList, true);
+            }
+            else if(data.type == "circle")
+            {
+                // 极坐标图没有绘制圆的相关接口，只能通过画多个点的方式拟合圆
+                graph->setPen(QColor(Qt::red));
+                // 填充颜色
+                //                graph->setBrush(QColor(255, 0, 0));
+
+                // 添加数据点
+                int numPoints = 100; // 圆形轮廓的点数
+                double radius = 100; // 圆形的半径
+
+                for(int i = 0; i <= numPoints; ++i)
+                {
+                    double theta = 2.0 * M_PI * i / numPoints; // 角度范围从 0 到 2π
+                    double x = radius * qCos(theta);
+                    double y = radius * qSin(theta);
+                    graph->addData(x, y);
+                }
+            }
+            m_gogGraphList.append(graph);
+        }
+    }
+}
+
 void PlotPolar::updateDataForDataPairsByTime(double secs)
 {
     int isize = getDataPairs().size();

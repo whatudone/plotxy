@@ -42,6 +42,8 @@ public:
     void rescaleYAxis() override;
     void rescaleAxis() override;
 
+    void drawGOGData() override;
+
 private:
     void updateDataForDataPairsByTime(double secs) override;
     void updateGraphByDataPair(DataPair* data) override;
@@ -60,4 +62,6 @@ private:
     QHash<QString, QCPPolarGraph*> m_graphHash;
     // <uuid,data>
     QHash<QString, QPair<QVector<double>, QVector<double>>> m_dataHash;
+
+    QList<QCPPolarGraph*> m_gogGraphList;
 };

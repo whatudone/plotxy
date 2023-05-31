@@ -1,10 +1,12 @@
 ﻿#include "PlotManager.h"
 #include "AddPlotPair.h"
+#include "DataManager.h"
 
+#include "PlotAScope.h"
 #include "PlotAttitude.h"
 #include "PlotDial.h"
-#include "PlotItemBase.h"
 #include "PlotManagerData.h"
+#include "PlotScatter.h"
 #include <QAction>
 #include <QColorDialog>
 #include <QDebug>
@@ -62,6 +64,7 @@ void PlotManager::init()
 	initTreeWidgetSettings();
 	initGeneralUI();
 	initAxisGridUI();
+    initGOGUI();
 
 	initPlotDataUI();
 	initTextEditUI();
@@ -384,6 +387,16 @@ void PlotManager::initAttitudeUI()
 	connect(ui.spinBox_29, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_29ValueChanged(int)));
 	connect(ui.spinBox_30, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_30ValueChanged(int)));
     connect(ui.spinBox_31, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_31ValueChanged(int)));
+}
+
+void PlotManager::initGOGUI()
+{
+    // Filled有三种状态：未选中：不填充   半选中：根据GOG文件来  全选中：填充
+    ui.checkBox_16->setTristate(true);
+    connect(ui.pushButton_24, &QPushButton::clicked, this, &PlotManager::onPushButton_24Clicked);
+    connect(ui.pushButton_25, &QPushButton::clicked, this, &PlotManager::onPushButton_25Clicked);
+    connect(ui.pushButton_26, &QPushButton::clicked, this, &PlotManager::onPushButton_26Clicked);
+    connect(ui.pushButton_27, &QPushButton::clicked, this, &PlotManager::onPushButton_27Clicked);
 }
 
 void PlotManager::initDialUI()
@@ -1425,7 +1438,57 @@ void PlotManager::onComboBox_3CurrentIndexChanged(int index)
 		density = GridDensity::MORE;
 		break;
 	}
-	m_curSelectPlot->setGridDensity(density);
+    m_curSelectPlot->setGridDensity(density);
+}
+
+void PlotManager::onPushButton_24Clicked()
+{
+    // 去掉reload时加载asi中gog文件的逻辑
+    return;
+    // 重新加载asi文件中关联的gog文件
+    //    QList<QString> list = DataManager::getInstance()->getGOGFileList();
+    //    for(auto item : list)
+    //    {
+    //        addGOGTableItem(item);
+    //    }
+}
+
+void PlotManager::onPushButton_25Clicked()
+{
+    QString fileName =
+        QFileDialog::getOpenFileName(this, tr("打开GOG文件"), "", "GOG Files(*.gog)");
+    if(!fileName.isEmpty())
+    {
+        addGOGTableItem(fileName);
+    }
+}
+
+void PlotManager::onPushButton_26Clicked()
+{
+    DataManager::getInstance()->removeGOGFile(
+        ui.listWidget_2->currentItem()->data(Qt::DisplayRole).toString());
+    ui.listWidget_2->takeItem(ui.listWidget_2->currentRow());
+}
+
+void PlotManager::onPushButton_27Clicked() {}
+
+void PlotManager::addGOGTableItem(const QString& fileName)
+{
+    bool duplicate = false;
+    for(int i = 0; i < ui.listWidget_2->count(); i++)
+    {
+        duplicate = false;
+        if(fileName == ui.listWidget_2->item(i)->data(Qt::DisplayRole).toString())
+        {
+            duplicate = true;
+            break;
+        }
+    }
+    if(!duplicate)
+    {
+        ui.listWidget_2->addItem(fileName);
+        DataManager::getInstance()->addGOGFile(fileName);
+    }
 }
 
 void PlotManager::onTableWidget_textLightDataSortItemSelectionChanged()

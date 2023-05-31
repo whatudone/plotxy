@@ -49,6 +49,8 @@ public:
 
     void exportDataToFile(const QString& filename) const override;
 
+    void drawGOGData() override;
+
 private:
     void initPlot();
     void updateDataForDataPairsByTime(double secs) override;
@@ -74,6 +76,9 @@ private:
     QCPItemRect* m_timelineNowRect = nullptr;
     QCPItemText* m_timelineNowText = nullptr;
     QCPGraph* m_timelineGraph = nullptr;
+
+    QList<QCPGraph*> m_gogGraphList;
+    QList<QCPItemEllipse*> m_gogEllipseList;
 };
 
 #endif // PLOTSCATTER_H
