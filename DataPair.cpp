@@ -814,3 +814,35 @@ void DataPair::setColorRangeMode(const ColorRangeMode& colorRangeMode)
         emit dataUpdate();
     }
 }
+
+void DataPair::addEvent(const EventSettings& event)
+{
+    if(!m_eventList.contains(event))
+    {
+        m_eventList.append(event);
+        emit dataUpdate();
+    }
+}
+
+void DataPair::removeEvent(const QString& name)
+{
+    for(auto& event : m_eventList)
+    {
+        if(name == event.m_name)
+        {
+            m_eventList.removeOne(event);
+            emit dataUpdate();
+            return;
+        }
+    }
+}
+
+QList<EventSettings> DataPair::getEventList() const
+{
+    return m_eventList;
+}
+
+void DataPair::setEventList(const QList<EventSettings>& eventList)
+{
+    m_eventList = eventList;
+}

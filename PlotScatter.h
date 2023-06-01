@@ -58,11 +58,15 @@ private:
 
     // 文本标签坐标,特殊情况不调用DataPair里面的通用处理方式
     QPair<double, double> processLabelTextPosition(const QString& text, DataPair* data);
+    // 删除历史事件标签
+    void clearEventText(const QString& uuid);
 
 private:
     QHash<QString, QPair<QVector<double>, QVector<double>>> m_dataHash;
     // <uuid,graph>
     QMap<QString, DrawComponents> m_mapScatter;
+    // 事件标签
+    QHash<QString, QList<QCPItemText*>> m_eventHash;
 };
 
 #endif // PLOTSCATTER_H

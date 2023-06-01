@@ -92,6 +92,8 @@ public slots:
     void onEventBtnMoreClicked();
     // 刷新当前实体中包含的所有通用数据标签
     void onGenericDataEntityChanged(int32_t row, int32_t col);
+    void onAddEvent();
+    void onRemoveEvent();
 
 private:
     // 根据数据对数据刷新UI
@@ -102,6 +104,8 @@ private:
 	void refreshLabelSettings();
 	void refreshStipple();
 	void refreshEvent();
+    void refreshAddedEventList();
+
 	void refreshLabelText();
 	void refreshColorRanges();
 

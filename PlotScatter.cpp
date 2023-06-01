@@ -148,13 +148,13 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
 void PlotScatter::updateGraphByDataPair(DataPair* data)
 {
     if(!data)
-    {
+	{
         return;
     }
     DrawComponents info;
     auto uuid = data->getUuid();
     if(!m_mapScatter.contains(uuid))
-	{
+    {
         info.graph = m_customPlot->addGraph();
 
         info.tracerText = new QCPItemText(m_customPlot);
@@ -219,7 +219,6 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
         //Label Text
         if(data->isLabelTextShow())
         {
-
             // 游标功能先注释掉
             tracerText->setVisible(false);
             QString text = data->processLabelText(x.last(), y.last());
@@ -229,14 +228,50 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
             tracerText->setTextAlignment(alignFlag);
             tracerText->setFont(data->getLabelFont());
             tracerText->setColor(data->getLabelColor());
-            if(data->getLabelBackTransparent())
-                tracerText->setBrush(Qt::transparent);
-			else
-                tracerText->setBrush(data->getLabelBackground());
+            tracerText->setBrush(data->getLabelBackground());
 		}
 		else
 		{
             tracerText->setVisible(false);
+        }
+        //如果x轴是time，那么需要绘制事件标签，整个用一个Text显示
+        clearEventText(data->getUuid());
+        if(data->getAttr_x() == "Time")
+        {
+            auto eventList = data->getEventList();
+            QList<QCPItemText*> itemTextList;
+            for(auto& event : eventList)
+            {
+                QCPItemText* textItem = new QCPItemText(m_customPlot);
+                QString text;
+                if(event.m_eventStyle == "Small X")
+                {
+                    text = "X ";
+                }
+                else
+                {
+                    text = "| ";
+                }
+                if(event.m_isIncludeTag)
+                {
+                    text.append(event.m_name);
+                }
+                text.append(QString("(%1s)").arg(event.m_relativeTime));
+                textItem->setText(text);
+                QFont font;
+                font.setFamily(event.m_eventFontFamily);
+                font.setPixelSize(event.m_eventFontSize);
+                textItem->setColor(QColor(event.m_eventColor));
+                // x轴需要设置到对应的时间坐标上，y轴需要按照像素坐标从低到高排列,目前暂时设置到0.5垂直居中
+                textItem->position->setTypeX(QCPItemPosition::ptPlotCoords);
+                textItem->position->setTypeY(QCPItemPosition::ptAxisRectRatio);
+                textItem->position->setCoords(event.m_relativeTime, 0.5);
+                itemTextList.append(textItem);
+            }
+            if(!itemTextList.isEmpty())
+            {
+                m_eventHash.insert(data->getUuid(), itemTextList);
+            }
 		}
 	}
 	else
@@ -421,4 +456,17 @@ QPair<double, double> PlotScatter::processLabelTextPosition(const QString& text,
         break;
     }
     return pair;
+}
+
+void PlotScatter::clearEventText(const QString& uuid)
+{
+    if(m_eventHash.contains(uuid))
+    {
+        auto eventList = m_eventHash.value(uuid);
+        for(auto text : eventList)
+        {
+            m_customPlot->removeItem(text);
+        }
+        m_eventHash.remove(uuid);
+    }
 }

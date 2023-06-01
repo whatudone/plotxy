@@ -725,6 +725,11 @@ p, li { white-space: pre-wrap; }
                       <string>Small X</string>
                      </property>
                     </item>
+                    <item>
+                     <property name="text">
+                      <string>Vertical Line</string>
+                     </property>
+                    </item>
                    </widget>
                   </item>
                  </layout>
@@ -742,6 +747,20 @@ p, li { white-space: pre-wrap; }
                   </property>
                  </spacer>
                 </item>
+                <item>
+                 <widget class="QPushButton" name="pushButtonAddEvent">
+                  <property name="text">
+                   <string>添加</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButtonRemoveEvent">
+                  <property name="text">
+                   <string>删除</string>
+                  </property>
+                 </widget>
+                </item>
                </layout>
               </item>
               <item>
@@ -757,18 +776,13 @@ p, li { white-space: pre-wrap; }
                  <widget class="QFontComboBox" name="comboBoxEventFont"/>
                 </item>
                 <item>
-                 <widget class="QComboBox" name="comboBoxEventFontSize">
-                  <property name="minimumSize">
-                   <size>
-                    <width>70</width>
-                    <height>0</height>
-                   </size>
+                 <widget class="QSpinBox" name="spinBoxFontSize">
+                  <property name="minimum">
+                   <number>1</number>
                   </property>
-                  <item>
-                   <property name="text">
-                    <string>8</string>
-                   </property>
-                  </item>
+                  <property name="value">
+                   <number>8</number>
+                  </property>
                  </widget>
                 </item>
                 <item>
@@ -781,7 +795,13 @@ p, li { white-space: pre-wrap; }
                </layout>
               </item>
               <item>
-               <widget class="QTableWidget" name="tableWidget_3">
+               <widget class="QTableWidget" name="tableWidgetAddedEvent">
+                <property name="selectionBehavior">
+                 <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+                <attribute name="horizontalHeaderStretchLastSection">
+                 <bool>true</bool>
+                </attribute>
                 <column>
                  <property name="text">
                   <string>实体</string>

@@ -163,4 +163,34 @@ struct DialColorInfo
     int width;
 };
 
+struct EventSettings
+{
+    QString m_eventFontFamily = "微软雅黑";
+    int32_t m_eventFontSize = 8;
+    QColor m_eventColor = Qt::red;
+    QString m_eventStyle = "Small X";
+    bool m_isIncludeTag = true;
+    // 事件名称
+    QString m_name;
+    // 事件发生时间，以s为单位
+    double m_relativeTime;
+    // 时间偏移
+    int32_t m_timeOffset;
+    QString m_entityName;
+    bool operator==(const EventSettings& e)
+    {
+        return m_name == e.m_name;
+    }
+};
+
+struct GenericData
+{
+    // 事件名称
+    QString m_name;
+    // 事件发生时间，以s为单位
+    double m_relativeTime;
+    // 时间偏移
+    int32_t m_timeOffset;
+};
+
 #endif // _CONST_DEF_H_

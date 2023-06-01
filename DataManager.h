@@ -8,6 +8,8 @@
 #define DATA_MANAGER_H
 
 #include "BaseData.h"
+#include "constdef.h"
+
 #include <QMap>
 #include <QVector3D>
 
@@ -32,16 +34,6 @@ public:
         {
             return m_platformDataID == p.m_platformDataID;
         }
-    };
-
-    struct GenericData
-    {
-        // 事件名称
-        QString m_name;
-        // 事件发生时间，以s为单位
-        double m_relativeTime;
-        // 时间偏移
-        int32_t m_timeOffset;
     };
 
 private:
@@ -122,7 +114,9 @@ public:
     // 获取所有<entityId,entityName>键值对
     QMap<int32_t, QString> getEntityIDAndNameMap();
     // 获取某个实体对应的所有generic data tags
-    QStringList getGenericDataTagsByID(int32_t entityID);
+    QList<GenericData> getGenericDataTagsByID(int32_t entityID);
+    // 获取某个实体对应的所有事件列表
+    QList<GenericData> getGenericDatasByID(int32_t id, const QString& type = "Event");
     // 获取数据路径
     QString getDataFileName() const;
     void setDataFileName(const QString& dataFileName);

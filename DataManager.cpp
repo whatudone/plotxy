@@ -358,7 +358,8 @@ void DataManager::loadASIData(const QString& asiFileName)
                             continue;
                         }
                         GenericData g;
-                        g.m_name = eventDataList.at(3).trimmed();
+                        g.m_name = eventDataList.at(3);
+                        g.m_name = g.m_name.remove("\"").trimmed();
                         g.m_relativeTime = OrdinalTimeFormatter::getSecondsFromTimeStr(
                             eventDataList.at(4).trimmed(), m_refYear);
                         g.m_timeOffset = eventDataList.at(5).trimmed().toInt();
@@ -643,14 +644,23 @@ QMap<int32_t, QString> DataManager::getEntityIDAndNameMap()
     return map;
 }
 
-QStringList DataManager::getGenericDataTagsByID(int32_t entityID)
+QList<GenericData> DataManager::getGenericDataTagsByID(int32_t entityID)
 {
-    QStringList tags;
+    QList<GenericData> tags;
     if(m_genericMap.contains(entityID))
     {
-        tags = m_genericMap.value(entityID).keys();
+        tags = m_genericMap.value(entityID).value("Event");
     }
     return tags;
+}
+
+QList<GenericData> DataManager::getGenericDatasByID(int32_t id, const QString& type)
+{
+    if(m_genericMap.contains(id) && m_genericMap.value(id).contains(type))
+    {
+        return m_genericMap.value(id).value(type);
+    }
+    return QList<GenericData>();
 }
 
 int DataManager::getEntityAttrMaxIndexByTime(int32_t entityID, double secs)

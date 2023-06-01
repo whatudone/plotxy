@@ -486,6 +486,34 @@ void AdvancedDataManager::refreshEvent()
     // 刷新实体对应的generic data tag
 
     // 刷新已经添加的事件
+    refreshAddedEventList();
+}
+
+void AdvancedDataManager::refreshAddedEventList()
+{
+    if(m_curSelectDatapair)
+    {
+        auto eventList = m_curSelectDatapair->getEventList();
+        int32_t size = eventList.size();
+        ui.tableWidgetAddedEvent->clearContents();
+        ui.tableWidgetAddedEvent->setRowCount(size);
+        for(int var = 0; var < size; ++var)
+        {
+            EventSettings e = eventList.at(var);
+            QTableWidgetItem* item = new QTableWidgetItem(e.m_entityName);
+            ui.tableWidgetAddedEvent->setItem(var, 0, item);
+            QTableWidgetItem* item1 = new QTableWidgetItem(e.m_name);
+            ui.tableWidgetAddedEvent->setItem(var, 1, item1);
+            QTableWidgetItem* item2 =
+                new QTableWidgetItem(m_curSelectDatapair->getXEntityAttrPair());
+            ui.tableWidgetAddedEvent->setItem(var, 2, item2);
+            QTableWidgetItem* item3 =
+                new QTableWidgetItem(m_curSelectDatapair->getYEntityAttrPair());
+            ui.tableWidgetAddedEvent->setItem(var, 3, item3);
+            QTableWidgetItem* item4 = new QTableWidgetItem(m_curSelectPlot->getName());
+            ui.tableWidgetAddedEvent->setItem(var, 4, item4);
+        }
+    }
 }
 
 void AdvancedDataManager::refreshLabelText()
@@ -754,6 +782,10 @@ void AdvancedDataManager::initEventConnections()
             &QTableWidget::cellClicked,
             this,
             &AdvancedDataManager::onGenericDataEntityChanged);
+
+    connect(ui.pushButtonAddEvent, &QPushButton::clicked, this, &AdvancedDataManager::onAddEvent);
+    connect(
+        ui.pushButtonRemoveEvent, &QPushButton::clicked, this, &AdvancedDataManager::onRemoveEvent);
 }
 
 void AdvancedDataManager::initStippleConnections()
@@ -865,15 +897,51 @@ void AdvancedDataManager::onGenericDataEntityChanged(int32_t row, int32_t col)
     if(entityItem)
     {
         int32_t id = entityItem->data(Qt::UserRole + 1).toInt();
-        QStringList tags = DataManagerInstance->getGenericDataTagsByID(id);
+        QList<GenericData> tags = DataManagerInstance->getGenericDataTagsByID(id);
         auto size = tags.size();
         ui.tableWidgetGenericTag->clearContents();
         ui.tableWidgetGenericTag->setRowCount(size);
         for(int var = 0; var < size; ++var)
         {
-            QTableWidgetItem* item = new QTableWidgetItem(tags.at(var));
+            auto tag = tags.at(var);
+            QTableWidgetItem* item = new QTableWidgetItem(tag.m_name);
+            item->setData(Qt::UserRole + 1, tag.m_relativeTime);
+            item->setData(Qt::UserRole + 2, tag.m_timeOffset);
             ui.tableWidgetGenericTag->setItem(var, 0, item);
         }
+    }
+}
+
+void AdvancedDataManager::onAddEvent()
+{
+    if(auto item = ui.tableWidgetGenericTag->currentItem())
+    {
+        EventSettings e;
+        e.m_eventColor = ui.pushButtonEventColor->color();
+        e.m_eventFontFamily = ui.comboBoxEventFont->font().family();
+        e.m_eventFontSize = ui.spinBoxFontSize->value();
+        e.m_eventStyle = ui.comboBoxEventStyle->currentText();
+        e.m_isIncludeTag = ui.checkBoxIncludeTag->isChecked();
+        e.m_name = item->text();
+        e.m_relativeTime = item->data(Qt::UserRole + 1).toDouble();
+        e.m_timeOffset = item->data(Qt::UserRole + 2).toInt();
+        e.m_entityName = ui.tableWidgetEventEntity->currentItem()->text();
+        if(m_curSelectDatapair)
+        {
+            m_curSelectDatapair->addEvent(e);
+            refreshAddedEventList();
+        }
+    }
+}
+
+void AdvancedDataManager::onRemoveEvent()
+{
+    if(ui.tableWidgetAddedEvent->currentRow() >= 0)
+    {
+        QString eventName =
+            ui.tableWidgetAddedEvent->item(ui.tableWidgetAddedEvent->currentRow(), 1)->text();
+        m_curSelectDatapair->removeEvent(eventName);
+        refreshAddedEventList();
     }
 }
 
