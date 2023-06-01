@@ -149,8 +149,13 @@ void General::updateVisibleOnPlotTypeChanged(PlotType curType)
      * 表示所有行都是该属性
     */
     QList<bool> visibleList;
-    if(curType == PlotType::Type_PlotAScope || curType == PlotType::Type_PlotBar ||
-       curType == PlotType::Type_PlotDial || curType == PlotType::Type_PlotLight)
+    if(curType == PlotType::Type_PlotAScope)
+    {
+        visibleList = QList<bool>()
+                      << true << true << true << true << true << true << true << true << true;
+    }
+    else if(curType == PlotType::Type_PlotBar || curType == PlotType::Type_PlotDial ||
+            curType == PlotType::Type_PlotLight)
     {
         visibleList = QList<bool>()
                       << true << false << false << true << true << true << true << true << true;

@@ -106,7 +106,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
     int itemCnt = getDataPairs().size();
 
     for(int i = 0; i < itemCnt; ++i)
-    {
+	{
         QVector<double> x;
         QVector<double> y;
         auto data = getDataPairs().at(i);
@@ -139,7 +139,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
         m_dataHash.insert(uuid, qMakePair(x, y));
     }
     for(int i = 0; i < itemCnt; ++i)
-	{
+    {
         updateGraphByDataPair(m_dataPairs.at(i));
 	}
 	m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
@@ -174,8 +174,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
     {
         auto x = m_dataHash.value(uuid).first;
         auto y = m_dataHash.value(uuid).second;
-        if(x.isEmpty() || y.isEmpty())
-            return;
+
         graph->setVisible(true);
         graph->setData(x, y);
 

@@ -117,10 +117,30 @@ void PlotAScope::updateGraphByDataPair(DataPair* data)
         graph->setVisible(true);
         auto x = m_dataHash.value(uuid).first;
         auto y = m_dataHash.value(uuid).second;
-        if(x.isEmpty() || y.isEmpty())
-            return;
+
         graph->setData(x, y);
+
         graph->setPen(QPen(data->dataColor(), data->width()));
+        //line mode
+        if(data->isLineMode())
+        {
+            graph->setLineStyle(QCPGraph::lsLine);
+            Qt::PenStyle style = Qt::SolidLine;
+            // 线性模式下才支持stipple
+            if(data->getIsStippleEnable())
+            {
+                style = data->getStipplePattern();
+            }
+            QPen pen = graph->pen();
+            pen.setStyle(style);
+            graph->setPen(pen);
+            graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssNone));
+        }
+        else
+        {
+            graph->setLineStyle(QCPGraph::lsNone);
+            graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, data->width()));
+        }
     }
     else
     {
