@@ -170,16 +170,13 @@ struct EventSettings
     QColor m_eventColor = Qt::red;
     QString m_eventStyle = "Small X";
     bool m_isIncludeTag = true;
-    // 事件名称
-    QString m_name;
-    // 事件发生时间，以s为单位
-    double m_relativeTime;
-    // 时间偏移
-    int32_t m_timeOffset;
+    // 事件类型
+    QString m_type;
+    int32_t m_entityID;
     QString m_entityName;
     bool operator==(const EventSettings& e)
     {
-        return m_name == e.m_name;
+        return (m_entityID == e.m_entityID) && (m_type == e.m_type);
     }
 };
 

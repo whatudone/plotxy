@@ -91,7 +91,7 @@ public slots:
     // Event
     void onEventBtnMoreClicked();
     // 刷新当前实体中包含的所有通用数据标签
-    void onGenericDataEntityChanged(int32_t row, int32_t col);
+    //    void onGenericDataEntityChanged(int32_t row, int32_t col);
     void onAddEvent();
     void onRemoveEvent();
 

@@ -329,12 +329,6 @@ public:
     ColorRangeMode getColorRangeMode() const;
     void setColorRangeMode(const ColorRangeMode& colorRangeMode);
 
-    void addEvent(const EventSettings& event);
-    void removeEvent(const QString& name);
-
-    QList<EventSettings> getEventList() const;
-    void setEventList(const QList<EventSettings>& eventList);
-
 private:
     bool m_isDraw; //是否绘制
     QColor m_color; //数据颜色
@@ -395,9 +389,6 @@ private:
     QString m_desc;
     // 自动生成的唯一标识符
     QString m_uuid;
-
-    // Event
-    QList<EventSettings> m_eventList;
 
 signals:
 	void dataUpdate();

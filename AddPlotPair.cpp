@@ -561,13 +561,23 @@ void AddPlotPair::updateAttrTableWidgetOnEntityChanged(QTableWidgetItem* entityI
     if(pairList.isEmpty())
         return;
     auto pairSize = pairList.size();
-    attrTableWidget->setRowCount(pairSize);
+    attrTableWidget->setRowCount(pairSize + 1);
     attrTableWidget->setColumnCount(2);
-    for(int i = 0; i < pairSize; i++)
+    QString attr;
+    QString unit;
+    for(int i = 0; i < pairSize + 1; i++)
     {
-        QString attr = pairList.at(i).first;
-        QString unit = pairList.at(i).second;
-
+        // 末位插入一个Now属性，用于绘制散点图TimeLine模式
+        if(i < pairSize)
+        {
+            attr = pairList.at(i).first;
+            unit = pairList.at(i).second;
+        }
+        else
+        {
+            attr = "Now";
+            unit = "sec";
+        }
         attrTableWidget->setItem(i, 0, new QTableWidgetItem(attr));
         attrTableWidget->setItem(i, 1, new QTableWidgetItem(unit));
     }

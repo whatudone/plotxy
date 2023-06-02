@@ -28,6 +28,7 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     m_coordEnd_x = 100;
     m_coordBgn_y = 0;
     m_coordEnd_y = 100;
+
     m_outerFillColor = Qt::black;
     m_outlineColor = Qt::black;
 
@@ -66,15 +67,8 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     m_topPadding = 10;
     m_bottomPadding = 10;
 
-    setAutoFillBackground(true);
     setMinimumSize(200, 150);
     resize(1000, 600);
-
-    //设置下背景颜色区别看
-    QPalette palette = this->palette();
-    palette.setColor(QPalette::Window, getOuterFillColor());
-    //    palette.setColor(QPalette::Window, Qt::transparent);
-    setPalette(palette);
 
     updateResizeFocusPos();
     // 数据对整体发生变化时，更新界面
@@ -870,14 +864,19 @@ void PlotItemBase::onDataPairsChanged()
 void PlotItemBase::paintEvent(QPaintEvent* event)
 {
     // 绘制本身
-    QWidget::paintEvent(event);
     QPainter painter(this);
+
     QPen pen;
     pen.setColor(m_outlineColor);
     pen.setWidth(5);
     pen.setStyle(Qt::SolidLine);
     painter.setPen(pen);
+
     painter.drawRect(0, 0, width(), height());
+    QBrush brush;
+    brush.setColor(m_outerFillColor);
+    brush.setStyle(Qt::SolidPattern);
+    painter.fillRect(QRect(0, 0, width(), height()), brush);
 
     // 根据场景绘制外边框和控制点
     if(m_isNeedDrawBorder)
@@ -885,6 +884,7 @@ void PlotItemBase::paintEvent(QPaintEvent* event)
         updateResizeFocusPos();
         drawBorderAndControls();
     }
+    QWidget::paintEvent(event);
 }
 
 void PlotItemBase::onDataPairUpdateData()
@@ -1057,6 +1057,36 @@ void PlotItemBase::rescaleAxis(bool on)
         m_customPlot->rescaleAxes(on);
         m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
     }
+}
+
+void PlotItemBase::addEvent(const EventSettings& event)
+{
+    if(!m_eventList.contains(event))
+    {
+        m_eventList.append(event);
+    }
+}
+
+void PlotItemBase::removeEvent(const QString& entityName, const QString& type)
+{
+    for(auto& event : m_eventList)
+    {
+        if((entityName == event.m_entityName) && (type == event.m_type))
+        {
+            m_eventList.removeOne(event);
+            return;
+        }
+    }
+}
+
+QList<EventSettings> PlotItemBase::getEventList() const
+{
+    return m_eventList;
+}
+
+void PlotItemBase::setEventList(const QList<EventSettings>& eventList)
+{
+    m_eventList = eventList;
 }
 
 int PlotItemBase::getBarRightPadding() const

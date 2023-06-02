@@ -286,6 +286,12 @@ public:
     void rescaleYAxis(bool on);
     void rescaleAxis(bool on);
 
+    void addEvent(const EventSettings& event);
+    void removeEvent(const QString& entityName, const QString& type);
+
+    QList<EventSettings> getEventList() const;
+    void setEventList(const QList<EventSettings>& eventList);
+
 private:
     void updateResizeFocusPos();
     QRect getRectByDirection(ResizeDirection direction);
@@ -309,8 +315,8 @@ protected:
 protected:
     QVector<DataPair*> m_dataPairs;
     //General
-    QColor m_outerFillColor;
-    QColor m_outlineColor;
+    QColor m_outerFillColor; // 背景填充颜色
+    QColor m_outlineColor; // 外边框线
 
     //Axis and Grid
     double m_coordBgn_x; //x坐标起始值
@@ -415,6 +421,9 @@ private:
     QLabel* pTitleLabel = nullptr;
     QVBoxLayout* mainLayout = nullptr;
     QHBoxLayout* titleLayout = nullptr;
+
+    // Event
+    QList<EventSettings> m_eventList;
 };
 
 #endif // !

@@ -644,7 +644,7 @@ QMap<int32_t, QString> DataManager::getEntityIDAndNameMap()
     return map;
 }
 
-QList<GenericData> DataManager::getGenericDataTagsByID(int32_t entityID)
+QList<GenericData> DataManager::getGenericDataListByID(int32_t entityID)
 {
     QList<GenericData> tags;
     if(m_genericMap.contains(entityID))
@@ -652,6 +652,15 @@ QList<GenericData> DataManager::getGenericDataTagsByID(int32_t entityID)
         tags = m_genericMap.value(entityID).value("Event");
     }
     return tags;
+}
+
+QStringList DataManager::getGenericDataTagsByID(int32_t entityID)
+{
+    if(m_genericMap.contains(entityID))
+    {
+        return m_genericMap.value(entityID).keys();
+    }
+    return QStringList();
 }
 
 QList<GenericData> DataManager::getGenericDatasByID(int32_t id, const QString& type)

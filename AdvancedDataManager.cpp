@@ -493,7 +493,7 @@ void AdvancedDataManager::refreshAddedEventList()
 {
     if(m_curSelectDatapair)
     {
-        auto eventList = m_curSelectDatapair->getEventList();
+        auto eventList = m_curSelectPlot->getEventList();
         int32_t size = eventList.size();
         ui.tableWidgetAddedEvent->clearContents();
         ui.tableWidgetAddedEvent->setRowCount(size);
@@ -502,7 +502,7 @@ void AdvancedDataManager::refreshAddedEventList()
             EventSettings e = eventList.at(var);
             QTableWidgetItem* item = new QTableWidgetItem(e.m_entityName);
             ui.tableWidgetAddedEvent->setItem(var, 0, item);
-            QTableWidgetItem* item1 = new QTableWidgetItem(e.m_name);
+            QTableWidgetItem* item1 = new QTableWidgetItem(e.m_type);
             ui.tableWidgetAddedEvent->setItem(var, 1, item1);
             QTableWidgetItem* item2 =
                 new QTableWidgetItem(m_curSelectDatapair->getXEntityAttrPair());
@@ -778,10 +778,10 @@ void AdvancedDataManager::initEventConnections()
             this,
             SLOT(onEventBtnMoreClicked()));
 
-    connect(ui.tableWidgetEventEntity,
-            &QTableWidget::cellClicked,
-            this,
-            &AdvancedDataManager::onGenericDataEntityChanged);
+    //    connect(ui.tableWidgetEventEntity,
+    //            &QTableWidget::cellClicked,
+    //            this,
+    //            &AdvancedDataManager::onGenericDataEntityChanged);
 
     connect(ui.pushButtonAddEvent, &QPushButton::clicked, this, &AdvancedDataManager::onAddEvent);
     connect(
@@ -891,30 +891,32 @@ void AdvancedDataManager::onEventBtnMoreClicked()
     ui.stackedWidget_aDMrpart->setCurrentIndex(3);
 }
 
-void AdvancedDataManager::onGenericDataEntityChanged(int32_t row, int32_t col)
-{
-    QTableWidgetItem* entityItem = ui.tableWidgetEventEntity->item(row, col);
-    if(entityItem)
-    {
-        int32_t id = entityItem->data(Qt::UserRole + 1).toInt();
-        QList<GenericData> tags = DataManagerInstance->getGenericDataTagsByID(id);
-        auto size = tags.size();
-        ui.tableWidgetGenericTag->clearContents();
-        ui.tableWidgetGenericTag->setRowCount(size);
-        for(int var = 0; var < size; ++var)
-        {
-            auto tag = tags.at(var);
-            QTableWidgetItem* item = new QTableWidgetItem(tag.m_name);
-            item->setData(Qt::UserRole + 1, tag.m_relativeTime);
-            item->setData(Qt::UserRole + 2, tag.m_timeOffset);
-            ui.tableWidgetGenericTag->setItem(var, 0, item);
-        }
-    }
-}
+//void AdvancedDataManager::onGenericDataEntityChanged(int32_t row, int32_t col)
+//{
+//    QTableWidgetItem* entityItem = ui.tableWidgetEventEntity->item(row, col);
+//    if(entityItem)
+//    {
+//        int32_t id = entityItem->data(Qt::UserRole + 1).toInt();
+//        QList<GenericData> tags = DataManagerInstance->getGenericDataTagsByID(id);
+//        auto size = tags.size();
+//        ui.tableWidgetGenericTag->clearContents();
+//        ui.tableWidgetGenericTag->setRowCount(size);
+//        for(int var = 0; var < size; ++var)
+//        {
+//            auto tag = tags.at(var);
+//            QTableWidgetItem* item = new QTableWidgetItem(tag.m_name);
+//            item->setData(Qt::UserRole + 1, tag.m_relativeTime);
+//            item->setData(Qt::UserRole + 2, tag.m_timeOffset);
+//            ui.tableWidgetGenericTag->setItem(var, 0, item);
+//        }
+//    }
+//}
 
 void AdvancedDataManager::onAddEvent()
 {
-    if(auto item = ui.tableWidgetGenericTag->currentItem())
+    auto entityItem = ui.tableWidgetEventEntity->currentItem();
+    auto dataItem = ui.tableWidgetGenericTag->currentItem();
+    if(entityItem && dataItem)
     {
         EventSettings e;
         e.m_eventColor = ui.pushButtonEventColor->color();
@@ -922,13 +924,12 @@ void AdvancedDataManager::onAddEvent()
         e.m_eventFontSize = ui.spinBoxFontSize->value();
         e.m_eventStyle = ui.comboBoxEventStyle->currentText();
         e.m_isIncludeTag = ui.checkBoxIncludeTag->isChecked();
-        e.m_name = item->text();
-        e.m_relativeTime = item->data(Qt::UserRole + 1).toDouble();
-        e.m_timeOffset = item->data(Qt::UserRole + 2).toInt();
-        e.m_entityName = ui.tableWidgetEventEntity->currentItem()->text();
-        if(m_curSelectDatapair)
+        e.m_type = dataItem->text();
+        e.m_entityID = entityItem->data(Qt::UserRole + 1).toInt();
+        e.m_entityName = entityItem->text();
+        if(m_curSelectPlot)
         {
-            m_curSelectDatapair->addEvent(e);
+            m_curSelectPlot->addEvent(e);
             refreshAddedEventList();
         }
     }
@@ -938,9 +939,11 @@ void AdvancedDataManager::onRemoveEvent()
 {
     if(ui.tableWidgetAddedEvent->currentRow() >= 0)
     {
-        QString eventName =
+        QString entityName =
+            ui.tableWidgetAddedEvent->item(ui.tableWidgetAddedEvent->currentRow(), 0)->text();
+        QString eventType =
             ui.tableWidgetAddedEvent->item(ui.tableWidgetAddedEvent->currentRow(), 1)->text();
-        m_curSelectDatapair->removeEvent(eventName);
+        m_curSelectPlot->removeEvent(entityName, eventType);
         refreshAddedEventList();
     }
 }

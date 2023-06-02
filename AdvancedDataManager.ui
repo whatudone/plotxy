@@ -653,7 +653,17 @@ p, li { white-space: pre-wrap; }
                     <attribute name="verticalHeaderVisible">
                      <bool>false</bool>
                     </attribute>
+                    <row>
+                     <property name="text">
+                      <string>1</string>
+                     </property>
+                    </row>
                     <column/>
+                    <item row="0" column="0">
+                     <property name="text">
+                      <string>Event</string>
+                     </property>
+                    </item>
                    </widget>
                   </item>
                   <item>

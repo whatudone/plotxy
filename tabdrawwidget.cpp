@@ -21,6 +21,10 @@ TabDrawWidget::TabDrawWidget(QWidget* parent)
     , m_pRubberBand(new QRubberBand(QRubberBand::Rectangle, this))
 {
     setMouseTracking(true);
+    setAutoFillBackground(true);
+    QPalette palette = this->palette();
+    palette.setColor(QPalette::Window, Qt::black);
+    setPalette(palette);
 }
 
 void TabDrawWidget::mousePressEvent(QMouseEvent* event)

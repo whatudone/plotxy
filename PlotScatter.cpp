@@ -124,7 +124,15 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
         else if(xAttr == "Time" && yAttr != "Time")
         {
             x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(yEntityID, xAttr, secs);
-            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(yEntityID, yAttr, secs);
+            if(yAttr != "Now")
+            {
+                y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                    yEntityID, yAttr, secs);
+            }
+            else
+            {
+                //当为Now的时候y轴没有数据，只需要在X轴上显示一个Now的矩形
+            }
         }
         else if(xAttr != "Time" && yAttr == "Time")
         {
@@ -233,45 +241,45 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
 		{
             tracerText->setVisible(false);
         }
-        //如果x轴是time，那么需要绘制事件标签，整个用一个Text显示
-        clearEventText(data->getUuid());
-        if(data->getAttr_x() == "Time")
-        {
-            auto eventList = data->getEventList();
-            QList<QCPItemText*> itemTextList;
-            for(auto& event : eventList)
-            {
-                QCPItemText* textItem = new QCPItemText(m_customPlot);
-                QString text;
-                if(event.m_eventStyle == "Small X")
-                {
-                    text = "X ";
-                }
-                else
-                {
-                    text = "| ";
-                }
-                if(event.m_isIncludeTag)
-                {
-                    text.append(event.m_name);
-                }
-                text.append(QString("(%1s)").arg(event.m_relativeTime));
-                textItem->setText(text);
-                QFont font;
-                font.setFamily(event.m_eventFontFamily);
-                font.setPixelSize(event.m_eventFontSize);
-                textItem->setColor(QColor(event.m_eventColor));
-                // x轴需要设置到对应的时间坐标上，y轴需要按照像素坐标从低到高排列,目前暂时设置到0.5垂直居中
-                textItem->position->setTypeX(QCPItemPosition::ptPlotCoords);
-                textItem->position->setTypeY(QCPItemPosition::ptAxisRectRatio);
-                textItem->position->setCoords(event.m_relativeTime, 0.5);
-                itemTextList.append(textItem);
-            }
-            if(!itemTextList.isEmpty())
-            {
-                m_eventHash.insert(data->getUuid(), itemTextList);
-            }
-		}
+        //        //如果x轴是time，那么需要绘制事件标签，整个用一个Text显示
+        //        clearEventText(data->getUuid());
+        //        if(data->getAttr_x() == "Time")
+        //        {
+        //            auto eventList = getEventList();
+        //            QList<QCPItemText*> itemTextList;
+        //            for(auto& event : eventList)
+        //            {
+        //                QCPItemText* textItem = new QCPItemText(m_customPlot);
+        //                QString text;
+        //                if(event.m_eventStyle == "Small X")
+        //                {
+        //                    text = "X ";
+        //                }
+        //                else
+        //                {
+        //                    text = "| ";
+        //                }
+        //                if(event.m_isIncludeTag)
+        //                {
+        //                    text.append(event.m_name);
+        //                }
+        //                text.append(QString("(%1s)").arg(event.m_relativeTime));
+        //                textItem->setText(text);
+        //                QFont font;
+        //                font.setFamily(event.m_eventFontFamily);
+        //                font.setPixelSize(event.m_eventFontSize);
+        //                textItem->setColor(QColor(event.m_eventColor));
+        //                // x轴需要设置到对应的时间坐标上，y轴需要按照像素坐标从低到高排列,目前暂时设置到0.5垂直居中
+        //                textItem->position->setTypeX(QCPItemPosition::ptPlotCoords);
+        //                textItem->position->setTypeY(QCPItemPosition::ptAxisRectRatio);
+        //                textItem->position->setCoords(event.m_relativeTime, 0.5);
+        //                itemTextList.append(textItem);
+        //            }
+        //            if(!itemTextList.isEmpty())
+        //            {
+        //                m_eventHash.insert(data->getUuid(), itemTextList);
+        //            }
+        //		}
 	}
 	else
 	{
