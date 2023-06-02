@@ -181,6 +181,8 @@ public:
     // 加载PXY格式工程信息，里面带了图表空间信息和数据信息
     void loadPXYData(const QString& pxyFileName);
 
+    static double getSeconds();
+
 private:
     void addTabPage(const QString& tabName = QString());
     // 将添加图表控件操作合并到一个函数
@@ -231,6 +233,8 @@ private:
     QToolButton* m_statusBar_createPlot;
     QToolButton* m_statusBar_movePlot;
     QLabel* m_statusBar_null;
+    // 当前时间
+    static double m_seconds;
 };
 
 #endif // !

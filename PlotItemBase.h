@@ -351,7 +351,6 @@ protected:
     QColor m_axisLabelColor; //坐标轴标题颜色
     QFont m_axisLabelFont; //坐标轴标题字体
     int m_axisLabelFontSize; //坐标轴标题字体尺寸
-    double m_seconds; // 时间，用于筛选数据
 
     bool m_isHorizonBar; // Bar是否是水平
     int m_barBetweenPadding; // Bar之间的间隔

@@ -30,6 +30,8 @@
 #include "rename_tab_dialog.h"
 #include "tabdrawwidget.h"
 
+double PlotXYDemo::m_seconds = 0.0;
+
 PlotXYDemo::PlotXYDemo(QWidget* parent)
     : QMainWindow(parent)
     , m_mouseMode(MouseMode::SelectPlot)
@@ -608,14 +610,14 @@ void PlotXYDemo::onSetSliderRange(int min, int max, int singleStep)
 
 void PlotXYDemo::onSliderValueChanged(int value)
 {
-    double secs = (double)value / m_timeCtrl->getMultiplizer();
+    m_seconds = (double)value / m_timeCtrl->getMultiplizer();
     int refYear = m_timeCtrl->getRefYear();
     // show data time
-    QString dataTime = OrdinalTimeFormatter::toString(secs, refYear);
+    QString dataTime = OrdinalTimeFormatter::toString(m_seconds, refYear);
     m_statusBar_dataTime->setText(dataTime);
 
     //发送数据时间
-    emit currentSecsChanged(secs);
+    emit currentSecsChanged(m_seconds);
 }
 
 void PlotXYDemo::onRemoteSliderValueChanged(int value)
@@ -1261,6 +1263,11 @@ void PlotXYDemo::clearAllTab()
         delete ui.tabWidget->widget(var);
     }
     ui.tabWidget->clear();
+}
+
+double PlotXYDemo::getSeconds()
+{
+    return m_seconds;
 }
 
 void PlotXYDemo::onPlay()

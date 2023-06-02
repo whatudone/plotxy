@@ -36,10 +36,7 @@ private:
     void drawCellData(QPainter& painter);
 
 private:
-    QStringList m_entityList;
-    QStringList m_attrList;
-    // 二维数组的数据
-    QHash<QPair<QString, QString>, double> m_dataHash;
+    QList<double> m_dataList;
 };
 
 #endif // _PLOT_TEXT_H_

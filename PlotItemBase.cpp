@@ -5,6 +5,7 @@
 *  */
 
 #include "PlotItemBase.h"
+#include "PlotXYDemo.h"
 
 #include <QDebug>
 #include <QPainter>
@@ -692,10 +693,9 @@ void PlotItemBase::slot_setVisible(bool on)
 
 void PlotItemBase::onGetCurrentSeconds(double secs)
 {
-    m_seconds = secs;
     if(getDataPairs().isEmpty())
         return;
-    updateDataForDataPairsByTime(m_seconds);
+    updateDataForDataPairsByTime(secs);
 }
 
 void PlotItemBase::slot_updateRect(const QRect& rect)
@@ -863,7 +863,8 @@ void PlotItemBase::drawBorderAndControls()
 
 void PlotItemBase::onDataPairsChanged()
 {
-    updateDataForDataPairsByTime(m_seconds);
+    // 使用时间轴的当前时间
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
 }
 
 void PlotItemBase::paintEvent(QPaintEvent* event)
