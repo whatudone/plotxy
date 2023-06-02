@@ -1,11 +1,13 @@
-﻿#include <QtWidgets/QApplication>
+﻿#include "PlotXYDemo.h"
+#include "constdef.h"
 #include <QFile>
-
-#include "PlotXYDemo.h"
-void loadQss(const QString &fileName){
+#include <QtWidgets/QApplication>
+void loadQss(const QString& fileName)
+{
 
     QFile file(fileName);
-    if (file.open(QIODevice::ReadOnly)) {
+    if(file.open(QIODevice::ReadOnly))
+    {
         qApp->setStyleSheet(file.readAll());
     }
     file.close();
@@ -13,6 +15,8 @@ void loadQss(const QString &fileName){
 int main(int argc, char* argv[])
 {
     QApplication a(argc, argv);
+    qRegisterMetaType<Z_SendHeader>("Z_SendHeader");
+    qRegisterMetaType<PlatInfoDataExcect>("PlatInfoDataExcect");
     loadQss(":/qss/app.qss");
     PlotXYDemo w;
     w.showMaximized();

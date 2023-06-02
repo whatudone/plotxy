@@ -47,8 +47,9 @@ private:
 	double getEndTime(int refYear);
 
 public slots:
-	void onAlwaysOnTop();
-	void onUpdateData();
+    void onAlwaysOnTop();
+    void onUpdateData();
+    void onUpdateRealData();
     void onClose();
     void onSetSliderRange(int min, int max, int singleStep);
 	void onSliderValueChanged(int);
