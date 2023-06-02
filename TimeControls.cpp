@@ -1,5 +1,6 @@
 ﻿#include "TimeControls.h"
 #include "DataManager.h"
+#include <QDate>
 #include <QDebug>
 #include <QDoubleValidator>
 #include <windows.h>
@@ -212,6 +213,26 @@ void TimeControls::onUpdateData()
     emit sgn_sliderValueChanged(m_maxTime * m_Multiplier);
 }
 
+void TimeControls::onUpdateRealData()
+{
+    auto dataMap = DataManager::getInstance()->getDataMap();
+    if(dataMap.isEmpty())
+        return;
+
+    DataManager::getInstance()->getMinMaxRealTime(m_minTime, m_maxTime);
+    m_refYear = QDate::currentDate().year();
+
+    setBeginTime(m_minTime, m_refYear);
+    setCurTime(m_maxTime, m_refYear);
+    setEndTime(m_maxTime, m_refYear);
+    setRefTime(m_refYear);
+
+    emit sgn_setSliderRange(
+        m_minTime * m_Multiplier, m_maxTime * m_Multiplier, m_stepFactor * m_Multiplier);
+    ui.horizontalSlider->setValue(m_maxTime * m_Multiplier);
+    emit sgn_sliderValueChanged(m_maxTime * m_Multiplier);
+}
+
 void TimeControls::onClose()
 {
 	this->close();
@@ -219,7 +240,6 @@ void TimeControls::onClose()
 
 void TimeControls::onSetSliderRange(int min, int max, int singleStep)
 {
-
 	ui.horizontalSlider->setMinimum(min);
 	ui.horizontalSlider->setMaximum(max);
 	ui.horizontalSlider->setPageStep(singleStep);

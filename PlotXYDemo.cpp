@@ -12,6 +12,7 @@
 #include "AddPlotPair.h"
 #include "AdvancedDataManager.h"
 #include "DataManager.h"
+#include "NetSettingDialog.h"
 #include "PlotAScope.h"
 #include "PlotAttitude.h"
 #include "PlotBar.h"
@@ -52,6 +53,10 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
             &AddPlotPair::onUpdateEntityTableByDataChanged);
     connect(
         DataManager::getInstance(), SIGNAL(loadDataFinished()), m_timeCtrl, SLOT(onUpdateData()));
+    connect(DataManager::getInstance(),
+            &DataManager::updateRealTime,
+            m_timeCtrl,
+            &TimeControls::onUpdateRealData);
 
     connect(this,
             SIGNAL(sgn_renameTabPage(QString, QString)),
@@ -139,6 +144,7 @@ void PlotXYDemo::onExportToGOG()
 
 void PlotXYDemo::onAddPlotPair()
 {
+    m_addPlotPair->onUpdateEntityTableByDataChanged();
     m_addPlotPair->onChangeStackIndex(m_lastSelectedType);
     m_addPlotPair->setPlotBaseInfo(m_pCurSelectedPlot);
     m_addPlotPair->show();
@@ -1363,7 +1369,19 @@ void PlotXYDemo::onTimeServer() {}
 
 void PlotXYDemo::onTimeClient() {}
 
-void PlotXYDemo::onRealTime() {}
+void PlotXYDemo::onRealTime()
+{
+    bool isChecked = ui.actionReal_Time->isChecked();
+    DataManager::getInstance()->setIsRealTime(isChecked);
+    if(isChecked)
+    {
+        DataManager::getInstance()->getRecvThread()->start();
+    }
+    else
+    {
+        DataManager::getInstance()->getRecvThread()->stop();
+    }
+}
 
 void PlotXYDemo::init()
 {
@@ -1688,7 +1706,11 @@ void PlotXYDemo::updateStatusBarInfo()
     }
 }
 
-void PlotXYDemo::onOpenNetwork() {}
+void PlotXYDemo::onOpenNetwork()
+{
+    NetSettingDialog* dialog = new NetSettingDialog;
+    dialog->show();
+}
 
 void PlotXYDemo::onExportDataStore()
 {

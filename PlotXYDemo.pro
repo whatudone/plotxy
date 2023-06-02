@@ -4,7 +4,7 @@
 
 TEMPLATE = app
 TARGET = SimDataAnalyzer
-QT += core gui widgets printsupport
+QT += core gui widgets printsupport network
 CONFIG += c++17
 LIBS += -luser32
 win32-msvc {

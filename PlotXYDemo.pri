@@ -8,6 +8,7 @@
 
 
 HEADERS += $$PWD/TimeClass.h \
+    $$PWD/RecvThread.h \
     $$PWD/mydialpointer.h \
     $$PWD/rename_tab_dialog.h \
     $$PWD/tabdrawwidget.h \
@@ -44,8 +45,10 @@ HEADERS += $$PWD/TimeClass.h \
     $$PWD/AdvancedDataManager.h \
     $$PWD/PlotBar.h \
     $$PWD/choose_plot_type_dialog.h \
+    $$PWD/NetSettingDialog.h
 
 SOURCES += $$PWD/AddPlotPair.cpp \
+    $$PWD/RecvThread.cpp \
     $$PWD/mydialpointer.cpp \
     $$PWD/rename_tab_dialog.cpp \
     $$PWD/tabdrawwidget.cpp \
@@ -79,7 +82,8 @@ SOURCES += $$PWD/AddPlotPair.cpp \
     $$PWD/ToolBox.cpp \
     $$PWD/Toolpage.cpp \
     $$PWD/Utils.cpp \
-    $$PWD/choose_plot_type_dialog.cpp
+    $$PWD/choose_plot_type_dialog.cpp \
+    $$PWD/NetSettingDialog.cpp
 
 FORMS += $$PWD/AddPlotPair.ui \
     $$PWD/AdvancedDataManager.ui \
@@ -98,7 +102,8 @@ FORMS += $$PWD/AddPlotPair.ui \
     $$PWD/ToolBox.ui \
     $$PWD/ToolPage.ui \
     $$PWD/rename_tab_dialog.ui \
-    $$PWD/choose_plot_type_dialog.ui
+    $$PWD/choose_plot_type_dialog.ui\
+    $$PWD/NetSettingDialog.ui
 
 RESOURCES += resources/statusbar.qrc \
     $$PWD/resources/cursor/cursor.qrc \
@@ -106,4 +111,3 @@ RESOURCES += resources/statusbar.qrc \
     $$PWD/resources/icon/icons.qrc \
     $$PWD/resources/qss.qrc \
     $$PWD/resources/toolbar.qrc
-

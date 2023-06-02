@@ -8,6 +8,7 @@
 #define DATA_MANAGER_H
 
 #include "BaseData.h"
+#include "RecvThread.h"
 #include "constdef.h"
 
 #include <QMap>
@@ -36,6 +37,19 @@ public:
         }
     };
 
+    struct RealPlatform
+    {
+        int platformDataID;
+        QString platformName;
+        OpsStatus OpsStatus; //状态
+        Alliance Alliance; //联盟方
+        Operation_medium Operation_medium; //运动介质
+        IconType Icon_Type; //类型
+        QString basePlatName; //类型名称
+        QString hullName; //舷号
+        QString cStandBy; //备用字
+    };
+
 private:
     DataManager();
     DataManager(const DataManager&) = delete;
@@ -47,6 +61,9 @@ private:
     QVector<double> m_timeDataVector;
     // 新的数据存储结构 <EntityID,<<Attr>,DataList>> qhash是随机排序，性能比qmap强
     QMap<int32_t, QHash<QString, QVector<double>>> m_newEntityDataMap;
+    QMap<int32_t, QHash<QString, QVector<double>>> m_realDataMap;
+    QHash<int32_t, QList<QPair<QString, QString>>> m_realUnitHash;
+    QMap<int32_t, RealPlatform> m_realPlatformMap;
     // <EntityID, <attr,unit>>
     QHash<int32_t, QList<QPair<QString, QString>>> m_attrUnitHash;
     // 平台map数据
@@ -56,6 +73,8 @@ private:
     // 时间以s为计算单位，小数位表示ms
     double m_minTime = 0.0;
     double m_maxTime = 0.0;
+    double m_minRealTime = 0.0;
+    double m_maxRealTime = 0.0;
     // 去重，用于确定时间轴范围的时间信息，数据中还保留原始的Time数据列表
     std::set<double> m_timeDataSet;
     // 参考年份，作为相对时间的计算基准
@@ -66,6 +85,7 @@ private:
     QList<QString> m_gogFileList;
     // 导入数据文件路径
     QString m_dataFileName;
+    bool m_isRealTime;
 
 public:
     static DataManager* getInstance()
@@ -77,6 +97,7 @@ public:
     void loadFileData(const QString& filename);
     const QMap<int32_t, QHash<QString, QVector<double>>>& getDataMap();
     void getMinMaxTime(double& minTime, double& maxTime);
+    void getMinMaxRealTime(double& minTime, double& maxTime);
     int getRefYear();
 
     // 获取最小时间到secs时间内的实体-属性数据list
@@ -125,6 +146,10 @@ public:
 
     void clearData();
 
+    recvThread* getRecvThread() const;
+
+    void setIsRealTime(bool isRealTime);
+
 private:
     //获取实体-属性的全数据，属性默认为Time
     QVector<double> getEntityAttrValueList(int32_t entityID, const QString& attr = "Time");
@@ -138,8 +163,15 @@ private:
 
     // 使用正则表达式加载ASI中特定数据格式
     QStringList parsePlatformData(const QString& data);
+
+    recvThread* m_recvThread = nullptr;
 signals:
     void loadDataFinished();
+    void recvData();
+    void updateRealTime();
+
+public Q_SLOTS:
+    void onRecvRealData(PlatInfoDataExcect plat);
 };
 
 #define DataManagerInstance DataManager::getInstance()

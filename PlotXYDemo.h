@@ -1,6 +1,7 @@
 ﻿#ifndef PLOTXY_DEMO_H_
 #define PLOTXY_DEMO_H_
 
+#include "RecvThread.h"
 #include "TimeControls.h"
 #include "constdef.h"
 #include "ui_PlotXYDemo.h"

@@ -5,19 +5,27 @@
 *  */
 
 #include "DataManager.h"
+#include <QApplication>
 #include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QRegularExpression>
+#include <QSettings>
 
 #include <limits>
 
 #include "TimeClass.h"
 #include "Utils.h"
 
-DataManager::DataManager() {}
+DataManager::DataManager()
+    : m_isRealTime(false)
+{
+    m_recvThread = new recvThread;
+
+    connect(m_recvThread, &recvThread::dataReceived, this, &DataManager::onRecvRealData);
+}
 
 DataManager::~DataManager() {}
 
@@ -51,7 +59,7 @@ void DataManager::loadFileData(const QString& filename)
     else
     {
 
-        QMessageBox::information(NULL, QString("提示信息"), QString("已成功加载数据"));
+        QMessageBox::information(nullptr, QString("提示信息"), QString("已成功加载数据"));
         emit loadDataFinished();
     }
 }
@@ -392,13 +400,24 @@ void DataManager::loadASIData(const QString& asiFileName)
 
 const QMap<int32_t, QHash<QString, QVector<double>>>& DataManager::getDataMap()
 {
-    return m_newEntityDataMap;
+    if(m_isRealTime)
+    {
+        return m_realDataMap;
+    }
+    else
+        return m_newEntityDataMap;
 }
 
 void DataManager::getMinMaxTime(double& minTime, double& maxTime)
 {
-	minTime = m_minTime;
-	maxTime = m_maxTime;
+    minTime = m_minTime;
+    maxTime = m_maxTime;
+}
+
+void DataManager::getMinMaxRealTime(double& minTime, double& maxTime)
+{
+    minTime = m_minRealTime;
+    maxTime = m_maxRealTime;
 }
 
 int DataManager::getRefYear()
@@ -408,9 +427,16 @@ int DataManager::getRefYear()
 
 QVector<double> DataManager::getEntityAttrValueList(int32_t entityID, const QString& attr)
 {
-
     QVector<double> valueList;
-    if(m_newEntityDataMap.contains(entityID) && m_newEntityDataMap.value(entityID).contains(attr))
+    if(m_isRealTime)
+    {
+        if(m_realDataMap.contains(entityID) && m_realDataMap.value(entityID).contains(attr))
+        {
+            return m_realDataMap.value(entityID).value(attr);
+        }
+    }
+    else if(m_newEntityDataMap.contains(entityID) &&
+            m_newEntityDataMap.value(entityID).contains(attr))
     {
         return m_newEntityDataMap.value(entityID).value(attr);
     }
@@ -610,7 +636,14 @@ void DataManager::getDopplerDataByTime(int32_t entityID,
 
 QString DataManager::getEntityNameByID(int32_t id)
 {
-    if(m_platformMap.contains(id))
+    if(m_isRealTime)
+    {
+        if(m_realPlatformMap.contains(id))
+        {
+            return m_realPlatformMap.value(id).platformName;
+        }
+    }
+    else if(m_platformMap.contains(id))
     {
         return m_platformMap.value(id).m_platformName;
     }
@@ -620,16 +653,34 @@ QString DataManager::getEntityNameByID(int32_t id)
 QStringList DataManager::getEntityNameList()
 {
     QStringList list;
-    for(const auto& p : m_platformMap)
+    if(m_isRealTime)
     {
-        list.append(p.m_platformName);
+        for(const auto& p : m_realPlatformMap)
+        {
+            list.append(p.platformName);
+        }
+    }
+    else
+    {
+        for(const auto& p : m_platformMap)
+        {
+            list.append(p.m_platformName);
+        }
     }
     return list;
 }
 
 QList<QPair<QString, QString>> DataManager::getAttrAndUnitPairList(int32_t id)
 {
-    auto list = m_attrUnitHash.value(id);
+    QList<QPair<QString, QString>> list;
+    if(m_isRealTime)
+    {
+        list = m_realUnitHash.value(id);
+    }
+    else
+    {
+        list = m_attrUnitHash.value(id);
+    }
     list.removeOne(qMakePair(QString("Time"), QString("sec")));
     return list;
 }
@@ -637,9 +688,19 @@ QList<QPair<QString, QString>> DataManager::getAttrAndUnitPairList(int32_t id)
 QMap<int32_t, QString> DataManager::getEntityIDAndNameMap()
 {
     QMap<int32_t, QString> map;
-    for(const auto& p : m_platformMap)
+    if(m_isRealTime)
     {
-        map.insert(p.m_platformDataID, p.m_platformName);
+        for(const auto& p : m_realPlatformMap)
+        {
+            map.insert(p.platformDataID, p.platformName);
+        }
+    }
+    else
+    {
+        for(const auto& p : m_platformMap)
+        {
+            map.insert(p.m_platformDataID, p.m_platformName);
+        }
     }
     return map;
 }
@@ -704,6 +765,81 @@ QStringList DataManager::parsePlatformData(const QString& data)
         list.append(element);
     }
     return list;
+}
+
+recvThread* DataManager::getRecvThread() const
+{
+    return m_recvThread;
+}
+
+void DataManager::setIsRealTime(bool isRealTime)
+{
+    m_isRealTime = isRealTime;
+}
+
+void DataManager::onRecvRealData(PlatInfoDataExcect plat)
+{
+    int32_t uID = int32_t(plat.uID);
+    if(!m_realDataMap.contains(uID))
+    {
+        m_realDataMap.insert(uID, QHash<QString, QVector<double>>());
+    }
+
+    QHash<QString, QVector<double>> dataMap = m_realDataMap[uID];
+    dataMap["Time"].append(plat.time * 3600);
+    dataMap["Fuel"].append(plat.fuel);
+    dataMap["Dammager"].append(plat.dammager);
+    dataMap["Speed"].append(double(plat.speed));
+    dataMap["Bearing"].append(double(plat.bearing));
+    dataMap["Lat"].append(plat.lat);
+    dataMap["Lon"].append(plat.lng);
+    dataMap["Alt"].append(plat.Alt);
+    dataMap["CW"].append(plat.CW);
+    dataMap["Pitch"].append(plat.pitch);
+    dataMap["Roll"].append(plat.roll);
+    dataMap["MaxSpeed"].append(plat.maxSpeed);
+    dataMap["ConNUm"].append(plat.iConNUm);
+    dataMap["Visible"].append(plat.iVisible);
+    m_realDataMap.insert(uID, dataMap);
+    m_minRealTime = dataMap["Time"].at(0);
+    m_maxRealTime = plat.time * 3600;
+
+    QList<QPair<QString, QString>> attrUnitList;
+    if(!m_realUnitHash.contains(uID))
+    {
+        m_realUnitHash.insert(uID, attrUnitList);
+    }
+
+    attrUnitList.append(QPair<QString, QString>("Time", "sec"));
+    attrUnitList.append(QPair<QString, QString>("Fuel", "sec"));
+    attrUnitList.append(QPair<QString, QString>("Dammager", "na"));
+    attrUnitList.append(QPair<QString, QString>("Speed", "m/sec"));
+    attrUnitList.append(QPair<QString, QString>("Bearing", "na"));
+    attrUnitList.append(QPair<QString, QString>("Lat", "deg"));
+    attrUnitList.append(QPair<QString, QString>("Lon", "deg"));
+    attrUnitList.append(QPair<QString, QString>("Alt", "m"));
+    attrUnitList.append(QPair<QString, QString>("CW", "na"));
+    attrUnitList.append(QPair<QString, QString>("Pitch", "deg"));
+    attrUnitList.append(QPair<QString, QString>("Roll", "deg"));
+    attrUnitList.append(QPair<QString, QString>("MaxSpeed", "m/sec"));
+    attrUnitList.append(QPair<QString, QString>("ConNUm", "na"));
+    attrUnitList.append(QPair<QString, QString>("Visible", "na"));
+
+    m_realUnitHash.insert(uID, attrUnitList);
+
+    RealPlatform realPlatform;
+    realPlatform.platformDataID = plat.uID;
+    realPlatform.platformName = plat.platName;
+    realPlatform.OpsStatus = plat.OpsStatus;
+    realPlatform.Alliance = plat.Alliance;
+    realPlatform.Operation_medium = plat.Operation_medium;
+    realPlatform.Icon_Type = plat.Icon_Type;
+    realPlatform.basePlatName = plat.BasePlatName;
+    realPlatform.hullName = plat.HullName;
+    realPlatform.cStandBy = plat.cStandBy;
+    m_realPlatformMap.insert(uID, realPlatform);
+
+    emit updateRealTime();
 }
 
 QString DataManager::getDataFileName() const

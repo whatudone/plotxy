@@ -190,4 +190,89 @@ struct GenericData
     int32_t m_timeOffset;
 };
 
+enum OpsStatus
+{
+    IN_PORT,
+    TRANSIT
+};
+
+enum Alliance
+{
+    M_BLUE = 0,
+    M_RED,
+    M_WHITE,
+    M_GREEN,
+    M_YELLOW,
+    M_ORANE,
+    M_BLACK,
+    M_PURPLE,
+    M_CYAN,
+    M_BROWN,
+    M_TOTAL
+};
+
+enum Operation_medium
+{
+    ME_AIR,
+    ME_SURFACE,
+    ME_SPACE,
+    ME_LAND,
+    ME_SUBSURFACE,
+    ME_UNKOWN
+};
+
+enum IconType
+{
+    SURFACE1,
+    SURFACE2,
+    SURFACE3,
+    SURFACE4,
+    SURFACE5,
+    SURFACE6,
+    SURFACE7,
+    SURFACE8,
+    SURFACE9,
+    SURFACE10,
+    SURFACE11,
+
+};
+
+#pragma pack(push, 1)
+struct Z_SendHeader
+{
+    unsigned short iMessageType; //信息标识
+    double time; //时间 从0开始 的小时数
+    int ilength; //本包信息长度
+};
+
+#define NLENTH 32
+
+struct PlatInfoDataExcect
+{
+    double time;
+    char platName[NLENTH]; //平台名称
+    int uID; //平台ID
+    double fuel; //油料
+    double dammager; //生命值
+    OpsStatus OpsStatus; //状态
+    Alliance Alliance; //联盟方
+    Operation_medium Operation_medium; //运动介质
+    IconType Icon_Type; //类型
+    float speed; //单位米/S
+    float bearing; //航向度
+    double lat; //经
+    double lng; //纬度
+    double Alt; //高度
+    double CW; //首向角
+    double pitch;
+    double roll;
+    char BasePlatName[NLENTH]; //类型名称
+    char HullName[NLENTH]; //舷号
+    char cStandBy[NLENTH]; //备用字
+    int iConNUm; //标号
+    int iVisible; //是否显示
+    double maxSpeed; //最大速度
+};
+#pragma pack(pop)
+
 #endif // _CONST_DEF_H_
