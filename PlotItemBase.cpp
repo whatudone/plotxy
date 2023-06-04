@@ -66,9 +66,11 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     m_rightPadding = 10;
     m_topPadding = 10;
     m_bottomPadding = 10;
-
     setMinimumSize(200, 150);
     resize(1000, 600);
+
+    setWindowFlags(Qt::FramelessWindowHint);
+    setAttribute(Qt::WA_TranslucentBackground);
 
     updateResizeFocusPos();
     // 数据对整体发生变化时，更新界面
@@ -863,20 +865,16 @@ void PlotItemBase::onDataPairsChanged()
 
 void PlotItemBase::paintEvent(QPaintEvent* event)
 {
+
     // 绘制本身
     QPainter painter(this);
-
     QPen pen;
     pen.setColor(m_outlineColor);
     pen.setWidth(5);
     pen.setStyle(Qt::SolidLine);
     painter.setPen(pen);
 
-    painter.drawRect(0, 0, width(), height());
-    QBrush brush;
-    brush.setColor(m_outerFillColor);
-    brush.setStyle(Qt::SolidPattern);
-    painter.fillRect(QRect(0, 0, width(), height()), brush);
+    painter.drawRect(rect());
 
     // 根据场景绘制外边框和控制点
     if(m_isNeedDrawBorder)
