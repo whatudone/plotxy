@@ -1062,6 +1062,7 @@ void PlotItemBase::addEvent(const EventSettings& event)
     if(!m_eventList.contains(event))
     {
         m_eventList.append(event);
+        updateTimelineGraph();
     }
 }
 
@@ -1072,6 +1073,7 @@ void PlotItemBase::removeEvent(const QString& entityName, const QString& type)
         if((entityName == event.m_entityName) && (type == event.m_type))
         {
             m_eventList.removeOne(event);
+            updateTimelineGraph();
             return;
         }
     }

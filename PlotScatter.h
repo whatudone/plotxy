@@ -59,14 +59,21 @@ private:
     // 文本标签坐标,特殊情况不调用DataPair里面的通用处理方式
     QPair<double, double> processLabelTextPosition(const QString& text, DataPair* data);
     // 删除历史事件标签
-    void clearEventText(const QString& uuid);
+    void clearEventText();
+    // 刷新时间线事件
+    void updateTimelineGraph() override;
 
 private:
     QHash<QString, QPair<QVector<double>, QVector<double>>> m_dataHash;
     // <uuid,graph>
     QMap<QString, DrawComponents> m_mapScatter;
     // 事件标签
-    QHash<QString, QList<QCPItemText*>> m_eventHash;
+    QList<QCPItemText*> m_eventList;
+    // 是否为时间线模式
+    bool m_isTimeLine = false;
+    QCPItemRect* m_timelineNowRect = nullptr;
+    QCPItemText* m_timelineNowText = nullptr;
+    QCPGraph* m_timelineGraph = nullptr;
 };
 
 #endif // PLOTSCATTER_H

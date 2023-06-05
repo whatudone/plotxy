@@ -312,6 +312,9 @@ protected:
 
     virtual bool eventFilter(QObject* obj, QEvent* event) override;
 
+    // 刷新时间线事件
+    virtual void updateTimelineGraph() {}
+
 protected:
     QVector<DataPair*> m_dataPairs;
     //General

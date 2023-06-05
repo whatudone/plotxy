@@ -1,5 +1,6 @@
 ﻿#include "PlotScatter.h"
 #include "DataManager.h"
+#include "PlotXYDemo.h"
 #include "Utils.h"
 
 #include <QDebug>
@@ -103,6 +104,7 @@ void PlotScatter::delPlotPairData(const QString& uuid)
 void PlotScatter::updateDataForDataPairsByTime(double secs)
 {
     m_dataHash.clear();
+    m_isTimeLine = false;
     int itemCnt = getDataPairs().size();
 
     for(int i = 0; i < itemCnt; ++i)
@@ -123,15 +125,17 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
         }
         else if(xAttr == "Time" && yAttr != "Time")
         {
-            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(yEntityID, xAttr, secs);
             if(yAttr != "Now")
             {
+                x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                    yEntityID, xAttr, secs);
                 y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
                     yEntityID, yAttr, secs);
             }
             else
             {
                 //当为Now的时候y轴没有数据，只需要在X轴上显示一个Now的矩形
+                m_isTimeLine = true;
             }
         }
         else if(xAttr != "Time" && yAttr == "Time")
@@ -146,10 +150,17 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
         }
         m_dataHash.insert(uuid, qMakePair(x, y));
     }
-    for(int i = 0; i < itemCnt; ++i)
+    if(m_isTimeLine)
     {
-        updateGraphByDataPair(m_dataPairs.at(i));
-	}
+        updateTimelineGraph();
+    }
+    else
+    {
+        for(int i = 0; i < itemCnt; ++i)
+        {
+            updateGraphByDataPair(m_dataPairs.at(i));
+        }
+    }
 	m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
@@ -159,8 +170,19 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
 	{
         return;
     }
-    DrawComponents info;
+    if(m_isTimeLine)
+    {
+        updateTimelineGraph();
+        return;
+    }
     auto uuid = data->getUuid();
+    auto x = m_dataHash.value(uuid).first;
+    auto y = m_dataHash.value(uuid).second;
+    if(x.isEmpty() || y.isEmpty())
+    {
+        return;
+    }
+    DrawComponents info;
     if(!m_mapScatter.contains(uuid))
     {
         info.graph = m_customPlot->addGraph();
@@ -180,8 +202,6 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
     auto pixmap = m_mapScatter[uuid].pixmap;
     if(data->isDraw())
     {
-        auto x = m_dataHash.value(uuid).first;
-        auto y = m_dataHash.value(uuid).second;
 
         graph->setVisible(true);
         graph->setData(x, y);
@@ -241,45 +261,6 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
 		{
             tracerText->setVisible(false);
         }
-        //        //如果x轴是time，那么需要绘制事件标签，整个用一个Text显示
-        //        clearEventText(data->getUuid());
-        //        if(data->getAttr_x() == "Time")
-        //        {
-        //            auto eventList = getEventList();
-        //            QList<QCPItemText*> itemTextList;
-        //            for(auto& event : eventList)
-        //            {
-        //                QCPItemText* textItem = new QCPItemText(m_customPlot);
-        //                QString text;
-        //                if(event.m_eventStyle == "Small X")
-        //                {
-        //                    text = "X ";
-        //                }
-        //                else
-        //                {
-        //                    text = "| ";
-        //                }
-        //                if(event.m_isIncludeTag)
-        //                {
-        //                    text.append(event.m_name);
-        //                }
-        //                text.append(QString("(%1s)").arg(event.m_relativeTime));
-        //                textItem->setText(text);
-        //                QFont font;
-        //                font.setFamily(event.m_eventFontFamily);
-        //                font.setPixelSize(event.m_eventFontSize);
-        //                textItem->setColor(QColor(event.m_eventColor));
-        //                // x轴需要设置到对应的时间坐标上，y轴需要按照像素坐标从低到高排列,目前暂时设置到0.5垂直居中
-        //                textItem->position->setTypeX(QCPItemPosition::ptPlotCoords);
-        //                textItem->position->setTypeY(QCPItemPosition::ptAxisRectRatio);
-        //                textItem->position->setCoords(event.m_relativeTime, 0.5);
-        //                itemTextList.append(textItem);
-        //            }
-        //            if(!itemTextList.isEmpty())
-        //            {
-        //                m_eventHash.insert(data->getUuid(), itemTextList);
-        //            }
-        //		}
 	}
 	else
 	{
@@ -465,15 +446,103 @@ QPair<double, double> PlotScatter::processLabelTextPosition(const QString& text,
     return pair;
 }
 
-void PlotScatter::clearEventText(const QString& uuid)
+void PlotScatter::clearEventText()
 {
-    if(m_eventHash.contains(uuid))
+    for(auto text : m_eventList)
     {
-        auto eventList = m_eventHash.value(uuid);
-        for(auto text : eventList)
-        {
-            m_customPlot->removeItem(text);
-        }
-        m_eventHash.remove(uuid);
+        m_customPlot->removeItem(text);
     }
+    m_eventList.clear();
+}
+
+void PlotScatter::updateTimelineGraph()
+{
+    if(!m_timelineGraph)
+    {
+        m_timelineGraph = m_customPlot->addGraph();
+        m_timelineGraph->setVisible(true);
+        QVector<double> timeVec = DataManager::getInstance()->getTimeDataSet();
+        if(!timeVec.isEmpty())
+        {
+            m_customPlot->xAxis->setRange(timeVec.first(), timeVec.last());
+            m_customPlot->xAxis->setLabel("Time(s)");
+            m_customPlot->yAxis->setRange(0, 1);
+            m_customPlot->yAxis->setLabel("All Platforms");
+        }
+        m_customPlot->yAxis->setTickLabels(false);
+    }
+    m_customPlot->yAxis->grid()->setVisible(false);
+    if(!m_timelineNowRect)
+    {
+        m_timelineNowRect = new QCPItemRect(m_customPlot);
+        m_timelineNowRect->setBrush(Qt::gray);
+        QPen pen;
+        pen.setColor(Qt::gray);
+        m_timelineNowRect->setPen(pen);
+    }
+    double now = PlotXYDemo::getSeconds();
+    // Now矩形高度占比0.9
+    double centerX = m_customPlot->xAxis->coordToPixel(now);
+    double rectTop = m_customPlot->yAxis->coordToPixel(0.9);
+    double bottom = m_customPlot->yAxis->coordToPixel(0.0);
+    m_timelineNowRect->topLeft->setType(QCPItemPosition::ptAbsolute);
+    m_timelineNowRect->topLeft->setCoords(centerX - 10, rectTop);
+    m_timelineNowRect->bottomRight->setType(QCPItemPosition::ptAbsolute);
+    m_timelineNowRect->bottomRight->setCoords(centerX + 10, bottom);
+
+    if(!m_timelineNowText)
+    {
+        m_timelineNowText = new QCPItemText(m_customPlot);
+        m_timelineNowText->setText("Now");
+        m_timelineNowText->setColor(Qt::gray);
+        m_timelineNowText->setTextAlignment(Qt::AlignCenter);
+    }
+    double textTop = m_customPlot->yAxis->coordToPixel(0.98);
+    m_timelineNowText->position->setType(QCPItemPosition::ptAbsolute);
+
+    m_timelineNowText->position->setCoords(centerX + 10, textTop);
+    clearEventText();
+
+    auto eventList = getEventList();
+    // 上下预留0.1，中间区域占比0.8
+    double heightDelta = 0.8 / eventList.size();
+    int32_t index = 0;
+    for(auto& event : eventList)
+    {
+
+        auto dataList = DataManagerInstance->getGenericDataListByID(event.m_entityID);
+        //如果x轴是time，那么需要绘制事件标签，整个用一个Text显示
+        for(const auto& data : dataList)
+        {
+
+            QCPItemText* textItem = new QCPItemText(m_customPlot);
+            QString text;
+            if(event.m_eventStyle == "Small X")
+            {
+                text = "X ";
+            }
+            else
+            {
+                text = "| ";
+            }
+            if(event.m_isIncludeTag)
+            {
+                text.append(data.m_name);
+            }
+            text.append(QString("(%1s)").arg(data.m_relativeTime));
+            textItem->setText(text);
+            QFont font;
+            font.setFamily(event.m_eventFontFamily);
+            font.setPixelSize(event.m_eventFontSize);
+            textItem->setColor(QColor(event.m_eventColor));
+            // x轴需要设置到对应的时间坐标上，y轴需要按照像素坐标从低到高排列,目前暂时设置到0.5垂直居中
+            textItem->position->setTypeX(QCPItemPosition::ptPlotCoords);
+            textItem->position->setTypeY(QCPItemPosition::ptAxisRectRatio);
+            textItem->position->setCoords(data.m_relativeTime, 0.1 + index * heightDelta);
+            m_eventList.append(textItem);
+        }
+        ++index;
+    }
+
+    m_customPlot->replot();
 }
