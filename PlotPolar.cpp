@@ -12,9 +12,6 @@ PlotPolar::PlotPolar(QWidget* parent)
 
     m_title = "Polar";
 
-    m_units_x = QString("X");
-    m_units_y = QString("Y");
-
     m_angularRange_lower = 0.0;
     m_angularRange_upper = 360.0;
     m_radialRange_lower = 0.0;
@@ -42,14 +39,14 @@ void PlotPolar::initPlot()
 
     m_angularAxis->setRangeDrag(false);
     m_angularAxis->setTickLabelMode(QCPPolarAxisAngular::lmUpright);
-    m_angularAxis->setFormat(m_units_x);
+
     m_angularAxis->setTickLabelColor(m_tickLabelColor);
     m_angularAxis->setTickLabelFont(m_tickLabelFont);
     m_angularAxis->setTickPen(QPen(m_gridColor, 1));
 
     m_angularAxis->radialAxis()->setTickLabelColor(m_tickLabelColor);
     m_angularAxis->radialAxis()->setTickLabelFont(m_tickLabelFont);
-    m_angularAxis->radialAxis()->setFormat(m_units_y);
+
     m_angularAxis->radialAxis()->setTickLabelMode(QCPPolarAxisRadial::lmUpright);
     m_angularAxis->radialAxis()->setTickLabelRotation(0);
     m_angularAxis->radialAxis()->setBasePen(QPen(m_axisColor, m_axisWidth));
@@ -235,6 +232,21 @@ void PlotPolar::getCoordRangeY(double& lower, double& upper)
     upper = m_radialRange_upper;
 }
 
+void PlotPolar::rescaleXAxis()
+{
+    m_angularAxis->rescale();
+}
+
+void PlotPolar::rescaleYAxis()
+{
+    m_angularAxis->radialAxis()->rescale();
+}
+
+void PlotPolar::rescaleAxis()
+{
+    m_customPlot->rescaleAxes();
+}
+
 void PlotPolar::updateDataForDataPairsByTime(double secs)
 {
     int isize = getDataPairs().size();
@@ -268,6 +280,7 @@ void PlotPolar::updateGraphByDataPair(DataPair* data)
     if(!m_graphHash.contains(uuid))
     {
         graph = new QCPPolarGraph(m_angularAxis, m_angularAxis->radialAxis());
+        graph->setBrush(Qt::NoBrush);
         graph->setPen(QPen(data->dataColor(), data->width()));
     }
     else
@@ -279,7 +292,7 @@ void PlotPolar::updateGraphByDataPair(DataPair* data)
         graph->setVisible(true);
         auto x = m_dataHash.value(uuid).first;
         auto y = m_dataHash.value(uuid).second;
-        graph->setData(x, y);
+        graph->setData(x, y, true);
         if(data->isLineMode())
         {
             Qt::PenStyle style = Qt::SolidLine;

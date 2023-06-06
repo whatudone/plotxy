@@ -282,9 +282,9 @@ public:
     int getBarLeftPadding() const;
     void setBarLeftPadding(int barLeftPadding);
 
-    void rescaleXAxis(bool on);
-    void rescaleYAxis(bool on);
-    void rescaleAxis(bool on);
+    virtual void rescaleXAxis();
+    virtual void rescaleYAxis();
+    virtual void rescaleAxis();
 
     void addEvent(const EventSettings& event);
     void removeEvent(const QString& entityName, const QString& type);

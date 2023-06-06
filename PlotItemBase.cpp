@@ -1030,29 +1030,29 @@ void PlotItemBase::setBarLeftPadding(int barLeftPadding)
     m_barLeftPadding = barLeftPadding;
 }
 
-void PlotItemBase::rescaleXAxis(bool on)
+void PlotItemBase::rescaleXAxis()
 {
     if(m_customPlot && m_customPlot->xAxis)
     {
-        m_customPlot->xAxis->rescale(on);
+        m_customPlot->xAxis->rescale();
         m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
     }
 }
 
-void PlotItemBase::rescaleYAxis(bool on)
+void PlotItemBase::rescaleYAxis()
 {
     if(m_customPlot && m_customPlot->yAxis)
     {
-        m_customPlot->yAxis->rescale(on);
+        m_customPlot->yAxis->rescale();
         m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
     }
 }
 
-void PlotItemBase::rescaleAxis(bool on)
+void PlotItemBase::rescaleAxis()
 {
     if(m_customPlot)
     {
-        m_customPlot->rescaleAxes(on);
+        m_customPlot->rescaleAxes();
         m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
     }
 }

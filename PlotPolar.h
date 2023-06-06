@@ -38,6 +38,10 @@ public:
     void getCoordRangeX(double& lower, double& upper) override;
     void getCoordRangeY(double& lower, double& upper) override;
 
+    void rescaleXAxis() override;
+    void rescaleYAxis() override;
+    void rescaleAxis() override;
+
 private:
     void updateDataForDataPairsByTime(double secs) override;
     void updateGraphByDataPair(DataPair* data) override;

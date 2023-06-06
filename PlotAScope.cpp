@@ -118,7 +118,7 @@ void PlotAScope::updateGraphByDataPair(DataPair* data)
         auto x = m_dataHash.value(uuid).first;
         auto y = m_dataHash.value(uuid).second;
 
-        graph->setData(x, y);
+        graph->setData(x, y, true);
 
         graph->setPen(QPen(data->dataColor(), data->width()));
         //line mode

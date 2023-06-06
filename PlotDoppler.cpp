@@ -185,11 +185,11 @@ void PlotDoppler::updateAScopesBySlicePoint(const QPointF& point)
     QVector<double> hXDatas;
     QVector<double> hValues;
     getXToValueVecByY(point.x(), hXDatas, hValues);
-    m_customPlot->graph(1)->setData(hXDatas, hValues);
+    m_customPlot->graph(1)->setData(hXDatas, hValues, true);
 
     // 垂直曲线图加载数据
     QVector<double> vYDatas;
     QVector<double> vValues;
     getYToValueVecByX(point.y(), vYDatas, vValues);
-    m_customPlot->graph(2)->setData(vYDatas, vValues);
+    m_customPlot->graph(2)->setData(vYDatas, vValues, true);
 }

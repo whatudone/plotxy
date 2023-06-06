@@ -186,6 +186,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
     if(!m_mapScatter.contains(uuid))
     {
         info.graph = m_customPlot->addGraph();
+        info.graph->setBrush(Qt::NoBrush);
 
         info.tracerText = new QCPItemText(m_customPlot);
         info.tracerText->position->setType(QCPItemPosition::ptPlotCoords);
@@ -204,7 +205,8 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
     {
 
         graph->setVisible(true);
-        graph->setData(x, y);
+        // 第三个参数设置为true，禁止内部对数据根据x轴的数值大小进行排序，导致数据插入顺序不对，出现line模式连线不对
+        graph->setData(x, y, true);
 
         graph->setPen(QPen(data->dataColor(), data->width()));
 		//line mode
@@ -483,7 +485,7 @@ void PlotScatter::updateTimelineGraph()
     double now = PlotXYDemo::getSeconds();
     // Now矩形高度占比0.9
     double centerX = m_customPlot->xAxis->coordToPixel(now);
-    double rectTop = m_customPlot->yAxis->coordToPixel(0.9);
+    double rectTop = m_customPlot->yAxis->coordToPixel(0.95);
     double bottom = m_customPlot->yAxis->coordToPixel(0.0);
     m_timelineNowRect->topLeft->setType(QCPItemPosition::ptAbsolute);
     m_timelineNowRect->topLeft->setCoords(centerX - 10, rectTop);
@@ -500,7 +502,7 @@ void PlotScatter::updateTimelineGraph()
     double textTop = m_customPlot->yAxis->coordToPixel(0.98);
     m_timelineNowText->position->setType(QCPItemPosition::ptAbsolute);
 
-    m_timelineNowText->position->setCoords(centerX + 10, textTop);
+    m_timelineNowText->position->setCoords(centerX, textTop);
     clearEventText();
 
     auto eventList = getEventList();

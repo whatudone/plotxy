@@ -78,9 +78,9 @@ public slots:
 
     void onAddPlot();
 
-    void onAutofit_Full(bool checked);
-    void onAutofit_X(bool checked);
-    void onAutofit_Y(bool checked);
+    void onAutofit_Full();
+    void onAutofit_X();
+    void onAutofit_Y();
 	void onOneToOne();
 	void onRoundRanges();
 	void onInvertColors();
