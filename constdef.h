@@ -273,6 +273,14 @@ struct PlatInfoDataExcect
     int iVisible; //是否显示
     double maxSpeed; //最大速度
 };
+
+struct GenericDataExcect
+{
+    int uID; //平台ID
+    char platName[NLENTH]; //平台名称
+    double time; //偏移时间
+    double relative; //事件类型（-1）
+};
 #pragma pack(pop)
 
 #endif // _CONST_DEF_H_
