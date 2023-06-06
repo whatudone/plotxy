@@ -70,6 +70,7 @@ private:
     QMap<int32_t, Platform> m_platformMap;
     // 事件map数据
     QMap<int32_t, QMap<QString, QList<GenericData>>> m_genericMap;
+    QMap<int32_t, QMap<QString, QList<GenericData>>> m_realGenericMap;
     // 时间以s为计算单位，小数位表示ms
     double m_minTime = 0.0;
     double m_maxTime = 0.0;
@@ -171,7 +172,7 @@ signals:
     void updateRealTime();
 
 public Q_SLOTS:
-    void onRecvRealData(PlatInfoDataExcect plat);
+    void onRecvRealData(PlatInfoDataExcect plat, GenericData generic);
 };
 
 #define DataManagerInstance DataManager::getInstance()

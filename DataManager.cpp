@@ -401,9 +401,7 @@ void DataManager::loadASIData(const QString& asiFileName)
 const QMap<int32_t, QHash<QString, QVector<double>>>& DataManager::getDataMap()
 {
     if(m_isRealTime)
-    {
         return m_realDataMap;
-    }
     else
         return m_newEntityDataMap;
 }
@@ -708,27 +706,45 @@ QMap<int32_t, QString> DataManager::getEntityIDAndNameMap()
 QList<GenericData> DataManager::getGenericDataListByID(int32_t entityID)
 {
     QList<GenericData> tags;
-    if(m_genericMap.contains(entityID))
+    if(m_isRealTime)
     {
-        tags = m_genericMap.value(entityID).value("Event");
+        if(m_realGenericMap.contains(entityID))
+            tags = m_realGenericMap.value(entityID).value("Event");
+    }
+    else
+    {
+        if(m_genericMap.contains(entityID))
+            tags = m_genericMap.value(entityID).value("Event");
     }
     return tags;
 }
 
 QStringList DataManager::getGenericDataTagsByID(int32_t entityID)
 {
-    if(m_genericMap.contains(entityID))
+    if(m_isRealTime)
     {
-        return m_genericMap.value(entityID).keys();
+        if(m_realGenericMap.contains(entityID))
+            return m_realGenericMap.value(entityID).keys();
+    }
+    else
+    {
+        if(m_genericMap.contains(entityID))
+            return m_genericMap.value(entityID).keys();
     }
     return QStringList();
 }
 
 QList<GenericData> DataManager::getGenericDatasByID(int32_t id, const QString& type)
 {
-    if(m_genericMap.contains(id) && m_genericMap.value(id).contains(type))
+    if(m_isRealTime)
     {
-        return m_genericMap.value(id).value(type);
+        if(m_realGenericMap.contains(id) && m_realGenericMap.value(id).contains(type))
+            return m_realGenericMap.value(id).value(type);
+    }
+    else
+    {
+        if(m_genericMap.contains(id) && m_genericMap.value(id).contains(type))
+            return m_genericMap.value(id).value(type);
     }
     return QList<GenericData>();
 }
@@ -777,7 +793,7 @@ void DataManager::setIsRealTime(bool isRealTime)
     m_isRealTime = isRealTime;
 }
 
-void DataManager::onRecvRealData(PlatInfoDataExcect plat)
+void DataManager::onRecvRealData(PlatInfoDataExcect plat, GenericData generic)
 {
     int32_t uID = int32_t(plat.uID);
     if(!m_realDataMap.contains(uID))
@@ -839,6 +855,8 @@ void DataManager::onRecvRealData(PlatInfoDataExcect plat)
     realPlatform.cStandBy = plat.cStandBy;
     m_realPlatformMap.insert(uID, realPlatform);
 
+    QMap<int32_t, QMap<QString, QList<GenericData>>> m_realGenericMap;
+
     emit updateRealTime();
 }
 
@@ -855,8 +873,11 @@ void DataManager::setDataFileName(const QString& dataFileName)
 void DataManager::clearData()
 {
     m_newEntityDataMap.clear();
+    m_realDataMap.clear();
     m_platformMap.clear();
+    m_realPlatformMap.clear();
     m_genericMap.clear();
+    m_realGenericMap.clear();
     m_timeDataSet.clear();
     m_gogFileList.clear();
     m_dataFileName.clear();
