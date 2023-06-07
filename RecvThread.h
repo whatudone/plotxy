@@ -21,7 +21,8 @@ protected:
     void onReadyRead();
 
 signals:
-    void dataReceived(PlatInfoDataExcect plat, GenericData generic);
+    void platInfoReceived(PlatInfoDataExcect plat);
+    void genericReceived(GenericDataExcect generic);
 
 private:
     QUdpSocket* m_udpSocket = nullptr;

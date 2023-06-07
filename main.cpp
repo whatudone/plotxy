@@ -12,11 +12,13 @@ void loadQss(const QString& fileName)
     }
     file.close();
 }
+
 int main(int argc, char* argv[])
 {
     QApplication a(argc, argv);
     qRegisterMetaType<Z_SendHeader>("Z_SendHeader");
     qRegisterMetaType<PlatInfoDataExcect>("PlatInfoDataExcect");
+    qRegisterMetaType<GenericDataExcect>("GenericDataExcect");
     loadQss(":/qss/app.qss");
     PlotXYDemo w;
     w.showMaximized();

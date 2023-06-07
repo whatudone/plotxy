@@ -278,8 +278,8 @@ struct GenericDataExcect
 {
     int uID; //平台ID
     char platName[NLENTH]; //平台名称
-    double time; //偏移时间
-    double relative; //事件类型（-1）
+    double relativeTime; //偏移时间
+    int timeOffset; //事件类型（-1）
 };
 #pragma pack(pop)
 
