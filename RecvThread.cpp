@@ -62,12 +62,17 @@ void recvThread::onReadyRead()
         QByteArray headerData = datagram.mid(0, sizeof(Z_SendHeader));
         // 处理接收到的数据
         Z_SendHeader* header = reinterpret_cast<Z_SendHeader*>(headerData.data());
-        QByteArray platData = datagram.mid(sizeof(Z_SendHeader), sizeof(PlatInfoDataExcect));
-        PlatInfoDataExcect* plat = reinterpret_cast<PlatInfoDataExcect*>(platData.data());
-        QByteArray genericData =
-            datagram.mid(sizeof(Z_SendHeader) + sizeof(PlatInfoDataExcect), sizeof(GenericData));
-        GenericData* generic = reinterpret_cast<GenericData*>(genericData.data());
-
-        emit dataReceived(*plat, *generic);
+        if(header->iMessageType == 0)
+        {
+            QByteArray platData = datagram.mid(sizeof(Z_SendHeader), header->ilength);
+            PlatInfoDataExcect* plat = reinterpret_cast<PlatInfoDataExcect*>(platData.data());
+            emit platInfoReceived(*plat);
+        }
+        else if(header->iMessageType == 1)
+        {
+            QByteArray genericData = datagram.mid(sizeof(Z_SendHeader), header->ilength);
+            GenericDataExcect* generic = reinterpret_cast<GenericDataExcect*>(genericData.data());
+            emit genericReceived(*generic);
+        }
     }
 }

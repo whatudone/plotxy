@@ -172,7 +172,8 @@ signals:
     void updateRealTime();
 
 public Q_SLOTS:
-    void onRecvRealData(PlatInfoDataExcect plat, GenericData generic);
+    void onRecvPlatinfoData(PlatInfoDataExcect plat);
+    void onRecvGenericData(GenericDataExcect generic);
 };
 
 #define DataManagerInstance DataManager::getInstance()

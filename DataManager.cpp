@@ -24,7 +24,8 @@ DataManager::DataManager()
 {
     m_recvThread = new recvThread;
 
-    connect(m_recvThread, &recvThread::dataReceived, this, &DataManager::onRecvRealData);
+    connect(m_recvThread, &recvThread::platInfoReceived, this, &DataManager::onRecvPlatinfoData);
+    connect(m_recvThread, &recvThread::genericReceived, this, &DataManager::onRecvGenericData);
 }
 
 DataManager::~DataManager() {}
@@ -783,17 +784,7 @@ QStringList DataManager::parsePlatformData(const QString& data)
     return list;
 }
 
-recvThread* DataManager::getRecvThread() const
-{
-    return m_recvThread;
-}
-
-void DataManager::setIsRealTime(bool isRealTime)
-{
-    m_isRealTime = isRealTime;
-}
-
-void DataManager::onRecvRealData(PlatInfoDataExcect plat, GenericData generic)
+void DataManager::onRecvPlatinfoData(PlatInfoDataExcect plat)
 {
     int32_t uID = int32_t(plat.uID);
     if(!m_realDataMap.contains(uID))
@@ -855,9 +846,36 @@ void DataManager::onRecvRealData(PlatInfoDataExcect plat, GenericData generic)
     realPlatform.cStandBy = plat.cStandBy;
     m_realPlatformMap.insert(uID, realPlatform);
 
-    QMap<int32_t, QMap<QString, QList<GenericData>>> m_realGenericMap;
+    emit updateRealTime();
+}
+
+void DataManager::onRecvGenericData(GenericDataExcect generic)
+{
+    int32_t uID = int32_t(generic.uID);
+    if(!m_realGenericMap.contains(uID))
+    {
+        m_realGenericMap.insert(uID, QMap<QString, QList<GenericData>>());
+    }
+
+    QMap<QString, QList<GenericData>> dataMap = m_realGenericMap[uID];
+    GenericData data;
+    data.m_name = generic.platName;
+    data.m_timeOffset = generic.timeOffset;
+    data.m_relativeTime = generic.relativeTime;
+    dataMap["Event"].append(data);
+    m_realGenericMap.insert(uID, dataMap);
 
     emit updateRealTime();
+}
+
+recvThread* DataManager::getRecvThread() const
+{
+    return m_recvThread;
+}
+
+void DataManager::setIsRealTime(bool isRealTime)
+{
+    m_isRealTime = isRealTime;
 }
 
 QString DataManager::getDataFileName() const
