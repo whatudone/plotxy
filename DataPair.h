@@ -188,6 +188,7 @@ public:
 
     QFont getLabelFont()
     {
+        m_labelFont.setPixelSize(m_labelFontSize);
         return m_labelFont;
     }
     void setLabelFont(const QFont&);
@@ -303,7 +304,9 @@ public:
     // 图标icon
     QPixmap processIcon();
     // 文本对齐
-    Qt::Alignment processLabelTextPosition();
+    Qt::Alignment getLabelTextAlign();
+    // 根据文本对齐方式，处理文本的像素坐标位置
+    QPointF processLabelPosition(const QPointF& lastPointPosition, const QString& labelText);
 
     QColor getLabelSecColor() const;
     void setLabelSecColor(const QColor& labelSecColor);
@@ -361,13 +364,13 @@ private:
     QString m_labelText; //显示文本
     QString m_customText; //自定义文本
     TEXT_FROMAT m_format; //文本格式
-    bool m_prefix_show; //前缀是否显示
     int32_t m_entityIDX; //x轴实体ID
     int32_t m_entityIDY; //y轴实体ID
     QString m_entity_x; //x轴实体名
     QString m_entity_y; //y轴实体名
     QString m_attr_x; //x轴属性
     QString m_attr_y; //y轴属性
+    bool m_prefix_show; //前缀是否显示
     bool m_object_show; //实体名是否显示
     bool m_attr_show; //属性是否显示
     bool m_data_show; //数据是否显示

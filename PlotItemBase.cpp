@@ -606,6 +606,10 @@ DataPair* PlotItemBase::addPlotDataPair(int32_t xEntityID,
         auto desc = extraParams.value("Desc").toString();
         data->setDesc(desc);
     }
+    if(extraParams.contains("UUID"))
+    {
+        data->setUuid(extraParams.value("UUID").toString());
+    }
 
     // 目前界面上都是直接修改DataPair内部的数据，这里提供一个集中的入口虚函数处理。
     connect(data,

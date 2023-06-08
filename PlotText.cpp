@@ -152,7 +152,7 @@ void PlotText::drawCellData(QPainter& painter)
                 text = QString::number(value, 'f', data->getLabelPrecision_x());
                 text += " " + data->getUnit_x();
             }
-            auto alignFlag = data->processLabelTextPosition();
+            auto alignFlag = data->getLabelTextAlign();
             painter.drawText(cellRect, alignFlag | Qt::TextWrapAnywhere, text);
         }
     }

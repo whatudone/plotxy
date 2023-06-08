@@ -1101,11 +1101,11 @@ void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBas
     int32_t yEntityID = dataPairObject.value("YEntityID").toInt();
     QString yAttrName = dataPairObject.value("YAttrName").toString();
     QString yAttrUnitName = dataPairObject.value("YAttrUnitName").toString();
-
+    QHash<QString, QVariant> params;
+    params.insert("UUID", uuid);
     auto dataPair = plot->addPlotDataPair(
-        xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
+        xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName, params);
     dataPair->blockSignals(true);
-    dataPair->setUuid(uuid);
     dataPair->setDraw(visible);
     PlotType type = plot->plotType();
     if(type == PlotType::Type_PlotAScope)

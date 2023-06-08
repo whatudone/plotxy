@@ -81,10 +81,6 @@ void PlotScatter::delPlotPairData(const QString& uuid)
 
             m_customPlot->removeItem(draw.pixmap);
         }
-        if(!draw.tracer.isNull())
-        {
-            m_customPlot->removeItem(draw.tracer);
-        }
         if(!draw.tracerText.isNull())
         {
             m_customPlot->removeItem(draw.tracerText);
@@ -187,14 +183,16 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
     {
         info.graph = m_customPlot->addGraph();
         info.graph->setBrush(Qt::NoBrush);
-
+        info.graph->setAdaptiveSampling(true);
         info.tracerText = new QCPItemText(m_customPlot);
-        info.tracerText->position->setType(QCPItemPosition::ptPlotCoords);
+        info.tracerText->position->setType(QCPItemPosition::ptAbsolute);
+        // 默认position的坐标是center,为了方便计算，将position的坐标改为左上角
+        info.tracerText->setPositionAlignment(Qt::AlignTop | Qt::AlignLeft);
 
         info.pixmap = new QCPItemPixmap(m_customPlot); // 创建 QCPItemPixmap 对象
         info.pixmap->setClipToAxisRect(false); // 允许图标超出坐标轴范围
         info.pixmap->setClipAxisRect(m_customPlot->axisRect()); // 设置图标显示范围
-        info.pixmap->topLeft->setType(QCPItemPosition::ptPlotCoords);
+        info.pixmap->topLeft->setType(QCPItemPosition::ptAbsolute);
         info.pixmap->setPen(Qt::NoPen); // 不显示边框
         m_mapScatter.insert(uuid, info);
     }
@@ -203,25 +201,22 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
     auto pixmap = m_mapScatter[uuid].pixmap;
     if(data->isDraw())
     {
-
         graph->setVisible(true);
         // 第三个参数设置为true，禁止内部对数据根据x轴的数值大小进行排序，导致数据插入顺序不对，出现line模式连线不对
         graph->setData(x, y, true);
-
-        graph->setPen(QPen(data->dataColor(), data->width()));
+        QPen pen(data->dataColor(), data->width());
 		//line mode
         if(data->isLineMode())
 		{
-            graph->setLineStyle(QCPGraph::lsLine);
             Qt::PenStyle style = Qt::SolidLine;
             // 线性模式下才支持stipple
             if(data->getIsStippleEnable())
             {
                 style = data->getStipplePattern();
             }
-            QPen pen = graph->pen();
+
             pen.setStyle(style);
-            graph->setPen(pen);
+            graph->setLineStyle(QCPGraph::lsLine);
             graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssNone));
 		}
 		else
@@ -229,6 +224,11 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
             graph->setLineStyle(QCPGraph::lsNone);
             graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, data->width()));
 		}
+        graph->setPen(pen);
+        double lastX = x.last();
+        double lastY = y.last();
+        double lastPosX = m_customPlot->xAxis->coordToPixel(lastX);
+        double lastPosY = m_customPlot->yAxis->coordToPixel(lastY);
 		//icon
         if(data->isIconDraw())
         {
@@ -237,7 +237,10 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
             {
                 pixmap->setVisible(true);
                 pixmap->setPixmap(pix);
-                pixmap->topLeft->setCoords(x.last(), y.last());
+                // 以最后一个数据点的坐标作为图片的中心点
+                double topX = lastPosX - data->iconWidth() / 2;
+                double topY = lastPosY - data->iconHeight() / 2;
+                pixmap->topLeft->setCoords(topX, topY);
             }
         }
         else
@@ -248,13 +251,11 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
         //Label Text
         if(data->isLabelTextShow())
         {
-            // 游标功能先注释掉
-            tracerText->setVisible(false);
-            QString text = data->processLabelText(x.last(), y.last());
+            tracerText->setVisible(true);
+            QString text = data->processLabelText(lastX, lastY);
             tracerText->setText(text);
-            tracerText->position->setCoords(x.last(), y.last());
-            auto alignFlag = data->processLabelTextPosition();
-            tracerText->setTextAlignment(alignFlag);
+            QPointF labelPoint = data->processLabelPosition(QPointF(lastPosX, lastPosY), text);
+            tracerText->position->setCoords(labelPoint.x(), labelPoint.y());
             tracerText->setFont(data->getLabelFont());
             tracerText->setColor(data->getLabelColor());
             tracerText->setBrush(data->getLabelBackground());
@@ -267,6 +268,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
 	else
 	{
         graph->setVisible(false);
+        pixmap->setVisible(false);
         tracerText->setVisible(false);
     }
 }
@@ -406,7 +408,7 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
         xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName, extraParams);
 }
 
-QPair<double, double> PlotScatter::processLabelTextPosition(const QString& text, DataPair* data)
+QPair<double, double> PlotScatter::getLabelTextAlign(const QString& text, DataPair* data)
 {
     QFontMetricsF fm(data->getLabelFont());
     double wd = (fm.size(Qt::TextSingleLine, text).width()) / 3.0;
@@ -455,6 +457,17 @@ void PlotScatter::clearEventText()
         m_customPlot->removeItem(text);
     }
     m_eventList.clear();
+}
+
+void PlotScatter::clearHistoryLines()
+{
+    for(const auto& draw : m_mapScatter)
+    {
+        m_customPlot->removeGraph(draw.graph);
+        m_customPlot->removeItem(draw.pixmap);
+        m_customPlot->removeItem(draw.tracerText);
+    }
+    m_mapScatter.clear();
 }
 
 void PlotScatter::updateTimelineGraph()
@@ -511,7 +524,6 @@ void PlotScatter::updateTimelineGraph()
     int32_t index = 0;
     for(auto& event : eventList)
     {
-
         auto dataList = DataManagerInstance->getGenericDataListByID(event.m_entityID);
         //如果x轴是time，那么需要绘制事件标签，整个用一个Text显示
         for(const auto& data : dataList)

@@ -26,7 +26,7 @@ DataPair::DataPair(QObject* parent)
     m_format = format_default;
 
 	m_labelColor = Qt::green;
-	m_labelBackground = Qt::black;
+    m_labelBackground = Qt::transparent;
 	m_backTransparent = true;
 	m_labelFontSize = 12;
 	m_labelFont.setFamily("Microsoft YaHei");
@@ -35,7 +35,7 @@ DataPair::DataPair(QObject* parent)
     m_textPosition = center;
     m_labelPrec_x = 6;
     m_labelPrec_y = 6;
-	m_labelText_show = true;
+    m_labelText_show = false;
 	m_prefix_show = true;
 	m_object_show = true;
 
@@ -364,6 +364,25 @@ QPixmap DataPair::processIcon()
         QImage newImage = oldImage.mirrored(false, true);
         pix = QPixmap::fromImage(newImage);
     }
+    // 覆盖颜色
+    //    QImage image = pix.toImage(); // 将 QPixmap 转换为 QImage
+
+    //    // 遍历图像的每个像素
+    //    for(int y = 0; y < image.height(); ++y)
+    //    {
+    //        for(int x = 0; x < image.width(); ++x)
+    //        {
+    //            QColor pixelColor = image.pixelColor(x, y);
+    //            if(pixelColor == Qt::black)
+    //            {
+    //                // 将黑色背景像素设置为透明
+    //                pixelColor.setAlpha(0);
+    //                image.setPixelColor(x, y, pixelColor);
+    //            }
+    //        }
+    //    }
+
+    //    pix = QPixmap::fromImage(image);
     return pix;
 }
 
@@ -664,7 +683,7 @@ void DataPair::setUnitShow(bool show)
     }
 }
 
-Qt::Alignment DataPair::processLabelTextPosition()
+Qt::Alignment DataPair::getLabelTextAlign()
 {
     Qt::Alignment flag;
     switch(getLabelPosition())
@@ -697,10 +716,64 @@ Qt::Alignment DataPair::processLabelTextPosition()
         flag = Qt::AlignBottom | Qt::AlignRight;
         break;
     default: //right
-        flag = Qt::AlignCenter;
+        flag = Qt::AlignRight;
         break;
     }
     return flag;
+}
+
+QPointF DataPair::processLabelPosition(const QPointF& lastPointPosition, const QString& labelText)
+{
+    QFont labelFont = getLabelFont();
+
+    QFontMetricsF fm(labelFont);
+    auto labelSize = fm.size(Qt::TextWordWrap, labelText);
+    double defaultSpace = 50.0;
+    QPointF labelPos;
+    switch(getLabelPosition())
+    {
+    case DataPair::left_top: //left-top
+        labelPos.setX(lastPointPosition.x() - defaultSpace - labelSize.width());
+        labelPos.setY(lastPointPosition.y() - defaultSpace - labelSize.height());
+        break;
+    case DataPair::top: //top
+        labelPos.setX(lastPointPosition.x() - labelSize.width() / 2);
+        labelPos.setY(lastPointPosition.y() - defaultSpace - labelSize.height());
+        break;
+    case DataPair::right_top: //right-top
+        labelPos.setX(lastPointPosition.x() + defaultSpace);
+        labelPos.setY(lastPointPosition.y() - defaultSpace - labelSize.height());
+        break;
+    case DataPair::left: //left
+        labelPos.setX(lastPointPosition.x() - defaultSpace - labelSize.width());
+        labelPos.setY(lastPointPosition.y() - labelSize.height() / 2);
+        break;
+    case DataPair::center: //center
+        labelPos.setX(lastPointPosition.x() - labelSize.width() / 2);
+        labelPos.setY(lastPointPosition.y() - labelSize.height() / 2);
+        break;
+    case DataPair::right: //right
+        labelPos.setX(lastPointPosition.x() + defaultSpace);
+        labelPos.setY(lastPointPosition.y() - labelSize.height() / 2);
+        break;
+    case DataPair::left_bottom: //left-bottom
+        labelPos.setX(lastPointPosition.x() - defaultSpace - labelSize.width());
+        labelPos.setY(lastPointPosition.y() + defaultSpace);
+        break;
+    case DataPair::bottom: //bottom
+        labelPos.setX(lastPointPosition.x() - labelSize.width() / 2);
+        labelPos.setY(lastPointPosition.y() + defaultSpace);
+        break;
+    case DataPair::right_bottom: //right-bottom
+        labelPos.setX(lastPointPosition.x() + defaultSpace);
+        labelPos.setY(lastPointPosition.y() + defaultSpace);
+        break;
+    default: //right
+        labelPos.setX(lastPointPosition.x() + defaultSpace);
+        labelPos.setY(lastPointPosition.y() - labelSize.height() / 2);
+        break;
+    }
+    return labelPos;
 }
 
 QColor DataPair::getLabelSecColor() const

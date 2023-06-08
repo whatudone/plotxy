@@ -15,14 +15,12 @@ public:
     struct DrawComponents
     {
         QPointer<QCPGraph> graph;
-        QPointer<QCPItemTracer> tracer;
         QPointer<QCPItemText> tracerText;
         QPointer<QCPItemPixmap> pixmap;
 
         DrawComponents()
         {
             graph = nullptr;
-            tracer = nullptr;
             tracerText = nullptr;
             pixmap = nullptr;
         }
@@ -57,11 +55,13 @@ private:
     void updateGraphByDataPair(DataPair* data) override;
 
     // 文本标签坐标,特殊情况不调用DataPair里面的通用处理方式
-    QPair<double, double> processLabelTextPosition(const QString& text, DataPair* data);
+    QPair<double, double> getLabelTextAlign(const QString& text, DataPair* data);
     // 删除历史事件标签
     void clearEventText();
+    void clearHistoryLines();
     // 刷新时间线事件
     void updateTimelineGraph() override;
+
 
 private:
     QHash<QString, QPair<QVector<double>, QVector<double>>> m_dataHash;
