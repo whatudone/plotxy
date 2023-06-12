@@ -909,12 +909,34 @@ void PlotXYDemo::loadPXYData(const QString& pxyFileName)
 void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
 {
     QString plotName = plot->getName();
+    plotObject.insert("IsDraw", plot->getBVisible());
     plotObject.insert("PlotName", plotName);
     plotObject.insert("X", plot->x());
     plotObject.insert("Y", plot->y());
     plotObject.insert("Width", plot->width());
     plotObject.insert("Height", plot->height());
     plotObject.insert("PlotType", plot->plotType());
+    plotObject.insert("PlotOuterFillColor", colorToString(plot->getOuterFillColor()));
+    plotObject.insert("PlotOutLineColor", colorToString(plot->getOutlineColor()));
+
+    double lower, upper;
+    plot->getCoordRangeX(lower, upper);
+    plotObject.insert("PlotOriginX", lower);
+    plotObject.insert("PlotEndX", upper);
+    plot->getCoordRangeY(lower, upper);
+    plotObject.insert("PlotOriginY", lower);
+    plotObject.insert("PlotEndY", upper);
+
+    plotObject.insert("HorzGrids", QString::number(plot->getHorzGrids()));
+    plotObject.insert("VertGrids", QString::number(plot->getVertGrids()));
+    plotObject.insert("AxisWidth", QString::number(plot->getAxisWidth()));
+    plotObject.insert("GridWidth", QString::number(plot->getGridWidth()));
+    plotObject.insert("AxisColor", colorToString(plot->getAxisColor()));
+    plotObject.insert("GridWidth", colorToString(plot->getGridColor()));
+    plotObject.insert("GridFillColor", colorToString(plot->getGridFillColor()));
+    plotObject.insert("ShowUnitX", plot->unitsShowX());
+    plotObject.insert("ShowUnitY", plot->unitsShowY());
+
     // 图表存在多个数据对
     QJsonArray dataPairArray;
     auto dataPairs = plot->getDataPairs();
@@ -935,7 +957,31 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
     int32_t height = plotObject.value("Height").toInt();
     PlotType type = static_cast<PlotType>(plotObject.value("PlotType").toInt());
     QString plotName = plotObject.value("PlotName").toString();
-    return addPlotWidget(type, QRect(x, y, width, height), plotName);
+
+    auto plot = addPlotWidget(type, QRect(x, y, width, height), plotName);
+    plot->setBVisible(plotObject.value("IsDraw").toBool());
+    plot->setOuterFillColor(plotObject.value("PlotOuterFillColor").toString());
+    plot->setOutlineColor(plotObject.value("PlotOutLineColor").toString());
+
+    double lower, upper;
+    lower = plotObject.value("PlotOriginX").toDouble();
+    upper = plotObject.value("PlotEndX").toDouble();
+    plot->setCoordRangeX(lower, upper);
+    lower = plotObject.value("PlotOriginY").toDouble();
+    upper = plotObject.value("PlotEndU").toDouble();
+    plot->setCoordRangeY(lower, upper);
+
+    plot->setHorzGrids(uint(plotObject.value("HorzGrids").toInt()));
+    plot->setVertGrids(uint(plotObject.value("VertGrids").toInt()));
+    plot->setAxisColorWidth(plotObject.value("AxisColor").toString(),
+                            uint(plotObject.value("AxisWidth").toInt()));
+    plot->setGridColorWidth(plotObject.value("GridColor").toString(),
+                            uint(plotObject.value("GridWidth").toInt()));
+    plot->setGridFillColor(plotObject.value("GridFillColor").toString());
+    plot->setUnitsShowX(plotObject.value("ShowUnitX").toBool());
+    plot->setUnitsShowY(plotObject.value("ShowUnitY").toBool());
+
+    return plot;
 }
 
 void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object, PlotType type)

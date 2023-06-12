@@ -292,6 +292,9 @@ public:
     QList<EventSettings> getEventList() const;
     void setEventList(const QList<EventSettings>& eventList);
 
+    bool getBVisible() const;
+    void setBVisible(bool bVisible);
+
 private:
     void updateResizeFocusPos();
     QRect getRectByDirection(ResizeDirection direction);

@@ -305,4 +305,5 @@ private:
                                        QList<QPointF>* secondControlPoints);
 };
 
+QString colorToString(const QColor& color);
 #endif /* SIMCORE_TIME_UTILS_H */
