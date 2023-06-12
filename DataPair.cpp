@@ -1,11 +1,13 @@
 ﻿#include "DataPair.h"
+#include "DataManager.h"
+#include "PlotXYDemo.h"
+
 #include <QDebug>
 #include <QFileInfo>
 #include <QPainter>
 #include <QTransform>
 #include <QUuid>
 
-#include "DataManager.h"
 DataPair::DataPair(QObject* parent)
 	: QObject(parent)
 {
@@ -344,8 +346,26 @@ QPixmap DataPair::processIcon()
     case DataPair::rotation_270:
         trans.rotate(270);
         break;
+    case DataPair::FollowYaw: {
+        double yaw = DataManagerInstance->getEntityAttrValueByMaxTime(
+            m_entityIDX, "Yaw", PlotXYDemo::getSeconds());
+        trans.rotate(yaw);
+    }
+    break;
+    case DataPair::FollowPitch: {
+        double pitch = DataManagerInstance->getEntityAttrValueByMaxTime(
+            m_entityIDX, "Pitch", PlotXYDemo::getSeconds());
+        trans.rotate(pitch);
+    }
+    break;
+    case DataPair::FollowRoll: {
+        double roll = DataManagerInstance->getEntityAttrValueByMaxTime(
+            m_entityIDX, "Roll", PlotXYDemo::getSeconds());
+        trans.rotate(roll);
+    }
+    break;
     default:
-        trans.rotate(45);
+        trans.rotate(0);
         break;
     }
     pix = pix.transformed(trans);

@@ -256,7 +256,7 @@
        </property>
        <item>
         <property name="text">
-         <string>No Rotation</string>
+         <string>不旋转</string>
         </property>
        </item>
        <item>
@@ -272,6 +272,21 @@
        <item>
         <property name="text">
          <string>270°</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>跟随Yaw</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>跟随Pitch</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>跟随Roll</string>
         </property>
        </item>
       </widget>

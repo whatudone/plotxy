@@ -37,7 +37,12 @@ public:
         no_rotation = 0,
         rotation_90,
         rotation_180,
-        rotation_270
+        rotation_270,
+        FollowYaw,
+        FollowPitch,
+        FollowRoll,
+        FollowCourse,
+        FollwFPAngle
     };
 
     enum ColorRangeMode

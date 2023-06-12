@@ -319,7 +319,7 @@ void PlotDial::customPainting(QPainter& painter)
     double posY;
     QFontMetrics fm(font);
     int w = 0;
-    for(int i = 1; i < m_horzGrids - 1; i++)
+    for(uint32_t i = 1; i < m_horzGrids - 1; i++)
     {
         posX = m_circleRadius * cos((m_endAngle - perAngle * i - 90) * M_PI / 180);
         posY = m_circleRadius * sin((m_endAngle - perAngle * i - 90) * M_PI / 180);
