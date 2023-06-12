@@ -703,3 +703,17 @@ void SmoothCurveGenerator::calculateControlPoints(const QVector<QPointF>& knots,
     delete[] rhsx;
     delete[] rhsy;
 }
+
+QString colorToString(const QColor& color)
+{
+    int red = color.red();
+    int green = color.green();
+    int blue = color.blue();
+
+    QString strRed = QString::number(red, 16);
+    QString strGreen = QString::number(green, 16);
+    QString strBlue = QString::number(blue, 16);
+
+    QString colorStr = "#" + strRed + strGreen + strBlue;
+    return colorStr;
+}
