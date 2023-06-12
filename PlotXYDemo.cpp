@@ -812,10 +812,6 @@ TabDrawWidget* PlotXYDemo::getCurDrawWidget()
 void PlotXYDemo::savePXYData(const QString& pxyFileName)
 {
     QString dataFileName = DataManagerInstance->getDataFileName();
-    if(dataFileName.isEmpty())
-    {
-        return;
-    }
 
     QFile file(pxyFileName);
     if(!file.open(QIODevice::WriteOnly))
@@ -909,15 +905,16 @@ void PlotXYDemo::loadPXYData(const QString& pxyFileName)
 void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
 {
     QString plotName = plot->getName();
+    auto type = plot->plotType();
     plotObject.insert("IsDraw", plot->getBVisible());
     plotObject.insert("PlotName", plotName);
     plotObject.insert("X", plot->x());
     plotObject.insert("Y", plot->y());
     plotObject.insert("Width", plot->width());
     plotObject.insert("Height", plot->height());
-    plotObject.insert("PlotType", plot->plotType());
-    plotObject.insert("PlotOuterFillColor", colorToString(plot->getOuterFillColor()));
-    plotObject.insert("PlotOutLineColor", colorToString(plot->getOutlineColor()));
+    plotObject.insert("PlotType", type);
+    plotObject.insert("PlotOuterFillColor", plot->getOuterFillColor().name());
+    plotObject.insert("PlotOutLineColor", plot->getOutlineColor().name());
 
     double lower, upper;
     plot->getCoordRangeX(lower, upper);
@@ -931,11 +928,63 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
     plotObject.insert("VertGrids", QString::number(plot->getVertGrids()));
     plotObject.insert("AxisWidth", QString::number(plot->getAxisWidth()));
     plotObject.insert("GridWidth", QString::number(plot->getGridWidth()));
-    plotObject.insert("AxisColor", colorToString(plot->getAxisColor()));
-    plotObject.insert("GridWidth", colorToString(plot->getGridColor()));
-    plotObject.insert("GridFillColor", colorToString(plot->getGridFillColor()));
+    plotObject.insert("AxisColor", plot->getAxisColor().name());
+    plotObject.insert("GridWidth", plot->getGridColor().name());
+    plotObject.insert("GridFillColor", plot->getGridFillColor().name());
     plotObject.insert("ShowUnitX", plot->unitsShowX());
     plotObject.insert("ShowUnitY", plot->unitsShowY());
+
+    // 图表特殊设置
+    if(type == PlotType::Type_PlotBar)
+    {
+        plotObject.insert("IsHorizonBar", plot->getIsHorizonBar());
+    }
+    else if(type == PlotType::Type_PlotDial)
+    {
+        PlotDial* dialPlot = dynamic_cast<PlotDial*>(plot);
+        if(dialPlot)
+        {
+            plotObject.insert("DialTickRadius", dialPlot->getTickRadiusRate());
+            plotObject.insert("DialColorRate", dialPlot->getColorRate());
+            plotObject.insert("DialTextRate", dialPlot->getTextRate());
+            plotObject.insert("DialRate", dialPlot->getDialRate());
+            plotObject.insert("DialCapRate", dialPlot->getDialCapRate());
+            plotObject.insert("DialStartAngle", dialPlot->getStartAngle());
+            plotObject.insert("DialEndAngle", dialPlot->getEndAngle());
+            plotObject.insert("DialCapColor", dialPlot->getCapColor().name());
+            plotObject.insert("DialDrawFirstTick", dialPlot->getDrawFirstTick());
+            plotObject.insert("DialDrawLastTick", dialPlot->getDrawLastTick());
+            plotObject.insert("DialDrawFirstTextLabel", dialPlot->getDrawFirstTextLabel());
+            plotObject.insert("DialDrawLastTextLabel", dialPlot->getDrawLastTextLabel());
+            plotObject.insert("DialStyle", dialPlot->getDialStyle());
+
+            QJsonArray colorInfo;
+            QList<DialColorInfo> list = dialPlot->getColorInfoList();
+            for(auto item : list)
+            {
+                QJsonObject object;
+                object.insert("DialColorStart", item.start);
+                object.insert("DialColorEnd", item.end);
+                object.insert("DialColor", item.clr.name());
+                object.insert("DialColorOutline", item.outline.name());
+                object.insert("DialColorWidth", item.width);
+                colorInfo.append(object);
+            }
+            plotObject.insert("DialColorInfo", colorInfo);
+        }
+    }
+    else if(type == PlotType::Type_PlotAttitude)
+    {
+        PlotAttitude* attPlot = dynamic_cast<PlotAttitude*>(plot);
+        if(attPlot)
+        {
+            plotObject.insert("AttitudeTickRadius", attPlot->getTickRadiusPercentage());
+            plotObject.insert("AttitudeTextPercentage", attPlot->getTextPercentage());
+            plotObject.insert("AttitudeDialPercentage", attPlot->getDialPercentage());
+            plotObject.insert("AttitudeRollColor", attPlot->getRollColor().name());
+            plotObject.insert("AttitudePitchColor", attPlot->getPitchColor().name());
+        }
+    }
 
     // 图表存在多个数据对
     QJsonArray dataPairArray;
@@ -980,6 +1029,60 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
     plot->setGridFillColor(plotObject.value("GridFillColor").toString());
     plot->setUnitsShowX(plotObject.value("ShowUnitX").toBool());
     plot->setUnitsShowY(plotObject.value("ShowUnitY").toBool());
+
+    //图表特殊设置部分
+    if(type == PlotType::Type_PlotBar)
+    {
+        plot->setIsHorizonBar(plotObject.value("IsHorizonBar").toBool());
+    }
+    else if(type == PlotType::Type_PlotDial)
+    {
+        PlotDial* dialPlot = dynamic_cast<PlotDial*>(plot);
+        if(dialPlot)
+        {
+            dialPlot->setTickRadiusRate(plotObject.value("DialTickRadius").toInt());
+            dialPlot->setColorRate(plotObject.value("DialColorRate").toInt());
+            dialPlot->setTextRate(plotObject.value("DialTextRate").toInt());
+            dialPlot->setDialRate(plotObject.value("DialRate").toInt());
+            dialPlot->setDialCapRate(plotObject.value("DialCapRate").toInt());
+            dialPlot->setStartAngle(plotObject.value("DialStartAngle").toInt());
+            dialPlot->setEndAngle(plotObject.value("DialEndAngle").toInt());
+            dialPlot->setCapColor(plotObject.value("DialCapColor").toString());
+            dialPlot->setDrawFirstTick(plotObject.value("DialDrawFirstTick").toBool());
+            dialPlot->setDrawLastTick(plotObject.value("DialDrawLastTick").toBool());
+            dialPlot->setDrawFirstTextLabel(plotObject.value("DialDrawFirstTextLabel").toBool());
+            dialPlot->setDrawLastTextLabel(plotObject.value("DialDrawLastTextLabel").toBool());
+            dialPlot->setDialStyle(plotObject.value("DialStyle").toString());
+
+            QJsonArray colorInfo = plotObject.value("DialColorInfo").toArray();
+            int size = colorInfo.size();
+            QList<DialColorInfo> list;
+            for(int i = 0; i < size; i++)
+            {
+                DialColorInfo item;
+                QJsonObject obj = colorInfo.at(i).toObject();
+                item.start = obj.value("DialColorStart").toInt();
+                item.end = obj.value("DialColorEnd").toInt();
+                item.clr = obj.value("DialColor").toString();
+                item.outline = obj.value("DialColorOutline").toString();
+                item.width = obj.value("DialColorWidth").toInt();
+                list.append(item);
+            }
+            dialPlot->setColorInfoList(list);
+        }
+    }
+    else if(type == PlotType::Type_PlotAttitude)
+    {
+        PlotAttitude* attPlot = dynamic_cast<PlotAttitude*>(plot);
+        if(attPlot)
+        {
+            attPlot->setTickRadiusPercentage(plotObject.value("AttitudeTickRadius").toInt());
+            attPlot->setTextPercentage(plotObject.value("AttitudeTextPercentage").toInt());
+            attPlot->setDialPercentage(plotObject.value("AttitudeDialPercentage").toInt());
+            attPlot->setRollColor(plotObject.value("AttitudeRollColor").toString());
+            attPlot->setPitchColor(plotObject.value("AttitudePitchColor").toString());
+        }
+    }
 
     return plot;
 }
