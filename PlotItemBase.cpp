@@ -934,16 +934,6 @@ void PlotItemBase::setBVisible(bool bVisible)
     m_bVisible = bVisible;
 }
 
-bool PlotItemBase::getBVisible() const
-{
-    return m_bVisible;
-}
-
-void PlotItemBase::setBVisible(bool bVisible)
-{
-    m_bVisible = bVisible;
-}
-
 void PlotItemBase::mousePressEvent(QMouseEvent* event)
 {
     if((event->button() == Qt::LeftButton))
