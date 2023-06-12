@@ -555,31 +555,31 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
 void AddPlotPair::updateAttrTableWidgetOnEntityChanged(QTableWidgetItem* entityItem,
                                                        QTableWidget* attrTableWidget)
 {
-    int32_t id = entityItem->data(Qt::UserRole + 1).toInt();
-    auto pairList = DataManagerInstance->getAttrAndUnitPairList(id);
-
-    if(pairList.isEmpty())
-        return;
-    auto pairSize = pairList.size();
-    attrTableWidget->setRowCount(pairSize + 1);
+    attrTableWidget->clearContents();
     attrTableWidget->setColumnCount(2);
-    QString attr;
-    QString unit;
-    for(int i = 0; i < pairSize + 1; i++)
+    QString entityName = entityItem->text();
+    if(entityName == "Now")
     {
-        // 末位插入一个Now属性，用于绘制散点图TimeLine模式
-        if(i < pairSize)
+        attrTableWidget->setRowCount(1);
+        attrTableWidget->setItem(0, 0, new QTableWidgetItem("Now"));
+        attrTableWidget->setItem(0, 1, new QTableWidgetItem(""));
+    }
+    else
+    {
+        int32_t id = entityItem->data(Qt::UserRole + 1).toInt();
+        auto pairList = DataManagerInstance->getAttrAndUnitPairList(id);
+        auto pairSize = pairList.size();
+        attrTableWidget->setRowCount(pairSize);
+        QString attr;
+        QString unit;
+        for(int i = 0; i < pairSize; i++)
         {
             attr = pairList.at(i).first;
             unit = pairList.at(i).second;
+
+            attrTableWidget->setItem(i, 0, new QTableWidgetItem(attr));
+            attrTableWidget->setItem(i, 1, new QTableWidgetItem(unit));
         }
-        else
-        {
-            attr = "Now";
-            unit = "sec";
-        }
-        attrTableWidget->setItem(i, 0, new QTableWidgetItem(attr));
-        attrTableWidget->setItem(i, 1, new QTableWidgetItem(unit));
     }
 }
 // 添加数据对
@@ -666,10 +666,9 @@ void AddPlotPair::onUpdateEntityTableByDataChanged()
     auto dataMap = DataManager::getInstance()->getDataMap();
     if(dataMap.isEmpty())
     {
-        qWarning() << QString("尚未加载数据,当前数据为空") << endl;
+        qWarning() << QString("尚未加载数据,当前数据为空");
         return;
     }
-    int index = 0;
     int icount = dataMap.size();
     QList<QTableWidget*> tableList;
     tableList << ui.tableWidget_Entity << ui.tableWidget_Entity_2 << ui.tableWidget_Entity_3
@@ -680,22 +679,23 @@ void AddPlotPair::onUpdateEntityTableByDataChanged()
               << ui.tableWidget_AScopeEntity;
     for(auto tableWidget : tableList)
     {
-        tableWidget->setRowCount(icount);
+        tableWidget->clearContents();
+        tableWidget->setRowCount(icount + 1);
     }
 
-    for(auto it = dataMap.begin(); it != dataMap.end(); it++)
+    for(auto tableWidget : tableList)
     {
-        QString currEntityType = DataManagerInstance->getEntityNameByID(it.key());
-
-        for(auto tableWidget : tableList)
+        int index = 0;
+        for(auto it = dataMap.begin(); it != dataMap.end(); it++)
         {
+            QString currEntityType = DataManagerInstance->getEntityNameByID(it.key());
             QTableWidgetItem* item = new QTableWidgetItem(currEntityType);
             // 将key作为隐藏数据设置到item中，方便后续通过key查找数据
             item->setData(Qt::UserRole + 1, it.key());
             tableWidget->setItem(index, 0, item);
+            index++;
         }
-
-        index++;
+        tableWidget->setItem(index, 0, new QTableWidgetItem("Now"));
     }
 }
 

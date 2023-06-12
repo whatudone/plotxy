@@ -15,13 +15,6 @@
 #include <QWidget>
 #include <QWidgetAction>
 
-struct textUserData
-{
-	int row;
-	int column;
-	QString str;
-};
-
 class AddPlotPair : public QWidget
 {
     Q_OBJECT

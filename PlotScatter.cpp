@@ -104,7 +104,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
     int itemCnt = getDataPairs().size();
 
     for(int i = 0; i < itemCnt; ++i)
-	{
+    {
         QVector<double> x;
         QVector<double> y;
         auto data = getDataPairs().at(i);
@@ -114,40 +114,45 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
         auto xAttr = data->getAttr_x();
         auto yAttr = data->getAttr_y();
         // 散点图有几种模式，时间模式只有时间属性
-        if(xAttr == "Time" && yAttr == "Time")
+        if(xAttr == "Time" && yAttr == "Now")
         {
-            x = DataManager::getInstance()->getTimeDataSet();
-            y = DataManager::getInstance()->getTimeDataSet();
+            //当为Now的时候y轴没有数据，只需要在X轴上显示一个Now的矩形
+            m_isTimeLine = true;
         }
-        else if(xAttr == "Time" && yAttr != "Time")
+        else
         {
-            if(yAttr != "Now")
+            if(xAttr == "Time" && yAttr == "Time")
             {
+                x = DataManager::getInstance()->getTimeDataSet();
+                y = DataManager::getInstance()->getTimeDataSet();
+            }
+            else if(xAttr == "Time" && yAttr != "Time")
+            {
+
                 x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
                     yEntityID, xAttr, secs);
                 y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
                     yEntityID, yAttr, secs);
             }
+            else if(xAttr != "Time" && yAttr == "Time")
+            {
+                x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                    xEntityID, xAttr, secs);
+                y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                    xEntityID, yAttr, secs);
+            }
             else
             {
-                //当为Now的时候y轴没有数据，只需要在X轴上显示一个Now的矩形
-                m_isTimeLine = true;
+                x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                    xEntityID, xAttr, secs);
+                y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                    yEntityID, yAttr, secs);
             }
+            m_dataHash.insert(uuid, qMakePair(x, y));
         }
-        else if(xAttr != "Time" && yAttr == "Time")
-        {
-            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
-            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, yAttr, secs);
-        }
-        else
-        {
-            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
-            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(yEntityID, yAttr, secs);
-        }
-        m_dataHash.insert(uuid, qMakePair(x, y));
     }
     if(m_isTimeLine)
-    {
+	{
         updateTimelineGraph();
     }
     else
@@ -163,7 +168,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
 void PlotScatter::updateGraphByDataPair(DataPair* data)
 {
     if(!data)
-	{
+    {
         return;
     }
     if(m_isTimeLine)
@@ -175,7 +180,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
     auto x = m_dataHash.value(uuid).first;
     auto y = m_dataHash.value(uuid).second;
     if(x.isEmpty() || y.isEmpty())
-    {
+	{
         return;
     }
     DrawComponents info;
@@ -472,6 +477,7 @@ void PlotScatter::clearHistoryLines()
 
 void PlotScatter::updateTimelineGraph()
 {
+    //Timeline模式 Now和event标签都是不移动，只是会移动坐标轴范围
     if(!m_timelineGraph)
     {
         m_timelineGraph = m_customPlot->addGraph();
