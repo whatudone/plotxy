@@ -7,6 +7,7 @@
 #include "PlotDial.h"
 #include "PlotManagerData.h"
 #include "PlotScatter.h"
+
 #include <QAction>
 #include <QColorDialog>
 #include <QDebug>
@@ -310,7 +311,16 @@ void PlotManager::initTextLightUI()
             &PlotManager::onTableWidget_textLightDataSortItemSelectionChanged);
 	connect(ui.spinBox_10, &QSpinBox::editingFinished, this, &PlotManager::onSpinbox_10Changed);
 	connect(ui.pushButton_71, &QPushButton::clicked, this, &PlotManager::onPushButton_71Clicked);
-	connect(ui.pushButton_73, &QPushButton::clicked, this, &PlotManager::onPushButton_73Clicked);
+    connect(ui.pushButton_73, &QPushButton::clicked, this, &PlotManager::onPushButton_73Clicked);
+}
+
+void PlotManager::initScatterLimitUI()
+{
+    connect(ui.pushButtonLimitAdd, &QPushButton::clicked, this, &PlotManager::onAddScatterLimit);
+    connect(
+        ui.pushButtonLimitRemove, &QPushButton::clicked, this, &PlotManager::onRemoveScatterLimit);
+    connect(
+        ui.pushButtonLimitUpdate, &QPushButton::clicked, this, &PlotManager::onUpdateScatterLimit);
 }
 void PlotManager::initPlotDataUI()
 {
@@ -2186,3 +2196,21 @@ void PlotManager::onCheckBox_37StateChanged(int state)
         plot->setDrawLastTextLabel(state == 2);
     }
 }
+
+void PlotManager::onAddScatterLimit()
+{
+    QString name = ui.lineEditLimitName->text();
+    double value = ui.lineEditLimitValue->text().toDouble();
+    QColor lineColor = ui.pushButtonLineColor->color();
+    uint32_t lineWidth = ui.spinBoxLimitLineWidth->value();
+    QColor FAColor = ui.pushButtonLimitFAColor->color();
+    QColor FBColor = ui.pushButtonLimitFBColor->color();
+    if(auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot))
+    {
+        //        plot->setDrawLastTextLabel(state == 2);
+    }
+}
+
+void PlotManager::onRemoveScatterLimit() {}
+
+void PlotManager::onUpdateScatterLimit() {}

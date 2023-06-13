@@ -369,6 +369,8 @@ void PlotXYDemo::onContextMenu(const QPoint& /*point*/)
     pMenu.addMenu(ui.menuOrder);
     pMenu.addMenu(ViewMenu);
     pMenu.addMenu(ui.menuSelect_Plot);
+    pMenu.addSeparator();
+    pMenu.addMenu(ui.menuView);
 
     /* 在鼠标右键处显示菜单 */
     pMenu.exec(QCursor::pos());
@@ -400,14 +402,20 @@ void PlotXYDemo::onPreviousTab()
     ui.tabWidget->setCurrentIndex(currTabIndex - 1);
 }
 
-void PlotXYDemo::onShowMenubar()
+void PlotXYDemo::onShowMenubar(bool checked)
 {
-    //  menuBar()->setVisible(false);
+    menuBar()->setVisible(checked);
 }
 
-void PlotXYDemo::onShowToolbar() {}
+void PlotXYDemo::onShowToolbar(bool checked)
+{
+    ui.mainToolBar->setVisible(checked);
+}
 
-void PlotXYDemo::onShowStatusbar() {}
+void PlotXYDemo::onShowStatusbar(bool checked)
+{
+    ui.statusBar->setVisible(checked);
+}
 
 void PlotXYDemo::onShowTimeSlider() {}
 

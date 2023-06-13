@@ -105,7 +105,7 @@
         <number>1</number>
        </property>
        <property name="currentIndex">
-        <number>3</number>
+        <number>6</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QVBoxLayout" name="verticalLayout_64" stretch="0,1,0,0,0,1">
@@ -2695,7 +2695,7 @@ background-color: rgb(127, 127, 127);</string>
                    </widget>
                   </item>
                   <item row="0" column="1" colspan="5">
-                   <widget class="QLineEdit" name="lineEdit_38"/>
+                   <widget class="QLineEdit" name="lineEditLimitName"/>
                   </item>
                   <item row="1" column="0">
                    <widget class="QLabel" name="label_59">
@@ -2705,7 +2705,16 @@ background-color: rgb(127, 127, 127);</string>
                    </widget>
                   </item>
                   <item row="1" column="1" colspan="2">
-                   <widget class="QComboBox" name="comboBox_7"/>
+                   <widget class="QComboBox" name="comboBoxLimitAlign">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string>Horizontal</string>
+                     </property>
+                    </item>
+                   </widget>
                   </item>
                   <item row="2" column="0">
                    <widget class="QLabel" name="label_60">
@@ -2715,7 +2724,7 @@ background-color: rgb(127, 127, 127);</string>
                    </widget>
                   </item>
                   <item row="2" column="1" colspan="4">
-                   <widget class="QLineEdit" name="lineEdit_39"/>
+                   <widget class="QLineEdit" name="lineEditLimitValue"/>
                   </item>
                   <item row="3" column="0">
                    <widget class="QLabel" name="label_61">
@@ -2725,7 +2734,7 @@ background-color: rgb(127, 127, 127);</string>
                    </widget>
                   </item>
                   <item row="3" column="1">
-                   <widget class="ColorButton" name="pushButton_36">
+                   <widget class="ColorButton" name="pushButtonLineColor">
                     <property name="maximumSize">
                      <size>
                       <width>30</width>
@@ -2745,7 +2754,11 @@ background-color: rgb(127, 127, 127);</string>
                    </widget>
                   </item>
                   <item row="3" column="3">
-                   <widget class="QSpinBox" name="spinBox"/>
+                   <widget class="QSpinBox" name="spinBoxLimitLineWidth">
+                    <property name="minimum">
+                     <number>1</number>
+                    </property>
+                   </widget>
                   </item>
                   <item row="3" column="4" colspan="2">
                    <widget class="QLabel" name="label_63">
@@ -2762,7 +2775,7 @@ background-color: rgb(127, 127, 127);</string>
                    </widget>
                   </item>
                   <item row="4" column="1">
-                   <widget class="ColorButton" name="pushButton_37">
+                   <widget class="ColorButton" name="pushButtonLimitFAColor">
                     <property name="maximumSize">
                      <size>
                       <width>30</width>
@@ -2782,7 +2795,7 @@ background-color: rgb(127, 127, 127);</string>
                    </widget>
                   </item>
                   <item row="4" column="3">
-                   <widget class="ColorButton" name="pushButton_38">
+                   <widget class="ColorButton" name="pushButtonLimitFBColor">
                     <property name="maximumSize">
                      <size>
                       <width>30</width>
@@ -2930,7 +2943,7 @@ background-color: rgb(127, 127, 127);</string>
                   <item row="2" column="4" colspan="8">
                    <widget class="QLineEdit" name="lineEdit_40">
                     <property name="text">
-                     <string>文件路径</string>
+                     <string/>
                     </property>
                    </widget>
                   </item>
@@ -3061,7 +3074,7 @@ background-color: rgb(127, 127, 127);</string>
                   <item row="0" column="3" colspan="7">
                    <widget class="QLabel" name="label_65">
                     <property name="text">
-                     <string>0(跟左侧Value值一致)</string>
+                     <string/>
                     </property>
                    </widget>
                   </item>
@@ -3102,21 +3115,21 @@ background-color: rgb(127, 127, 127);</string>
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_44">
+              <widget class="QPushButton" name="pushButtonLimitAdd">
                <property name="text">
                 <string>Add</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_42">
+              <widget class="QPushButton" name="pushButtonLimitUpdate">
                <property name="text">
                 <string>Update</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_43">
+              <widget class="QPushButton" name="pushButtonLimitRemove">
                <property name="text">
                 <string>Remove</string>
                </property>
@@ -3125,7 +3138,7 @@ background-color: rgb(127, 127, 127);</string>
             </layout>
            </item>
            <item>
-            <widget class="QTreeWidget" name="treeWidget_6">
+            <widget class="QTreeWidget" name="treeWidgetLimit">
              <attribute name="headerDefaultSectionSize">
               <number>200</number>
              </attribute>
@@ -3149,28 +3162,6 @@ background-color: rgb(127, 127, 127);</string>
                <string/>
               </property>
              </column>
-             <item>
-              <property name="text">
-               <string>Limit1</string>
-              </property>
-              <property name="text">
-               <string>10</string>
-              </property>
-              <property name="text">
-               <string>&gt;</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Limit2</string>
-              </property>
-              <property name="text">
-               <string>50</string>
-              </property>
-              <property name="text">
-               <string>&gt;</string>
-              </property>
-             </item>
             </widget>
            </item>
           </layout>

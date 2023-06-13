@@ -12,6 +12,7 @@ class PlotScatter : public PlotItemBase
 {
     Q_OBJECT
 public:
+    // 基础绘制组件
     struct DrawComponents
     {
         QPointer<QCPGraph> graph;
@@ -23,6 +24,21 @@ public:
             graph = nullptr;
             tracerText = nullptr;
             pixmap = nullptr;
+        }
+    };
+
+    // 背景颜色信息
+    struct BackgroundLimitSeg
+    {
+        QString m_limitName;
+        double m_limitValue;
+        QColor m_lineColor;
+        uint32_t m_lineWidth;
+        QColor m_fillAboveColor;
+        QColor m_fillBelowColor;
+        bool operator==(const BackgroundLimitSeg& seg)
+        {
+            return seg.m_limitValue == this->m_limitValue;
         }
     };
     PlotScatter(QWidget* parent = nullptr);
@@ -50,6 +66,14 @@ public:
     void exportDataToFile(const QString& filename) const override;
 
     void drawGOGData() override;
+    void addBackgroundColorInfo(const QString& limitName,
+                                double limitValue,
+                                const QColor& lineColor,
+                                uint32_t lineWidth,
+                                const QColor& fillAboveColor,
+                                const QColor& fillBelowColor);
+
+    void removeBackgroundColorInfo(double value);
 
 private:
     void initPlot();
@@ -63,7 +87,8 @@ private:
     void clearHistoryLines();
     // 刷新时间线事件
     void updateTimelineGraph() override;
-
+    // 根据当前背景分段信息刷新背景颜色
+    void updateBackgroundColorSeg();
 
 private:
     QHash<QString, QPair<QVector<double>, QVector<double>>> m_dataHash;
@@ -76,9 +101,13 @@ private:
     QCPItemRect* m_timelineNowRect = nullptr;
     QCPItemText* m_timelineNowText = nullptr;
     QCPGraph* m_timelineGraph = nullptr;
-
+    // GOG
     QList<QCPGraph*> m_gogGraphList;
     QList<QCPItemEllipse*> m_gogEllipseList;
+
+    // 背景分段信息
+    QMap<double, BackgroundLimitSeg> m_bkgLimitSegMap;
+    QList<QCPItemRect*> m_backSegRectList;
 };
 
 #endif // PLOTSCATTER_H

@@ -39,8 +39,8 @@ private:
 	void initAttitudeUI();
     void initGOGUI();
     void initDialUI();
-
 	void initTextLightUI();
+    void initScatterLimitUI();
 
 	void refreshTreeWidgetSettingEnabled(PlotItemBase* plot);
 	void refreshGeneralUI(PlotItemBase* plot);
@@ -174,7 +174,10 @@ public slots:
     void onCheckBox_35StateChanged(int state);
     void onCheckBox_36StateChanged(int state);
     void onCheckBox_37StateChanged(int state);
-
+    // scatter
+    void onAddScatterLimit();
+    void onRemoveScatterLimit();
+    void onUpdateScatterLimit();
 signals:
     void sigAddPlotPair();
 	void sigAdvancedDataManager();

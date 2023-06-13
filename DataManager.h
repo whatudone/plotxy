@@ -185,7 +185,6 @@ signals:
 public Q_SLOTS:
     void onRecvPlatinfoData(PlatInfoDataExcect plat);
     void onRecvGenericData(GenericDataExcect generic);
-    void onRecvRealData(PlatInfoDataExcect plat);
 };
 
 #define DataManagerInstance DataManager::getInstance()

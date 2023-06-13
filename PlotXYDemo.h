@@ -113,9 +113,9 @@ public slots:
 	void onNextTab();
 	void onPreviousTab();
 	//menu-view
-	void onShowMenubar();
-	void onShowToolbar();
-	void onShowStatusbar();
+    void onShowMenubar(bool checked);
+    void onShowToolbar(bool checked);
+    void onShowStatusbar(bool checked);
 	void onShowTimeSlider();
 	void onShowTabbar();
 	void onShowRTIControls();

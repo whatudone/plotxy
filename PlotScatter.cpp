@@ -172,7 +172,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
         return;
     }
     if(m_isTimeLine)
-    {
+	{
         updateTimelineGraph();
         return;
     }
@@ -180,7 +180,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
     auto x = m_dataHash.value(uuid).first;
     auto y = m_dataHash.value(uuid).second;
     if(x.isEmpty() || y.isEmpty())
-	{
+    {
         return;
     }
     DrawComponents info;
@@ -354,6 +354,33 @@ void PlotScatter::drawGOGData()
         }
     }
     m_customPlot->replot();
+}
+void PlotScatter::addBackgroundColorInfo(const QString& limitName,
+                                         double limitValue,
+                                         const QColor& lineColor,
+                                         uint32_t lineWidth,
+                                         const QColor& fillAboveColor,
+                                         const QColor& fillBelowColor)
+{
+    if(!m_bkgLimitSegMap.contains(limitValue))
+    {
+        BackgroundLimitSeg seg;
+        seg.m_limitName = limitName;
+        seg.m_limitValue = limitValue;
+        seg.m_lineColor = lineColor;
+        seg.m_lineWidth = lineWidth;
+        seg.m_fillAboveColor = fillAboveColor;
+        seg.m_fillBelowColor = fillBelowColor;
+        m_bkgLimitSegMap.insert(limitValue, seg);
+    }
+}
+
+void PlotScatter::removeBackgroundColorInfo(double value)
+{
+    if(m_bkgLimitSegMap.contains(value))
+    {
+        m_bkgLimitSegMap.remove(value);
+    }
 }
 
 void PlotScatter::setAxisVisible(bool on, AxisType type)
@@ -613,4 +640,47 @@ void PlotScatter::updateTimelineGraph()
     }
 
     m_customPlot->replot();
+}
+
+void PlotScatter::updateBackgroundColorSeg()
+{
+    // 清理历史背景分段信息
+    for(auto rect : m_backSegRectList)
+    {
+        m_customPlot->removeItem(rect);
+    }
+    m_backSegRectList.clear();
+    if(m_bkgLimitSegMap.isEmpty())
+    {
+        return;
+    }
+    int32_t size = m_bkgLimitSegMap.size() + 1;
+    for(int var = 0; var < size; ++var)
+    {
+        QCPItemRect* rect = new QCPItemRect(m_customPlot);
+        m_backSegRectList.append(rect);
+    }
+    // 假设已经对分段进行排序，从小到大
+    for(const auto& seg : m_bkgLimitSegMap)
+    {
+        if(seg.m_limitName == m_bkgLimitSegMap.first().m_limitName)
+        {
+            QCPItemRect* bottomRect = new QCPItemRect(m_customPlot);
+            bottomRect->topLeft->setTypeX(QCPItemPosition::ptAxisRectRatio);
+            bottomRect->topLeft->setTypeY(QCPItemPosition::ptPlotCoords);
+            bottomRect->topLeft->setCoords(0, seg.m_limitValue);
+            bottomRect->bottomRight->setTypeX(QCPItemPosition::ptAxisRectRatio);
+            bottomRect->bottomRight->setTypeY(QCPItemPosition::ptAxisRectRatio);
+            bottomRect->bottomRight->setCoords(1, 0);
+
+            QCPItemRect* topRect = new QCPItemRect(m_customPlot);
+            topRect->topLeft->setTypeX(QCPItemPosition::ptAxisRectRatio);
+            topRect->topLeft->setTypeY(QCPItemPosition::ptPlotCoords);
+            topRect->topLeft->setCoords(0, seg.m_limitValue);
+            topRect->bottomRight->setTypeX(QCPItemPosition::ptAxisRectRatio);
+            topRect->bottomRight->setTypeY(QCPItemPosition::ptAxisRectRatio);
+            topRect->bottomRight->setCoords(1, 0);
+            m_backSegRectList.append(topRect);
+        }
+    }
 }
