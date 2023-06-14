@@ -249,7 +249,7 @@ void PlotPolar::rescaleAxis()
 
 void PlotPolar::drawGOGData()
 {
-    QMap<QString, QList<GOGDataInfo>> gogDataMap = DataManager::getInstance()->getAllGOGFileMap();
+    QMap<QString, QList<GOGDataInfo>> gogDataMap = m_gogDataMap;
     QList<QString> keyList = gogDataMap.keys();
     for(auto graph : m_gogGraphList)
     {
@@ -279,21 +279,32 @@ void PlotPolar::drawGOGData()
             else if(data.type == "circle")
             {
                 // 极坐标图没有绘制圆的相关接口，只能通过画多个点的方式拟合圆
-                graph->setPen(QColor(Qt::red));
+                QPen pen = graph->pen();
+                pen.setStyle(Qt::SolidLine);
+                pen.setColor(QColor(data.lineColor));
+                pen.setWidth(data.lineWidth);
+                graph->setPen(pen);
+
                 // 填充颜色
-                //                graph->setBrush(QColor(255, 0, 0));
+                graph->setBrush(QColor(data.fillColor));
 
                 // 添加数据点
-                int numPoints = 100; // 圆形轮廓的点数
-                double radius = 100; // 圆形的半径
+                int numPoints = 200; // 圆形轮廓的点数
+                double radius = data.radius; // 圆形的半径
+                double centerX = data.xList.at(0);
+                double centerY = data.yList.at(0);
+                QVector<double> vecX;
+                QVector<double> vecY;
 
                 for(int i = 0; i <= numPoints; ++i)
                 {
                     double theta = 2.0 * M_PI * i / numPoints; // 角度范围从 0 到 2π
-                    double x = radius * qCos(theta);
-                    double y = radius * qSin(theta);
-                    graph->addData(x, y);
+                    double x = centerX + radius * qCos(theta);
+                    double y = centerY + radius * qSin(theta);
+                    vecX.append(x);
+                    vecY.append(y);
                 }
+                graph->setData(vecX, vecY, true);
             }
             m_gogGraphList.append(graph);
         }

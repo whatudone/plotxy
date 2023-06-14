@@ -80,12 +80,6 @@ PlotItemBase::PlotItemBase(QWidget* parent)
             this,
             &PlotItemBase::onDataPairsChanged,
             Qt::UniqueConnection);
-
-    connect(DataManager::getInstance(),
-            &DataManager::repaintGOGData,
-            this,
-            &PlotItemBase::drawGOGData,
-            Qt::UniqueConnection);
 }
 
 PlotItemBase::~PlotItemBase()
@@ -868,6 +862,94 @@ void PlotItemBase::drawBorderAndControls()
     painter.drawRects(m_resizeRectMap.values().toVector());
 }
 
+void PlotItemBase::loadGOGFile(const QString& fileName)
+{
+    QFile file(fileName);
+    if(!file.open(QIODevice::ReadOnly))
+    {
+        qDebug() << "PlotManager::loadGOGFile read file failure:" << fileName;
+        return;
+    }
+    QList<GOGDataInfo> gogFileList;
+    while(!file.atEnd())
+    {
+        GOGDataInfo data;
+        QString lineData;
+        lineData = file.readLine();
+        if(lineData.startsWith("start"))
+        {
+            lineData = file.readLine();
+            data.type = lineData.simplified();
+
+            lineData = file.readLine();
+            while(!lineData.startsWith("end"))
+            {
+                if(lineData.startsWith("ll") || lineData.startsWith("centerll"))
+                {
+                    if(lineData.startsWith("ll"))
+                    {
+                        QStringList lineInfo = lineData.split(" ");
+                        data.xList.append(lineInfo.at(1).toDouble());
+                        data.yList.append(lineInfo.at(2).toDouble());
+                    }
+                    else if(lineData.startsWith("centerll"))
+                    {
+                        QStringList circleInfo = lineData.split(" ");
+                        data.xList.append(circleInfo.at(1).toDouble());
+                        data.yList.append(circleInfo.at(2).toDouble());
+
+                        lineData = file.readLine();
+                        if(lineData.startsWith("radius"))
+                            data.radius = lineData.split(" ").at(1).toDouble();
+                    }
+                }
+
+                if(lineData.startsWith("rangeUnits"))
+                {
+                    data.rangeUnits = lineData.split(" ").at(1).simplified();
+                }
+                if(lineData.startsWith("altitudeUnits"))
+                {
+                    data.altitudeUnits = lineData.split(" ").at(1).simplified();
+                }
+                if(lineData.startsWith("3d"))
+                {
+                    data.triDName = lineData.split(" ").at(2).simplified();
+                }
+
+                if(lineData.startsWith("linecolor"))
+                {
+                    data.lineColor = lineData.split(" ").at(2).simplified().toUInt(nullptr, 16);
+                }
+
+                if(lineData.startsWith("fillcolor"))
+                {
+                    data.fillColor = lineData.split(" ").at(2).simplified();
+                }
+
+                if(lineData.startsWith("linewidth"))
+                {
+                    data.lineWidth = lineData.split(" ").at(1).toInt();
+                }
+
+                if(lineData.startsWith("depthBuffer"))
+                {
+                    data.depthBuffer = (lineData.split(" ").at(1).simplified() == "true");
+                }
+
+                if(lineData.startsWith("tessellate"))
+                {
+                    data.tessellate = (lineData.split(" ").at(1).simplified() == "true");
+                }
+                lineData = file.readLine();
+            }
+            gogFileList.push_back(data);
+        }
+    }
+    file.close();
+    m_gogDataMap.insert(fileName, gogFileList);
+}
+
 void PlotItemBase::onDataPairsChanged()
 {
     // 使用时间轴的当前时间
@@ -893,7 +975,6 @@ void PlotItemBase::paintEvent(QPaintEvent* event)
         updateResizeFocusPos();
         drawBorderAndControls();
     }
-    drawGOGData();
     QWidget::paintEvent(event);
 }
 
@@ -1112,6 +1193,34 @@ void PlotItemBase::setEventList(const QList<EventSettings>& eventList)
 }
 
 void PlotItemBase::drawGOGData() {}
+
+void PlotItemBase::addGOGFile(const QString& fileName)
+{
+    m_allGOGFileList.push_back(fileName);
+    loadGOGFile(fileName);
+    drawGOGData();
+}
+
+void PlotItemBase::removeGOGFile(const QString& fileName)
+{
+    int cnt = m_allGOGFileList.size();
+    for(int i = 0; i < cnt; i++)
+    {
+        if(m_allGOGFileList.at(i) == fileName)
+        {
+            m_allGOGFileList.removeAt(i);
+            break;
+        }
+    }
+    if(m_gogDataMap.contains(fileName))
+        m_gogDataMap.remove(fileName);
+    drawGOGData();
+}
+
+QList<QString> PlotItemBase::getGOGFileList()
+{
+    return m_allGOGFileList;
+}
 
 int PlotItemBase::getBarRightPadding() const
 {
