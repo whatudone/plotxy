@@ -75,6 +75,8 @@ public:
 
     void removeBackgroundColorInfo(double value);
 
+    QMap<double, BackgroundLimitSeg> getBkgLimitSegMap() const;
+
 private:
     void initPlot();
     void updateDataForDataPairsByTime(double secs) override;
@@ -107,7 +109,7 @@ private:
 
     // 背景分段信息
     QMap<double, BackgroundLimitSeg> m_bkgLimitSegMap;
-    QList<QCPItemRect*> m_backSegRectList;
+    QList<QCPAbstractItem*> m_backSegRectList;
 };
 
 #endif // PLOTSCATTER_H

@@ -38,6 +38,13 @@ PlotScatter::~PlotScatter() {}
 void PlotScatter::initPlot()
 {
     m_customPlot = new QCustomPlot();
+    // 坐标轴范围切换之后，需要更新背景分段坐标信息
+    connect(m_customPlot->xAxis, QOverload<const QCPRange&>::of(&QCPAxis::rangeChanged), [this]() {
+        updateBackgroundColorSeg();
+    });
+    connect(m_customPlot->yAxis, QOverload<const QCPRange&>::of(&QCPAxis::rangeChanged), [this]() {
+        updateBackgroundColorSeg();
+    });
     m_customPlot->axisRect()->setupFullAxesBox(true);
 
     m_customPlot->xAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
@@ -73,7 +80,6 @@ void PlotScatter::delPlotPairData(const QString& uuid)
         auto draw = m_mapScatter.take(uuid);
         if(!draw.graph.isNull())
         {
-
             m_customPlot->removeGraph(draw.graph);
         }
         if(!draw.pixmap.isNull())
@@ -168,7 +174,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
 void PlotScatter::updateGraphByDataPair(DataPair* data)
 {
     if(!data)
-	{
+    {
         return;
     }
     if(m_isTimeLine)
@@ -180,7 +186,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
     auto x = m_dataHash.value(uuid).first;
     auto y = m_dataHash.value(uuid).second;
     if(x.isEmpty() || y.isEmpty())
-    {
+	{
         return;
     }
     DrawComponents info;
@@ -373,6 +379,7 @@ void PlotScatter::addBackgroundColorInfo(const QString& limitName,
         seg.m_fillBelowColor = fillBelowColor;
         m_bkgLimitSegMap.insert(limitValue, seg);
     }
+    updateBackgroundColorSeg();
 }
 
 void PlotScatter::removeBackgroundColorInfo(double value)
@@ -381,6 +388,7 @@ void PlotScatter::removeBackgroundColorInfo(double value)
     {
         m_bkgLimitSegMap.remove(value);
     }
+    updateBackgroundColorSeg();
 }
 
 void PlotScatter::setAxisVisible(bool on, AxisType type)
@@ -484,6 +492,8 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
     }
     m_customPlot->xAxis->setRange(m_coordBgn_x, m_coordEnd_x);
     m_customPlot->yAxis->setRange(m_coordBgn_y, m_coordEnd_y);
+    m_customPlot->xAxis->setLabel(xAttrName);
+    m_customPlot->yAxis->setLabel(yAttrName);
     return PlotItemBase::addPlotDataPair(
         xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName, extraParams);
 }
@@ -652,35 +662,65 @@ void PlotScatter::updateBackgroundColorSeg()
     m_backSegRectList.clear();
     if(m_bkgLimitSegMap.isEmpty())
     {
+        m_customPlot->replot();
         return;
     }
-    int32_t size = m_bkgLimitSegMap.size() + 1;
+    // 已经对分段进行排序，从小到大,先绘制最下层的背景分段，然后循环绘制上层背景分段
+    QList<double> valueVec = m_bkgLimitSegMap.keys();
+    double value = valueVec.at(0);
+    QCPItemRect* bottomRect = new QCPItemRect(m_customPlot);
+    bottomRect->topLeft->setTypeX(QCPItemPosition::ptAxisRectRatio);
+    bottomRect->topLeft->setTypeY(QCPItemPosition::ptPlotCoords);
+    bottomRect->topLeft->setCoords(0.0, value);
+    bottomRect->bottomRight->setTypeX(QCPItemPosition::ptPlotCoords);
+    bottomRect->bottomRight->setTypeY(QCPItemPosition::ptPlotCoords);
+    bottomRect->bottomRight->setCoords(m_customPlot->xAxis->range().upper,
+                                       m_customPlot->yAxis->range().lower);
+    bottomRect->setBrush(m_bkgLimitSegMap.value(value).m_fillBelowColor);
+    // 将rect放置到最底层进行绘制，避免遮挡其他元素
+    bottomRect->setLayer("background");
+    m_backSegRectList.append(bottomRect);
+
+    int32_t size = valueVec.size();
     for(int var = 0; var < size; ++var)
     {
-        QCPItemRect* rect = new QCPItemRect(m_customPlot);
-        m_backSegRectList.append(rect);
-    }
-    // 假设已经对分段进行排序，从小到大
-    for(const auto& seg : m_bkgLimitSegMap)
-    {
-        if(seg.m_limitName == m_bkgLimitSegMap.first().m_limitName)
+        QCPItemRect* topRect = new QCPItemRect(m_customPlot);
+        topRect->topLeft->setTypeX(QCPItemPosition::ptAxisRectRatio);
+        topRect->topLeft->setTypeY(QCPItemPosition::ptPlotCoords);
+        double topValue = 0.0;
+        if(valueVec.size() > (var + 1))
         {
-            QCPItemRect* bottomRect = new QCPItemRect(m_customPlot);
-            bottomRect->topLeft->setTypeX(QCPItemPosition::ptAxisRectRatio);
-            bottomRect->topLeft->setTypeY(QCPItemPosition::ptPlotCoords);
-            bottomRect->topLeft->setCoords(0, seg.m_limitValue);
-            bottomRect->bottomRight->setTypeX(QCPItemPosition::ptAxisRectRatio);
-            bottomRect->bottomRight->setTypeY(QCPItemPosition::ptAxisRectRatio);
-            bottomRect->bottomRight->setCoords(1, 0);
-
-            QCPItemRect* topRect = new QCPItemRect(m_customPlot);
-            topRect->topLeft->setTypeX(QCPItemPosition::ptAxisRectRatio);
-            topRect->topLeft->setTypeY(QCPItemPosition::ptPlotCoords);
-            topRect->topLeft->setCoords(0, seg.m_limitValue);
-            topRect->bottomRight->setTypeX(QCPItemPosition::ptAxisRectRatio);
-            topRect->bottomRight->setTypeY(QCPItemPosition::ptAxisRectRatio);
-            topRect->bottomRight->setCoords(1, 0);
-            m_backSegRectList.append(topRect);
+            topValue = std::min(valueVec.at(var + 1), m_customPlot->yAxis->range().upper);
         }
+        else
+        {
+            topValue = m_customPlot->yAxis->range().upper;
+        }
+        double curValue = valueVec.at(var);
+        topRect->topLeft->setCoords(0, topValue);
+        topRect->bottomRight->setTypeX(QCPItemPosition::ptAxisRectRatio);
+        topRect->bottomRight->setTypeY(QCPItemPosition::ptPlotCoords);
+        topRect->bottomRight->setCoords(1, curValue);
+        auto seg = m_bkgLimitSegMap.value(curValue);
+
+        topRect->setBrush(seg.m_fillAboveColor);
+        topRect->setLayer("background");
+        m_backSegRectList.append(topRect);
+
+        QCPItemLine* line = new QCPItemLine(m_customPlot);
+        line->setPen(QPen(seg.m_lineColor, seg.m_lineWidth));
+        line->start->setType(QCPItemPosition::ptPlotCoords);
+        line->start->setCoords(m_customPlot->xAxis->range().lower, curValue);
+        line->end->setType(QCPItemPosition::ptPlotCoords);
+        line->end->setCoords(m_customPlot->xAxis->range().upper, curValue);
+        line->setLayer("background");
+        m_backSegRectList.append(line);
     }
+
+    m_customPlot->replot();
+}
+
+QMap<double, PlotScatter::BackgroundLimitSeg> PlotScatter::getBkgLimitSegMap() const
+{
+    return m_bkgLimitSegMap;
 }

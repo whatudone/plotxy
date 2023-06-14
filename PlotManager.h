@@ -52,6 +52,7 @@ private:
 	void refreshTextEditUI(PlotItemBase* plot);
 	void refreshAttitudeUI(PlotItemBase* plot);
     void refreshDialUI(PlotItemBase* plot);
+    void refreshScatterLimitUI(PlotItemBase* plot);
 
 	void enableItem_Scatter();
 	void enableItem_AScope();
@@ -179,6 +180,8 @@ public slots:
     void onAddScatterLimit();
     void onRemoveScatterLimit();
     void onUpdateScatterLimit();
+    // 选中不同的Limit
+    void onCurrentLimitChanged(QTreeWidgetItem* item, int column);
 signals:
     void sigAddPlotPair();
 	void sigAdvancedDataManager();
