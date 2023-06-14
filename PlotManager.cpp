@@ -618,7 +618,17 @@ void PlotManager::refreshLightTextUI(PlotItemBase* plot)
 		}
 	}
 	else
-		return;
+        return;
+}
+
+void PlotManager::refreshGOGUI(PlotItemBase* plot)
+{
+    QList<QString> fileList = plot->getGOGFileList();
+    ui.listWidget_2->clear();
+    for(auto fileName : fileList)
+    {
+        ui.listWidget_2->addItem(fileName);
+    }
 }
 
 void PlotManager::refreshTextEditUI(PlotItemBase* plot)
@@ -855,6 +865,8 @@ void PlotManager::onTWSPclicked(QTreeWidgetItem* item, int column)
         refreshAxisGridUI(m_curSelectPlot);
         //Text Edit
         refreshTextEditUI(m_curSelectPlot);
+        //gog界面
+        refreshGOGUI(m_curSelectPlot);
     }
 }
 
@@ -1475,7 +1487,7 @@ void PlotManager::onPushButton_25Clicked()
 
 void PlotManager::onPushButton_26Clicked()
 {
-    DataManager::getInstance()->removeGOGFile(
+    m_curSelectPlot->removeGOGFile(
         ui.listWidget_2->currentItem()->data(Qt::DisplayRole).toString());
     ui.listWidget_2->takeItem(ui.listWidget_2->currentRow());
 }
@@ -1497,7 +1509,7 @@ void PlotManager::addGOGTableItem(const QString& fileName)
     if(!duplicate)
     {
         ui.listWidget_2->addItem(fileName);
-        DataManager::getInstance()->addGOGFile(fileName);
+        m_curSelectPlot->addGOGFile(fileName);
     }
 }
 

@@ -296,12 +296,17 @@ public:
     void setBVisible(bool bVisible);
     virtual void drawGOGData();
 
+    void addGOGFile(const QString& fileName);
+    void removeGOGFile(const QString& fileName);
+    QList<QString> getGOGFileList();
+
 private:
     void updateResizeFocusPos();
     QRect getRectByDirection(ResizeDirection direction);
     void setCursorByDirection();
 
     void drawBorderAndControls();
+    void loadGOGFile(const QString& fileName);
 
 private slots:
     // 响应整体数据变化
@@ -375,6 +380,10 @@ protected:
     int32_t m_leftPadding; //绘图间隔-left
     int32_t m_rightPadding; //绘图间隔-right
 
+    // gog数据
+    QMap<QString, QList<GOGDataInfo>> m_gogDataMap;
+    QList<QString> m_allGOGFileList;
+
 public slots:
     void slot_updateRect(const QRect&);
     void slot_setVisible(bool);
@@ -395,6 +404,7 @@ private:
     virtual void customPainting(QPainter&);
 signals:
     void dataPairsChanged(PlotItemBase* pBaseItem); //整体数据发生变化
+
 protected:
     // 部分为自绘,不需要这个控件就不需要创建，需要的子类自己初始化
     QCustomPlot* m_customPlot = nullptr;

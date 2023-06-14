@@ -310,7 +310,7 @@ void PlotScatter::exportDataToFile(const QString& filename) const
 
 void PlotScatter::drawGOGData()
 {
-    QMap<QString, QList<GOGDataInfo>> gogDataMap = DataManager::getInstance()->getAllGOGFileMap();
+    QMap<QString, QList<GOGDataInfo>> gogDataMap = m_gogDataMap;
     QList<QString> keyList = gogDataMap.keys();
     for(auto graph : m_gogGraphList)
     {

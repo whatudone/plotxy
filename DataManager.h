@@ -84,7 +84,6 @@ private:
     QVector3D m_refLLAPoint;
     // ASI文件中带的gog数据路径，是相对于ASI文件的相对路径，需要读取的时候转化为绝对路径
     QList<QString> m_gogFileList;
-    QList<QString> m_allGOGFileList;
     // 导入数据文件路径
     QString m_dataFileName;
     bool m_isRealTime;
@@ -103,13 +102,6 @@ public:
     void getMinMaxTime(double& minTime, double& maxTime);
     void getMinMaxRealTime(double& minTime, double& maxTime);
     int getRefYear();
-
-    void addGOGFile(const QString& fileName);
-    void removeGOGFile(const QString& fileName);
-    QList<QString> getGOGFileList();
-    QMap<QString, QList<GOGDataInfo>> getAllGOGFileMap();
-    void loadGOGFile(const QString& fileName);
-    void updateGOGDataMap();
 
     // 获取最小时间到secs时间内的实体-属性数据list
     QVector<double>
@@ -180,7 +172,6 @@ signals:
     void loadDataFinished();
     void recvData();
     void updateRealTime();
-    void repaintGOGData();
 
 public Q_SLOTS:
     void onRecvPlatinfoData(PlatInfoDataExcect plat);

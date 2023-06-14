@@ -47,6 +47,7 @@ private:
 	void refreshAxisGridUI(PlotItemBase* plot);
 	void refreshPlotDataUI(PlotItemBase* plot);
 	void refreshLightTextUI(PlotItemBase* plot);
+    void refreshGOGUI(PlotItemBase* plot);
 
 	void refreshTextEditUI(PlotItemBase* plot);
 	void refreshAttitudeUI(PlotItemBase* plot);
