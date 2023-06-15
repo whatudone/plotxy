@@ -381,6 +381,7 @@ void PlotPolar::updateGraphByDataPair(DataPair* data)
         graph = new QCPPolarGraph(m_angularAxis, m_angularAxis->radialAxis());
         graph->setBrush(Qt::NoBrush);
         graph->setPen(QPen(data->dataColor(), data->width()));
+        m_graphHash.insert(uuid, graph);
     }
     else
     {
