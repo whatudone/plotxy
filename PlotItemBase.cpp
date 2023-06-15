@@ -29,6 +29,8 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     m_coordEnd_x = 100;
     m_coordBgn_y = 0;
     m_coordEnd_y = 100;
+    m_xPrecision = 0;
+    m_yPrecision = 0;
 
     m_outerFillColor = Qt::black;
     m_outlineColor = Qt::black;
@@ -711,6 +713,18 @@ void PlotItemBase::setyAxisLabelFontSize(int size)
             m_customPlot->yAxis->setLabelFont(m_yAxisLabelFont);
         }
     }
+    replot();
+}
+
+void PlotItemBase::setXPrecision(int value)
+{
+    m_xPrecision = value;
+    replot();
+}
+
+void PlotItemBase::setYPrecision(int value)
+{
+    m_yPrecision = value;
     replot();
 }
 

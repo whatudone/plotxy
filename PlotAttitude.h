@@ -33,10 +33,6 @@ private:
     double m_pitchValue; //旋转角度
     double m_rollValue; //滚动值
 
-    int m_decision_roll; //roll小数点精度
-
-    int m_decision_pitch; //pitch小数点精度
-
     int m_tickRadiusPercentage; //刻度半径百分比
     int m_textPercentage; //文本半径百分比
     int m_dialPercentage; //表盘半径百分比

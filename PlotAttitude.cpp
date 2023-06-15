@@ -33,8 +33,6 @@ PlotAttitude::PlotAttitude(QWidget* parent)
 
 	m_units_x = QString("°");
     m_units_y = QString("°");
-    m_decision_roll = 0;
-    m_decision_pitch = 0;
 	m_title = "Attitude";
 
     m_xTickLabelFontSize = 10;
@@ -98,7 +96,7 @@ void PlotAttitude::drawScale_roll(QPainter* painter, int radius)
         {
             rollTickNum = rollTickNum - 360;
         }
-        strNum = QString::number(rollTickNum, 'f', m_decision_roll);
+        strNum = QString::number(rollTickNum, 'f', m_xPrecision);
         if(m_showUnits_x)
 			str = QString("%1%2").arg(strNum).arg(m_units_x);
 		else
@@ -138,7 +136,7 @@ void PlotAttitude::drawScale_pitch(QPainter* painter, int radius)
     // 从上往下绘制
     for(uint i = 0; i < m_vertGrids; ++i)
 	{
-		strNum = QString::number(eachMajor_pitch * i + m_coordBgn_y, 'f', m_decision_pitch);
+        strNum = QString::number(eachMajor_pitch * i + m_coordBgn_y, 'f', m_yPrecision);
 		if(m_showUnits_y)
 			str = QString("%1%2").arg(strNum).arg(m_units_y);
 		else
@@ -194,14 +192,14 @@ void PlotAttitude::drawText_roll(QPainter* painter, int radius)
     int yPos = radius * sin(rad);
 	painter->drawText(QPoint(xPos, yPos), m_xAxisLabel);
 
-	QString str, strNum;
+    QString str, strNum;
     if(math::doubleEqual(m_rollValue, std::numeric_limits<double>::max()))
     {
         strNum = "---";
     }
     else
     {
-        strNum = QString::number(m_rollValue, 'f', m_decision_roll);
+        strNum = QString::number(m_rollValue, 'f', m_xPrecision);
     }
     if(m_showUnits_x)
 		str = QString("%1%2").arg(strNum).arg(m_units_x);
@@ -228,14 +226,14 @@ void PlotAttitude::drawText_pitch(QPainter* painter, int radius)
     int yPos = radius * sin(rad);
 	painter->drawText(QPoint(xPos, yPos), m_yAxisLabel);
 
-	QString str, strNum;
+    QString str, strNum;
     if(math::doubleEqual(m_pitchValue, std::numeric_limits<double>::max()))
     {
         strNum = "---";
     }
     else
     {
-        strNum = QString::number(m_pitchValue, 'f', m_decision_pitch);
+        strNum = QString::number(m_pitchValue, 'f', m_yPrecision);
     }
     if(m_showUnits_y)
 		str = QString("%1%2").arg(strNum).arg(m_units_y);

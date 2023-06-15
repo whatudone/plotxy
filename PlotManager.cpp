@@ -272,6 +272,14 @@ void PlotManager::initAxisGridUI()
             SIGNAL(currentIndexChanged(int)),
             this,
             SLOT(onComboBox_3CurrentIndexChanged(int)));
+    connect(ui.lineEdit_PrecisionX,
+            &QLineEdit::editingFinished,
+            this,
+            &PlotManager::onLineEdit_PrecisionXEditingFinished);
+    connect(ui.lineEdit_PrecisionY,
+            &QLineEdit::editingFinished,
+            this,
+            &PlotManager::onLineEdit_PrecisionYEditingFinished);
     QFontDatabase FontDb;
     foreach(int size, FontDb.standardSizes())
     {
@@ -586,6 +594,9 @@ void PlotManager::refreshAxisGridUI(PlotItemBase* plot)
     ui.fontComboBox_3->setCurrentFont(plot->getxTickLabelFont());
     ui.comboBox_AxisGrid_FontSize->setCurrentText(QString("%1").arg(plot->getxTickLabelFontSize()));
     ui.comboBox_2->setCurrentIndex(int(plot->getGridStyle()) - 1);
+    ui.lineEdit_PrecisionX->setText(QString::number(plot->getXPrecision()));
+    ui.lineEdit_PrecisionY->setText(QString::number(plot->getYPrecision()));
+
     switch(plot->getGridDensity())
     {
     case GridDensity::LESS:
@@ -1519,6 +1530,16 @@ void PlotManager::onComboBox_3CurrentIndexChanged(int index)
         break;
     }
     m_curSelectPlot->setGridDensity(density);
+}
+
+void PlotManager::onLineEdit_PrecisionXEditingFinished()
+{
+    m_curSelectPlot->setXPrecision(ui.lineEdit_PrecisionX->text().toInt());
+}
+
+void PlotManager::onLineEdit_PrecisionYEditingFinished()
+{
+    m_curSelectPlot->setYPrecision(ui.lineEdit_PrecisionY->text().toInt());
 }
 
 void PlotManager::onPushButton_24Clicked()
