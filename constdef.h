@@ -2,6 +2,7 @@
 #define CONST_DEF_H_
 
 #include <QColor>
+#include <QFont>
 #include <QPoint>
 #include <QString>
 #include <QVector>
@@ -302,4 +303,24 @@ struct GOGDataInfo
     bool tessellate;
 };
 
+struct GOGCustomSetting
+{
+    bool isDraw;
+    QColor fillColor;
+    Qt::CheckState fillState;
+    int lineWidth;
+    int pointSize;
+    QFont font;
+    bool isDrawText;
+
+    GOGCustomSetting()
+    {
+        isDraw = false;
+        fillColor = Qt::transparent;
+        fillState = Qt::PartiallyChecked;
+        lineWidth = 0;
+        pointSize = 0;
+        isDrawText = false;
+    }
+};
 #endif // _CONST_DEF_H_

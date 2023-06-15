@@ -51,10 +51,10 @@ void PlotScatter::initPlot()
     m_customPlot->yAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
     m_customPlot->xAxis->ticker()->setTickCount(m_vertGrids);
     m_customPlot->yAxis->ticker()->setTickCount(m_horzGrids);
-    m_customPlot->xAxis->setTickLabelColor(m_tickLabelColor);
-    m_customPlot->yAxis->setTickLabelColor(m_tickLabelColor);
-    m_customPlot->xAxis->setTickLabelFont(m_tickLabelFont);
-    m_customPlot->yAxis->setTickLabelFont(m_tickLabelFont);
+    m_customPlot->xAxis->setTickLabelColor(m_xTickLabelColor);
+    m_customPlot->yAxis->setTickLabelColor(m_yTickLabelColor);
+    m_customPlot->xAxis->setTickLabelFont(m_xTickLabelFont);
+    m_customPlot->yAxis->setTickLabelFont(m_yTickLabelFont);
     m_customPlot->xAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
     m_customPlot->yAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
     m_customPlot->xAxis2->setBasePen(QPen(m_axisColor, m_axisWidth));
@@ -66,10 +66,10 @@ void PlotScatter::initPlot()
 
     m_customPlot->setBackground(m_outerFillColor);
     m_customPlot->axisRect()->setBackground(m_gridFillColor);
-    m_customPlot->xAxis->setLabelColor(m_axisLabelColor);
-    m_customPlot->yAxis->setLabelColor(m_axisLabelColor);
-    m_customPlot->xAxis->setLabelFont(m_axisLabelFont);
-    m_customPlot->yAxis->setLabelFont(m_axisLabelFont);
+    m_customPlot->xAxis->setLabelColor(m_xAxisLabelColor);
+    m_customPlot->yAxis->setLabelColor(m_yAxisLabelColor);
+    m_customPlot->xAxis->setLabelFont(m_xAxisLabelFont);
+    m_customPlot->yAxis->setLabelFont(m_yAxisLabelFont);
 }
 
 void PlotScatter::delPlotPairData(const QString& uuid)
@@ -178,7 +178,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
         return;
     }
     if(m_isTimeLine)
-	{
+    {
         updateTimelineGraph();
         return;
     }
@@ -191,7 +191,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
     }
     DrawComponents info;
     if(!m_mapScatter.contains(uuid))
-    {
+	{
         info.graph = m_customPlot->addGraph();
         info.graph->setBrush(Qt::NoBrush);
         info.graph->setAdaptiveSampling(true);
@@ -316,8 +316,7 @@ void PlotScatter::exportDataToFile(const QString& filename) const
 
 void PlotScatter::drawGOGData()
 {
-    QMap<QString, QList<GOGDataInfo>> gogDataMap = m_gogDataMap;
-    QList<QString> keyList = gogDataMap.keys();
+    QList<QString> keyList = m_gogDataMap.keys();
     for(auto graph : m_gogGraphList)
     {
         m_customPlot->removeGraph(graph);
@@ -330,37 +329,70 @@ void PlotScatter::drawGOGData()
     m_gogEllipseList.clear();
     for(auto fileName : keyList)
     {
-        QList<GOGDataInfo> dataList = gogDataMap[fileName];
-        for(auto data : dataList)
+        GOGCustomSetting setting = m_gogCustomSettings.value(fileName);
+        QList<GOGDataInfo> dataList = m_gogDataMap[fileName];
+
+        if(setting.isDraw)
         {
-            if(data.type == "line")
+            for(auto data : dataList)
             {
-                QCPGraph* graph = m_customPlot->addGraph();
-                graph->setBrush(Qt::NoBrush);
-                graph->setVisible(true);
-                graph->setPen(QPen(QColor(data.lineColor), data.lineWidth));
-                graph->setLineStyle(QCPGraph::lsLine);
-                graph->setData(data.xList, data.yList, true);
-                m_gogGraphList.append(graph);
-            }
-            else if(data.type == "circle")
-            {
-                QCPItemEllipse* ellipse = new QCPItemEllipse(m_customPlot);
-                ellipse->topLeft->setCoords(data.xList.at(0) - data.radius,
-                                            data.yList.at(0) + data.radius);
-                ellipse->bottomRight->setCoords(data.xList.at(0) + data.radius,
-                                                data.yList.at(0) - data.radius);
-                ellipse->setPen(QPen(QColor(data.lineColor), data.lineWidth));
-                if(data.isFill)
-                    ellipse->setBrush(QColor(data.fillColor));
-                else
+                bool isFilled = false;
+                QColor fillColor;
+                if(setting.fillState == Qt::Checked)
+                {
+                    isFilled = true;
+                    fillColor = setting.fillColor;
+                }
+                else if(setting.fillState == Qt::Unchecked)
+                {
+                    isFilled = false;
+                }
+                else if(setting.fillState == Qt::PartiallyChecked)
+                {
+                    if(data.isFill)
+                    {
+                        isFilled = true;
+                        fillColor = data.fillColor;
+                    }
+                    else
+                    {
+                        isFilled = false;
+                    }
+                }
+                int lineWidth = setting.lineWidth == 0 ? data.lineWidth : setting.lineWidth;
+                if(data.type == "line")
+                {
+                    QCPGraph* graph = m_customPlot->addGraph();
+                    //                    if(isFilled)
+                    //                        graph->setBrush(fillColor);
+                    //                    else
+                    graph->setBrush(Qt::NoBrush);
+                    graph->setVisible(true);
+                    graph->setPen(QPen(QColor(data.lineColor), lineWidth));
+                    graph->setLineStyle(QCPGraph::lsLine);
+                    graph->setData(data.xList, data.yList, true);
+                    m_gogGraphList.append(graph);
+                }
+                else if(data.type == "circle")
+                {
+                    QCPItemEllipse* ellipse = new QCPItemEllipse(m_customPlot);
+                    ellipse->topLeft->setCoords(data.xList.at(0) - data.radius,
+                                                data.yList.at(0) + data.radius);
+                    ellipse->bottomRight->setCoords(data.xList.at(0) + data.radius,
+                                                    data.yList.at(0) - data.radius);
+                    ellipse->setPen(QPen(QColor(data.lineColor), lineWidth));
+                    //                    if(isFilled)
+                    //                        ellipse->setBrush(QColor(fillColor));
+                    //                    else
                     ellipse->setBrush(Qt::NoBrush);
-                m_gogEllipseList.append(ellipse);
+                    m_gogEllipseList.append(ellipse);
+                }
             }
         }
     }
     m_customPlot->replot();
 }
+
 void PlotScatter::addBackgroundColorInfo(const QString& limitName,
                                          double limitValue,
                                          const QColor& lineColor,

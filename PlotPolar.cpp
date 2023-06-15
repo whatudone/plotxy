@@ -40,12 +40,12 @@ void PlotPolar::initPlot()
     m_angularAxis->setRangeDrag(false);
     m_angularAxis->setTickLabelMode(QCPPolarAxisAngular::lmUpright);
 
-    m_angularAxis->setTickLabelColor(m_tickLabelColor);
-    m_angularAxis->setTickLabelFont(m_tickLabelFont);
+    m_angularAxis->setTickLabelColor(m_xTickLabelColor);
+    m_angularAxis->setTickLabelFont(m_xTickLabelFont);
     m_angularAxis->setTickPen(QPen(m_gridColor, 1));
 
-    m_angularAxis->radialAxis()->setTickLabelColor(m_tickLabelColor);
-    m_angularAxis->radialAxis()->setTickLabelFont(m_tickLabelFont);
+    m_angularAxis->radialAxis()->setTickLabelColor(m_xTickLabelColor);
+    m_angularAxis->radialAxis()->setTickLabelFont(m_xTickLabelFont);
 
     m_angularAxis->radialAxis()->setTickLabelMode(QCPPolarAxisRadial::lmUpright);
     m_angularAxis->radialAxis()->setTickLabelRotation(0);
@@ -130,15 +130,15 @@ void PlotPolar::setGridVisible(bool enable)
 
 void PlotPolar::setTickLabelColor(QColor& color)
 {
-    m_tickLabelColor = color;
-    m_angularAxis->setTickLabelColor(m_tickLabelColor);
-    m_angularAxis->radialAxis()->setTickLabelColor(m_tickLabelColor);
+    m_xTickLabelColor = color;
+    m_angularAxis->setTickLabelColor(m_xTickLabelColor);
+    m_angularAxis->radialAxis()->setTickLabelColor(m_xTickLabelColor);
     m_customPlot->replot();
 }
 
 void PlotPolar::setTickLabelFont(QFont& font)
 {
-    m_tickLabelFont = font;
+    m_xTickLabelFont = font;
     m_angularAxis->setTickLabelFont(font);
     m_angularAxis->radialAxis()->setTickLabelFont(font);
     m_customPlot->replot();
@@ -146,9 +146,9 @@ void PlotPolar::setTickLabelFont(QFont& font)
 
 void PlotPolar::setTickLabelFontSize(int size)
 {
-    m_tickLabelFontSize = size;
-    m_tickLabelFont.setPixelSize(size);
-    setTickLabelFont(m_tickLabelFont);
+    m_xTickLabelFontSize = size;
+    m_xTickLabelFont.setPixelSize(size);
+    setTickLabelFont(m_xTickLabelFont);
 }
 
 void PlotPolar::setGridStyle(GridStyle style)
@@ -249,8 +249,7 @@ void PlotPolar::rescaleAxis()
 
 void PlotPolar::drawGOGData()
 {
-    QMap<QString, QList<GOGDataInfo>> gogDataMap = m_gogDataMap;
-    QList<QString> keyList = gogDataMap.keys();
+    QList<QString> keyList = m_gogDataMap.keys();
     for(auto graph : m_gogGraphList)
     {
         m_angularAxis->removeGraph(graph);
@@ -258,55 +257,91 @@ void PlotPolar::drawGOGData()
     m_gogGraphList.clear();
     for(auto fileName : keyList)
     {
-        QList<GOGDataInfo> dataList = gogDataMap[fileName];
-        for(auto data : dataList)
+        GOGCustomSetting setting = m_gogCustomSettings.value(fileName);
+        QList<GOGDataInfo> dataList = m_gogDataMap[fileName];
+        if(setting.isDraw)
         {
-            QCPPolarGraph* graph = new QCPPolarGraph(m_angularAxis, m_angularAxis->radialAxis());
-            if(data.type == "line")
+
+            for(auto data : dataList)
             {
-                graph->setBrush(Qt::NoBrush);
-                graph->setVisible(true);
-                QPen pen = graph->pen();
-                pen.setStyle(Qt::SolidLine);
-                pen.setColor(QColor(data.lineColor));
-                pen.setWidth(data.lineWidth);
-                graph->setPen(pen);
-
-                graph->setScatterStyle(QCPScatterStyle::ssNone);
-                graph->setLineStyle(QCPPolarGraph::lsLine);
-                graph->setData(data.xList, data.yList, true);
-            }
-            else if(data.type == "circle")
-            {
-                // 极坐标图没有绘制圆的相关接口，只能通过画多个点的方式拟合圆
-                QPen pen = graph->pen();
-                pen.setStyle(Qt::SolidLine);
-                pen.setColor(QColor(data.lineColor));
-                pen.setWidth(data.lineWidth);
-                graph->setPen(pen);
-
-                // 填充颜色
-                graph->setBrush(QColor(data.fillColor));
-
-                // 添加数据点
-                int numPoints = 200; // 圆形轮廓的点数
-                double radius = data.radius; // 圆形的半径
-                double centerX = data.xList.at(0);
-                double centerY = data.yList.at(0);
-                QVector<double> vecX;
-                QVector<double> vecY;
-
-                for(int i = 0; i <= numPoints; ++i)
+                bool isFilled = false;
+                QColor fillColor;
+                if(setting.fillState == Qt::Checked)
                 {
-                    double theta = 2.0 * M_PI * i / numPoints; // 角度范围从 0 到 2π
-                    double x = centerX + radius * qCos(theta);
-                    double y = centerY + radius * qSin(theta);
-                    vecX.append(x);
-                    vecY.append(y);
+                    isFilled = true;
+                    fillColor = setting.fillColor;
                 }
-                graph->setData(vecX, vecY, true);
+                else if(setting.fillState == Qt::Unchecked)
+                {
+                    isFilled = false;
+                }
+                else if(setting.fillState == Qt::PartiallyChecked)
+                {
+                    if(data.isFill)
+                    {
+                        isFilled = true;
+                        fillColor = data.fillColor;
+                    }
+                    else
+                    {
+                        isFilled = false;
+                    }
+                }
+                int lineWidth = setting.lineWidth == 0 ? data.lineWidth : setting.lineWidth;
+                QCPPolarGraph* graph =
+                    new QCPPolarGraph(m_angularAxis, m_angularAxis->radialAxis());
+                if(data.type == "line")
+                {
+                    //                    if(isFilled)
+                    //                        graph->setBrush(fillColor);
+                    //                    else
+                    graph->setBrush(Qt::NoBrush);
+                    graph->setVisible(true);
+                    QPen pen = graph->pen();
+                    pen.setStyle(Qt::SolidLine);
+                    pen.setColor(QColor(data.lineColor));
+                    pen.setWidth(lineWidth);
+                    graph->setPen(pen);
+
+                    graph->setScatterStyle(QCPScatterStyle::ssNone);
+                    graph->setLineStyle(QCPPolarGraph::lsLine);
+                    graph->setData(data.xList, data.yList, true);
+                }
+                else if(data.type == "circle")
+                {
+                    // 极坐标图没有绘制圆的相关接口，只能通过画多个点的方式拟合圆
+                    QPen pen = graph->pen();
+                    pen.setStyle(Qt::SolidLine);
+                    pen.setColor(QColor(data.lineColor));
+                    pen.setWidth(lineWidth);
+                    graph->setPen(pen);
+
+                    // 填充颜色
+                    //                    if(isFilled)
+                    //                        graph->setBrush(fillColor);
+                    //                    else
+                    graph->setBrush(Qt::NoBrush);
+
+                    // 添加数据点
+                    int numPoints = 200; // 圆形轮廓的点数
+                    double radius = data.radius; // 圆形的半径
+                    double centerX = data.xList.at(0);
+                    double centerY = data.yList.at(0);
+                    QVector<double> vecX;
+                    QVector<double> vecY;
+
+                    for(int i = 0; i <= numPoints; ++i)
+                    {
+                        double theta = 2.0 * M_PI * i / numPoints; // 角度范围从 0 到 2π
+                        double x = centerX + radius * qCos(theta);
+                        double y = centerY + radius * qSin(theta);
+                        vecX.append(x);
+                        vecY.append(y);
+                    }
+                    graph->setData(vecX, vecY, true);
+                }
+                m_gogGraphList.append(graph);
             }
-            m_gogGraphList.append(graph);
         }
     }
 }

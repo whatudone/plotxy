@@ -294,16 +294,16 @@ void PlotDial::customPainting(QPainter& painter)
     pen.setWidth(int(m_gridWidth));
     pen.setColor(m_axisColor);
     painter.setPen(pen);
-    QFont font = m_tickLabelFont;
+    QFont font = m_xTickLabelFont;
 
     // pixelSize = 0的时候，设置不生效
-    if(int(m_tickLabelFont.pixelSize() * m_textRate / 1000.0) == 0)
+    if(int(m_xTickLabelFont.pixelSize() * m_textRate / 1000.0) == 0)
     {
         font.setPixelSize(1);
     }
     else
     {
-        font.setPixelSize(int(m_tickLabelFont.pixelSize() * m_textRate / 1000.0));
+        font.setPixelSize(int(m_xTickLabelFont.pixelSize() * m_textRate / 1000.0));
     }
     painter.setFont(font);
 

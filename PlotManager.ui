@@ -1810,43 +1810,17 @@ color: rgb(255, 255, 255);</string>
               </item>
               <item>
                <layout class="QGridLayout" name="gridLayout_10">
-                <item row="4" column="0">
-                 <widget class="QLabel" name="label_47">
-                  <property name="text">
-                   <string>Font:</string>
+                <item row="4" column="1" colspan="2">
+                 <widget class="QFontComboBox" name="fontComboBox_2">
+                  <property name="editable">
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="1" colspan="3">
-                 <widget class="QLineEdit" name="lineEdit_26"/>
-                </item>
-                <item row="6" column="0">
-                 <widget class="QLabel" name="label_46">
+                <item row="2" column="0">
+                 <widget class="QLabel" name="label_42">
                   <property name="text">
-                   <string>Offset Y:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="6" column="1" colspan="3">
-                 <widget class="QLineEdit" name="lineEdit_30"/>
-                </item>
-                <item row="2" column="1">
-                 <widget class="ColorButton" name="pushButton_22">
-                  <property name="maximumSize">
-                   <size>
-                    <width>25</width>
-                    <height>25</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="0" colspan="2">
-                 <widget class="QCheckBox" name="checkBox_14">
-                  <property name="text">
-                   <string>Visible</string>
+                   <string>Color:</string>
                   </property>
                  </widget>
                 </item>
@@ -1863,47 +1837,16 @@ color: rgb(255, 255, 255);</string>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="0">
-                 <widget class="QLabel" name="label_43">
-                  <property name="text">
-                   <string>Fill: </string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="1" colspan="2">
-                 <widget class="QFontComboBox" name="fontComboBox_2">
-                  <property name="editable">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="label_42">
-                  <property name="text">
-                   <string>Color:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="2">
-                 <spacer name="horizontalSpacer_11">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
+                <item row="2" column="1">
+                 <widget class="ColorButton" name="pushButton_22">
+                  <property name="maximumSize">
                    <size>
-                    <width>40</width>
-                    <height>20</height>
+                    <width>25</width>
+                    <height>25</height>
                    </size>
                   </property>
-                 </spacer>
-                </item>
-                <item row="5" column="1" colspan="3">
-                 <widget class="QLineEdit" name="lineEdit_29"/>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_41">
                   <property name="text">
-                   <string>Text:</string>
+                   <string/>
                   </property>
                  </widget>
                 </item>
@@ -1927,8 +1870,69 @@ color: rgb(255, 255, 255);</string>
                   </property>
                  </widget>
                 </item>
+                <item row="3" column="2">
+                 <spacer name="horizontalSpacer_11">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="label_43">
+                  <property name="text">
+                   <string>Fill: </string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0" colspan="2">
+                 <widget class="QCheckBox" name="checkBox_14">
+                  <property name="text">
+                   <string>Visible</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="1" colspan="3">
+                 <widget class="QLineEdit" name="lineEdit_29"/>
+                </item>
+                <item row="4" column="0">
+                 <widget class="QLabel" name="label_47">
+                  <property name="text">
+                   <string>Font:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1" colspan="3">
+                 <widget class="QLineEdit" name="lineEdit_26"/>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_41">
+                  <property name="text">
+                   <string>Text:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="6" column="0">
+                 <widget class="QLabel" name="label_46">
+                  <property name="text">
+                   <string>Offset Y:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="6" column="1" colspan="3">
+                 <widget class="QLineEdit" name="lineEdit_30"/>
+                </item>
                 <item row="4" column="3">
-                 <widget class="QComboBox" name="comboBox_Text_fontSize"/>
+                 <widget class="QSpinBox" name="spinBox_FontSize">
+                  <property name="value">
+                   <number>36</number>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </item>

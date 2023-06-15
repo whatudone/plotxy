@@ -38,13 +38,16 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     m_axisWidth = 1;
     m_gridWidth = 1;
     m_axisColor = Qt::white;
-    m_axisLabelColor = Qt::white;
     m_gridColor = Qt::white;
     m_gridVisible = true;
-    m_tickLabelColor = Qt::white;
-    m_tickLabelFontSize = 20;
-    m_tickLabelFont.setFamily("Microsoft YaHei");
-    m_tickLabelFont.setPixelSize(m_tickLabelFontSize);
+    m_xTickLabelColor = Qt::white;
+    m_xTickLabelFontSize = 20;
+    m_xTickLabelFont.setFamily("Microsoft YaHei");
+    m_xTickLabelFont.setPixelSize(m_xTickLabelFontSize);
+    m_yTickLabelColor = Qt::white;
+    m_yTickLabelFontSize = 20;
+    m_yTickLabelFont.setFamily("Microsoft YaHei");
+    m_yTickLabelFont.setPixelSize(m_yTickLabelFontSize);
     m_gridStyle = Qt::DotLine;
     m_gridDensity = GridDensity::LESS;
     m_gridFillColor = Qt::black;
@@ -58,10 +61,15 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     m_titleFont.setFamily("Microsoft YaHei");
     m_titleFont.setPixelSize(m_titleFontSize);
 
-    m_axisLabelColor = Qt::white;
-    m_axisLabelFontSize = 32.0;
-    m_axisLabelFont.setFamily("Microsoft YaHei");
-    m_axisLabelFont.setPixelSize(m_axisLabelFontSize);
+    m_xAxisLabelColor = Qt::white;
+    m_xAxisLabelFontSize = 32.0;
+    m_xAxisLabelFont.setFamily("Microsoft YaHei");
+    m_xAxisLabelFont.setPixelSize(m_xAxisLabelFontSize);
+
+    m_yAxisLabelColor = Qt::white;
+    m_yAxisLabelFontSize = 32.0;
+    m_yAxisLabelFont.setFamily("Microsoft YaHei");
+    m_yAxisLabelFont.setPixelSize(m_yAxisLabelFontSize);
 
     m_leftPadding = 10;
     m_rightPadding = 10;
@@ -312,39 +320,92 @@ void PlotItemBase::setGridVisible(bool enable)
     replot();
 }
 
-void PlotItemBase::setTickLabelColor(const QColor& color)
+void PlotItemBase::setxTickLabelVisible(bool show)
 {
-    m_tickLabelColor = color;
+    m_xTickLabelVisible = show;
+    if(m_customPlot)
+    {
+        if(m_customPlot->xAxis)
+            m_customPlot->xAxis->setTickLabels(show);
+    }
+    replot();
+}
+
+void PlotItemBase::setyTickLabelVisible(bool show)
+{
+    m_yTickLabelVisible = show;
+    if(m_customPlot)
+    {
+        if(m_customPlot->yAxis)
+            m_customPlot->yAxis->setTickLabels(show);
+    }
+    replot();
+}
+
+void PlotItemBase::setxTickLabelColor(const QColor& color)
+{
+    m_xTickLabelColor = color;
     if(m_customPlot)
     {
         if(m_customPlot->xAxis && m_customPlot->yAxis)
         {
-            m_customPlot->xAxis->setTickLabelColor(m_tickLabelColor);
-            m_customPlot->yAxis->setTickLabelColor(m_tickLabelColor);
+            m_customPlot->xAxis->setTickLabelColor(m_xTickLabelColor);
         }
     }
     replot();
 }
 
-void PlotItemBase::setTickLabelFont(const QFont& font)
+void PlotItemBase::setxTickLabelFont(const QFont& font)
 {
-    m_tickLabelFont = font;
+    m_xTickLabelFont = font;
     if(m_customPlot)
     {
         if(m_customPlot->xAxis && m_customPlot->yAxis)
         {
-            m_customPlot->xAxis->setTickLabelFont(m_tickLabelFont);
-            m_customPlot->yAxis->setTickLabelFont(m_tickLabelFont);
+            m_customPlot->xAxis->setTickLabelFont(m_xTickLabelFont);
         }
     }
     replot();
 }
 
-void PlotItemBase::setTickLabelFontSize(int size)
+void PlotItemBase::setxTickLabelFontSize(int size)
 {
-    m_tickLabelFontSize = size;
-    m_tickLabelFont.setPixelSize(size);
-    setTickLabelFont(m_tickLabelFont);
+    m_xTickLabelFontSize = size;
+    m_xTickLabelFont.setPixelSize(size);
+    setxTickLabelFont(m_xTickLabelFont);
+}
+
+void PlotItemBase::setyTickLabelColor(const QColor& color)
+{
+    m_yTickLabelColor = color;
+    if(m_customPlot)
+    {
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
+        {
+            m_customPlot->yAxis->setTickLabelColor(m_yTickLabelColor);
+        }
+    }
+    replot();
+}
+
+void PlotItemBase::setyTickLabelFont(const QFont& font)
+{
+    m_yTickLabelFont = font;
+    if(m_customPlot)
+    {
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
+        {
+            m_customPlot->yAxis->setTickLabelFont(m_yTickLabelFont);
+        }
+    }
+    replot();
+}
+
+void PlotItemBase::setyTickLabelFontSize(int size)
+{
+    m_yTickLabelFontSize = size;
+    m_yTickLabelFont.setPixelSize(size);
+    setyTickLabelFont(m_yTickLabelFont);
 }
 
 void PlotItemBase::setGridStyle(GridStyle style)
@@ -511,6 +572,46 @@ void PlotItemBase::setTitleOffset(int offsetX, int offsetY)
     updateTitle();
 }
 
+void PlotItemBase::setxAxisLabelVisible(bool on)
+{
+    m_xAxisLabelVisible = on;
+    if(m_customPlot)
+    {
+        if(m_customPlot->xAxis)
+        {
+            if(on)
+            {
+                m_customPlot->xAxis->setLabel(m_xAxisLabel);
+            }
+            else
+            {
+                m_customPlot->xAxis->setLabel("");
+            }
+        }
+    }
+    replot();
+}
+
+void PlotItemBase::setyAxisLabelVisible(bool on)
+{
+    m_yAxisLabelVisible = on;
+    if(m_customPlot)
+    {
+        if(m_customPlot->yAxis)
+        {
+            if(on)
+            {
+                m_customPlot->yAxis->setLabel(m_yAxisLabel);
+            }
+            else
+            {
+                m_customPlot->yAxis->setLabel("");
+            }
+        }
+    }
+    replot();
+}
+
 void PlotItemBase::setxAxisLabel(const QString& label)
 {
     m_xAxisLabel = label;
@@ -533,38 +634,83 @@ void PlotItemBase::setyAxisLabel(const QString& label)
     replot();
 }
 
-void PlotItemBase::setAxisLabelColor(const QColor& color)
+void PlotItemBase::setxAxisLabelColor(const QColor& color)
 {
-    m_axisLabelColor = color;
+    m_xAxisLabelColor = color;
     if(m_customPlot)
     {
         if(m_customPlot->xAxis && m_customPlot->yAxis)
         {
-            m_customPlot->xAxis->setLabelColor(m_axisLabelColor);
-            m_customPlot->yAxis->setLabelColor(m_axisLabelColor);
+            m_customPlot->xAxis->setLabelColor(m_xAxisLabelColor);
         }
     }
     replot();
 }
 
-void PlotItemBase::setAxisLabelFont(const QFont& font)
+void PlotItemBase::setxAxisLabelFont(const QFont& font)
 {
-    m_axisLabelFont = font;
+    m_xAxisLabelFont = font;
     if(m_customPlot)
     {
         if(m_customPlot->xAxis && m_customPlot->yAxis)
         {
-            m_customPlot->xAxis->setLabelFont(m_axisLabelFont);
-            m_customPlot->yAxis->setLabelFont(m_axisLabelFont);
+            m_customPlot->xAxis->setLabelFont(m_xAxisLabelFont);
         }
     }
     replot();
 }
 
-void PlotItemBase::setAxisLabelFontSize(int size)
+void PlotItemBase::setxAxisLabelFontSize(int size)
 {
-    m_axisLabelFontSize = size;
-    m_axisLabelFont.setPixelSize(size);
+    m_xAxisLabelFontSize = size;
+    m_xAxisLabelFont.setPixelSize(size);
+    if(m_customPlot)
+    {
+        if(m_customPlot->xAxis)
+        {
+            m_customPlot->xAxis->setLabelFont(m_xAxisLabelFont);
+        }
+    }
+    replot();
+}
+
+void PlotItemBase::setyAxisLabelColor(const QColor& color)
+{
+    m_yAxisLabelColor = color;
+    if(m_customPlot)
+    {
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
+        {
+            m_customPlot->yAxis->setLabelColor(m_yAxisLabelColor);
+        }
+    }
+    replot();
+}
+
+void PlotItemBase::setyAxisLabelFont(const QFont& font)
+{
+    m_yAxisLabelFont = font;
+    if(m_customPlot)
+    {
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
+        {
+            m_customPlot->yAxis->setLabelFont(m_yAxisLabelFont);
+        }
+    }
+    replot();
+}
+
+void PlotItemBase::setyAxisLabelFontSize(int size)
+{
+    m_yAxisLabelFontSize = size;
+    m_yAxisLabelFont.setPixelSize(size);
+    if(m_customPlot)
+    {
+        if(m_customPlot->yAxis)
+        {
+            m_customPlot->yAxis->setLabelFont(m_yAxisLabelFont);
+        }
+    }
     replot();
 }
 
@@ -924,7 +1070,7 @@ void PlotItemBase::loadGOGFile(const QString& fileName)
 
                 if(lineData.startsWith("fillcolor"))
                 {
-                    data.fillColor = lineData.split(" ").at(2).simplified();
+                    data.fillColor = lineData.split(" ").at(2).simplified().toUInt(nullptr, 16);
                 }
 
                 if(lineData.startsWith("linewidth"))
@@ -1012,6 +1158,17 @@ void PlotItemBase::updateGraphByDataPair(DataPair* dataPair)
 }
 
 void PlotItemBase::customPainting(QPainter& /*painter*/) {}
+
+QMap<QString, GOGCustomSetting> PlotItemBase::getGogCustomSettings() const
+{
+    return m_gogCustomSettings;
+}
+
+void PlotItemBase::setGogCustomSettings(const QMap<QString, GOGCustomSetting>& gogCustomSettings)
+{
+    m_gogCustomSettings = gogCustomSettings;
+    drawGOGData();
+}
 
 bool PlotItemBase::getBVisible() const
 {
@@ -1121,6 +1278,11 @@ bool PlotItemBase::eventFilter(QObject* obj, QEvent* event)
         }
     }
     return QWidget::eventFilter(obj, event);
+}
+
+QMap<QString, QList<GOGDataInfo>> PlotItemBase::getGogDataMap() const
+{
+    return m_gogDataMap;
 }
 
 int PlotItemBase::getBarLeftPadding() const

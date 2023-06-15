@@ -113,8 +113,10 @@ public:
 	void setTickLabelFontSize(int size);
 
 	//设置文本字体
-    void setAxisLabelFont(QFont& font);
-	void setAxisLabelFontSize(int size);
+    void setxAxisLabelFont(QFont& font);
+    void setxAxisLabelFontSize(int size);
+    void setyAxisLabelFont(QFont& font);
+    void setyAxisLabelFontSize(int size);
 
 private:
     void updateDataForDataPairsByTime(double secs) override;

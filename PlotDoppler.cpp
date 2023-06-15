@@ -77,10 +77,10 @@ void PlotDoppler::initPlot()
     verPlotX->setVisible(true);
     verPlotY->setVisible(true);
 
-    horPlotX->setTickLabelColor(m_tickLabelColor);
-    verPlotX->setTickLabelColor(m_tickLabelColor);
-    horPlotX->setTickLabelFont(m_tickLabelFont);
-    verPlotX->setTickLabelFont(m_tickLabelFont);
+    horPlotX->setTickLabelColor(m_xTickLabelColor);
+    verPlotX->setTickLabelColor(m_yTickLabelColor);
+    horPlotX->setTickLabelFont(m_xTickLabelFont);
+    verPlotX->setTickLabelFont(m_yTickLabelFont);
 
     horPlotX->setBasePen(QPen(m_axisColor, m_axisWidth));
     verPlotX->setBasePen(QPen(m_axisColor, m_axisWidth));
@@ -91,8 +91,8 @@ void PlotDoppler::initPlot()
     verPlotX->grid()->setPen(QPen(m_gridColor, m_gridWidth, Qt::SolidLine));
     verPlotY->grid()->setPen(QPen(m_gridColor, m_gridWidth, Qt::SolidLine));
 
-    horPlotX->setLabelColor(m_axisLabelColor);
-    verPlotX->setLabelColor(m_axisLabelColor);
+    horPlotX->setLabelColor(m_xAxisLabelColor);
+    verPlotX->setLabelColor(m_yAxisLabelColor);
     m_customPlot->setBackground(m_outerFillColor);
 }
 

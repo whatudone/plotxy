@@ -73,6 +73,8 @@ void PlotManager::init()
     initAttitudeUI();
     initTextLightUI();
     initDialUI();
+
+    initEditableMap();
 }
 
 void PlotManager::addPlot(const QString& tabName, PlotItemBase* plotItem)
@@ -322,6 +324,33 @@ void PlotManager::initScatterLimitUI()
     connect(
         ui.treeWidgetLimit, &QTreeWidget::itemClicked, this, &PlotManager::onCurrentLimitChanged);
 }
+
+void PlotManager::initEditableMap()
+{
+    m_itemTextEditableMap.insert(PlotType::Type_PlotScatter,
+                                 QList<QString>() << "Title"
+                                                  << "X-Axis Description"
+                                                  << "Y-Axis Description"
+                                                  << "X-Axis Data"
+                                                  << "Y-Axis Data");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotAScope, QList<QString>() << "Title");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotRTI, QList<QString>() << "Title");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotText, QList<QString>() << "Title");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotLight, QList<QString>() << "Title");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotBar, QList<QString>() << "Title");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotDial, QList<QString>() << "Title");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotAttitude, QList<QString>() << "Title");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotPolar, QList<QString>() << "Title");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotTrack, QList<QString>() << "Title");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotDoppler, QList<QString>() << "Title");
+}
+
+void PlotManager::showScatterEditableItem(PlotType type)
+{
+    ui.listWidget->clear();
+    ui.listWidget->addItems(m_itemTextEditableMap.value(type));
+}
+
 void PlotManager::initPlotDataUI()
 {
     connect(ui.pushButton_addNew, SIGNAL(clicked()), this, SLOT(onAddNewClicked()));
@@ -367,27 +396,21 @@ void PlotManager::initTextEditUI()
             &QLineEdit::editingFinished,
             this,
             &PlotManager::onLineEdit_26EditingFinished);
-    connect(ui.pushButton_22, &QPushButton::clicked, this, &PlotManager::onPushButton_22Clicked);
+	connect(ui.pushButton_22, &QPushButton::clicked, this, &PlotManager::onPushButton_22Clicked);
     connect(ui.pushButton_23, &QPushButton::clicked, this, &PlotManager::onPushButton_23Clicked);
-    QFontDatabase FontDb;
-    foreach(int size, FontDb.standardSizes())
-    {
-        ui.comboBox_Text_fontSize->addItem(QString::number(size));
-    }
-    ui.comboBox_Text_fontSize->setCurrentText("36");
     connect(ui.fontComboBox_2,
             &QFontComboBox::currentFontChanged,
             this,
             &PlotManager::onfontComboBox_2CurrentFontChanged);
-    connect(ui.comboBox_Text_fontSize,
-            &QComboBox::currentTextChanged,
-            this,
-            &PlotManager::onComboBox_Text_fontSizeCurrentTextChanged);
+    connect(
+        ui.spinBox_FontSize, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_FontSizeChanged(int)));
     connect(ui.lineEdit_29, &QLineEdit::textChanged, this, &PlotManager::onOffsetValueChanged);
     connect(ui.lineEdit_30, &QLineEdit::textChanged, this, &PlotManager::onOffsetValueChanged);
 
-    // TODO:先只在这里添加一条Title，以后再根据不同的对象进行设置
-    ui.listWidget->addItem("Title");
+    connect(ui.listWidget,
+            &QListWidget::currentItemChanged,
+            this,
+            &PlotManager::onListWidgetItemChanged);
 }
 
 void PlotManager::initAttitudeUI()
@@ -407,6 +430,21 @@ void PlotManager::initGOGUI()
     connect(ui.pushButton_25, &QPushButton::clicked, this, &PlotManager::onPushButton_25Clicked);
     connect(ui.pushButton_26, &QPushButton::clicked, this, &PlotManager::onPushButton_26Clicked);
     connect(ui.pushButton_27, &QPushButton::clicked, this, &PlotManager::onPushButton_27Clicked);
+    connect(ui.pushButton_28, &QPushButton::clicked, this, &PlotManager::onUpdateGOGCustomSetting);
+    connect(ui.checkBox_15, &QCheckBox::stateChanged, this, &PlotManager::onUpdateGOGCustomSetting);
+    connect(ui.checkBox_16, &QCheckBox::stateChanged, this, &PlotManager::onUpdateGOGCustomSetting);
+    connect(ui.checkBox_17, &QCheckBox::stateChanged, this, &PlotManager::onUpdateGOGCustomSetting);
+    connect(ui.checkBox_25, &QCheckBox::stateChanged, this, &PlotManager::onUpdateGOGCustomSetting);
+    connect(
+        ui.lineEdit_31, &QLineEdit::editingFinished, this, &PlotManager::onUpdateGOGCustomSetting);
+    connect(
+        ui.lineEdit_32, &QLineEdit::editingFinished, this, &PlotManager::onUpdateGOGCustomSetting);
+    connect(ui.fontComboBox,
+            &QComboBox::currentTextChanged,
+            this,
+            &PlotManager::onUpdateGOGCustomSetting);
+
+    connect(ui.listWidget_2, &QListWidget::itemClicked, this, &PlotManager::onListWidget_2Clicked);
 }
 
 void PlotManager::initDialUI()
@@ -441,6 +479,7 @@ void PlotManager::refreshTreeWidgetSettingEnabled(PlotItemBase* plot)
 {
     ui.treeWidget_settings->setEnabled(true);
     PlotType type = plot->plotType();
+    showScatterEditableItem(type);
 
     if(type == PlotType::Type_PlotScatter)
     {
@@ -528,24 +567,24 @@ void PlotManager::refreshGeneralUI(PlotItemBase* plot)
 
 void PlotManager::refreshAxisGridUI(PlotItemBase* plot)
 {
-    double x0, x1, y0, y1;
-    plot->getCoordRangeX(x0, x1);
-    plot->getCoordRangeY(y0, y1);
-    ui.lineEdit_limitBgnX->setText(QString("%1").arg(x0));
-    ui.lineEdit_limitEndX->setText(QString("%1").arg(x1));
-    ui.lineEdit_LimitBgnY->setText(QString("%1").arg(y0));
-    ui.lineEdit_limitEndY->setText(QString("%1").arg(y1));
-    ui.lineEdit_hrozGrids->setText(QString("%1").arg(plot->getHorzGrids()));
-    ui.lineEdit_vertGrids->setText(QString("%1").arg(plot->getVertGrids()));
-    ui.lineEdit_21->setText(QString("%1").arg(plot->getAxisWidth()));
-    ui.lineEdit_23->setText(QString("%1").arg(plot->getGridWidth()));
-    ui.pushButton_axisColor->setColor(plot->getAxisColor());
-    ui.pushButton_gridColor->setColor(plot->getGridColor());
-    ui.pushButton_gridFill->setColor(plot->getGridFillColor());
-    ui.checkBox_6->setChecked(plot->getGridVisible());
-    ui.pushButton_10->setColor(plot->getTickLabelColor());
-    ui.fontComboBox_3->setCurrentFont(plot->getTickLabelFont());
-    ui.comboBox_AxisGrid_FontSize->setCurrentText(QString("%1").arg(plot->getTickLabelFontSize()));
+	double x0, x1, y0, y1;
+	plot->getCoordRangeX(x0, x1);
+	plot->getCoordRangeY(y0, y1);
+	ui.lineEdit_limitBgnX->setText(QString("%1").arg(x0));
+	ui.lineEdit_limitEndX->setText(QString("%1").arg(x1));
+	ui.lineEdit_LimitBgnY->setText(QString("%1").arg(y0));
+	ui.lineEdit_limitEndY->setText(QString("%1").arg(y1));
+	ui.lineEdit_hrozGrids->setText(QString("%1").arg(plot->getHorzGrids()));
+	ui.lineEdit_vertGrids->setText(QString("%1").arg(plot->getVertGrids()));
+	ui.lineEdit_21->setText(QString("%1").arg(plot->getAxisWidth()));
+	ui.lineEdit_23->setText(QString("%1").arg(plot->getGridWidth()));
+	ui.pushButton_axisColor->setColor(plot->getAxisColor());
+	ui.pushButton_gridColor->setColor(plot->getGridColor());
+	ui.pushButton_gridFill->setColor(plot->getGridFillColor());
+	ui.checkBox_6->setChecked(plot->getGridVisible());
+    ui.pushButton_10->setColor(plot->getxTickLabelColor());
+    ui.fontComboBox_3->setCurrentFont(plot->getxTickLabelFont());
+    ui.comboBox_AxisGrid_FontSize->setCurrentText(QString("%1").arg(plot->getxTickLabelFontSize()));
     ui.comboBox_2->setCurrentIndex(int(plot->getGridStyle()) - 1);
     switch(plot->getGridDensity())
     {
@@ -634,14 +673,14 @@ void PlotManager::refreshGOGUI(PlotItemBase* plot)
 
 void PlotManager::refreshTextEditUI(PlotItemBase* plot)
 {
-    ui.checkBox_12->setChecked(plot->unitsShowX());
-    ui.checkBox_13->setChecked(plot->unitsShowY());
-    ui.checkBox_14->setChecked(plot->getTitleVisible());
-    ui.lineEdit_26->setText(plot->getTitle());
-    ui.pushButton_22->setColor(plot->getTitleColor());
-    ui.pushButton_23->setColor(plot->getTitleFillColor());
-    ui.fontComboBox_2->setCurrentFont(plot->getTitleFont());
-    ui.comboBox_Text_fontSize->setCurrentText(QString("%1").arg(plot->getTitleFontSize()));
+	ui.checkBox_12->setChecked(plot->unitsShowX());
+	ui.checkBox_13->setChecked(plot->unitsShowY());
+	ui.checkBox_14->setChecked(plot->getTitleVisible());
+	ui.lineEdit_26->setText(plot->getTitle());
+	ui.pushButton_22->setColor(plot->getTitleColor());
+	ui.pushButton_23->setColor(plot->getTitleFillColor());
+	ui.fontComboBox_2->setCurrentFont(plot->getTitleFont());
+    ui.spinBox_FontSize->setValue(plot->getTitleFontSize());
 }
 
 void PlotManager::refreshAttitudeUI(PlotItemBase* plot)
@@ -1424,7 +1463,7 @@ void PlotManager::onPushButton_10Clicked()
         return;
     }
 
-    m_curSelectPlot->setTickLabelColor(ui.pushButton_10->color());
+    m_curSelectPlot->setxTickLabelColor(ui.pushButton_10->color());
 }
 
 void PlotManager::onfontComboBox_3CurrentFontChanged(const QFont& font)
@@ -1437,7 +1476,7 @@ void PlotManager::onfontComboBox_3CurrentFontChanged(const QFont& font)
     QFont newFont;
     newFont.setFamily(font.family());
     newFont.setPixelSize(fontSize);
-    m_curSelectPlot->setTickLabelFont(newFont);
+    m_curSelectPlot->setxTickLabelFont(newFont);
 }
 
 void PlotManager::onComboBox_AxisGrid_FontSizeCurrentTextChanged(const QString& text)
@@ -1447,7 +1486,7 @@ void PlotManager::onComboBox_AxisGrid_FontSizeCurrentTextChanged(const QString& 
         return;
     }
 
-    m_curSelectPlot->setTickLabelFontSize(text.toInt());
+    m_curSelectPlot->setxTickLabelFontSize(text.toInt());
 }
 
 void PlotManager::onComboBox_2CurrentIndexChanged(int index)
@@ -1506,12 +1545,37 @@ void PlotManager::onPushButton_25Clicked()
 
 void PlotManager::onPushButton_26Clicked()
 {
-    m_curSelectPlot->removeGOGFile(
-        ui.listWidget_2->currentItem()->data(Qt::DisplayRole).toString());
+    QString fileName = ui.listWidget_2->currentItem()->data(Qt::DisplayRole).toString();
+    m_curSelectPlot->removeGOGFile(fileName);
     ui.listWidget_2->takeItem(ui.listWidget_2->currentRow());
+
+    QMap<QString, GOGCustomSetting> settings = m_curSelectPlot->getGogCustomSettings();
+    if(settings.contains(fileName))
+    {
+        settings.remove(fileName);
+        m_curSelectPlot->setGogCustomSettings(settings);
+    }
 }
 
 void PlotManager::onPushButton_27Clicked() {}
+
+void PlotManager::onListWidget_2Clicked()
+{
+    QString fileName = ui.listWidget_2->currentItem()->data(Qt::DisplayRole).toString();
+    QMap<QString, GOGCustomSetting> gogSetting = m_curSelectPlot->getGogCustomSettings();
+    if(gogSetting.contains(fileName))
+    {
+        GOGCustomSetting setting = gogSetting.value(fileName);
+        ui.checkBox_15->setChecked(setting.isDraw);
+        ui.pushButton_28->setColor(setting.fillColor);
+        ui.checkBox_16->setCheckState(setting.fillState);
+        ui.lineEdit_31->setText(QString::number(setting.lineWidth));
+        ui.lineEdit_32->setText(QString::number(setting.pointSize));
+        ui.fontComboBox->setCurrentFont(setting.font);
+        ui.comboBox_25->setCurrentText(QString::number(setting.font.pixelSize()));
+        ui.checkBox_17->setChecked(setting.isDrawText);
+    }
+}
 
 void PlotManager::addGOGTableItem(const QString& fileName)
 {
@@ -1529,7 +1593,36 @@ void PlotManager::addGOGTableItem(const QString& fileName)
     {
         ui.listWidget_2->addItem(fileName);
         m_curSelectPlot->addGOGFile(fileName);
+
+        QMap<QString, GOGCustomSetting> settings = m_curSelectPlot->getGogCustomSettings();
+        settings.insert(fileName, GOGCustomSetting());
+        m_curSelectPlot->setGogCustomSettings(settings);
     }
+}
+
+void PlotManager::onUpdateGOGCustomSetting()
+{
+    if(!ui.listWidget_2->currentItem())
+        return;
+    QString fileName = ui.listWidget_2->currentItem()->data(Qt::DisplayRole).toString();
+    QMap<QString, GOGCustomSetting> allSetting = m_curSelectPlot->getGogCustomSettings();
+    GOGCustomSetting setting;
+    if(allSetting.contains(fileName))
+    {
+        setting = allSetting.value(fileName);
+        setting.isDraw = ui.checkBox_15->isChecked();
+        setting.fillState = ui.checkBox_16->checkState();
+        setting.isDrawText = ui.checkBox_17->isChecked();
+        setting.fillColor = ui.pushButton_28->color();
+        setting.lineWidth = ui.lineEdit_31->text().toInt();
+        setting.pointSize = ui.lineEdit_32->text().toInt();
+        setting.font = ui.fontComboBox->currentFont();
+        setting.font.setPixelSize(ui.comboBox_25->currentText().toInt() == 0
+                                      ? 14
+                                      : ui.comboBox_25->currentText().toInt());
+    }
+    allSetting.insert(fileName, setting);
+    m_curSelectPlot->setGogCustomSettings(allSetting);
 }
 
 void PlotManager::onTableWidget_textLightDataSortItemSelectionChanged()
@@ -1959,21 +2052,19 @@ void PlotManager::onCheckBox_13StateChanged()
 void PlotManager::onCheckBox_14StateChanged()
 {
     if(m_curSelectPlot == nullptr)
-    {
-        return;
-    }
-
-    m_curSelectPlot->setTitleVisible(ui.checkBox_14->isChecked());
+	{
+		return;
+	}
+    textSettingChanged();
 }
 
 void PlotManager::onLineEdit_26EditingFinished()
 {
     if(m_curSelectPlot == nullptr)
-    {
-        return;
+	{
+		return;
     }
-
-    m_curSelectPlot->setTitle(ui.lineEdit_26->text());
+    textSettingChanged();
 }
 
 void PlotManager::onPushButton_22Clicked()
@@ -1983,7 +2074,7 @@ void PlotManager::onPushButton_22Clicked()
         return;
     }
 
-    m_curSelectPlot->setTitleColor(ui.pushButton_22->color());
+    textSettingChanged();
 }
 
 void PlotManager::onPushButton_23Clicked()
@@ -1993,23 +2084,25 @@ void PlotManager::onPushButton_23Clicked()
         return;
     }
 
-    m_curSelectPlot->setTitleFillColor(ui.pushButton_23->color());
+    textSettingChanged();
 }
 
 void PlotManager::onfontComboBox_2CurrentFontChanged(const QFont& font)
 {
     if(m_curSelectPlot == nullptr)
-    {
-        return;
-    }
-    float fontSize = ui.comboBox_Text_fontSize->currentText().toFloat();
-    QFont newFont;
-    newFont.setFamily(font.family());
-    newFont.setPixelSize(fontSize);
-    m_curSelectPlot->setTitleFont(newFont);
+	{
+		return;
+	}
+    //	float fontSize = ui.comboBox_Text_fontSize->currentText().toFloat();
+    //	QFont newFont;
+    //	newFont.setFamily(font.family());
+    //    newFont.setPixelSize(fontSize);
+    //	m_curSelectPlot->setTitleFont(newFont);
+
+    textSettingChanged();
 }
 
-void PlotManager::onComboBox_Text_fontSizeCurrentTextChanged(const QString& text)
+void PlotManager::onSpinBox_FontSizeChanged(int value)
 {
     if(m_curSelectPlot == nullptr)
     {
@@ -2018,8 +2111,10 @@ void PlotManager::onComboBox_Text_fontSizeCurrentTextChanged(const QString& text
 
     // 	QFont font = ui.fontComboBox_2->currentFont();
     // 	font.setPixelSize(text.toFloat());
-    // 	m_curSelectPlot->setTitleFont(font);
-    m_curSelectPlot->setTitleFontSize(text.toInt());
+	// 	m_curSelectPlot->setTitleFont(font);
+    //    m_curSelectPlot->setTitleFontSize(text.toInt());
+
+    textSettingChanged();
 }
 
 void PlotManager::onOffsetValueChanged()
@@ -2029,6 +2124,115 @@ void PlotManager::onOffsetValueChanged()
         return;
     }
     m_curSelectPlot->setTitleOffset(ui.lineEdit_29->text().toInt(), ui.lineEdit_30->text().toInt());
+}
+
+void PlotManager::onListWidgetItemChanged()
+{
+    if(!ui.listWidget->currentItem())
+        return;
+
+    QList<QWidget*> list;
+    list << ui.checkBox_14 << ui.lineEdit_26 << ui.pushButton_22 << ui.pushButton_23
+         << ui.fontComboBox_2 << ui.spinBox_FontSize;
+    for(auto item : list)
+        item->blockSignals(true);
+
+    QString strItem = ui.listWidget->currentItem()->data(Qt::DisplayRole).toString();
+
+    if(strItem == "Title")
+    {
+        ui.checkBox_14->setChecked(m_curSelectPlot->getTitleVisible());
+        ui.lineEdit_26->setText(m_curSelectPlot->getTitle());
+        ui.pushButton_22->setColor(m_curSelectPlot->getTitleColor());
+        ui.pushButton_23->setColor(m_curSelectPlot->getTitleFillColor());
+        ui.fontComboBox_2->setCurrentFont(m_curSelectPlot->getTitleFont());
+        ui.spinBox_FontSize->setValue(m_curSelectPlot->getTitleFontSize());
+    }
+    else if(strItem == "X-Axis Description")
+    {
+        ui.checkBox_14->setChecked(m_curSelectPlot->getxAxisLabelVisible());
+        ui.lineEdit_26->setText(m_curSelectPlot->getxAxisLabel());
+        ui.pushButton_22->setColor(m_curSelectPlot->getxAxisLabelColor());
+        ui.pushButton_23->setColor(Qt::black);
+        ui.fontComboBox_2->setCurrentFont(m_curSelectPlot->getxAxisLabelFont());
+        ui.spinBox_FontSize->setValue(m_curSelectPlot->getxAxisLabelFontSize());
+    }
+    else if(strItem == "Y-Axis Description")
+    {
+        ui.checkBox_14->setChecked(m_curSelectPlot->getyAxisLabelVisible());
+        ui.lineEdit_26->setText(m_curSelectPlot->getyAxisLabel());
+        ui.pushButton_22->setColor(m_curSelectPlot->getyAxisLabelColor());
+        ui.pushButton_23->setColor(Qt::black);
+        ui.fontComboBox_2->setCurrentFont(m_curSelectPlot->getyAxisLabelFont());
+        ui.spinBox_FontSize->setValue(m_curSelectPlot->getyAxisLabelFontSize());
+    }
+    else if(strItem == "X-Axis Data")
+    {
+        ui.checkBox_14->setChecked(m_curSelectPlot->getxAxisLabelVisible());
+        ui.lineEdit_26->setText("");
+        ui.pushButton_22->setColor(m_curSelectPlot->getxTickLabelColor());
+        ui.pushButton_23->setColor(Qt::black);
+        ui.fontComboBox_2->setCurrentFont(m_curSelectPlot->getxTickLabelFont());
+        ui.spinBox_FontSize->setValue(m_curSelectPlot->getxTickLabelFontSize());
+    }
+    else if(strItem == "Y-Axis Data")
+    {
+        ui.checkBox_14->setChecked(m_curSelectPlot->getyAxisLabelVisible());
+        ui.lineEdit_26->setText("");
+        ui.pushButton_22->setColor(m_curSelectPlot->getyTickLabelColor());
+        ui.pushButton_23->setColor(Qt::black);
+        ui.fontComboBox_2->setCurrentFont(m_curSelectPlot->getyTickLabelFont());
+        ui.spinBox_FontSize->setValue(m_curSelectPlot->getyTickLabelFontSize());
+    }
+
+    for(auto item : list)
+        item->blockSignals(false);
+}
+
+void PlotManager::textSettingChanged()
+{
+    if(!ui.listWidget->currentItem())
+        return;
+    QString strItem = ui.listWidget->currentItem()->data(Qt::DisplayRole).toString();
+    if(strItem == "Title")
+    {
+        m_curSelectPlot->setTitleVisible(ui.checkBox_14->isChecked());
+        m_curSelectPlot->setTitle(ui.lineEdit_26->text());
+        m_curSelectPlot->setTitleColor(ui.pushButton_22->color());
+        m_curSelectPlot->setTitleFillColor(ui.pushButton_23->color());
+        m_curSelectPlot->setTitleFont(ui.fontComboBox_2->currentFont());
+        m_curSelectPlot->setTitleFontSize(ui.spinBox_FontSize->value());
+    }
+    else if(strItem == "X-Axis Description")
+    {
+        m_curSelectPlot->setxAxisLabel(ui.lineEdit_26->text());
+        m_curSelectPlot->setxAxisLabelVisible(ui.checkBox_14->isChecked());
+        m_curSelectPlot->setxAxisLabelColor(ui.pushButton_22->color());
+        m_curSelectPlot->setxAxisLabelFont(ui.fontComboBox_2->currentFont());
+        m_curSelectPlot->setxAxisLabelFontSize(ui.spinBox_FontSize->value());
+    }
+    else if(strItem == "Y-Axis Description")
+    {
+        m_curSelectPlot->setyAxisLabel(ui.lineEdit_26->text());
+        m_curSelectPlot->setyAxisLabelVisible(ui.checkBox_14->isChecked());
+        m_curSelectPlot->setyAxisLabelColor(ui.pushButton_22->color());
+        m_curSelectPlot->setyAxisLabelFont(ui.fontComboBox_2->currentFont());
+        m_curSelectPlot->setyAxisLabelFontSize(ui.spinBox_FontSize->value());
+    }
+    else if(strItem == "X-Axis Data")
+    {
+        m_curSelectPlot->setxTickLabelVisible(ui.checkBox_14->isChecked());
+        m_curSelectPlot->setxTickLabelFont(ui.fontComboBox_2->currentFont());
+        m_curSelectPlot->setxTickLabelFontSize(ui.spinBox_FontSize->value());
+        m_curSelectPlot->setxTickLabelColor(ui.pushButton_22->color());
+    }
+    else if(strItem == "Y-Axis Data")
+    {
+        m_curSelectPlot->setyTickLabelVisible(ui.checkBox_14->isChecked());
+        m_curSelectPlot->setyTickLabelFont(ui.fontComboBox_2->currentFont());
+        m_curSelectPlot->setyTickLabelFontSize(ui.spinBox_FontSize->value());
+        m_curSelectPlot->setyTickLabelColor(ui.pushButton_22->color());
+    }
 }
 
 void PlotManager::onPushButton_80Clicked()

@@ -61,9 +61,14 @@ public:
     virtual void setAxisColorWidth(const QColor& color, uint width);
     virtual void setGridColorWidth(const QColor& color, uint width);
     virtual void setGridVisible(bool enable);
-    virtual void setTickLabelColor(const QColor& color);
-    virtual void setTickLabelFont(const QFont& font);
-    virtual void setTickLabelFontSize(int size);
+    virtual void setxTickLabelVisible(bool show);
+    virtual void setyTickLabelVisible(bool show);
+    virtual void setxTickLabelColor(const QColor& color);
+    virtual void setxTickLabelFont(const QFont& font);
+    virtual void setxTickLabelFontSize(int size);
+    virtual void setyTickLabelColor(const QColor& color);
+    virtual void setyTickLabelFont(const QFont& font);
+    virtual void setyTickLabelFontSize(int size);
     virtual void setGridStyle(GridStyle style);
     virtual void setGridDensity(GridDensity density);
     virtual void setGridFillColor(const QColor& color);
@@ -78,11 +83,16 @@ public:
     virtual void setTitleFont(const QFont& font);
     virtual void setTitleFontSize(int size);
     virtual void setTitleOffset(int offsetX, int offsetY);
+    virtual void setxAxisLabelVisible(bool on);
+    virtual void setyAxisLabelVisible(bool on);
     virtual void setxAxisLabel(const QString& label);
     virtual void setyAxisLabel(const QString& label);
-    virtual void setAxisLabelColor(const QColor& color);
-    virtual void setAxisLabelFont(const QFont& font);
-    virtual void setAxisLabelFontSize(int size);
+    virtual void setxAxisLabelColor(const QColor& color);
+    virtual void setxAxisLabelFont(const QFont& font);
+    virtual void setxAxisLabelFontSize(int size);
+    virtual void setyAxisLabelColor(const QColor& color);
+    virtual void setyAxisLabelFont(const QFont& font);
+    virtual void setyAxisLabelFontSize(int size);
 
     void setPaddings(double top, double bottom, double left, double right);
     void updateTitle();
@@ -127,17 +137,29 @@ public:
     {
         return m_gridVisible;
     }
-    QColor getTickLabelColor()
+    QColor getxTickLabelColor()
     {
-        return m_tickLabelColor;
+        return m_xTickLabelColor;
     }
-    QFont getTickLabelFont()
+    QFont getxTickLabelFont()
     {
-        return m_tickLabelFont;
+        return m_xTickLabelFont;
     }
-    int getTickLabelFontSize()
+    int getxTickLabelFontSize()
     {
-        return m_tickLabelFontSize;
+        return m_xTickLabelFontSize;
+    }
+    QColor getyTickLabelColor()
+    {
+        return m_yTickLabelColor;
+    }
+    QFont getyTickLabelFont()
+    {
+        return m_yTickLabelFont;
+    }
+    int getyTickLabelFontSize()
+    {
+        return m_yTickLabelFontSize;
     }
     Qt::PenStyle getGridStyle()
     {
@@ -191,6 +213,14 @@ public:
     {
         return m_titleFontSize;
     }
+    bool getxAxisLabelVisible()
+    {
+        return m_xAxisLabelVisible;
+    }
+    bool getyAxisLabelVisible()
+    {
+        return m_yAxisLabelVisible;
+    }
     QString getxAxisLabel()
     {
         return m_xAxisLabel;
@@ -199,17 +229,37 @@ public:
     {
         return m_yAxisLabel;
     }
-    QColor getAxisLabelColor()
+    QColor getxAxisLabelColor()
     {
-        return m_axisLabelColor;
+        return m_xAxisLabelColor;
     }
-    QFont getAxisLabelFont()
+    QFont getxAxisLabelFont()
     {
-        return m_axisLabelFont;
+        return m_xAxisLabelFont;
     }
-    int getAxisLabelFontSize()
+    int getxAxisLabelFontSize()
     {
-        return m_axisLabelFontSize;
+        return m_xAxisLabelFontSize;
+    }
+    QColor getyAxisLabelColor()
+    {
+        return m_yAxisLabelColor;
+    }
+    QFont getyAxisLabelFont()
+    {
+        return m_yAxisLabelFont;
+    }
+    int getyAxisLabelFontSize()
+    {
+        return m_yAxisLabelFontSize;
+    }
+    bool getxAxisTickLabelVisible()
+    {
+        return m_xTickLabelVisible;
+    }
+    bool getyAxisTickLabelVisible()
+    {
+        return m_yTickLabelVisible;
     }
 
     virtual DataPair*
@@ -300,6 +350,11 @@ public:
     void removeGOGFile(const QString& fileName);
     QList<QString> getGOGFileList();
 
+    QMap<QString, QList<GOGDataInfo>> getGogDataMap() const;
+
+    QMap<QString, GOGCustomSetting> getGogCustomSettings() const;
+    void setGogCustomSettings(const QMap<QString, GOGCustomSetting>& gogCustomSettings);
+
 private:
     void updateResizeFocusPos();
     QRect getRectByDirection(ResizeDirection direction);
@@ -342,9 +397,14 @@ protected:
     QColor m_axisColor; //坐标轴颜色
     QColor m_gridColor; //grid颜色
     bool m_gridVisible; //是否显示grid
-    QColor m_tickLabelColor; //坐标刻度值颜色
-    QFont m_tickLabelFont; //坐标刻度值字体
-    int m_tickLabelFontSize; //坐标刻度值字体尺寸
+    bool m_xTickLabelVisible; //是否显示x轴刻度
+    bool m_yTickLabelVisible; //是否显示y轴刻度
+    QColor m_xTickLabelColor; //坐标刻度值颜色
+    QFont m_xTickLabelFont; //坐标刻度值字体
+    int m_xTickLabelFontSize; //坐标刻度值字体尺寸
+    QColor m_yTickLabelColor; //坐标刻度值颜色
+    QFont m_yTickLabelFont; //坐标刻度值字体
+    int m_yTickLabelFontSize; //坐标刻度值字体尺寸
     Qt::PenStyle m_gridStyle; //grid风格
     GridDensity m_gridDensity; //grid密度
     QColor m_gridFillColor; //grid填充色，即背景色
@@ -366,9 +426,14 @@ protected:
 
     QString m_xAxisLabel; //x轴标题
     QString m_yAxisLabel; //y轴标题
-    QColor m_axisLabelColor; //坐标轴标题颜色
-    QFont m_axisLabelFont; //坐标轴标题字体
-    int m_axisLabelFontSize; //坐标轴标题字体尺寸
+    bool m_xAxisLabelVisible; //是否显示X轴描述信息
+    bool m_yAxisLabelVisible; //是否显示y轴描述信息
+    QColor m_xAxisLabelColor; //坐标轴标题颜色
+    QFont m_xAxisLabelFont; //坐标轴标题字体
+    int m_xAxisLabelFontSize; //坐标轴标题字体尺寸
+    QColor m_yAxisLabelColor; //坐标轴标题颜色
+    QFont m_yAxisLabelFont; //坐标轴标题字体
+    int m_yAxisLabelFontSize; //坐标轴标题字体尺寸
 
     bool m_isHorizonBar; // Bar是否是水平
     int m_barBetweenPadding; // Bar之间的间隔
@@ -383,6 +448,7 @@ protected:
     // gog数据
     QMap<QString, QList<GOGDataInfo>> m_gogDataMap;
     QList<QString> m_allGOGFileList;
+    QMap<QString, GOGCustomSetting> m_gogCustomSettings; //用户自定义设置  filename,settings
 
 public slots:
     void slot_updateRect(const QRect&);

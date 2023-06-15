@@ -40,10 +40,10 @@ void PlotTrack::initPlot()
     m_customPlot->yAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
     m_customPlot->xAxis->ticker()->setTickCount(int(m_vertGrids));
     m_customPlot->yAxis->ticker()->setTickCount(int(m_horzGrids));
-    m_customPlot->xAxis->setTickLabelColor(m_tickLabelColor);
-    m_customPlot->yAxis->setTickLabelColor(m_tickLabelColor);
-    m_customPlot->xAxis->setTickLabelFont(m_tickLabelFont);
-    m_customPlot->yAxis->setTickLabelFont(m_tickLabelFont);
+    m_customPlot->xAxis->setTickLabelColor(m_xTickLabelColor);
+    m_customPlot->yAxis->setTickLabelColor(m_yTickLabelColor);
+    m_customPlot->xAxis->setTickLabelFont(m_xTickLabelFont);
+    m_customPlot->yAxis->setTickLabelFont(m_yTickLabelFont);
     m_customPlot->xAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
     m_customPlot->yAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
     m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
@@ -62,10 +62,10 @@ void PlotTrack::initPlot()
 
     m_customPlot->xAxis->setLabel(m_xAxisLabel);
     m_customPlot->yAxis->setLabel(m_yAxisLabel);
-    m_customPlot->xAxis->setLabelColor(m_axisLabelColor);
-    m_customPlot->yAxis->setLabelColor(m_axisLabelColor);
-    m_customPlot->xAxis->setLabelFont(m_axisLabelFont);
-    m_customPlot->yAxis->setLabelFont(m_axisLabelFont);
+    m_customPlot->xAxis->setLabelColor(m_xAxisLabelColor);
+    m_customPlot->yAxis->setLabelColor(m_yAxisLabelColor);
+    m_customPlot->xAxis->setLabelFont(m_xAxisLabelFont);
+    m_customPlot->yAxis->setLabelFont(m_yAxisLabelFont);
 }
 
 void PlotTrack::updateDataForDataPairsByTime(double secs)
