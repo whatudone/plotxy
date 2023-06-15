@@ -5,18 +5,27 @@
 TEMPLATE = app
 TARGET = SimDataAnalyzer
 QT += core gui widgets printsupport network
-CONFIG += c++17
+CONFIG += c++11
 LIBS += -luser32
 win32-msvc {
-    QMAKE_CXXFLAGS += /std:c++14
+    QMAKE_CXXFLAGS += /std:c++11
     QMAKE_CFLAGS += /utf-8
     QMAKE_CXXFLAGS += /utf-8
     DEFINES += NOMINMAX
+    INCLUDEPATH += $$PWD/third_party/protobuf/msvc2015_64/include
+    CONFIG(debug,debug|release)
+    {
+        LIBS+= -L$$PWD/third_party/protobuf/msvc2015_64/lib -llibprotobufd
+    }
+    CONFIG(release,debug|release)
+    {
+        LIBS+= -L$$PWD/third_party/protobuf/msvc2015_64/lib -llibprotobuf
+    }
 }
-win32-mingw{
-    QMAKE_CXXFLAGS += -std=c++17
+
+win32-g++{
+    QMAKE_CXXFLAGS += -std=c++11
+    INCLUDEPATH += $$PWD/third_party/protobuf/mingw53_32/include
+    LIBS+= -L$$PWD/third_party/protobuf/mingw53_32/lib -lprotobuf.dll
 }
 include(PlotXYDemo.pri)
-# AScope RTI Doppler 三种图表都是一类数据，目前数据格式未知，暂时直接在代码中生成模拟数据
-# 此宏定义用于打开测试数据开关，后续有真实数据需要关闭这个开关
-DEFINES += TEST_SCOPE_DATA

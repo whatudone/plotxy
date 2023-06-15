@@ -8,8 +8,6 @@
 #include <string>
 #include <thread>
 
-#pragma comment(lib, "ws2_32.lib")
-
 recvThread::recvThread(QObject* parent)
     : QThread(parent)
 {}
