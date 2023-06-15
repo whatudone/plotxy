@@ -109,7 +109,9 @@ public slots:
 	void onfontComboBox_3CurrentFontChanged(const QFont& font);
 	void onComboBox_AxisGrid_FontSizeCurrentTextChanged(const QString& text);
 	void onComboBox_2CurrentIndexChanged(int index);
-	void onComboBox_3CurrentIndexChanged(int index);
+    void onComboBox_3CurrentIndexChanged(int index);
+    void onLineEdit_PrecisionXEditingFinished();
+    void onLineEdit_PrecisionYEditingFinished();
 
     //GOG
     void onPushButton_24Clicked();

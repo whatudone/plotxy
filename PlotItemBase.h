@@ -93,6 +93,8 @@ public:
     virtual void setyAxisLabelColor(const QColor& color);
     virtual void setyAxisLabelFont(const QFont& font);
     virtual void setyAxisLabelFontSize(int size);
+    virtual void setXPrecision(int value);
+    virtual void setYPrecision(int value);
 
     void setPaddings(double top, double bottom, double left, double right);
     void updateTitle();
@@ -260,6 +262,14 @@ public:
     bool getyAxisTickLabelVisible()
     {
         return m_yTickLabelVisible;
+    }
+    int getXPrecision()
+    {
+        return m_xPrecision;
+    }
+    int getYPrecision()
+    {
+        return m_yPrecision;
     }
 
     virtual DataPair*
@@ -444,6 +454,9 @@ protected:
     int32_t m_bottomPadding; //绘图间隔-bottom
     int32_t m_leftPadding; //绘图间隔-left
     int32_t m_rightPadding; //绘图间隔-right
+
+    int m_xPrecision; //X轴数据精度
+    int m_yPrecision; //Y轴数据精度
 
     // gog数据
     QMap<QString, QList<GOGDataInfo>> m_gogDataMap;

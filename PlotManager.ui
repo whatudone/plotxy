@@ -105,7 +105,7 @@
         <number>1</number>
        </property>
        <property name="currentIndex">
-        <number>6</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QVBoxLayout" name="verticalLayout_64" stretch="0,1,0,0,0,1">
@@ -1277,10 +1277,10 @@ color: rgb(255, 255, 255);</string>
                  <widget class="QComboBox" name="comboBox_5"/>
                 </item>
                 <item row="1" column="2">
-                 <widget class="QLineEdit" name="lineEdit"/>
+                 <widget class="QLineEdit" name="lineEdit_PrecisionX"/>
                 </item>
                 <item row="2" column="2">
-                 <widget class="QLineEdit" name="lineEdit_2"/>
+                 <widget class="QLineEdit" name="lineEdit_PrecisionY"/>
                 </item>
                </layout>
               </item>
