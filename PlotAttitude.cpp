@@ -35,9 +35,9 @@ PlotAttitude::PlotAttitude(QWidget* parent)
     m_decision_pitch = 0;
 	m_title = "Attitude";
 
-	m_tickLabelFontSize = 10;
-	m_tickLabelFont.setFamily("Microsoft YaHei");
-    m_tickLabelFont.setPixelSize(m_tickLabelFontSize);
+    m_xTickLabelFontSize = 10;
+    m_xTickLabelFont.setFamily("Microsoft YaHei");
+    m_xTickLabelFont.setPixelSize(m_xTickLabelFontSize);
 
 	m_xAxisLabel = "Roll";
 	m_yAxisLabel = "Pitch";
@@ -80,10 +80,10 @@ void PlotAttitude::drawBg(QPainter* painter, int radius)
 
 void PlotAttitude::drawScale_roll(QPainter* painter, int radius)
 {
-	QFontMetricsF fm(m_tickLabelFont);
+    QFontMetricsF fm(m_xTickLabelFont);
 
 	painter->save();
-	painter->setFont(m_tickLabelFont);
+    painter->setFont(m_xTickLabelFont);
 	double eachMajor_roll = (m_coordEnd_x - m_coordBgn_x) / (double)m_horzGrids;
 	double x, y, w, h;
     QString str, strNum;
@@ -123,10 +123,10 @@ void PlotAttitude::drawScale_roll(QPainter* painter, int radius)
 void PlotAttitude::drawScale_pitch(QPainter* painter, int radius)
 {
 	painter->save();
-    QFontMetricsF fm(m_tickLabelFont);
+    QFontMetricsF fm(m_xTickLabelFont);
     double x, y;
 
-	painter->setFont(m_tickLabelFont);
+    painter->setFont(m_xTickLabelFont);
 	painter->setPen(QPen(m_pitchColor));
 	QString str, strNum;
     double eachMajor_pitch = (m_coordEnd_y - m_coordBgn_y) / (m_vertGrids - 1);
@@ -180,10 +180,10 @@ void PlotAttitude::drawText_roll(QPainter* painter, int radius)
 	radius = radius * m_textPercentage / 100;
 	painter->save();
 
-	painter->setFont(m_axisLabelFont);
+    painter->setFont(m_xAxisLabelFont);
 	painter->setPen(QPen(m_rollColor));
 
-	QFontMetricsF fm(m_axisLabelFont);
+    QFontMetricsF fm(m_xAxisLabelFont);
 	double h = fm.size(Qt::TextSingleLine, m_xAxisLabel).height();
 	double w = fm.size(Qt::TextSingleLine, m_xAxisLabel).width();
 	double rad = qDegreesToRadians(45.0);
@@ -207,10 +207,10 @@ void PlotAttitude::drawText_pitch(QPainter* painter, int radius)
 {
 	radius = radius * m_textPercentage / 100;
 	painter->save();
-	painter->setFont(m_axisLabelFont);
+    painter->setFont(m_xAxisLabelFont);
 	painter->setPen(QPen(m_pitchColor));
 
-	QFontMetricsF fm(m_axisLabelFont);
+    QFontMetricsF fm(m_xAxisLabelFont);
 	double h = fm.size(Qt::TextSingleLine, m_yAxisLabel).height();
 	double w = fm.size(Qt::TextSingleLine, m_yAxisLabel).width();
 	double rad = qDegreesToRadians(45.0);
@@ -403,28 +403,41 @@ void PlotAttitude::setTitleFontSize(int size)
 
 void PlotAttitude::setTickLabelFont(QFont& font)
 {
-	m_tickLabelFont = font;
+    m_xTickLabelFont = font;
 	update();
 }
 
 void PlotAttitude::setTickLabelFontSize(int size)
 {
-	m_tickLabelFontSize = size;
-    m_tickLabelFont.setPixelSize(size);
+    m_xTickLabelFontSize = size;
+    m_xTickLabelFont.setPixelSize(size);
 	update();
 }
 
-void PlotAttitude::setAxisLabelFont(QFont& font)
+void PlotAttitude::setxAxisLabelFont(QFont& font)
 {
-	m_axisLabelFont = font;
+    m_xAxisLabelFont = font;
 	update();
 }
 
-void PlotAttitude::setAxisLabelFontSize(int size)
+void PlotAttitude::setxAxisLabelFontSize(int size)
 {
-	m_axisLabelFontSize = size;
-    m_axisLabelFont.setPixelSize(size);
+    m_xAxisLabelFontSize = size;
+    m_xAxisLabelFont.setPixelSize(size);
 	update();
+}
+
+void PlotAttitude::setyAxisLabelFont(QFont& font)
+{
+    m_yAxisLabelFont = font;
+    update();
+}
+
+void PlotAttitude::setyAxisLabelFontSize(int size)
+{
+    m_yAxisLabelFontSize = size;
+    m_yAxisLabelFont.setPixelSize(size);
+    update();
 }
 
 void PlotAttitude::setTitle(QString& title)
@@ -466,7 +479,7 @@ void PlotAttitude::customPainting(QPainter& painter)
 {
     int width = m_widget->width();
     int height = m_widget->height();
-    QFontMetricsF fm(m_axisLabelFont);
+    QFontMetricsF fm(m_xAxisLabelFont);
     double h = fm.size(Qt::TextSingleLine, m_yAxisLabel).height();
     double yLabelAscent = fm.ascent();
     int radius = qMin(width, static_cast<int>(height - h - yLabelAscent)) / 2;

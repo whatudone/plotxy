@@ -41,6 +41,9 @@ private:
     void initDialUI();
 	void initTextLightUI();
     void initScatterLimitUI();
+    void initEditableMap();
+
+    void showScatterEditableItem(PlotType type);
 
 	void refreshTreeWidgetSettingEnabled(PlotItemBase* plot);
 	void refreshGeneralUI(PlotItemBase* plot);
@@ -113,8 +116,10 @@ public slots:
     void onPushButton_25Clicked();
     void onPushButton_26Clicked();
     void onPushButton_27Clicked();
+    void onListWidget_2Clicked();
 
     void addGOGTableItem(const QString& fileName);
+    void onUpdateGOGCustomSetting();
 
 	//Light/Text
 	void onPushButton_71Clicked();
@@ -147,9 +152,11 @@ public slots:
 	void onLineEdit_26EditingFinished();
 	void onPushButton_22Clicked();
 	void onPushButton_23Clicked();
-	void onfontComboBox_2CurrentFontChanged(const QFont& font);
-	void onComboBox_Text_fontSizeCurrentTextChanged(const QString& text);
+    void onfontComboBox_2CurrentFontChanged(const QFont& font);
+    void onSpinBox_FontSizeChanged(int value);
     void onOffsetValueChanged();
+    void onListWidgetItemChanged();
+    void textSettingChanged();
 
 	//Attitude
 	void onPushButton_80Clicked();
@@ -216,6 +223,8 @@ private:
 	QRect m_tabWidgetRect;
     // 本界面当前选中图表，不影响主界面选中图表
     PlotItemBase* m_curSelectPlot = nullptr;
+
+    QMap<PlotType, QList<QString>> m_itemTextEditableMap;
 };
 
 #endif // !

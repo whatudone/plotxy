@@ -67,10 +67,10 @@ void PlotBar::initPlot()
     keyAxis()->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
     valueAxis()->ticker()->setTickCount(int(m_vertGrids));
     keyAxis()->ticker()->setTickCount(int(m_horzGrids));
-    valueAxis()->setTickLabelColor(m_tickLabelColor);
-    keyAxis()->setTickLabelColor(m_tickLabelColor);
-    valueAxis()->setTickLabelFont(m_tickLabelFont);
-    keyAxis()->setTickLabelFont(m_tickLabelFont);
+    valueAxis()->setTickLabelColor(m_yTickLabelColor);
+    keyAxis()->setTickLabelColor(m_xTickLabelColor);
+    valueAxis()->setTickLabelFont(m_yTickLabelFont);
+    keyAxis()->setTickLabelFont(m_xTickLabelFont);
     valueAxis()->setBasePen(QPen(m_axisColor, m_axisWidth));
     keyAxis()->setBasePen(QPen(m_axisColor, m_axisWidth));
     valueAxis()->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
@@ -89,10 +89,10 @@ void PlotBar::initPlot()
 
     m_customPlot->xAxis->setLabel(m_xAxisLabel);
     m_customPlot->yAxis->setLabel(m_yAxisLabel);
-    m_customPlot->xAxis->setLabelColor(m_axisLabelColor);
-    m_customPlot->yAxis->setLabelColor(m_axisLabelColor);
-    m_customPlot->xAxis->setLabelFont(m_axisLabelFont);
-    m_customPlot->yAxis->setLabelFont(m_axisLabelFont);
+    m_customPlot->xAxis->setLabelColor(m_xAxisLabelColor);
+    m_customPlot->yAxis->setLabelColor(m_yAxisLabelColor);
+    m_customPlot->xAxis->setLabelFont(m_xAxisLabelFont);
+    m_customPlot->yAxis->setLabelFont(m_yAxisLabelFont);
 }
 
 void PlotBar::updateGraphByDataPair(DataPair* data)

@@ -117,10 +117,10 @@ void PlotText::drawCellData(QPainter& painter)
         int hy1 = drawRect.y() + verGridWidth * j;
         int hx1 = drawRect.left();
         painter.save();
-        pen.setColor(getTickLabelColor());
+        pen.setColor(getxTickLabelColor());
         painter.setPen(pen);
-        QFont font = getTickLabelFont();
-        font.setPixelSize(getTickLabelFontSize());
+        QFont font = getxTickLabelFont();
+        font.setPixelSize(getxTickLabelFontSize());
         painter.setFont(font);
 
         cellRect.setRect(hx1, hy1, horiGridWidth, verGridWidth);
