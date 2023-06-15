@@ -41,6 +41,7 @@ void PlotScatter::initPlot()
     // 坐标轴范围切换之后，需要更新背景分段坐标信息
     connect(m_customPlot->xAxis, QOverload<const QCPRange&>::of(&QCPAxis::rangeChanged), [this]() {
         updateBackgroundColorSeg();
+        updateTimelineGraph();
     });
     connect(m_customPlot->yAxis, QOverload<const QCPRange&>::of(&QCPAxis::rangeChanged), [this]() {
         updateBackgroundColorSeg();
@@ -174,7 +175,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
 void PlotScatter::updateGraphByDataPair(DataPair* data)
 {
     if(!data)
-    {
+	{
         return;
     }
     if(m_isTimeLine)
@@ -186,7 +187,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
     auto x = m_dataHash.value(uuid).first;
     auto y = m_dataHash.value(uuid).second;
     if(x.isEmpty() || y.isEmpty())
-	{
+    {
         return;
     }
     DrawComponents info;
@@ -476,8 +477,15 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
                                        const QHash<QString, QVariant>& extraParams)
 {
     // 更新range
-    QPair<double, double> xlimit =
-        DataManager::getInstance()->getMaxAndMinEntityAttrValue(xEntityID, xAttrName);
+    QPair<double, double> xlimit;
+    if(xAttrName == "Time")
+    {
+        xlimit = DataManager::getInstance()->getMaxAndMinEntityAttrValue(yEntityID, xAttrName);
+    }
+    else
+    {
+        xlimit = DataManager::getInstance()->getMaxAndMinEntityAttrValue(xEntityID, xAttrName);
+    }
 
     // x轴
     if(math::doubleEqual(m_coordBgn_x, std::numeric_limits<double>::min()))
@@ -594,6 +602,7 @@ void PlotScatter::clearHistoryLines()
 
 void PlotScatter::updateTimelineGraph()
 {
+    static double time = PlotXYDemo::getSeconds();
     //Timeline模式 Now和event标签都是不移动，只是会移动坐标轴范围
     if(!m_timelineGraph)
     {
@@ -604,12 +613,18 @@ void PlotScatter::updateTimelineGraph()
         {
             m_customPlot->xAxis->setRange(timeVec.first(), timeVec.last());
             m_customPlot->xAxis->setLabel("Time(s)");
-            m_customPlot->yAxis->setRange(0, 1);
+            m_coordBgn_x = timeVec.first();
+            m_coordEnd_x = timeVec.last();
+
+            m_customPlot->yAxis->setRange(0.0, 1.0);
+            m_coordBgn_y = 0.0;
+            m_coordEnd_y = 1.0;
             m_customPlot->yAxis->setLabel("All Platforms");
         }
         m_customPlot->yAxis->setTickLabels(false);
     }
     m_customPlot->yAxis->grid()->setVisible(false);
+    double now = PlotXYDemo::getSeconds();
     if(!m_timelineNowRect)
     {
         m_timelineNowRect = new QCPItemRect(m_customPlot);
@@ -617,15 +632,15 @@ void PlotScatter::updateTimelineGraph()
         QPen pen;
         pen.setColor(Qt::gray);
         m_timelineNowRect->setPen(pen);
+        m_timelineNowRect->topLeft->setType(QCPItemPosition::ptAbsolute);
+        m_timelineNowRect->bottomRight->setType(QCPItemPosition::ptAbsolute);
     }
-    double now = PlotXYDemo::getSeconds();
+
     // Now矩形高度占比0.9
     double centerX = m_customPlot->xAxis->coordToPixel(now);
     double rectTop = m_customPlot->yAxis->coordToPixel(0.95);
     double bottom = m_customPlot->yAxis->coordToPixel(0.0);
-    m_timelineNowRect->topLeft->setType(QCPItemPosition::ptAbsolute);
     m_timelineNowRect->topLeft->setCoords(centerX - 10, rectTop);
-    m_timelineNowRect->bottomRight->setType(QCPItemPosition::ptAbsolute);
     m_timelineNowRect->bottomRight->setCoords(centerX + 10, bottom);
 
     if(!m_timelineNowText)
@@ -634,11 +649,11 @@ void PlotScatter::updateTimelineGraph()
         m_timelineNowText->setText("Now");
         m_timelineNowText->setColor(Qt::gray);
         m_timelineNowText->setTextAlignment(Qt::AlignCenter);
+        m_timelineNowText->position->setType(QCPItemPosition::ptAbsolute);
     }
     double textTop = m_customPlot->yAxis->coordToPixel(0.98);
-    m_timelineNowText->position->setType(QCPItemPosition::ptAbsolute);
-
     m_timelineNowText->position->setCoords(centerX, textTop);
+
     clearEventText();
 
     auto eventList = getEventList();
@@ -680,7 +695,14 @@ void PlotScatter::updateTimelineGraph()
         }
         ++index;
     }
-
+    // 在线模式试试刷新最新时间轴范围，起点和终点同步更新
+    double delta = now - time;
+    double timeBegin = m_customPlot->xAxis->range().lower + delta;
+    double timeEnd = m_customPlot->xAxis->range().upper + delta;
+    time = now;
+    m_customPlot->xAxis->setRange(timeBegin, timeEnd);
+    m_coordBgn_x = timeBegin;
+    m_coordEnd_x = timeEnd;
     m_customPlot->replot();
 }
 
