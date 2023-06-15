@@ -16,10 +16,14 @@ win32-msvc {
     CONFIG(debug,debug|release)
     {
         LIBS+= -L$$PWD/third_party/protobuf/msvc2015_64/lib -llibprotobufd
+        QMAKE_CFLAGS_DEBUG += -MTd
+        QMAKE_CXXFLAGS_DEBUG += -MTd
     }
     CONFIG(release,debug|release)
     {
         LIBS+= -L$$PWD/third_party/protobuf/msvc2015_64/lib -llibprotobuf
+        QMAKE_CFLAGS_RELEASE += -MT
+        QMAKE_CXXFLAGS_RELEASE += -MT
     }
 }
 
