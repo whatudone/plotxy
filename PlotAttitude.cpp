@@ -1,5 +1,7 @@
 ﻿#include "PlotAttitude.h"
 #include "DataManager.h"
+#include "Utils.h"
+
 #include <QDebug>
 #include <QPainter>
 #include <QtMath>
@@ -193,7 +195,14 @@ void PlotAttitude::drawText_roll(QPainter* painter, int radius)
 	painter->drawText(QPoint(xPos, yPos), m_xAxisLabel);
 
 	QString str, strNum;
-	strNum = QString::number(m_rollValue, 'f', m_decision_roll);
+    if(math::doubleEqual(m_rollValue, std::numeric_limits<double>::max()))
+    {
+        strNum = "---";
+    }
+    else
+    {
+        strNum = QString::number(m_rollValue, 'f', m_decision_roll);
+    }
     if(m_showUnits_x)
 		str = QString("%1%2").arg(strNum).arg(m_units_x);
 	else
@@ -220,7 +229,14 @@ void PlotAttitude::drawText_pitch(QPainter* painter, int radius)
 	painter->drawText(QPoint(xPos, yPos), m_yAxisLabel);
 
 	QString str, strNum;
-	strNum = QString::number(m_pitchValue, 'f', m_decision_pitch);
+    if(math::doubleEqual(m_pitchValue, std::numeric_limits<double>::max()))
+    {
+        strNum = "---";
+    }
+    else
+    {
+        strNum = QString::number(m_pitchValue, 'f', m_decision_pitch);
+    }
     if(m_showUnits_y)
 		str = QString("%1%2").arg(strNum).arg(m_units_y);
 	else

@@ -10,7 +10,7 @@
 #include "Utils.h"
 #include <QApplication>
 #include <QDebug>
-#include <winsock2.h>
+#include <WinSock2.h>
 
 //------------------------------------------------------------------------
 inline int GetTimeOfDay(struct timeval* t)
