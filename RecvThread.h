@@ -4,7 +4,9 @@
 #include <QThread>
 #include <QUdpSocket>
 
+#include "IO_CommStructer.h"
 #include "constdef.h"
+#include "protobuf/USimDataStructm.pb.h"
 
 class recvThread : public QThread
 {
@@ -19,10 +21,13 @@ protected:
     void run() override;
 
     void onReadyRead();
+    void onProtoBufReadyRead();
 
 signals:
-    void platInfoReceived(PlatInfoDataExcect plat);
-    void genericReceived(GenericDataExcect generic);
+    void platInfoReceived(const MARS_PlatInfoDataExcect &plat);
+    void genericReceived(const GenericData &generic);
+
+    void protobufPlatInfoReceived(const USIM_PlatInfoMessage_Proto &plat);
 
 private:
     QUdpSocket* m_udpSocket = nullptr;

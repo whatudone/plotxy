@@ -45,7 +45,10 @@ HEADERS += $$PWD/TimeClass.h \
     $$PWD/AdvancedDataManager.h \
     $$PWD/PlotBar.h \
     $$PWD/choose_plot_type_dialog.h \
-    $$PWD/NetSettingDialog.h
+    $$PWD/NetSettingDialog.h \
+    $$PWD/GenericDefined.h \
+    $$PWD/IO_CommStructer.h \
+    $$PWD/protobuf/USimDataStructm.pb.h
 
 SOURCES += $$PWD/AddPlotPair.cpp \
     $$PWD/RecvThread.cpp \
@@ -83,7 +86,8 @@ SOURCES += $$PWD/AddPlotPair.cpp \
     $$PWD/Toolpage.cpp \
     $$PWD/Utils.cpp \
     $$PWD/choose_plot_type_dialog.cpp \
-    $$PWD/NetSettingDialog.cpp
+    $$PWD/NetSettingDialog.cpp \
+    $$PWD/protobuf/USimDataStructm.pb.cc
 
 FORMS += $$PWD/AddPlotPair.ui \
     $$PWD/AdvancedDataManager.ui \

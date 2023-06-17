@@ -24,8 +24,9 @@ DataManager::DataManager()
 {
     m_recvThread = new recvThread;
 
-    connect(m_recvThread, &recvThread::platInfoReceived, this, &DataManager::onRecvPlatinfoData);
+//    connect(m_recvThread, &recvThread::platInfoReceived, this, &DataManager::onRecvPlatinfoData);
     connect(m_recvThread, &recvThread::genericReceived, this, &DataManager::onRecvGenericData);
+     connect(m_recvThread, &recvThread::protobufPlatInfoReceived, this, &DataManager::onRecvProtobufPlatinfoData);
 }
 
 DataManager::~DataManager() {}
@@ -790,88 +791,144 @@ QStringList DataManager::parsePlatformData(const QString& data)
     return list;
 }
 
-void DataManager::onRecvPlatinfoData(PlatInfoDataExcect plat)
+int32_t DataManager::findIDByName(const QString &name)
+{
+    QList<int32_t> lst = m_realPlatformMap.keys();
+    for(int i = 0;i<lst.size();i++){
+        if(name == m_realPlatformMap[lst.at(i)].platformName)
+            return lst.at(i);
+    }
+    return -1;
+}
+
+void DataManager::onRecvPlatinfoData(const MARS_PlatInfoDataExcect &plat)
 {
     int32_t uID = int32_t(plat.uID);
     if(!m_realDataMap.contains(uID))
     {
-        m_realDataMap.insert(uID, QHash<QString, QVector<double>>());
+        QHash<QString, QVector<double>> dataMap = m_realDataMap[uID];
+        dataMap["Time"].append(plat.time * 3600);
+        dataMap["Fuel"].append(plat.fuel);
+        dataMap["Dammager"].append(plat.damageper);
+        dataMap["Speed"].append(double(plat.Speed));
+        dataMap["Bearing"].append(double(plat.Bearing));
+        dataMap["Lat"].append(plat.Lat);
+        dataMap["Lon"].append(plat.Lng);
+        dataMap["Alt"].append(plat.Alt);
+        dataMap["CW"].append(plat.Cw);
+        dataMap["Pitch"].append(plat.pitch);
+        dataMap["Roll"].append(plat.roll);
+        dataMap["MaxSpeed"].append(plat.maxSpeed);
+        dataMap["ConNUm"].append(plat.iIconNum);
+        dataMap["Visible"].append(plat.iVisible);
+        m_realDataMap.insert(uID, dataMap);
+        m_minRealTime = dataMap["Time"].at(0);
+        m_maxRealTime = plat.time * 3600;
     }
 
-    QHash<QString, QVector<double>> dataMap = m_realDataMap[uID];
-    dataMap["Time"].append(plat.time * 3600);
-    dataMap["Fuel"].append(plat.fuel);
-    dataMap["Dammager"].append(plat.dammager);
-    dataMap["Speed"].append(double(plat.speed));
-    dataMap["Bearing"].append(double(plat.bearing));
-    dataMap["Lat"].append(plat.lat);
-    dataMap["Lon"].append(plat.lng);
-    dataMap["Alt"].append(plat.Alt);
-    dataMap["CW"].append(plat.CW);
-    dataMap["Pitch"].append(plat.pitch);
-    dataMap["Roll"].append(plat.roll);
-    dataMap["MaxSpeed"].append(plat.maxSpeed);
-    dataMap["ConNUm"].append(plat.iConNUm);
-    dataMap["Visible"].append(plat.iVisible);
-    m_realDataMap.insert(uID, dataMap);
-    m_minRealTime = dataMap["Time"].at(0);
-    m_maxRealTime = plat.time * 3600;
-
-    QList<QPair<QString, QString>> attrUnitList;
     if(!m_realUnitHash.contains(uID))
     {
+        QList<QPair<QString, QString>> attrUnitList;
+        attrUnitList.append(QPair<QString, QString>("Time", "sec"));
+        attrUnitList.append(QPair<QString, QString>("Fuel", "sec"));
+        attrUnitList.append(QPair<QString, QString>("Dammager", "na"));
+        attrUnitList.append(QPair<QString, QString>("Speed", "m/sec"));
+        attrUnitList.append(QPair<QString, QString>("Bearing", "na"));
+        attrUnitList.append(QPair<QString, QString>("Lat", "deg"));
+        attrUnitList.append(QPair<QString, QString>("Lon", "deg"));
+        attrUnitList.append(QPair<QString, QString>("Alt", "m"));
+        attrUnitList.append(QPair<QString, QString>("CW", "na"));
+        attrUnitList.append(QPair<QString, QString>("Pitch", "deg"));
+        attrUnitList.append(QPair<QString, QString>("Roll", "deg"));
+        attrUnitList.append(QPair<QString, QString>("MaxSpeed", "m/sec"));
+        attrUnitList.append(QPair<QString, QString>("ConNUm", "na"));
+        attrUnitList.append(QPair<QString, QString>("Visible", "na"));
         m_realUnitHash.insert(uID, attrUnitList);
     }
 
-    attrUnitList.append(QPair<QString, QString>("Time", "sec"));
-    attrUnitList.append(QPair<QString, QString>("Fuel", "sec"));
-    attrUnitList.append(QPair<QString, QString>("Dammager", "na"));
-    attrUnitList.append(QPair<QString, QString>("Speed", "m/sec"));
-    attrUnitList.append(QPair<QString, QString>("Bearing", "na"));
-    attrUnitList.append(QPair<QString, QString>("Lat", "deg"));
-    attrUnitList.append(QPair<QString, QString>("Lon", "deg"));
-    attrUnitList.append(QPair<QString, QString>("Alt", "m"));
-    attrUnitList.append(QPair<QString, QString>("CW", "na"));
-    attrUnitList.append(QPair<QString, QString>("Pitch", "deg"));
-    attrUnitList.append(QPair<QString, QString>("Roll", "deg"));
-    attrUnitList.append(QPair<QString, QString>("MaxSpeed", "m/sec"));
-    attrUnitList.append(QPair<QString, QString>("ConNUm", "na"));
-    attrUnitList.append(QPair<QString, QString>("Visible", "na"));
-
-    m_realUnitHash.insert(uID, attrUnitList);
-
     RealPlatform realPlatform;
     realPlatform.platformDataID = plat.uID;
-    realPlatform.platformName = plat.platName;
+    realPlatform.platformName =QString::fromLocal8Bit(plat.PlatName);
     realPlatform.OpsStatus = plat.OpsStatus;
     realPlatform.Alliance = plat.Alliance;
-    realPlatform.Operation_medium = plat.Operation_medium;
-    realPlatform.Icon_Type = plat.Icon_Type;
+    realPlatform.Operation_medium = plat.Operating_medium;
+    realPlatform.Icon_Type = plat.Icon_type;
     realPlatform.basePlatName = plat.BasePlatName;
     realPlatform.hullName = plat.HullName;
     realPlatform.cStandBy = plat.cStandBy;
-    m_realPlatformMap.insert(uID, realPlatform);
-
     emit updateRealTime();
 }
 
-void DataManager::onRecvGenericData(GenericDataExcect generic)
+void DataManager::onRecvGenericData(const GenericData &generic)
 {
-    int32_t uID = int32_t(generic.uID);
+    int32_t uID = findIDByName(generic.m_name);
     if(!m_realGenericMap.contains(uID))
     {
         m_realGenericMap.insert(uID, QMap<QString, QList<GenericData>>());
     }
 
-    QMap<QString, QList<GenericData>> dataMap = m_realGenericMap[uID];
-    GenericData data;
-    data.m_name = generic.platName;
-    data.m_timeOffset = generic.timeOffset;
-    data.m_relativeTime = generic.relativeTime;
-    dataMap["Event"].append(data);
-    m_realGenericMap.insert(uID, dataMap);
-
+    m_realGenericMap[uID]["Event"].append(generic);
     emit updateRealTime();
+}
+
+void DataManager::onRecvProtobufPlatinfoData(const USIM_PlatInfoMessage_Proto &plat)
+{
+    int32_t uID = int32_t(plat.uid());
+    if(!m_realDataMap.contains(uID))
+    {
+        QHash<QString, QVector<double>> dataMap = m_realDataMap[uID];
+        dataMap["Time"].append(plat.dfsimtime());
+        dataMap["Fuel"].append(plat.dffuel());
+        dataMap["Life"].append(plat.dflife());
+        dataMap["Lon"].append(plat.dflon());
+        dataMap["Lat"].append(plat.dflat());
+        dataMap["Alt"].append(plat.dfalt());
+        dataMap["Heading"].append(plat.dfheading());
+        dataMap["Vx"].append(plat.dfvx());
+        dataMap["Vy"].append(plat.dfvy());
+        dataMap["Vz"].append(plat.df());
+        dataMap["Yaw"].append(plat.dfyaw());
+        dataMap["Pitch"].append(plat.pitch());
+        dataMap["Roll"].append(plat.roll());
+        dataMap["Swaying"].append(plat.dfswaying());
+        dataMap["Surging"].append(plat.surging());
+        dataMap["Heaving"].append(plat.heaving());
+        m_realDataMap.insert(uID, dataMap);
+        m_minRealTime = dataMap["Time"].at(0);
+        m_maxRealTime = plat.dfsimtime();
+
+        QList<QPair<QString, QString>> attrUnitList;
+        attrUnitList.append(QPair<QString, QString>("Time", "sec"));
+        attrUnitList.append(QPair<QString, QString>("Fuel", "pound"));
+        attrUnitList.append(QPair<QString, QString>("Life", "NA"));
+        attrUnitList.append(QPair<QString, QString>("Lon", "deg"));
+        attrUnitList.append(QPair<QString, QString>("Lat", "deg"));
+        attrUnitList.append(QPair<QString, QString>("Alt", "m"));
+        attrUnitList.append(QPair<QString, QString>("Heading", "deg"));
+        attrUnitList.append(QPair<QString, QString>("Vx", "m/sec"));
+        attrUnitList.append(QPair<QString, QString>("Vy", "m/sec"));
+        attrUnitList.append(QPair<QString, QString>("Vz", "m/sec"));
+        attrUnitList.append(QPair<QString, QString>("Yaw", "deg"));
+        attrUnitList.append(QPair<QString, QString>("Pitch", "deg"));
+        attrUnitList.append(QPair<QString, QString>("Roll", "deg"));
+        attrUnitList.append(QPair<QString, QString>("Swaying", "m"));
+        attrUnitList.append(QPair<QString, QString>("Surging", "m"));
+        attrUnitList.append(QPair<QString, QString>("Heaving", "m"));
+        m_realUnitHash.insert(uID, attrUnitList);
+
+        ProtobufPlatForm protoPlatform;
+        protoPlatform.platformID = plat.uid();
+        protoPlatform.name = QString::fromLocal8Bit(plat.splatname().data());
+        protoPlatform.cmdNodeName = QString::fromLocal8Bit(plat.scommandnodename().data());
+        protoPlatform.alliance = static_cast<USIM_Alliance>(plat.ualliance());
+        protoPlatform.color = plat.ucolor();
+        protoPlatform.kind = plat.ukind();
+        protoPlatform.classType = plat.uclass();
+        protoPlatform.typeName = QString::fromLocal8Bit(plat.stype().data());
+        m_protobufPlatformMap.insert(uID,protoPlatform);
+
+        emit updateRealTime();
+    }
 }
 
 recvThread* DataManager::getRecvThread() const

@@ -287,32 +287,32 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
 
 void PlotScatter::exportDataToFile(const QString& filename) const
 {
-    QFile file(filename);
-    if(file.open(QFile::WriteOnly | QFile::Truncate))
-    {
-        QTextStream out(&file); //创建写入流
-        for(const auto& info : m_mapScatter)
-        {
-            if(info.graph && info.graph->visible())
-            {
-                out << "[" << info.tracerText->text() << "]"
-                    << "\r\n";
-                out << "Title=" << info.tracerText->text() << "\r\n";
-                out << "Data="
-                    << "\r\n";
-                auto dataContainer = info.graph->data().get();
-                auto size = dataContainer->size();
-                for(int var = 0; var < size; ++var)
-                {
-                    double x = dataContainer->at(var)->key;
-                    double y = dataContainer->at(var)->value;
-                    out << x << "       " << y << "\r\n";
-                }
-                out << "\r\n";
-            }
-        }
-    }
-    file.close();
+//    QFile file(filename);
+//    if(file.open(QFile::WriteOnly | QFile::Truncate))
+//    {
+//        QTextStream out(&file); //创建写入流
+//        for(const auto& info : m_mapScatter)
+//        {
+//            if(info.graph && info.graph->visible())
+//            {
+//                out << "[" << info.tracerText->text() << "]"
+//                    << "\r\n";
+//                out << "Title=" << info.tracerText->text() << "\r\n";
+//                out << "Data="
+//                    << "\r\n";
+//                auto dataContainer = info.graph->data().get();
+//                auto size = dataContainer->size();
+//                for(int var = 0; var < size; ++var)
+//                {
+//                    double x = dataContainer->at(var)->key;
+//                    double y = dataContainer->at(var)->value;
+//                    out << x << "       " << y << "\r\n";
+//                }
+//                out << "\r\n";
+//            }
+//        }
+//    }
+//    file.close();
 }
 
 void PlotScatter::drawGOGData()
@@ -612,15 +612,19 @@ void PlotScatter::updateTimelineGraph()
         if(!timeVec.isEmpty())
         {
             m_customPlot->xAxis->setRange(timeVec.first(), timeVec.last());
-            m_customPlot->xAxis->setLabel("Time(s)");
             m_coordBgn_x = timeVec.first();
             m_coordEnd_x = timeVec.last();
-
-            m_customPlot->yAxis->setRange(0.0, 1.0);
-            m_coordBgn_y = 0.0;
-            m_coordEnd_y = 1.0;
-            m_customPlot->yAxis->setLabel("All Platforms");
+        }else {
+            m_customPlot->xAxis->setRange(0, 10000);
+            m_coordBgn_x = 0;
+            m_coordEnd_x = 10000;
         }
+
+        m_customPlot->xAxis->setLabel("Time(s)");
+        m_customPlot->yAxis->setRange(0.0, 1.0);
+        m_coordBgn_y = 0.0;
+        m_coordEnd_y = 1.0;
+        m_customPlot->yAxis->setLabel("All Platforms");
         m_customPlot->yAxis->setTickLabels(false);
     }
     m_customPlot->yAxis->grid()->setVisible(false);

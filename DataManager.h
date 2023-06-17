@@ -41,13 +41,35 @@ public:
     {
         int platformDataID;
         QString platformName;
-        OpsStatus OpsStatus; //状态
-        Alliance Alliance; //联盟方
-        Operation_medium Operation_medium; //运动介质
-        IconType Icon_Type; //类型
+        Mars_OpsStatus OpsStatus; //状态
+        Mars_Alliance Alliance; //联盟方
+        Mars_Operating_medium Operation_medium; //运动介质
+        Mars_IconType Icon_Type; //类型
         QString basePlatName; //类型名称
         QString hullName; //舷号
         QString cStandBy; //备用字
+    };
+
+    enum USIM_Alliance{
+        USIM_Alliance_UNKNOW = 0,
+        USIM_RED = 1,
+        USIM_BLUE = 2,
+        USIM_WHITE = 3,
+        USIM_GREEN = 4,
+        USIM_PURPLE = 5,
+        USIM_ORANGE = 6,
+        USIM_YELLOW = 7
+    };
+    struct ProtobufPlatForm
+    {
+        int32_t platformID;
+        QString name;
+        QString cmdNodeName;
+        USIM_Alliance alliance;
+        uint64_t color;
+        uint32_t kind;
+        uint32_t classType;
+        QString typeName;
     };
 
 private:
@@ -64,6 +86,7 @@ private:
     QMap<int32_t, QHash<QString, QVector<double>>> m_realDataMap;
     QHash<int32_t, QList<QPair<QString, QString>>> m_realUnitHash;
     QMap<int32_t, RealPlatform> m_realPlatformMap;
+    QMap<int32_t, ProtobufPlatForm> m_protobufPlatformMap;
     // <EntityID, <attr,unit>>
     QHash<int32_t, QList<QPair<QString, QString>>> m_attrUnitHash;
     // 平台map数据
@@ -166,6 +189,7 @@ private:
 
     // 使用正则表达式加载ASI中特定数据格式
     QStringList parsePlatformData(const QString& data);
+    int32_t findIDByName(const QString &name);
 
     recvThread* m_recvThread = nullptr;
 signals:
@@ -174,8 +198,10 @@ signals:
     void updateRealTime();
 
 public Q_SLOTS:
-    void onRecvPlatinfoData(PlatInfoDataExcect plat);
-    void onRecvGenericData(GenericDataExcect generic);
+    void onRecvPlatinfoData(const MARS_PlatInfoDataExcect &plat);
+    void onRecvGenericData(const GenericData &generic);
+
+    void onRecvProtobufPlatinfoData(const USIM_PlatInfoMessage_Proto &plat);
 };
 
 #define DataManagerInstance DataManager::getInstance()
