@@ -122,11 +122,9 @@ void recvThread::onProtoBufReadyRead()
             std::string str(platData.data(),header->ilength);
             plat.ParseFromString(str);
 
-            QString name = QString::fromLocal8Bit(plat.splatname().data());
+
             emit protobufPlatInfoReceived(plat);
-
         }
-
         else
         {
             GenericData data;
@@ -137,116 +135,401 @@ void recvThread::onProtoBufReadyRead()
                 USIM_SIMINFO_Proto generic;
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.sscinarioname().data());
+                data.m_eventName = "仿真信息";
             }
             else if(header->iMessageType == USIM_COMMANDSTRUCTURE_MESSAGE){
                 USIM_CommandStructInfo_Proto generic;
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.snodename().data());
+                data.m_eventName = "指挥结构信息";
             }
             else if(header->iMessageType == USIM_PLATLOADING_MESSAGE){
+                data.m_eventName = "装备挂载信息";
             }
             else if(header->iMessageType == USIM_TIME_MESSAGE){
+                data.m_eventName = "时间信息";
             }
             else if(header->iMessageType == USIM_DETECT_MESSAGE){
                 USIM_Detection_Proto generic;
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.csensorname().data());
+                data.m_eventName = "探测信息";
             }
             else if(header->iMessageType == USIM_FUSION_MESSAGE){
                 USIM_Fusion_Proto generic;
                 generic.ParseFromString(str);
                 data.m_ID = generic.uid();
+                data.m_eventName = "融合信息";
             }
             else if(header->iMessageType == USIM_DETECTEVENT_MESSAGE){
                 USIM_DetectionEvent_Proto generic;
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.csensorname().data());
+                data.m_eventName = "探测事件信息";
             }
             else if(header->iMessageType == USIM_FUSIONEVENT_MESSAGE){
                 USIM_FusionEvent_Proto generic;
                 generic.ParseFromString(str);
                 data.m_ID = generic.uid();
+                data.m_eventName = "融合事件信息";
             }
             else if(header->iMessageType == USIM_COMMUNICATIONEVENT_MESSAGE){
                 USIM_CommunicationEvent_Proto generic;
                 generic.ParseFromString(str);
                 data.m_ID = generic.uid();
+                data.m_eventName = "通信事件信息";
             }
             else if(header->iMessageType == USIM_COMMANDEVENT_MESSAGE){
                 USIM_CommandControlEvent_Proto generic;
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.sslaveequipmentname().data());
+                data.m_eventName = "指挥控制事件信息";
             }
             else if(header->iMessageType == USIM_WEAPONEVENT_MESSAGE){
                 USIM_WeaponSystemEvent_Proto generic;
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.cweaponname().data());
+                data.m_eventName = "武器系统事件信息";
             }
             else if(header->iMessageType == USIM_WEAPONLAUNCHEVENT_MESSAGE){
                 USIM_WeaponLaunchEvent_Proto generic;
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.cweaponname().data());
+                data.m_eventName = "武器发射事件信息";
             }
             else if(header->iMessageType == USIM_BAITLAUNCHEVENT_MESSAGE){
                 USIM_DecoyLaunchEvent_Proto generic;
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.cbaitname().data());
+                data.m_eventName = "诱饵发射事件信息";
             }
             else if(header->iMessageType == USIM_EWEVENT_MESSAGE){
                 USIM_ElectronicWarEvent_Proto generic;
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.cjammingsystemname().data());
+                data.m_eventName = "电子战事件信息";
             }
             else if(header->iMessageType == USIM_ACOUSTICJAMMINGEVENT_MESSAGE){
+                data.m_eventName = "水声干扰事件信息";
             }
             else if(header->iMessageType == USIM_SENSORSTATEEVENT_MESSAGE){
                 USIM_SensorStateEvent_Proto generic;
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.ssensorname().data());
+                data.m_eventName = "传感器开关机事件信息";
             }
             else if(header->iMessageType == USIM_ENGAGEMENTRESULTEVENT_MESSAGE){
                 USIM_BattleResultEvent_Proto generic;
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.sweaponname().data());
+                data.m_eventName = "交战结果事件信息";
             }
             else if(header->iMessageType == USIM_DAMAGEEVENT_MESSAGE){
                 USIM_DamageEvent_Proto generic;
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.sweaponname().data());
+                data.m_eventName = "毁伤事件信息";
             }
             else if(header->iMessageType == USIM_LOGISTICSUPPLYEVENT_MESSAGE){
                 USIM_LodisticsEvent_Protp generic;
                 generic.ParseFromString(str);
                 data.m_ID = generic.usenderid();
+                data.m_eventName = "后勤补给事件信息";
             }
             else if(header->iMessageType == USIM_AIRCRAFTLAUNCHEVENT_MESSAGE){
                 USIM_AircraftTakeoffEvent_Proto generic;
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.splanename().data());
+                data.m_eventName = "飞机起飞事件信息";
             }
             else if(header->iMessageType == USIM_AIRCRAFTLANDINGEVENT_MESSAGE){
                 USIM_AircraftLandEvent_Proto generic;
                 generic.ParseFromString(str);
                 data.m_ID = generic.uplaneid();
+                data.m_eventName = "飞机降落事件信息";
             }
             else if(header->iMessageType == USIM_RTBEVENT_MESSAGE){
                 USIM_AircraftReturnEvent_Proto generic;
                 generic.ParseFromString(str);
                 data.m_ID = generic.uplaneid();
+                data.m_eventName = "飞机返回基地事件信息";
             }
             else if(header->iMessageType == USIM_THROWBUOYEVENT_MESSAGE){
                 USIM_BuoyReleaseEvent_Proto generic;
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.sbuoy().data());
+                data.m_eventName = "撒浮标事件信息";
             }
             else if(header->iMessageType == USIM_SONARBUOYREUSINGEVENT_MESSAGE){
                 USIM_SonarDropReuseEvent_Proto generic;
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.ssonarname().data());
+                data.m_eventName = "声纳吊放回收事件信息";
+            }
+            else if(header->iMessageType == USIM_FORCEOPROJECTIONEVENT_MESSAGE){
+                USIM_ForceDeliveryEvent_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.cforcename().data());
+                data.m_eventName = "兵力投送事件信息";
+            }
+            else if(header->iMessageType == USIM_FORCEREUSINGEVENT_MESSAGE){
+                USIM_ForceReusingEvent_Proto generic;
+                generic.ParseFromString(str);
+                data.m_ID = generic.uid();
+                data.m_eventName = "兵力回收事件信息";
+            }
+            else if(header->iMessageType == USIM_DYNAMICRADIATIONCIRCLE_MESSAGE){
+                USIM_DyamicCycle_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.suuid().data());
+                data.m_eventName = "动态放射圈信息";
+            }
+            else if(header->iMessageType == USIM_DRAWING_WEDGE_MESSAGE){
+                USIM_WedgeBeam_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.suuid().data());
+                data.m_eventName = "楔形波束体信息";
+            }
+            else if(header->iMessageType == USIM_DRAWING_BALL_MESSAGE){
+                USIN_SphereBeam_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.suuid().data());
+                data.m_eventName = "球形波束体信息";
+            }
+            else if(header->iMessageType == USIM_DRAWING_CIRCULARRING_MESSAGE){
+                USIM_CircleBeam_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.suuid().data());
+                data.m_eventName = "圆环形波束体信息";
+            }
+            else if(header->iMessageType == USIM_DRAWING_CIRCULARCONE_MESSAGE){
+                USIM_ConeBeam_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.suuid().data());
+                data.m_eventName = "圆锥形波束体信息";
+            }
+            else if(header->iMessageType == USIM_DRAWING_PYRAMID_MESSAGE){
+                USIM_PyramidBeam_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.suuid().data());
+                data.m_eventName = "方锥形波束体信息";
+            }
+            else if(header->iMessageType == USIM_DRAWING_CYLINDER_MESSAGE){
+                USIM_CylinderBeam_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.suuid().data());
+                data.m_eventName = "圆柱形波束体信息";
+            }
+            else if(header->iMessageType == USIM_LINETYPE_MESSAGE){
+                USIM_Line_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.suuid().data());
+                data.m_eventName = "线型信息";
+            }
+            else if(header->iMessageType == USIM_DISABLEDISPLAY_MESSAGE){
+                USIM_GraphOnoff_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.suuid().data());
+                data.m_eventName = "图形显示关闭信息";
+            }
+            else if(header->iMessageType == USIM_SONARDETECTINFO_MESSAGE){
+                USIM_SonarDetectInfo_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.detector().data());
+                data.m_eventName = "声纳探测详情";
+            }
+            else if(header->iMessageType == USIM_SONOBOUYDETECTINFO_MESSAGE){
+                data.m_eventName = "浮标阵探测详情";
+            }
+            else if(header->iMessageType == USIM_AirDeckAbort_MESSAGE){
+                USIM_AircraftDeckAbortEvent_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.aircraft().data());
+                data.m_eventName = "飞机甲板中止事件信息";
+            }
+            else if(header->iMessageType == USIM_IssuingTaskAssignment_MESSAGE){
+                USIM_IssuingTaskAssignment_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.thewarfarecommander().data());
+                data.m_eventName = "指挥任务分派信息";
+            }
+            else if(header->iMessageType == USIM_CommandTaskCompleted_MESSAGE){
+                USIM_CommandTaskCompleted_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.thewarfarecommander().data());
+                data.m_eventName = "指挥任务完成信息";
+            }
+            else if(header->iMessageType == USIM_SetUpTrack_MESSAGE){
+                data.m_eventName = "航线信息";
+            }
+            else if(header->iMessageType == USIM_SetUpArea_MESSAGE){
+                USIM_TrackAreaInfo_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.name().data());
+                data.m_eventName = "区域信息";
+            }
+            else if(header->iMessageType == USIM_AmpHeliLaunch_Message){
+                USIM_AMPHELITRANSFER_Proto  generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.transportasset().data());
+                data.m_eventName = "直升机垂直登陆起飞";
+            }
+            else if(header->iMessageType == USIM_AmpHeliRecovery_Message){
+                USIM_AMPHELITRANSFER_Proto  generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.heliasset().data());
+                data.m_eventName = "直升机垂直登陆回位";
+            }
+            else if(header->iMessageType == USIM_AmpHeliDamage_Message){
+                USIM_AMPHELITRANSFER_Proto  generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.heliasset().data());
+                data.m_eventName = "直升机垂直登陆过程中损毁";
+            }
+            else if(header->iMessageType == USIM_AmpHeliUnloadBegin_Message){
+                USIM_AMPLANDINGUNLOAD_Proto  generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.unloadasset().data());
+                data.m_eventName = "直升机卸载开始";
+            }
+            else if(header->iMessageType == USIM_AmpHeliUnloadEnd_Message){
+                USIM_AMPLANDINGUNLOAD_Proto  generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.unloadasset().data());
+                data.m_eventName = "直升机卸载结束";
+            }
+            else if(header->iMessageType == USIM_AmpHeliUnloadDamage_Message){
+                USIM_AMPLANDINGUNLOAD_Proto  generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.unloadasset().data());
+                data.m_eventName = "直升机卸载过程中损毁";
+            }
+            else if(header->iMessageType == USIM_AmpCraftFlashBegin_Message){
+                USIM_AMPFLASHING_Proto  generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.transportasset().data());
+                data.m_eventName = "气垫艇泛水开始";
+            }
+            else if(header->iMessageType == USIM_AmpCraftFlashEnd_Message){
+                USIM_AMPFLASHING_Proto  generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.flashingasset().data());
+                data.m_eventName = "气垫艇泛水结束";
+            }
+            else if(header->iMessageType == USIM_AmpCraftFlashDamage_Message){
+                USIM_AMPFLASHING_Proto  generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.flashingasset().data());
+                data.m_eventName = "气垫艇泛水损毁";
+            }
+            else if(header->iMessageType == USIM_AmpVehicleFlashBegin_Message){
+                USIM_AMPFLASHING_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.transportasset().data());
+                data.m_eventName = "两栖装甲泛水开始";
+            }
+            else if(header->iMessageType == USIM_AmpVehicleFlashEnd_Message){
+                USIM_AMPFLASHING_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.flashingasset().data());
+                data.m_eventName = "两栖装甲泛水结束";
+            }
+            else if(header->iMessageType == USIM_AmpVehicleFlashDamage_Message){
+                USIM_AMPFLASHING_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.flashingasset().data());
+                data.m_eventName = "两栖装甲泛水损毁";
+            }
+            else if(header->iMessageType == USIM_AmpCraftTransBegin_Message){
+                USIM_AMPTRANSFER_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.transportasset().data());
+                data.m_eventName = "气垫艇换乘开始";
+            }
+            else if(header->iMessageType == USIM_AmpCraftTransEnd_Message){
+                USIM_AMPTRANSFER_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.subasset().data());
+                data.m_eventName = "气垫艇换乘结束";
+            }
+            else if(header->iMessageType == USIM_AmpCraftTransDamage_Message){
+                USIM_AMPTRANSFER_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.subasset().data());
+                data.m_eventName = "气垫艇换乘损毁";
+            }
+            else if(header->iMessageType == USIM_AmpHeliTransBegin_Message){
+                USIM_AMPTRANSFER_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.transportasset().data());
+                data.m_eventName = "直升机换乘开始";
+            }
+            else if(header->iMessageType == USIM_AmpHeliTransEnd_Message){
+                USIM_AMPTRANSFER_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.subasset().data());
+                data.m_eventName = "直升机换乘结束";
+            }
+            else if(header->iMessageType == USIM_AmpHeliTransDamage_Message){
+                USIM_AMPTRANSFER_Proto generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.subasset().data());
+                data.m_eventName = "直升机换乘损毁";
+            }
+            else if(header->iMessageType == USIM_AmpCraftUnloadBegin_Message){
+                USIM_AMPLANDINGUNLOAD_Proto  generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.unloadasset().data());
+                data.m_eventName = "气垫船卸载开始";
+            }
+            else if(header->iMessageType == USIM_AmpCraftUnloadEnd_Message){
+                USIM_AMPLANDINGUNLOAD_Proto  generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.unloadasset().data());
+                data.m_eventName = "气垫船卸载结束";
+            }
+            else if(header->iMessageType == USIM_AmpCraftUnloadDamage_Message){
+                USIM_AMPLANDINGUNLOAD_Proto  generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.unloadasset().data());
+                data.m_eventName = "气垫船卸载损毁";
+            }
+            else if(header->iMessageType == USIM_AmpSteamBoatUnloadBegin_Message){
+                USIM_AMPLANDINGUNLOAD_Proto  generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.unloadasset().data());
+                data.m_eventName = "冲锋舟卸载开始";
+            }
+            else if(header->iMessageType == USIM_AmpSteamBoatUnloadBegin_Message){
+                USIM_AMPLANDINGUNLOAD_Proto  generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.unloadasset().data());
+                data.m_eventName = "冲锋舟卸载结束";
+            }
+            else if(header->iMessageType == USIM_AmpSteamBoatUnloadBegin_Message){
+                USIM_AMPLANDINGUNLOAD_Proto  generic;
+                generic.ParseFromString(str);
+                data.m_platName = QString::fromLocal8Bit(generic.unloadasset().data());
+                data.m_eventName = "冲锋舟卸载损毁";
+            }
+            else if(header->iMessageType == USIM_MineSweepStart_Message){
+                data.m_eventName = "扫雷开始";
+            }
+            else if(header->iMessageType == USIM_MineSweepEnd_Message){
+                data.m_eventName = "扫雷结束";
+            }
+            else if(header->iMessageType == USIM_MineSweepSuccess_Message){
+                data.m_eventName = "扫雷成功";
+            }
+            else if(header->iMessageType == USIM_MineSweepExploded_Message){
+                data.m_eventName = "水雷爆炸";
             }
 
 
             emit genericReceived(data);
+
+            qDebug()<<data.m_relativeTime<<" "<<header->iMessageType<<" "<<data.m_platName<<" "<<data.m_eventName;
         }
     }
 }
+
