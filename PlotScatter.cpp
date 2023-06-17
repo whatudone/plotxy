@@ -683,7 +683,13 @@ void PlotScatter::updateTimelineGraph()
             }
             if(event.m_isIncludeTag)
             {
-                text.append(data.m_name);
+                // 离线数据中eventname包含了平台信息，在线数据中需要自己拼接
+                if(DataManagerInstance->getIsRealTime()){
+                     text.append(data.m_platName+data.m_eventName);
+                }else{
+                     text.append(data.m_eventName);
+                }
+
             }
             text.append(QString("(%1s)").arg(data.m_relativeTime));
             textItem->setText(text);

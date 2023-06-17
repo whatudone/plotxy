@@ -87,16 +87,14 @@ void recvThread::onReadyRead()
             QByteArray genericData = datagram.mid(sizeof(Z_SendHeader), header->ilength);
             if(header->iMessageType == MARS_TRANSMIT_NORMAL){
                 MARS_MsgSimMessage *generic = reinterpret_cast<MARS_MsgSimMessage*>(genericData.data());
-                data.m_name = QString::fromLocal8Bit(generic->OriginSender);
+                data.m_platName = QString::fromLocal8Bit(generic->OriginSender);
             }
             else if(header->iMessageType == VNR_GY_MOVETOPOINT){
                 MOVE_CTRL_POINT* generic = reinterpret_cast<MOVE_CTRL_POINT*>(genericData.data());
-                data.m_name = QString::fromLocal8Bit(generic->host_name);
+                data.m_platName = QString::fromLocal8Bit(generic->host_name);
             }
 
             emit genericReceived(data);
-
-            qDebug()<<data.m_relativeTime<<" "<<header->iMessageType<<" "<<data.m_name;
         }
     }
 }
@@ -249,8 +247,6 @@ void recvThread::onProtoBufReadyRead()
 
 
             emit genericReceived(data);
-
-            qDebug()<<data.m_relativeTime<<" "<<header->iMessageType<<" "<<data.m_name;
         }
     }
 }

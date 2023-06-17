@@ -105,7 +105,7 @@
         <number>1</number>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>7</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QVBoxLayout" name="verticalLayout_64" stretch="0,1,0,0,0,1">
@@ -3218,74 +3218,9 @@ background-color: rgb(127, 127, 127);</string>
             <number>10</number>
            </property>
            <item>
-            <layout class="QGridLayout" name="gridLayout_31" columnstretch="0,1,0,0,0,0,0">
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_74">
-               <property name="text">
-                <string>X:   </string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1" colspan="2">
-              <widget class="QLineEdit" name="lineEdit_14"/>
-             </item>
-             <item row="0" column="3" colspan="4">
-              <widget class="QComboBox" name="comboBox_11">
-               <item>
-                <property name="text">
-                 <string>这里是单位</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_75">
-               <property name="text">
-                <string>Y:   </string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1" colspan="2">
-              <widget class="QLineEdit" name="lineEdit_28"/>
-             </item>
-             <item row="1" column="3" colspan="4">
-              <widget class="QComboBox" name="comboBox_12">
-               <item>
-                <property name="text">
-                 <string>这里是单位</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_76">
-               <property name="text">
-                <string>Time:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QDateTimeEdit" name="dateTimeEdit"/>
-             </item>
-             <item row="2" column="2" colspan="4">
-              <widget class="QLineEdit" name="lineEdit_35"/>
-             </item>
-             <item row="2" column="6">
-              <widget class="QLabel" name="label_80">
-               <property name="text">
-                <string>s</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="label_77">
-               <property name="text">
-                <string>Icon:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1" colspan="3">
-              <widget class="QComboBox" name="comboBox_13">
+            <layout class="QGridLayout" name="gridLayout_31" columnstretch="0,0,0,0,0,0,0,0,0,0">
+             <item row="3" column="1">
+              <widget class="QComboBox" name="comboBoxMarkerIcon">
                <item>
                 <property name="text">
                  <string>None</string>
@@ -3328,15 +3263,103 @@ background-color: rgb(127, 127, 127);</string>
                </item>
               </widget>
              </item>
-             <item row="3" column="4">
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="lineEditMarkerYValue"/>
+             </item>
+             <item row="2" column="3">
+              <widget class="QSpinBox" name="spinBox"/>
+             </item>
+             <item row="2" column="4">
+              <widget class="QSpinBox" name="spinBox_18"/>
+             </item>
+             <item row="2" column="2">
+              <widget class="QSpinBox" name="spinBox_19"/>
+             </item>
+             <item row="2" column="1">
+              <widget class="QSpinBox" name="spinBox_20"/>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_78">
+               <property name="text">
+                <string>Text:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="label_79">
+               <property name="text">
+                <string>Font:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_74">
+               <property name="text">
+                <string>X:   </string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QComboBox" name="comboBoxMarkerXUnit">
+               <item>
+                <property name="text">
+                 <string>None</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_75">
+               <property name="text">
+                <string>Y:   </string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="QComboBox" name="comboBoxMarkerYUnit">
+               <item>
+                <property name="text">
+                 <string>None</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_76">
+               <property name="text">
+                <string>Time:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="lineEditMarkerXValue"/>
+             </item>
+             <item row="2" column="5" colspan="4">
+              <widget class="QLineEdit" name="lineEdit_35"/>
+             </item>
+             <item row="2" column="9">
+              <widget class="QLabel" name="label_80">
+               <property name="text">
+                <string>s</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_77">
+               <property name="text">
+                <string>Icon:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="2">
               <widget class="QLabel" name="label_81">
                <property name="text">
                 <string>Color:</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="5" colspan="2">
-              <widget class="ColorButton" name="pushButton_45">
+             <item row="3" column="3">
+              <widget class="ColorButton" name="pushButtonMarkerColor">
                <property name="maximumSize">
                 <size>
                  <width>30</width>
@@ -3348,28 +3371,14 @@ background-color: rgb(127, 127, 127);</string>
                </property>
               </widget>
              </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="label_78">
-               <property name="text">
-                <string>Text:</string>
-               </property>
-              </widget>
+             <item row="4" column="1">
+              <widget class="QLineEdit" name="lineEditMarkerText"/>
              </item>
-             <item row="4" column="1" colspan="6">
-              <widget class="QLineEdit" name="lineEdit_43"/>
+             <item row="5" column="1">
+              <widget class="QFontComboBox" name="fontComboBoxMarker"/>
              </item>
-             <item row="5" column="0">
-              <widget class="QLabel" name="label_79">
-               <property name="text">
-                <string>Font:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="4" colspan="3">
-              <widget class="QComboBox" name="comboBox_24"/>
-             </item>
-             <item row="5" column="1" colspan="3">
-              <widget class="QFontComboBox" name="fontComboBox_4"/>
+             <item row="5" column="2">
+              <widget class="QSpinBox" name="spinBoxMarkerFontSize"/>
              </item>
             </layout>
            </item>
@@ -3389,30 +3398,30 @@ background-color: rgb(127, 127, 127);</string>
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_46">
+              <widget class="QPushButton" name="pushButtonAddMarker">
                <property name="text">
-                <string>Add</string>
+                <string>添加</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_47">
+              <widget class="QPushButton" name="pushButtonModifyMarker">
                <property name="text">
-                <string>Modify</string>
+                <string>修改</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_48">
+              <widget class="QPushButton" name="pushButtonDeleteMarker">
                <property name="text">
-                <string>Delete</string>
+                <string>删除</string>
                </property>
               </widget>
              </item>
             </layout>
            </item>
            <item>
-            <widget class="QTreeWidget" name="treeWidget_7">
+            <widget class="QTreeWidget" name="treeWidgetMarker">
              <column>
               <property name="text">
                <string>X</string>

@@ -31,6 +31,11 @@ DataManager::DataManager()
 
 DataManager::~DataManager() {}
 
+bool DataManager::getIsRealTime() const
+{
+    return m_isRealTime;
+}
+
 void DataManager::loadFileData(const QString& filename)
 {
     QFileInfo info(filename);
@@ -374,8 +379,8 @@ void DataManager::loadASIData(const QString& asiFileName)
                             continue;
                         }
                         GenericData g;
-                        g.m_name = eventDataList.at(3);
-                        g.m_name = g.m_name.remove("\"").trimmed();
+                        g.m_eventName = eventDataList.at(3);
+                        g.m_eventName = g.m_eventName.remove("\"").trimmed();
                         g.m_relativeTime = OrdinalTimeFormatter::getSecondsFromTimeStr(
                             eventDataList.at(4).trimmed(), m_refYear);
                         g.m_timeOffset = eventDataList.at(5).trimmed().toInt();
@@ -861,7 +866,7 @@ void DataManager::onRecvPlatinfoData(const MARS_PlatInfoDataExcect &plat)
 
 void DataManager::onRecvGenericData(const GenericData &generic)
 {
-    int32_t uID = findIDByName(generic.m_name);
+    int32_t uID = findIDByName(generic.m_platName);
     if(!m_realGenericMap.contains(uID))
     {
         m_realGenericMap.insert(uID, QMap<QString, QList<GenericData>>());

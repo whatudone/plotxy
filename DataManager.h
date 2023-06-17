@@ -176,6 +176,8 @@ public:
 
     void setIsRealTime(bool isRealTime);
 
+    bool getIsRealTime() const;
+
 private:
     //获取实体-属性的全数据，属性默认为Time
     QVector<double> getEntityAttrValueList(int32_t entityID, const QString& attr = "Time");
