@@ -649,9 +649,9 @@ QString DataManager::getEntityNameByID(int32_t id)
 {
     if(m_isRealTime)
     {
-        if(m_realPlatformMap.contains(id))
+        if(m_protobufPlatformMap.contains(id))
         {
-            return m_realPlatformMap.value(id).platformName;
+            return m_protobufPlatformMap.value(id).name;
         }
     }
     else if(m_platformMap.contains(id))
@@ -666,9 +666,9 @@ QStringList DataManager::getEntityNameList()
     QStringList list;
     if(m_isRealTime)
     {
-        for(const auto& p : m_realPlatformMap)
+        for(const auto& p : m_protobufPlatformMap)
         {
-            list.append(p.platformName);
+            list.append(p.name);
         }
     }
     else
@@ -701,9 +701,9 @@ QMap<int32_t, QString> DataManager::getEntityIDAndNameMap()
     QMap<int32_t, QString> map;
     if(m_isRealTime)
     {
-        for(const auto& p : m_realPlatformMap)
+        for(const auto& p : m_protobufPlatformMap)
         {
-            map.insert(p.platformDataID, p.platformName);
+            map.insert(p.platformID, p.name);
         }
     }
     else
@@ -798,10 +798,11 @@ QStringList DataManager::parsePlatformData(const QString& data)
 
 int32_t DataManager::findIDByName(const QString &name)
 {
-    QList<int32_t> lst = m_realPlatformMap.keys();
+    QList<int32_t> lst = m_protobufPlatformMap.keys();
     for(int i = 0;i<lst.size();i++){
-        if(name == m_realPlatformMap[lst.at(i)].platformName)
+        if(name == m_protobufPlatformMap[lst.at(i)].name){
             return lst.at(i);
+        }
     }
     return -1;
 }
@@ -866,7 +867,11 @@ void DataManager::onRecvPlatinfoData(const MARS_PlatInfoDataExcect &plat)
 
 void DataManager::onRecvGenericData(const GenericData &generic)
 {
-    int32_t uID = findIDByName(generic.m_platName);
+    int32_t uID = -1;
+    if(!generic.m_platName.isEmpty())
+        uID = findIDByName(generic.m_platName);
+    else if(generic.m_ID != -1)
+        uID = generic.m_ID;
     if(!m_realGenericMap.contains(uID))
     {
         m_realGenericMap.insert(uID, QMap<QString, QList<GenericData>>());
@@ -881,27 +886,6 @@ void DataManager::onRecvProtobufPlatinfoData(const USIM_PlatInfoMessage_Proto &p
     int32_t uID = int32_t(plat.uid());
     if(!m_realDataMap.contains(uID))
     {
-        QHash<QString, QVector<double>> dataMap = m_realDataMap[uID];
-        dataMap["Time"].append(plat.dfsimtime());
-        dataMap["Fuel"].append(plat.dffuel());
-        dataMap["Life"].append(plat.dflife());
-        dataMap["Lon"].append(plat.dflon());
-        dataMap["Lat"].append(plat.dflat());
-        dataMap["Alt"].append(plat.dfalt());
-        dataMap["Heading"].append(plat.dfheading());
-        dataMap["Vx"].append(plat.dfvx());
-        dataMap["Vy"].append(plat.dfvy());
-        dataMap["Vz"].append(plat.df());
-        dataMap["Yaw"].append(plat.dfyaw());
-        dataMap["Pitch"].append(plat.pitch());
-        dataMap["Roll"].append(plat.roll());
-        dataMap["Swaying"].append(plat.dfswaying());
-        dataMap["Surging"].append(plat.surging());
-        dataMap["Heaving"].append(plat.heaving());
-        m_realDataMap.insert(uID, dataMap);
-        m_minRealTime = dataMap["Time"].at(0);
-        m_maxRealTime = plat.dfsimtime();
-
         QList<QPair<QString, QString>> attrUnitList;
         attrUnitList.append(QPair<QString, QString>("Time", "sec"));
         attrUnitList.append(QPair<QString, QString>("Fuel", "pound"));
@@ -931,9 +915,30 @@ void DataManager::onRecvProtobufPlatinfoData(const USIM_PlatInfoMessage_Proto &p
         protoPlatform.classType = plat.uclass();
         protoPlatform.typeName = QString::fromLocal8Bit(plat.stype().data());
         m_protobufPlatformMap.insert(uID,protoPlatform);
-
-        emit updateRealTime();
     }
+
+    QHash<QString, QVector<double>> dataMap = m_realDataMap[uID];
+    dataMap["Time"].append(plat.dfsimtime()*3600);
+    dataMap["Fuel"].append(plat.dffuel());
+    dataMap["Life"].append(plat.dflife());
+    dataMap["Lon"].append(plat.dflon());
+    dataMap["Lat"].append(plat.dflat());
+    dataMap["Alt"].append(plat.dfalt());
+    dataMap["Heading"].append(plat.dfheading());
+    dataMap["Vx"].append(plat.dfvx());
+    dataMap["Vy"].append(plat.dfvy());
+    dataMap["Vz"].append(plat.df());
+    dataMap["Yaw"].append(plat.dfyaw());
+    dataMap["Pitch"].append(plat.pitch());
+    dataMap["Roll"].append(plat.roll());
+    dataMap["Swaying"].append(plat.dfswaying());
+    dataMap["Surging"].append(plat.surging());
+    dataMap["Heaving"].append(plat.heaving());
+    m_realDataMap.insert(uID, dataMap);
+    m_minRealTime = dataMap["Time"].at(0);
+    m_maxRealTime = plat.dfsimtime() * 3600;
+
+    emit updateRealTime();
 }
 
 recvThread* DataManager::getRecvThread() const
@@ -962,6 +967,7 @@ void DataManager::clearData()
     m_realDataMap.clear();
     m_platformMap.clear();
     m_realPlatformMap.clear();
+    m_protobufPlatformMap.clear();
     m_genericMap.clear();
     m_realGenericMap.clear();
     m_timeDataSet.clear();

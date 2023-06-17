@@ -18,6 +18,7 @@ int main(int argc, char* argv[])
     QApplication a(argc, argv);
     qRegisterMetaType<Z_SendHeader>("Z_SendHeader");
     qRegisterMetaType<MARS_PlatInfoDataExcect>("MARS_PlatInfoDataExcect");
+    qRegisterMetaType<USIM_PlatInfoMessage_Proto>("USIM_PlatInfoMessage_Proto");
     qRegisterMetaType<GenericData>("GenericData");
     loadQss(":/qss/app.qss");
     PlotXYDemo w;

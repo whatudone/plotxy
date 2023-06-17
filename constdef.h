@@ -193,6 +193,10 @@ struct GenericData
     // 时间偏移
     int32_t m_timeOffset;
     int32_t m_ID;
+
+    GenericData(){
+        m_ID = -1;
+    }
 };
 
 struct GOGDataInfo
