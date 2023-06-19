@@ -472,17 +472,25 @@ void PlotItemBase::setUnitsShowX(bool on)
                 {
                     if(m_isHorizonBar)
                     {
-                        m_customPlot->xAxis->setAxisFormat(m_dataPairs.at(0)->getUnit_x());
-                        m_customPlot->xAxis->setAxisFormatShow(on);
-                        m_customPlot->yAxis->setAxisFormatShow(false);
+                        if(on)
+                            setxAxisLabel(m_dataPairs.at(0)->getAttr_x() + "(" + m_dataPairs.at(0)->getUnit_x() + ")");
+                        else {
+                            setxAxisLabel(m_dataPairs.at(0)->getAttr_x());
+                        }
+                        setyAxisLabel(m_dataPairs.at(0)->getAttr_y());
                     }
                     replot();
                     return;
+                } else {
+                    if(on) {
+                        setxAxisLabel(m_dataPairs.at(0)->getAttr_x() + "(" + m_dataPairs.at(0)->getUnit_x() + ")");
+                    }
+                    else {
+                        setxAxisLabel(m_dataPairs.at(0)->getAttr_x());
+                    }
                 }
-                m_customPlot->xAxis->setAxisFormat(m_dataPairs.at(0)->getUnit_y());
+
             }
-            m_customPlot->xAxis->setAxisFormat(m_units_x);
-            m_customPlot->xAxis->setAxisFormatShow(on);
         }
     }
     replot();
@@ -500,19 +508,26 @@ void PlotItemBase::setUnitsShowY(bool on)
                 // PlotBar只有一个轴，只有X有单位，并且通过方向判断单位在哪个轴显示
                 if(plotType() == PlotType::Type_PlotBar)
                 {
-                    if(!m_isHorizonBar)
+                    if(m_isHorizonBar)
                     {
-                        m_customPlot->yAxis->setAxisFormat(m_dataPairs.at(0)->getUnit_x());
-                        m_customPlot->yAxis->setAxisFormatShow(on);
-                        m_customPlot->xAxis->setAxisFormatShow(false);
+                        if(on)
+                            setyAxisLabel(m_dataPairs.at(0)->getAttr_y() + "(" + m_dataPairs.at(0)->getUnit_y() + ")");
+                        else {
+                            setyAxisLabel(m_dataPairs.at(0)->getAttr_y());
+                        }
+                        setxAxisLabel(m_dataPairs.at(0)->getAttr_x());
                     }
                     replot();
                     return;
+                } else {
+                    if(on) {
+                        setyAxisLabel(m_dataPairs.at(0)->getAttr_y() + "(" + m_dataPairs.at(0)->getUnit_y() + ")");
+                    }
+                    else {
+                        setyAxisLabel(m_dataPairs.at(0)->getAttr_y());
+                    }
                 }
-                m_customPlot->yAxis->setAxisFormat(m_dataPairs.at(0)->getUnit_y());
             }
-            m_customPlot->yAxis->setAxisFormat(m_units_y);
-            m_customPlot->yAxis->setAxisFormatShow(on);
         }
     }
     replot();

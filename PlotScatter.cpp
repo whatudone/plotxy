@@ -41,7 +41,7 @@ void PlotScatter::initPlot()
     // 坐标轴范围切换之后，需要更新背景分段坐标信息
     connect(m_customPlot->xAxis, QOverload<const QCPRange&>::of(&QCPAxis::rangeChanged), [this]() {
         updateBackgroundColorSeg();
-        updateTimelineGraph();
+//        updateTimelineGraph();
     });
     connect(m_customPlot->yAxis, QOverload<const QCPRange&>::of(&QCPAxis::rangeChanged), [this]() {
         updateBackgroundColorSeg();
