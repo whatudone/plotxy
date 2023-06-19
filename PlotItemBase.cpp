@@ -32,7 +32,7 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     m_xPrecision = 0;
     m_yPrecision = 0;
 
-    m_outerFillColor = Qt::black;
+    m_outerFillColor = Qt::transparent;
     m_outlineColor = Qt::black;
 
     m_horzGrids = 4;
@@ -81,7 +81,12 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     resize(1000, 600);
 
     setWindowFlags(Qt::FramelessWindowHint);
-    setAttribute(Qt::WA_TranslucentBackground);
+    // 基类最外层透明
+
+    setAutoFillBackground(true);
+    QPalette palette = this->palette();
+    palette.setColor(QPalette::Window, m_outerFillColor);
+    this->setPalette(palette);
 
     updateResizeFocusPos();
     // 数据对整体发生变化时，更新界面
@@ -176,16 +181,11 @@ void PlotItemBase::setOuterFillColor(const QColor& color)
 {
     if(m_outerFillColor == color)
         return;
-    setAutoFillBackground(true);
     m_outerFillColor = color;
     QPalette palette = this->palette();
     palette.setColor(QPalette::Window, m_outerFillColor);
     this->setPalette(palette);
-    if(m_customPlot)
-    {
-        m_customPlot->setBackground(color);
-    }
-    replot();
+
 }
 
 void PlotItemBase::setOutlineColor(const QColor& color)

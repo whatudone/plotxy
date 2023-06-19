@@ -127,7 +127,7 @@ public slots:
 
 	//Light/Text
 	void onPushButton_71Clicked();
-	void onPushButton_73Clicked();
+    void onPushButton_TextFillColorClicked();
 	void onSpinbox_10Changed();
 	void onPushButton_66Clicked();
 	void onPushButton_67Clicked();

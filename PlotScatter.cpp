@@ -66,7 +66,7 @@ void PlotScatter::initPlot()
     m_customPlot->xAxis->setLabel(m_xAxisLabel);
     m_customPlot->yAxis->setLabel(m_yAxisLabel);
 
-    m_customPlot->setBackground(m_outerFillColor);
+    m_customPlot->setBackground(m_gridFillColor);
     m_customPlot->axisRect()->setBackground(m_gridFillColor);
     m_customPlot->xAxis->setLabelColor(m_xAxisLabelColor);
     m_customPlot->yAxis->setLabelColor(m_yAxisLabelColor);
@@ -339,29 +339,37 @@ void PlotScatter::drawGOGData()
         {
             for(auto data : dataList)
             {
-                bool isFilled = false;
+//                bool isFilled = false;
+//                QColor fillColor;
+//                if(setting.fillState == Qt::Checked)
+//                {
+//                    isFilled = true;
+//                    fillColor = setting.fillColor;
+//                }
+//                else if(setting.fillState == Qt::Unchecked)
+//                {
+//                    isFilled = false;
+//                }
+//                else if(setting.fillState == Qt::PartiallyChecked)
+//                {
+//                    if(data.isFill)
+//                    {
+//                        isFilled = true;
+//                        fillColor = data.fillColor;
+//                    }
+//                    else
+//                    {
+//                        isFilled = false;
+//                    }
+//                }
+
                 QColor fillColor;
-                if(setting.fillState == Qt::Checked)
-                {
-                    isFilled = true;
+                if(setting.fillColor.isValid()){
                     fillColor = setting.fillColor;
+                } else {
+                    fillColor = data.fillColor;
                 }
-                else if(setting.fillState == Qt::Unchecked)
-                {
-                    isFilled = false;
-                }
-                else if(setting.fillState == Qt::PartiallyChecked)
-                {
-                    if(data.isFill)
-                    {
-                        isFilled = true;
-                        fillColor = data.fillColor;
-                    }
-                    else
-                    {
-                        isFilled = false;
-                    }
-                }
+
                 int lineWidth = setting.lineWidth == 0 ? data.lineWidth : setting.lineWidth;
                 if(data.type == "line")
                 {
@@ -371,7 +379,7 @@ void PlotScatter::drawGOGData()
                     //                    else
                     graph->setBrush(Qt::NoBrush);
                     graph->setVisible(true);
-                    graph->setPen(QPen(QColor(data.lineColor), lineWidth));
+                    graph->setPen(QPen(QColor(fillColor), lineWidth));
                     graph->setLineStyle(QCPGraph::lsLine);
                     graph->setData(data.xList, data.yList, true);
                     m_gogGraphList.append(graph);
@@ -383,7 +391,7 @@ void PlotScatter::drawGOGData()
                                                 data.yList.at(0) + data.radius);
                     ellipse->bottomRight->setCoords(data.xList.at(0) + data.radius,
                                                     data.yList.at(0) - data.radius);
-                    ellipse->setPen(QPen(QColor(data.lineColor), lineWidth));
+                    ellipse->setPen(QPen(QColor(fillColor), lineWidth));
                     //                    if(isFilled)
                     //                        ellipse->setBrush(QColor(fillColor));
                     //                    else

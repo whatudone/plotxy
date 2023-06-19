@@ -1023,6 +1023,43 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
                 array.append(object);
             }
             plotObject.insert("ScatterMarkers",array);
+
+            auto gogList = scatter->getGOGFileList();
+            QJsonArray gogArray;
+            auto settingMap = scatter->getGogCustomSettings();
+            for(const auto &gogFile:gogList){
+                GOGCustomSetting setting = settingMap.value(gogFile);
+
+                QJsonObject object;
+
+                object.insert("GOGFilePath",gogFile);
+                object.insert("GOGIsDraw",setting.isDraw);
+                object.insert("GOGColor",setting.fillColor.name());
+                object.insert("GOGLineWidth",setting.lineWidth);
+
+                gogArray.append(object);
+            }
+            plotObject.insert("ScatterGOGs",gogArray);
+            // Event
+            auto eventList = scatter->getEventList();
+            QJsonArray  eventArray;
+            for(const auto &event:eventList){
+
+                QJsonObject object;
+
+                object.insert("ScatterEventFontFamily",event.m_eventFontFamily);
+                object.insert("ScatterEventFontSize",event.m_eventFontSize);
+                object.insert("ScatterEventColor",event.m_eventColor.name());
+                object.insert("ScatterEventStyle",event.m_eventStyle);
+                object.insert("ScatterEventIncludeTag",event.m_isIncludeTag);
+                object.insert("ScatterEventType",event.m_type);
+                object.insert("ScatterEventEID",event.m_entityID);
+                object.insert("ScatterEventEName",event.m_entityName);
+
+                eventArray.append(object);
+            }
+
+            plotObject.insert("ScatterEvents",eventArray);
         }
     }
 
@@ -1148,6 +1185,41 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
 
                scatter->addMarker(plotMarker);
             }
+
+            auto gogArray = plotObject.value("ScatterGOGs").toArray();
+            QMap<QString, GOGCustomSetting> gogSettingMap;
+            for(int32_t i = 0;i<gogArray.size();i++){
+                auto gogObject = gogArray.at(i).toObject();
+                GOGCustomSetting setting;
+                setting.isDraw = gogObject.value("GOGIsDraw").toBool();
+                setting.fillColor = QColor(gogObject.value("GOGColor").toString());
+                setting.lineWidth = gogObject.value("GOGLineWidth").toInt();
+                QString gogFilePath = gogObject.value("GOGFilePath").toString();
+
+                scatter->addGOGFile(gogFilePath);
+                gogSettingMap.insert(gogFilePath,setting);
+            }
+            scatter->setGogCustomSettings(gogSettingMap);
+
+            // Event
+            auto eventArray = plotObject.value("ScatterEvents").toArray();
+
+           for(int32_t i = 0;i<eventArray.size();i++){
+
+                 auto eventObject = eventArray.at(i).toObject();
+                EventSettings set;
+
+                set.m_eventFontFamily = eventObject.value("ScatterEventFontFamily").toString();
+                set.m_eventFontSize = eventObject.value("ScatterEventFontSize").toInt();
+                set.m_eventColor = QColor(eventObject.value("ScatterEventColor").toString());
+                set.m_eventStyle = eventObject.value("ScatterEventStyle").toString();
+                set.m_isIncludeTag = eventObject.value("ScatterEventIncludeTag").toBool();
+                set.m_type = eventObject.value("ScatterEventType").toString();
+                set.m_entityID = eventObject.value("ScatterEventEID").toInt();
+                set.m_entityName = eventObject.value("ScatterEventEName").toString();
+                scatter->addEvent(set);
+            }
+
         }
     }
 
@@ -1277,6 +1349,7 @@ void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object, Plo
 
         object.insert("StippleEnable", dataPair->getIsStippleEnable());
         object.insert("StipplePattern", dataPair->getStipplePattern());
+
     }
     else if(type == PlotType::Type_PlotText)
     {

@@ -185,7 +185,7 @@ void PlotLight::initPlot()
     m_customPlot = new QCustomPlot();
     // 将plot里面的坐标轴和中间的绘图矩形全部删除
     m_customPlot->plotLayout()->clear();
-    m_customPlot->setBackground(m_outerFillColor);
+    m_customPlot->setBackground(m_gridFillColor);
 }
 
 void PlotLight::clearPlotContent()

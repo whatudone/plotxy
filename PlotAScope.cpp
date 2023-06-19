@@ -48,7 +48,7 @@ void PlotAScope::initPlot()
     m_customPlot->xAxis->setRange(m_coordBgn_x, m_coordEnd_x);
     m_customPlot->yAxis->setRange(m_coordBgn_y, m_coordEnd_y);
 
-    m_customPlot->setBackground(m_outerFillColor);
+    m_customPlot->setBackground(m_gridFillColor);
     m_customPlot->axisRect()->setBackground(m_gridFillColor);
     m_customPlot->xAxis->setLabelColor(m_xAxisLabelColor);
     m_customPlot->yAxis->setLabelColor(m_yAxisLabelColor);

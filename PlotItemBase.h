@@ -393,7 +393,7 @@ protected:
 protected:
     QVector<DataPair*> m_dataPairs;
     //General
-    QColor m_outerFillColor; // 背景填充颜色
+    QColor m_outerFillColor; // 整体背景
     QColor m_outlineColor; // 外边框线
 
     //Axis and Grid

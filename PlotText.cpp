@@ -113,6 +113,7 @@ void PlotText::drawCellData(QPainter& painter)
     {
         auto data = dataPairList.at(j);
         auto xAttr = data->getAttr_x();
+        auto entity =  data->getEntity_x();
         // 顺便画Attr Label，减少重复循环
         int hy1 = drawRect.y() + verGridWidth * j;
         int hx1 = drawRect.left();
@@ -124,13 +125,18 @@ void PlotText::drawCellData(QPainter& painter)
         painter.setFont(font);
 
         cellRect.setRect(hx1, hy1, horiGridWidth, verGridWidth);
-        painter.drawText(cellRect, Qt::AlignCenter | Qt::TextWordWrap, xAttr);
+        painter.drawText(cellRect, Qt::AlignCenter | Qt::TextWordWrap, entity+" "+xAttr);
         painter.restore();
 
         if(data->isDraw())
         {
             // 绘制X和Y轴的value
-            pen.setColor(data->getLabelColor());
+            if(data->matchColor()){
+                pen.setColor(data->dataColor());
+            }else{
+                pen.setColor(data->getLabelColor());
+
+            }
             pen.setWidth(3);
             pen.setStyle(Qt::SolidLine);
             painter.setPen(pen);
@@ -145,7 +151,7 @@ void PlotText::drawCellData(QPainter& painter)
             QString text;
             if(math::doubleEqual(value, std::numeric_limits<double>::max()))
             {
-                text = "无数据";
+                text = "---";
             }
             else
             {

@@ -298,12 +298,6 @@ void PlotManager::initTextLightUI()
     connect(ui.lineEdit_23, &QLineEdit::editingFinished, this, [=]() {
         ui.spinBox_10->setValue(ui.lineEdit_23->text().toInt());
     });
-    connect(ui.pushButton_gridColor, &QPushButton::clicked, this, [=]() {
-        ui.pushButton_71->setColor(ui.pushButton_gridColor->color());
-    });
-    connect(ui.pushButton_gridFill, &QPushButton::clicked, this, [=]() {
-        ui.pushButton_73->setColor(ui.pushButton_gridFill->color());
-    });
     connect(ui.pushButton_68,
             SIGNAL(clicked()),
             this,
@@ -321,7 +315,7 @@ void PlotManager::initTextLightUI()
             &PlotManager::onTableWidget_textLightDataSortItemSelectionChanged);
     connect(ui.spinBox_10, &QSpinBox::editingFinished, this, &PlotManager::onSpinbox_10Changed);
     connect(ui.pushButton_71, &QPushButton::clicked, this, &PlotManager::onPushButton_71Clicked);
-    connect(ui.pushButton_73, &QPushButton::clicked, this, &PlotManager::onPushButton_73Clicked);
+    connect(ui.pushButton_TextFillColor, &QPushButton::clicked, this, &PlotManager::onPushButton_TextFillColorClicked);
 }
 
 void PlotManager::initScatterLimitUI()
@@ -646,7 +640,7 @@ void PlotManager::refreshLightTextUI(PlotItemBase* plot)
     if(!(plot == nullptr))
     {
         auto dataPairs = plot->getDataPairs();
-        if(plot->getName().startsWith("Text"))
+        if(plot->plotType() == PlotType::Type_PlotText)
         {
             ui.stackedWidget_LightTextDataSort->setCurrentIndex(0);
             ui.groupBox_29->setVisible(false);
@@ -680,6 +674,7 @@ void PlotManager::refreshLightTextUI(PlotItemBase* plot)
                 ui.tableWidget_LightDataSort->setItem(i, 0, temEntityAndAttri);
             }
         }
+        ui.pushButton_TextFillColor->setColor(plot->getGridFillColor());
     }
     else
         return;
@@ -1234,14 +1229,10 @@ void PlotManager::onSpinbox_10Changed()
     m_curSelectPlot->setGridColorWidth(ui.pushButton_71->color(), ui.spinBox_10->value());
 }
 
-void PlotManager::onPushButton_73Clicked()
+void PlotManager::onPushButton_TextFillColorClicked()
 {
-    QColor color = ui.pushButton_73->color();
-    if(!(color == ui.pushButton_gridFill->color()))
-    {
-        m_curSelectPlot->setGridFillColor(color);
-    }
-    ui.pushButton_gridFill->setColor(color);
+    QColor color = ui.pushButton_TextFillColor->color();
+    m_curSelectPlot->setGridFillColor(color);
 }
 
 //void PlotManager::onPushButton_gridFillClicked()

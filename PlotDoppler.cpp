@@ -93,7 +93,7 @@ void PlotDoppler::initPlot()
 
     horPlotX->setLabelColor(m_xAxisLabelColor);
     verPlotX->setLabelColor(m_yAxisLabelColor);
-    m_customPlot->setBackground(m_outerFillColor);
+    m_customPlot->setBackground(m_gridFillColor);
 }
 
 void PlotDoppler::getYToValueVecByX(double x, QVector<double>& yVec, QVector<double>& dataVec)

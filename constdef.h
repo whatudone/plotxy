@@ -230,7 +230,6 @@ struct GOGCustomSetting
     GOGCustomSetting()
     {
         isDraw = false;
-        fillColor = Qt::transparent;
         fillState = Qt::PartiallyChecked;
         lineWidth = 0;
         pointSize = 0;

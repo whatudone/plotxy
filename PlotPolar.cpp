@@ -35,7 +35,7 @@ void PlotPolar::initPlot()
     m_angularAxis = new QCPPolarAxisAngular(m_customPlot);
     m_angularAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
     m_customPlot->plotLayout()->addElement(0, 0, m_angularAxis);
-    m_customPlot->setBackground(m_outerFillColor);
+    m_customPlot->setBackground(m_gridFillColor);
 
     m_angularAxis->setRangeDrag(false);
     m_angularAxis->setTickLabelMode(QCPPolarAxisAngular::lmUpright);
