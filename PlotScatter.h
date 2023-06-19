@@ -77,6 +77,13 @@ public:
 
     QMap<double, BackgroundLimitSeg> getBkgLimitSegMap() const;
 
+    void addMarker(const PlotMarker& marker);
+    void removeMarker(const QString&uuid);
+    void modifyMarker(const QString&uuid ,const PlotMarker& marker);
+
+    QHash<QString, PlotMarker> getPlotMarkers() const;
+    PlotMarker getMarkerByUuid(const QString &uuid) const;
+
 private:
     void initPlot();
     void updateDataForDataPairsByTime(double secs) override;
@@ -91,6 +98,8 @@ private:
     void updateTimelineGraph() override;
     // 根据当前背景分段信息刷新背景颜色
     void updateBackgroundColorSeg();
+    // 刷新marker
+    void updateMarkers(double currentSeconds);
 
 private:
     QHash<QString, QPair<QVector<double>, QVector<double>>> m_dataHash;
@@ -110,6 +119,9 @@ private:
     // 背景分段信息
     QMap<double, BackgroundLimitSeg> m_bkgLimitSegMap;
     QList<QCPAbstractItem*> m_backSegRectList;
+    // markers
+    QHash<QString, PlotMarker> m_plotMarkers;
+    QHash<QString,QCPItemText*> m_plotMarkerItems;
 };
 
 #endif // PLOTSCATTER_H

@@ -1,6 +1,7 @@
 ﻿#include "PlotManager.h"
 #include "AddPlotPair.h"
 #include "DataManager.h"
+#include "TimeClass.h"
 
 #include "PlotAScope.h"
 #include "PlotAttitude.h"
@@ -68,6 +69,7 @@ void PlotManager::init()
     initGOGUI();
 
     initScatterLimitUI();
+    initScatterMarkersUI();
     initPlotDataUI();
     initTextEditUI();
     initAttitudeUI();
@@ -330,7 +332,17 @@ void PlotManager::initScatterLimitUI()
     connect(
         ui.pushButtonLimitUpdate, &QPushButton::clicked, this, &PlotManager::onUpdateScatterLimit);
     connect(
-        ui.treeWidgetLimit, &QTreeWidget::itemClicked, this, &PlotManager::onCurrentLimitChanged);
+                ui.treeWidgetLimit, &QTreeWidget::itemClicked, this, &PlotManager::onCurrentLimitChanged);
+}
+
+void PlotManager::initScatterMarkersUI()
+{
+    connect(ui.pushButtonAddMarker, &QPushButton::clicked, this, &PlotManager::onAddScatterMarkers);
+    connect(ui.pushButtonModifyMarker, &QPushButton::clicked, this, &PlotManager::onModifyScatterMarkers);
+    connect(ui.pushButtonDeleteMarker, &QPushButton::clicked, this, &PlotManager::onDeleteScatterMarkers);
+
+    connect(
+                ui.treeWidgetMarker, &QTreeWidget::itemClicked, this, &PlotManager::onCurrentMarkerChanged);
 }
 
 void PlotManager::initEditableMap()
@@ -495,6 +507,7 @@ void PlotManager::refreshTreeWidgetSettingEnabled(PlotItemBase* plot)
         //plotPair界面
         refreshPlotDataUI(m_curSelectPlot);
         refreshScatterLimitUI(m_curSelectPlot);
+        refreshScatterMarkersUI(m_curSelectPlot);
     }
     else if(type == PlotType::Type_PlotAScope)
     {
@@ -741,6 +754,27 @@ void PlotManager::refreshScatterLimitUI(PlotItemBase* plot)
             //左侧功能未实现，暂时这里写一个固定的>
             item->setText(2, ">");
             ui.treeWidgetLimit->addTopLevelItem(item);
+        }
+    }
+}
+
+void PlotManager::refreshScatterMarkersUI(PlotItemBase *plot)
+{
+    if(auto scatter = dynamic_cast<PlotScatter*>(plot))
+    {
+        auto markers = scatter->getPlotMarkers();
+        ui.treeWidgetMarker->clear();
+        for(const auto& marker : markers)
+        {
+            QTreeWidgetItem* item = new QTreeWidgetItem();
+            item->setText(0, QString::number(marker.x));
+            item->setText(1, marker.xUnit);
+            item->setText(2, QString::number(marker.y));
+            item->setText(3, marker.yUnit);
+            item->setText(4, OrdinalTimeFormatter::toString(marker.time,DataManagerInstance->getRefYear()));
+            item->setText(5, marker.text);
+            item->setData(0,Qt::UserRole+1,marker.uuid);
+            ui.treeWidgetMarker->addTopLevelItem(item);
         }
     }
 }
@@ -2507,5 +2541,127 @@ void PlotManager::onCurrentLimitChanged(QTreeWidgetItem* item, int column)
             ui.pushButtonLimitFAColor->setColor(seg.m_fillAboveColor);
             ui.pushButtonLimitFBColor->setColor(seg.m_fillBelowColor);
         }
+    }
+}
+
+void PlotManager::onAddScatterMarkers()
+{
+    if(auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot))
+    {
+        PlotMarker marker;
+        marker.x = ui.lineEditMarkerXValue->text().toDouble();
+        marker.xUnit=ui.comboBoxMarkerXUnit->currentText();
+        marker.y =ui.lineEditMarkerYValue->text().toDouble();
+        marker.yUnit =ui.comboBoxMarkerYUnit->currentText();
+
+        QString odiTimeStr = QString("%1 %2 %3:%4:%5")
+                .arg(ui.spinBoxMarkerDays->value())
+                .arg(ui.spinBoxMarkerYears->value())
+                .arg(ui.spinBoxMarkerHours->value())
+                .arg(ui.spinBoxMarkerMins->value())
+                .arg(ui.lineEditSecs->text());
+
+        marker.time  =OrdinalTimeFormatter::convertToSeconds(odiTimeStr,DataManagerInstance->getRefYear());
+        marker.iconType = ui.comboBoxMarkerIcon->currentText();
+        marker.color = ui.pushButtonMarkerColor->color();
+        marker.text =ui.lineEditMarkerText->text();
+        marker.fontFamily = ui.fontComboBoxMarker->currentText();
+        marker.fontSize = ui.spinBoxMarkerFontSize->value();
+        plot->addMarker(marker);
+
+        QTreeWidgetItem* item = new QTreeWidgetItem();
+        item->setText(0, QString::number(marker.x));
+        item->setText(1, marker.xUnit);
+        item->setText(2, QString::number(marker.y));
+        item->setText(3, marker.yUnit);
+        item->setText(4, odiTimeStr);
+        item->setText(5, marker.text);
+        item->setData(0,Qt::UserRole+1,marker.uuid);
+        ui.treeWidgetMarker->addTopLevelItem(item);
+    }
+}
+
+void PlotManager::onModifyScatterMarkers()
+{
+    if(auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot))
+    {
+        if(!ui.treeWidgetMarker->currentIndex().isValid()){
+            return;
+        }
+        auto  topWidget = ui.treeWidgetMarker->topLevelItem(ui.treeWidgetMarker->currentIndex().row());
+
+        QString uuid = topWidget->data(0,Qt::UserRole+1).toString();
+        PlotMarker marker;
+        marker.uuid = uuid;
+        marker.x = ui.lineEditMarkerXValue->text().toDouble();
+        marker.xUnit=ui.comboBoxMarkerXUnit->currentText();
+        marker.y =ui.lineEditMarkerYValue->text().toDouble();
+        marker.yUnit =ui.comboBoxMarkerYUnit->currentText();
+
+        QString odiTimeStr = QString("%1 %2 %3:%4:%5")
+                .arg(ui.spinBoxMarkerDays->value())
+                .arg(ui.spinBoxMarkerYears->value())
+                .arg(ui.spinBoxMarkerHours->value())
+                .arg(ui.spinBoxMarkerMins->value())
+                .arg(ui.lineEditSecs->text());
+
+        marker.time  =OrdinalTimeFormatter::convertToSeconds(odiTimeStr,DataManagerInstance->getRefYear());
+        marker.iconType = ui.comboBoxMarkerIcon->currentText();
+        marker.color = ui.pushButtonMarkerColor->color();
+        marker.text =ui.lineEditMarkerText->text();
+        marker.fontFamily = ui.fontComboBoxMarker->currentText();
+        marker.fontSize = ui.spinBoxMarkerFontSize->value();
+        plot->modifyMarker(uuid,marker);
+    }
+}
+
+void PlotManager::onDeleteScatterMarkers()
+{
+    if(auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot))
+    {
+        if(!ui.treeWidgetMarker->currentIndex().isValid()){
+            return;
+        }
+        auto  topWidget = ui.treeWidgetMarker->takeTopLevelItem(ui.treeWidgetMarker->currentIndex().row());
+
+        QString uuid = topWidget->data(0,Qt::UserRole+1).toString();
+        plot->removeMarker(uuid);
+        delete topWidget;
+    }
+}
+
+void PlotManager::onCurrentMarkerChanged()
+{
+    if(auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot))
+    {
+        if(!ui.treeWidgetMarker->currentIndex().isValid()){
+            return;
+        }
+        auto  topWidget = ui.treeWidgetMarker->topLevelItem(ui.treeWidgetMarker->currentIndex().row());
+
+        QString uuid = topWidget->data(0,Qt::UserRole+1).toString();
+        auto marker= plot->getMarkerByUuid(uuid);
+        ui.lineEditMarkerXValue->setText(QString::number(marker.x));
+        ui.lineEditMarkerYValue->setText(QString::number(marker.y));
+        ui.comboBoxMarkerXUnit->setCurrentText(marker.xUnit);
+        ui.comboBoxMarkerYUnit->setCurrentText(marker.yUnit);
+        ui.pushButtonMarkerColor->setColor(marker.color);
+        ui.comboBoxMarkerIcon->setCurrentText(marker.iconType);
+        ui.lineEditMarkerText->setText(marker.text);
+        ui.fontComboBoxMarker->setCurrentText(marker.fontFamily);
+        ui.spinBoxMarkerFontSize->setValue(marker.fontSize);
+
+        QString timeStr = OrdinalTimeFormatter::toString(marker.time,DataManagerInstance->getRefYear());
+       int32_t days;
+       int32_t year;
+       int32_t hour;
+       int32_t minute;
+       double seconds;
+       OrdinalTimeFormatter::convertToTime(timeStr,days,year,hour,minute,seconds);
+       ui.spinBoxMarkerDays->setValue(days);
+       ui.spinBoxMarkerYears->setValue(year);
+       ui.spinBoxMarkerHours->setValue(hour);
+       ui.spinBoxMarkerMins->setValue(minute);
+       ui.lineEditSecs->setText(QString::number(seconds));
     }
 }

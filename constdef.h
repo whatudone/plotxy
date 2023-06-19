@@ -6,6 +6,7 @@
 #include <QPoint>
 #include <QString>
 #include <QVector>
+#include <QUuid>
 
 enum PlotType : int32_t
 {
@@ -234,6 +235,25 @@ struct GOGCustomSetting
         lineWidth = 0;
         pointSize = 0;
         isDrawText = false;
+    }
+};
+
+// 散点图标记
+struct PlotMarker{
+    QString uuid;
+    double x;
+    QString xUnit;
+    double y;
+    QString yUnit;
+    double time;
+    QString iconType;
+    QString text;
+    QColor color;
+    QString fontFamily;
+    int32_t fontSize;
+
+    PlotMarker(){
+        uuid = QUuid::createUuid().toString();
     }
 };
 #endif // _CONST_DEF_H_

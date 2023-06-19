@@ -41,6 +41,7 @@ private:
     void initDialUI();
 	void initTextLightUI();
     void initScatterLimitUI();
+    void initScatterMarkersUI();
     void initEditableMap();
 
     void showScatterEditableItem(PlotType type);
@@ -56,6 +57,7 @@ private:
 	void refreshAttitudeUI(PlotItemBase* plot);
     void refreshDialUI(PlotItemBase* plot);
     void refreshScatterLimitUI(PlotItemBase* plot);
+    void refreshScatterMarkersUI(PlotItemBase* plot);
 
 	void enableItem_Scatter();
 	void enableItem_AScope();
@@ -191,6 +193,12 @@ public slots:
     void onUpdateScatterLimit();
     // 选中不同的Limit
     void onCurrentLimitChanged(QTreeWidgetItem* item, int column);
+    // Plot Markers
+    void onAddScatterMarkers();
+    void onModifyScatterMarkers();
+    void onDeleteScatterMarkers();
+    void onCurrentMarkerChanged();
+
 signals:
     void sigAddPlotPair();
 	void sigAdvancedDataManager();

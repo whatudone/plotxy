@@ -41,7 +41,10 @@ void PlotScatter::initPlot()
     // 坐标轴范围切换之后，需要更新背景分段坐标信息
     connect(m_customPlot->xAxis, QOverload<const QCPRange&>::of(&QCPAxis::rangeChanged), [this]() {
         updateBackgroundColorSeg();
-//        updateTimelineGraph();
+        if(m_isTimeLine){
+            updateTimelineGraph();
+        }
+
     });
     connect(m_customPlot->yAxis, QOverload<const QCPRange&>::of(&QCPAxis::rangeChanged), [this]() {
         updateBackgroundColorSeg();
@@ -169,6 +172,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
             updateGraphByDataPair(m_dataPairs.at(i));
         }
     }
+    updateMarkers(secs);
 	m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
@@ -696,7 +700,8 @@ void PlotScatter::updateTimelineGraph()
             QFont font;
             font.setFamily(event.m_eventFontFamily);
             font.setPixelSize(event.m_eventFontSize);
-            textItem->setColor(QColor(event.m_eventColor));
+            textItem->setFont(font);
+            textItem->setColor(event.m_eventColor);
             // x轴需要设置到对应的时间坐标上，y轴需要按照像素坐标从低到高排列,目前暂时设置到0.5垂直居中
             textItem->position->setTypeX(QCPItemPosition::ptPlotCoords);
             textItem->position->setTypeY(QCPItemPosition::ptAxisRectRatio);
@@ -784,7 +789,69 @@ void PlotScatter::updateBackgroundColorSeg()
     m_customPlot->replot();
 }
 
+void PlotScatter::updateMarkers(double currentSeconds)
+{
+    for(auto textItem : m_plotMarkerItems)
+    {
+        m_customPlot->removeItem(textItem);
+    }
+    m_plotMarkerItems.clear();
+    if(m_plotMarkers.isEmpty())
+    {
+        m_customPlot->replot();
+        return;
+    }
+    for(const auto &marker:m_plotMarkers){
+        if(marker.time>currentSeconds){
+            continue;
+        }
+        QCPItemText* textItem =new QCPItemText(m_customPlot);
+        textItem->setText("X "+marker.text);
+        QFont font;
+        font.setFamily(marker.fontFamily);
+        font.setPixelSize(marker.fontSize);
+        textItem->setFont(font);
+        textItem->setColor(marker.color);
+        // x轴需要设置到对应的时间坐标上，y轴需要按照像素坐标从低到高排列,目前暂时设置到0.5垂直居中
+        textItem->position->setType(QCPItemPosition::ptPlotCoords);
+        textItem->position->setCoords(marker.x, marker.y);
+        m_plotMarkerItems.insert(marker.uuid,textItem);
+    }
+    m_customPlot->replot();
+}
+
+QHash<QString, PlotMarker> PlotScatter::getPlotMarkers() const
+{
+    return m_plotMarkers;
+}
+
+PlotMarker PlotScatter::getMarkerByUuid(const QString &uuid) const
+{
+    return m_plotMarkers.value(uuid);
+}
+
 QMap<double, PlotScatter::BackgroundLimitSeg> PlotScatter::getBkgLimitSegMap() const
 {
     return m_bkgLimitSegMap;
+}
+
+void PlotScatter::addMarker(const PlotMarker &marker)
+{
+    if(!m_plotMarkers.contains(marker.uuid)){
+        m_plotMarkers.insert(marker.uuid,marker);
+    }
+}
+
+void PlotScatter::removeMarker(const QString &uuid)
+{
+    if(m_plotMarkers.contains(uuid)){
+        m_plotMarkers.remove(uuid);
+    }
+}
+
+void PlotScatter::modifyMarker(const QString &uuid, const PlotMarker &marker)
+{
+    if(m_plotMarkers.contains(marker.uuid)){
+        m_plotMarkers.insert(uuid,marker);
+    }
 }
