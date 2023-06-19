@@ -55,7 +55,7 @@ public:
                                       int32_t yEntityID,
                                       const QString& yAttrName,
                                       const QString& yAttrUnitName,
-                                      const QHash<QString, QVariant>& extraParams) override;
+                                      const QHash<QString, QVariant>& extraParams, bool isFromJson=false) override;
     void delPlotPairData(const QString& uuid) override;
 
     PlotType plotType() const override
@@ -122,6 +122,8 @@ private:
     // markers
     QHash<QString, PlotMarker> m_plotMarkers;
     QHash<QString,QCPItemText*> m_plotMarkerItems;
+    // 是否初始化过上下限
+    bool m_isInitCoorRange = false;
 };
 
 #endif // PLOTSCATTER_H

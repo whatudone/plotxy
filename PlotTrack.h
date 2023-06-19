@@ -41,7 +41,7 @@ protected:
                                       int32_t yEntityID,
                                       const QString& yAttrName,
                                       const QString& yAttrUnitName,
-                                      const QHash<QString, QVariant>& extraParams) override;
+                                      const QHash<QString, QVariant>& extraParams, bool isFromJson=false) override;
     virtual void delPlotPairData(const QString& uuid) override;
     virtual void updateGraphByDataPair(DataPair* dataPair) override;
 

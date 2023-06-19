@@ -1065,7 +1065,7 @@ void PlotManager::onTWSclicked(QTreeWidgetItem* item, int column)
         }
         else if(compare == QString("Scatter设置"))
         {
-            ui.stackedWidget->setCurrentIndex(4);
+            ui.stackedWidget->setCurrentIndex(6);
         }
         else if(compare == QString("GOG曲线"))
         {

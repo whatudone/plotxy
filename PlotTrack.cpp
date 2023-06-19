@@ -179,7 +179,7 @@ DataPair* PlotTrack::addPlotDataPair(int32_t xEntityID,
                                      int32_t yEntityID,
                                      const QString& yAttrName,
                                      const QString& yAttrUnitName,
-                                     const QHash<QString, QVariant>& extraParams)
+                                     const QHash<QString, QVariant>& extraParams, bool isFromJson)
 {
     Q_UNUSED(extraParams)
     DataPair* data =
@@ -235,7 +235,10 @@ DataPair* PlotTrack::addPlotDataPair(int32_t xEntityID,
     m_tickLabelMap.insert(uuid, data->getEntity_x() + '_' + xAttrName);
 
     updateKeyAxisTickLabel();
-    emit dataPairsChanged(this);
+    if(!isFromJson){
+        emit dataPairsChanged(this);
+
+    }
 
     return data;
 }

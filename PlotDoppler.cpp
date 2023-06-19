@@ -122,6 +122,9 @@ void PlotDoppler::getXToValueVecByY(double y, QVector<double>& xVec, QVector<dou
 
 void PlotDoppler::updateDataForDataPairsByTime(double secs)
 {
+    if(getDataPairs().isEmpty()){
+        return;
+    }
     auto data = getDataPairs().last();
     int32_t eid = data->getEntityIDX();
     DataManagerInstance->getDopplerDataByTime(

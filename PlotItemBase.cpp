@@ -228,12 +228,8 @@ void PlotItemBase::getCoordRangeY(double& lower, double& upper)
     upper = m_coordEnd_y;
 }
 
-void PlotItemBase::setHorzGrids(uint count)
+void PlotItemBase::setHorzGrids(int32_t count)
 {
-    if(m_horzGrids == count)
-    {
-        return;
-    }
     m_horzGrids = count;
     if(m_customPlot)
     {
@@ -253,12 +249,8 @@ void PlotItemBase::setHorzGrids(uint count)
     replot();
 }
 
-void PlotItemBase::setVertGrids(uint count)
+void PlotItemBase::setVertGrids(int32_t count)
 {
-    if(m_vertGrids == count)
-    {
-        return;
-    }
     m_vertGrids = count;
     if(m_customPlot)
     {
@@ -278,7 +270,7 @@ void PlotItemBase::setVertGrids(uint count)
     replot();
 }
 
-void PlotItemBase::setAxisColorWidth(const QColor& color, uint width)
+void PlotItemBase::setAxisColorWidth(const QColor& color, int32_t width)
 {
     m_axisColor = color;
     m_axisWidth = width;
@@ -293,7 +285,7 @@ void PlotItemBase::setAxisColorWidth(const QColor& color, uint width)
     replot();
 }
 
-void PlotItemBase::setGridColorWidth(const QColor& color, uint width)
+void PlotItemBase::setGridColorWidth(const QColor& color, int32_t width)
 {
     m_gridColor = color;
     m_gridWidth = width;
@@ -770,7 +762,7 @@ DataPair* PlotItemBase::addPlotDataPair(int32_t xEntityID,
                                         int32_t yEntityID,
                                         const QString& yAttrName,
                                         const QString& yAttrUnitName,
-                                        const QHash<QString, QVariant>& extraParams)
+                                        const QHash<QString, QVariant>& extraParams, bool isFromJson)
 {
     // TODO:需要完善重复添加逻辑
     DataPair* data =
@@ -793,7 +785,9 @@ DataPair* PlotItemBase::addPlotDataPair(int32_t xEntityID,
             this,
             &PlotItemBase::onDataPairUpdateData,
             Qt::UniqueConnection);
-    emit dataPairsChanged(this);
+    if(!isFromJson){
+        emit dataPairsChanged(this);
+    }
     return data;
 }
 
@@ -869,8 +863,6 @@ void PlotItemBase::slot_setVisible(bool on)
 
 void PlotItemBase::onGetCurrentSeconds(double secs)
 {
-    if(getDataPairs().isEmpty())
-        return;
     updateDataForDataPairsByTime(secs);
 }
 

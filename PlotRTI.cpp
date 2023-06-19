@@ -122,7 +122,9 @@ void PlotRTI::setAxisTickLabelShow(bool on, AxisType type)
 
 void PlotRTI::updateDataForDataPairsByTime(double secs)
 {
-    // 按照目前的理解，RTI暂时只能同时绘制一个数据对的数据
+    if(getDataPairs().isEmpty()){
+        return;
+    }
     auto data = getDataPairs().last();
     int32_t eid = data->getEntityIDX();
     DataManagerInstance->getRTIDataByTime(eid, secs, m_rangeList, m_timeList, m_dataHash);

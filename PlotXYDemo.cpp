@@ -905,6 +905,11 @@ void PlotXYDemo::loadPXYData(const QString& pxyFileName)
             {
                 QJsonObject dataPairObject = dataPairArray.at(m).toObject();
                 loadDataPairJson(dataPairObject, plot);
+
+            }
+            // 全部数据对加载完之后再统一刷新
+            if(dataPairSize>0){
+                emit plot->dataPairsChanged(plot);
             }
         }
     }
@@ -932,12 +937,13 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
     plotObject.insert("PlotOriginY", lower);
     plotObject.insert("PlotEndY", upper);
 
-    plotObject.insert("HorzGrids", QString::number(plot->getHorzGrids()));
-    plotObject.insert("VertGrids", QString::number(plot->getVertGrids()));
-    plotObject.insert("AxisWidth", QString::number(plot->getAxisWidth()));
-    plotObject.insert("GridWidth", QString::number(plot->getGridWidth()));
+    plotObject.insert("HorzGrids",plot->getHorzGrids());
+    plotObject.insert("VertGrids", plot->getVertGrids());
+    plotObject.insert("AxisWidth", plot->getAxisWidth());
+    plotObject.insert("GridWidth", plot->getGridWidth());
+
     plotObject.insert("AxisColor", plot->getAxisColor().name());
-    plotObject.insert("GridWidth", plot->getGridColor().name());
+    plotObject.insert("GridColor", plot->getGridColor().name());
     plotObject.insert("GridFillColor", plot->getGridFillColor().name());
     plotObject.insert("ShowUnitX", plot->unitsShowX());
     plotObject.insert("ShowUnitY", plot->unitsShowY());
@@ -993,6 +999,32 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
             plotObject.insert("AttitudePitchColor", attPlot->getPitchColor().name());
         }
     }
+    else if(type == PlotType::Type_PlotScatter)
+    {
+        PlotScatter* scatter = dynamic_cast<PlotScatter*>(plot);
+        if(scatter)
+        {
+            auto markers = scatter->getPlotMarkers();
+            QJsonArray array;
+            for(const auto &mark:markers){
+                QJsonObject object;
+                object.insert("MarkerUUID",mark.uuid);
+                object.insert("MarkerX",mark.x);
+                object.insert("MarkerXUnit",mark.xUnit);
+                object.insert("MarkerY",mark.y);
+                object.insert("MarkerYUnit",mark.yUnit);
+                object.insert("MarkerTime",mark.time);
+                object.insert("MarkerIconType",mark.iconType);
+                object.insert("MarkerText",mark.text);
+                object.insert("MarkerColor",mark.color.name());
+                object.insert("MarkerFontFamily",mark.fontFamily);
+                object.insert("MarkerFontSize",mark.fontSize);
+
+                array.append(object);
+            }
+            plotObject.insert("ScatterMarkers",array);
+        }
+    }
 
     // 图表存在多个数据对
     QJsonArray dataPairArray;
@@ -1025,15 +1057,15 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
     upper = plotObject.value("PlotEndX").toDouble();
     plot->setCoordRangeX(lower, upper);
     lower = plotObject.value("PlotOriginY").toDouble();
-    upper = plotObject.value("PlotEndU").toDouble();
+    upper = plotObject.value("PlotEndY").toDouble();
     plot->setCoordRangeY(lower, upper);
 
-    plot->setHorzGrids(uint(plotObject.value("HorzGrids").toInt()));
-    plot->setVertGrids(uint(plotObject.value("VertGrids").toInt()));
+    plot->setHorzGrids(plotObject.value("HorzGrids").toInt());
+    plot->setVertGrids(plotObject.value("VertGrids").toInt());
     plot->setAxisColorWidth(plotObject.value("AxisColor").toString(),
-                            uint(plotObject.value("AxisWidth").toInt()));
+                            plotObject.value("AxisWidth").toInt());
     plot->setGridColorWidth(plotObject.value("GridColor").toString(),
-                            uint(plotObject.value("GridWidth").toInt()));
+                            plotObject.value("GridWidth").toInt());
     plot->setGridFillColor(plotObject.value("GridFillColor").toString());
     plot->setUnitsShowX(plotObject.value("ShowUnitX").toBool());
     plot->setUnitsShowY(plotObject.value("ShowUnitY").toBool());
@@ -1089,6 +1121,33 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
             attPlot->setDialPercentage(plotObject.value("AttitudeDialPercentage").toInt());
             attPlot->setRollColor(plotObject.value("AttitudeRollColor").toString());
             attPlot->setPitchColor(plotObject.value("AttitudePitchColor").toString());
+        }
+    }
+    else if(type == PlotType::Type_PlotScatter)
+    {
+        PlotScatter* scatter = dynamic_cast<PlotScatter*>(plot);
+        if(scatter)
+        {
+            auto array=plotObject.value("ScatterMarkers").toArray();
+            int32_t size = array.size();
+            for(int32_t i=0;i<size;++i){
+               auto markObject= array.at(i).toObject();
+               PlotMarker plotMarker;
+               plotMarker.uuid= markObject.value("MarkerUUID").toString();
+               plotMarker.x= markObject.value("MarkerX").toDouble();
+               plotMarker.xUnit= markObject.value("MarkerXUnit").toString();
+               plotMarker.y = markObject.value("MarkerY").toDouble();
+               plotMarker.yUnit= markObject.value("MarkerYUnit").toString();
+               plotMarker.time= markObject.value("MarkerTime").toDouble();
+               plotMarker.iconType= markObject.value("MarkerIconType").toString();
+               plotMarker.text= markObject.value("MarkerText").toString();
+               plotMarker.color= QColor( markObject.value("MarkerColor").toString());
+               plotMarker.fontFamily= markObject.value("MarkerFontFamily").toString();
+               plotMarker.fontSize= markObject.value("MarkerFontSize").toInt();
+
+
+               scatter->addMarker(plotMarker);
+            }
         }
     }
 
@@ -1208,6 +1267,14 @@ void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object, Plo
         object.insert("LabelYPrecision", dataPair->getLabelPrecision_y());
         object.insert("LabelPosition", dataPair->getLabelPosition());
 
+        object.insert("LabelTextFormat", dataPair->getTextFormat());
+        object.insert("LabelTextIncludePrefix", dataPair->isPrefixShow());
+        object.insert("LabelTextIncludeObject", dataPair->isObjectShow());
+        object.insert("LabelTextIncludeAttr", dataPair->isAttrShow());
+        object.insert("LabelTextIncludeData", dataPair->isDataShow());
+        object.insert("LabelTextIncludeUnit", dataPair->isUnitShow());
+        object.insert("LabelTextCustomText", dataPair->getCustomText());
+
         object.insert("StippleEnable", dataPair->getIsStippleEnable());
         object.insert("StipplePattern", dataPair->getStipplePattern());
     }
@@ -1261,7 +1328,7 @@ void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBas
     QHash<QString, QVariant> params;
     params.insert("UUID", uuid);
     auto dataPair = plot->addPlotDataPair(
-        xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName, params);
+        xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName, params,true);
     dataPair->blockSignals(true);
     dataPair->setDraw(visible);
     PlotType type = plot->plotType();
@@ -1371,6 +1438,16 @@ void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBas
         dataPair->setLabelPrecision_y(dataPairObject.value("LabelYPrecision").toInt());
         dataPair->setLabelPosition(
             static_cast<DataPair::TEXT_POSITION>(dataPairObject.value("LabelPosition").toInt()));
+
+
+        dataPair->setTextFormat(static_cast<DataPair::TEXT_FROMAT>(dataPairObject.value("LabelTextFormat").toInt()));
+        dataPair->setPrefixShow(dataPairObject.value("LabelTextIncludePrefix").toBool());
+        dataPair->setObjectShow(dataPairObject.value("LabelTextIncludeObject").toBool());
+        dataPair->setAttrShow(dataPairObject.value("LabelTextIncludeAttr").toBool());
+        dataPair->setDataShow(dataPairObject.value("LabelTextIncludeData").toBool());
+        dataPair->setUnitShow(dataPairObject.value("LabelTextIncludeUnit").toBool());
+        dataPair->setCustomText(dataPairObject.value("LabelTextCustomText").toString());
+
 
         dataPair->setIsStippleEnable(dataPairObject.value("StippleEnable").toBool());
         dataPair->setStipplePattern(

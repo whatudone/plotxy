@@ -24,10 +24,6 @@ PlotScatter::PlotScatter(QWidget* parent)
 
     m_showUnits_x = false;
     m_showUnits_y = false;
-    m_coordBgn_x = std::numeric_limits<double>::min();
-    m_coordEnd_x = std::numeric_limits<double>::max();
-    m_coordBgn_y = std::numeric_limits<double>::min();
-    m_coordEnd_y = std::numeric_limits<double>::max();
 
     initPlot();
     setupLayout();
@@ -38,6 +34,8 @@ PlotScatter::~PlotScatter() {}
 void PlotScatter::initPlot()
 {
     m_customPlot = new QCustomPlot();
+    m_customPlot->xAxis->setRange(m_coordBgn_x,m_coordEnd_x);
+    m_customPlot->yAxis->setRange(m_coordBgn_y,m_coordEnd_y);
     // 坐标轴范围切换之后，需要更新背景分段坐标信息
     connect(m_customPlot->xAxis, QOverload<const QCPRange&>::of(&QCPAxis::rangeChanged), [this]() {
         updateBackgroundColorSeg();
@@ -478,8 +476,10 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
                                        int32_t yEntityID,
                                        const QString& yAttrName,
                                        const QString& yAttrUnitName,
-                                       const QHash<QString, QVariant>& extraParams)
+                                       const QHash<QString, QVariant>& extraParams, bool isFromJson)
 {
+    if(!isFromJson){
+
     // 更新range
     QPair<double, double> xlimit;
     if(xAttrName == "Time")
@@ -492,7 +492,7 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
     }
 
     // x轴
-    if(math::doubleEqual(m_coordBgn_x, std::numeric_limits<double>::min()))
+    if(!m_isInitCoorRange)
     {
         // 表示m_min数值无意义，先赋值
         m_coordBgn_x = xlimit.first;
@@ -502,7 +502,7 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
         m_coordBgn_x = m_coordBgn_x < xlimit.first ? m_coordBgn_x : xlimit.first;
     }
 
-    if(math::doubleEqual(m_coordEnd_x, std::numeric_limits<double>::max()))
+    if(!m_isInitCoorRange)
     {
         // 表示m_max数值无意义，先赋值
         m_coordEnd_x = xlimit.second;
@@ -515,7 +515,7 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
     // y轴
     QPair<double, double> ylimit =
         DataManager::getInstance()->getMaxAndMinEntityAttrValue(yEntityID, yAttrName);
-    if(math::doubleEqual(m_coordBgn_y, std::numeric_limits<double>::min()))
+    if(!m_isInitCoorRange)
     {
         // 表示m_min数值无意义，先赋值
         m_coordBgn_y = ylimit.first;
@@ -525,7 +525,7 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
         m_coordBgn_y = m_coordBgn_y < ylimit.first ? m_coordBgn_y : ylimit.first;
     }
 
-    if(math::doubleEqual(m_coordEnd_y, std::numeric_limits<double>::max()))
+    if(!m_isInitCoorRange)
     {
         // 表示m_max数值无意义，先赋值
         m_coordEnd_y = ylimit.second;
@@ -534,10 +534,14 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
     {
         m_coordEnd_y = m_coordEnd_y > ylimit.second ? m_coordEnd_y : ylimit.second;
     }
+
     m_customPlot->xAxis->setRange(m_coordBgn_x, m_coordEnd_x);
     m_customPlot->yAxis->setRange(m_coordBgn_y, m_coordEnd_y);
     m_customPlot->xAxis->setLabel(xAttrName);
     m_customPlot->yAxis->setLabel(yAttrName);
+    setTitle(QString("%1 VS. %2").arg(xAttrName).arg(yAttrName));
+    }
+    m_isInitCoorRange = true;
     return PlotItemBase::addPlotDataPair(
         xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName, extraParams);
 }
@@ -679,7 +683,7 @@ void PlotScatter::updateTimelineGraph()
             QString text;
             if(event.m_eventStyle == "Small X")
             {
-                text = "X ";
+                text = "× ";
             }
             else
             {
@@ -806,12 +810,13 @@ void PlotScatter::updateMarkers(double currentSeconds)
             continue;
         }
         QCPItemText* textItem =new QCPItemText(m_customPlot);
-        textItem->setText("X "+marker.text);
+        textItem->setText("× "+marker.text);
         QFont font;
         font.setFamily(marker.fontFamily);
         font.setPixelSize(marker.fontSize);
         textItem->setFont(font);
         textItem->setColor(marker.color);
+        textItem->setPositionAlignment(Qt::AlignTop | Qt::AlignLeft);
         // x轴需要设置到对应的时间坐标上，y轴需要按照像素坐标从低到高排列,目前暂时设置到0.5垂直居中
         textItem->position->setType(QCPItemPosition::ptPlotCoords);
         textItem->position->setCoords(marker.x, marker.y);
@@ -839,6 +844,7 @@ void PlotScatter::addMarker(const PlotMarker &marker)
 {
     if(!m_plotMarkers.contains(marker.uuid)){
         m_plotMarkers.insert(marker.uuid,marker);
+        updateMarkers(PlotXYDemo::getSeconds());
     }
 }
 
@@ -846,6 +852,7 @@ void PlotScatter::removeMarker(const QString &uuid)
 {
     if(m_plotMarkers.contains(uuid)){
         m_plotMarkers.remove(uuid);
+        updateMarkers(PlotXYDemo::getSeconds());
     }
 }
 
@@ -853,5 +860,6 @@ void PlotScatter::modifyMarker(const QString &uuid, const PlotMarker &marker)
 {
     if(m_plotMarkers.contains(marker.uuid)){
         m_plotMarkers.insert(uuid,marker);
+        updateMarkers(PlotXYDemo::getSeconds());
     }
 }

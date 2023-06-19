@@ -56,10 +56,10 @@ public:
     void setOutlineColor(const QColor& color);
     virtual void setCoordRangeX(double lower, double upper);
     virtual void setCoordRangeY(double lower, double upper);
-    virtual void setHorzGrids(uint count);
-    virtual void setVertGrids(uint count);
-    virtual void setAxisColorWidth(const QColor& color, uint width);
-    virtual void setGridColorWidth(const QColor& color, uint width);
+    virtual void setHorzGrids(int32_t count);
+    virtual void setVertGrids(int32_t count);
+    virtual void setAxisColorWidth(const QColor& color, int32_t width);
+    virtual void setGridColorWidth(const QColor& color, int32_t width);
     virtual void setGridVisible(bool enable);
     virtual void setxTickLabelVisible(bool show);
     virtual void setyTickLabelVisible(bool show);
@@ -111,19 +111,19 @@ public:
     // 某些图坐标系不一样，比如polar
     virtual void getCoordRangeX(double& lower, double& upper);
     virtual void getCoordRangeY(double& lower, double& upper);
-    uint getHorzGrids()
+    int32_t getHorzGrids()
     {
         return m_horzGrids;
     }
-    uint getVertGrids()
+    int32_t getVertGrids()
     {
         return m_vertGrids;
     }
-    uint getAxisWidth()
+    int32_t getAxisWidth()
     {
         return m_axisWidth;
     }
-    uint getGridWidth()
+    int32_t getGridWidth()
     {
         return m_gridWidth;
     }
@@ -279,7 +279,8 @@ public:
                     int32_t yEntityID,
                     const QString& yAttrName,
                     const QString& yAttrUnitName,
-                    const QHash<QString, QVariant>& extraParams = QHash<QString, QVariant>());
+                    const QHash<QString, QVariant>& extraParams = QHash<QString, QVariant>(),
+                    bool isFromJson = false);
     virtual void delPlotPairData(const QString& uuid);
     virtual void updatePlotPairData(const QString& uuid,
                                     int32_t xEntityID,
@@ -400,10 +401,10 @@ protected:
     double m_coordEnd_x; //x坐标结束值
     double m_coordBgn_y; //y坐标起始值
     double m_coordEnd_y; //y坐标结束值
-    uint m_horzGrids; //横向grid个数
-    uint m_vertGrids; //纵向grid个数
-    uint m_axisWidth; //坐标轴宽度
-    uint m_gridWidth; //grid宽度
+    int32_t m_horzGrids; //横向grid个数
+    int32_t m_vertGrids; //纵向grid个数
+    int32_t m_axisWidth; //坐标轴宽度
+    int32_t m_gridWidth; //grid宽度
     QColor m_axisColor; //坐标轴颜色
     QColor m_gridColor; //grid颜色
     bool m_gridVisible; //是否显示grid
