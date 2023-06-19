@@ -618,7 +618,9 @@ void PlotScatter::clearHistoryLines()
 
 void PlotScatter::updateTimelineGraph()
 {
-    static double time = PlotXYDemo::getSeconds();
+    if(math::doubleEqual(m_lastTime, std::numeric_limits<double>::max())){
+         m_lastTime = PlotXYDemo::getSeconds();
+    }
     //Timeline模式 Now和event标签都是不移动，只是会移动坐标轴范围
     if(!m_timelineGraph)
     {
@@ -723,10 +725,10 @@ void PlotScatter::updateTimelineGraph()
         ++index;
     }
     // 在线模式试试刷新最新时间轴范围，起点和终点同步更新
-    double delta = now - time;
+    double delta = now - m_lastTime;
     double timeBegin = m_customPlot->xAxis->range().lower + delta;
     double timeEnd = m_customPlot->xAxis->range().upper + delta;
-    time = now;
+    m_lastTime = now;
     m_customPlot->xAxis->setRange(timeBegin, timeEnd);
     m_coordBgn_x = timeBegin;
     m_coordEnd_x = timeEnd;

@@ -7,6 +7,7 @@
 #include "qcustomplot.h"
 #include <QMap>
 #include <QString>
+#include <limits>
 
 class PlotScatter : public PlotItemBase
 {
@@ -124,6 +125,8 @@ private:
     QHash<QString,QCPItemText*> m_plotMarkerItems;
     // 是否初始化过上下限
     bool m_isInitCoorRange = false;
+    // 最后更新时间
+    double m_lastTime = std::numeric_limits<double>::max();
 };
 
 #endif // PLOTSCATTER_H
