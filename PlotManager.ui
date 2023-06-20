@@ -105,7 +105,7 @@
         <number>1</number>
        </property>
        <property name="currentIndex">
-        <number>12</number>
+        <number>7</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QVBoxLayout" name="verticalLayout_64" stretch="0,1,0,0,0,1">
@@ -3227,7 +3227,14 @@ background-color: rgb(127, 127, 127);</string>
               </widget>
              </item>
              <item row="5" column="2">
-              <widget class="QSpinBox" name="spinBoxMarkerFontSize"/>
+              <widget class="QSpinBox" name="spinBoxMarkerFontSize">
+               <property name="minimum">
+                <number>8</number>
+               </property>
+               <property name="value">
+                <number>12</number>
+               </property>
+              </widget>
              </item>
              <item row="5" column="1">
               <widget class="QFontComboBox" name="fontComboBoxMarker"/>

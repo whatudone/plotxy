@@ -166,6 +166,8 @@ public:
     QStringList getGenericDataTagsByID(int32_t entityID);
     // 获取某个实体对应的所有事件列表
     QList<GenericData> getGenericDatasByID(int32_t id, const QString& type = "Event");
+    // 判断是否某个实体存在事件
+    bool isEntityContainsGenericTags(int32_t id);
     // 获取数据路径
     QString getDataFileName() const;
     void setDataFileName(const QString& dataFileName);

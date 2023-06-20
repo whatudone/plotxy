@@ -483,7 +483,6 @@ void AdvancedDataManager::refreshEvent()
         ui.tableWidgetEventEntity->setItem(row, 0, item);
         ++row;
     }
-    // 刷新实体对应的generic data tag
 
     // 刷新已经添加的事件
     refreshAddedEventList();
@@ -778,10 +777,10 @@ void AdvancedDataManager::initEventConnections()
             this,
             SLOT(onEventBtnMoreClicked()));
 
-    //    connect(ui.tableWidgetEventEntity,
-    //            &QTableWidget::cellClicked,
-    //            this,
-    //            &AdvancedDataManager::onGenericDataEntityChanged);
+        connect(ui.tableWidgetEventEntity,
+                &QTableWidget::cellClicked,
+                this,
+                &AdvancedDataManager::onGenericDataEntityChanged);
 
     connect(ui.pushButtonAddEvent, &QPushButton::clicked, this, &AdvancedDataManager::onAddEvent);
     connect(
@@ -891,26 +890,22 @@ void AdvancedDataManager::onEventBtnMoreClicked()
     ui.stackedWidget_aDMrpart->setCurrentIndex(3);
 }
 
-//void AdvancedDataManager::onGenericDataEntityChanged(int32_t row, int32_t col)
-//{
-//    QTableWidgetItem* entityItem = ui.tableWidgetEventEntity->item(row, col);
-//    if(entityItem)
-//    {
-//        int32_t id = entityItem->data(Qt::UserRole + 1).toInt();
-//        QList<GenericData> tags = DataManagerInstance->getGenericDataTagsByID(id);
-//        auto size = tags.size();
-//        ui.tableWidgetGenericTag->clearContents();
-//        ui.tableWidgetGenericTag->setRowCount(size);
-//        for(int var = 0; var < size; ++var)
-//        {
-//            auto tag = tags.at(var);
-//            QTableWidgetItem* item = new QTableWidgetItem(tag.m_name);
-//            item->setData(Qt::UserRole + 1, tag.m_relativeTime);
-//            item->setData(Qt::UserRole + 2, tag.m_timeOffset);
-//            ui.tableWidgetGenericTag->setItem(var, 0, item);
-//        }
-//    }
-//}
+void AdvancedDataManager::onGenericDataEntityChanged(int32_t row, int32_t col)
+{
+    QTableWidgetItem* entityItem = ui.tableWidgetEventEntity->item(row, col);
+    if(entityItem)
+    {
+        int32_t id = entityItem->data(Qt::UserRole + 1).toInt();
+        bool hasEvent = DataManagerInstance->isEntityContainsGenericTags(id);
+        ui.tableWidgetGenericTag->clearContents();
+        int32_t rowCount = (hasEvent)?1:0;
+        ui.tableWidgetGenericTag->setRowCount(rowCount);
+        if(hasEvent){
+            QTableWidgetItem* item =  new QTableWidgetItem("Event");
+            ui.tableWidgetGenericTag->setItem(0,0,item);
+        }
+    }
+}
 
 void AdvancedDataManager::onAddEvent()
 {

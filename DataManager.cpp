@@ -13,6 +13,7 @@
 #include <QMessageBox>
 #include <QRegularExpression>
 #include <QSettings>
+#include <QDate>
 
 #include <limits>
 
@@ -762,6 +763,18 @@ QList<GenericData> DataManager::getGenericDatasByID(int32_t id, const QString& t
     return QList<GenericData>();
 }
 
+bool DataManager::isEntityContainsGenericTags(int32_t id)
+{
+    if(m_isRealTime)
+    {
+        return m_realGenericMap.contains(id);
+    }
+    else
+    {
+        return m_genericMap.contains(id);
+    }
+}
+
 int DataManager::getEntityAttrMaxIndexByTime(int32_t entityID, double secs)
 {
 	int index = 0;
@@ -937,6 +950,8 @@ void DataManager::onRecvProtobufPlatinfoData(const USIM_PlatInfoMessage_Proto &p
     m_realDataMap.insert(uID, dataMap);
     m_minRealTime = dataMap["Time"].at(0);
     m_maxRealTime = plat.dfsimtime() * 3600;
+    // 暂时默认参考时间为当前年份，在线数据没有提供
+    m_refYear = QDate::currentDate().year();
 
     emit updateRealTime();
 }

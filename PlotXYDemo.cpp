@@ -1413,7 +1413,7 @@ void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object, Plo
         object.insert("IconOverrideColor", color_transfer::QColorToRGBAStr(dataPair->iconColor()));
 
         object.insert("LabelSettingsEnable", dataPair->isLabelTextShow());
-        object.insert("LabelColor", static_cast<int32_t>( dataPair->getLabelColor().rgba()));
+        object.insert("LabelColor", color_transfer::QColorToRGBAStr( dataPair->getLabelColor()));
         object.insert("LabelBackground", color_transfer::QColorToRGBAStr(dataPair->getLabelBackground()));
         object.insert("LabelFont", dataPair->getLabelFont().family());
         object.insert("LabelFontSize", dataPair->getLabelFontSize());

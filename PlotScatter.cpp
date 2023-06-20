@@ -171,6 +171,9 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
         }
     }
     updateMarkers(secs);
+//    if(DataManagerInstance->getIsRealTime() && !m_isTimeLine){
+//        m_customPlot->rescaleAxes();
+//    }
 	m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
