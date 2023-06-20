@@ -380,7 +380,8 @@ void PlotScatter::drawGOGData()
                     graph->setBrush(Qt::NoBrush);
                     graph->setVisible(true);
                     graph->setPen(QPen(QColor(fillColor), lineWidth));
-                    graph->setLineStyle(QCPGraph::lsLine);
+                    graph->setLineStyle(QCPGraph::lsNone);
+                    graph->setScatterStyle(QCPScatterStyle::ssCircle);
                     graph->setData(data.xList, data.yList, true);
                     m_gogGraphList.append(graph);
                 }

@@ -1056,14 +1056,14 @@ void PlotItemBase::loadGOGFile(const QString& fileName)
                     if(lineData.startsWith("ll"))
                     {
                         QStringList lineInfo = lineData.split(" ");
-                        data.xList.append(lineInfo.at(1).toDouble());
-                        data.yList.append(lineInfo.at(2).toDouble());
+                        data.xList.append(lineInfo.at(2).toDouble());
+                        data.yList.append(lineInfo.at(1).toDouble());
                     }
                     else if(lineData.startsWith("centerll"))
                     {
                         QStringList circleInfo = lineData.split(" ");
-                        data.xList.append(circleInfo.at(1).toDouble());
-                        data.yList.append(circleInfo.at(2).toDouble());
+                        data.xList.append(circleInfo.at(2).toDouble());
+                        data.yList.append(circleInfo.at(1).toDouble());
 
                         lineData = file.readLine();
                         if(lineData.startsWith("radius"))
@@ -1086,12 +1086,12 @@ void PlotItemBase::loadGOGFile(const QString& fileName)
 
                 if(lineData.startsWith("linecolor"))
                 {
-                    data.lineColor = lineData.split(" ").at(2).simplified().toUInt(nullptr, 16);
+                    data.lineColor.setRgb(lineData.split(" ").at(2).simplified().toUInt(nullptr, 16));
                 }
 
                 if(lineData.startsWith("fillcolor"))
                 {
-                    data.fillColor = lineData.split(" ").at(2).simplified().toUInt(nullptr, 16);
+                    data.fillColor.setRgb(lineData.split(" ").at(2).simplified().toUInt(nullptr, 16));
                 }
 
                 if(lineData.startsWith("linewidth"))
