@@ -921,13 +921,31 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
     auto type = plot->plotType();
     plotObject.insert("IsDraw", plot->getBVisible());
     plotObject.insert("PlotName", plotName);
+    plotObject.insert("Title", plot->getTitle());
+    plotObject.insert("TitleVisible",plot->getTitleVisible());
+    plotObject.insert("TitleColor",color_transfer::QColorToRGBAStr(plot->getTitleColor()));
+    plotObject.insert("TitleFillColor",color_transfer::QColorToRGBAStr(plot->getTitleFillColor()));
+    plotObject.insert("TitleFontFamily",plot->getTitleFont().family());
+    plotObject.insert("TitleFontSize",plot->getTitleFontSize());
     plotObject.insert("X", plot->x());
     plotObject.insert("Y", plot->y());
     plotObject.insert("Width", plot->width());
     plotObject.insert("Height", plot->height());
     plotObject.insert("PlotType", type);
-    plotObject.insert("PlotOuterFillColor", plot->getOuterFillColor().name());
-    plotObject.insert("PlotOutLineColor", plot->getOutlineColor().name());
+    plotObject.insert("PlotOuterFillColor", color_transfer::QColorToRGBAStr( plot->getOuterFillColor()));
+    plotObject.insert("PlotOutLineColor",color_transfer::QColorToRGBAStr( plot->getOutlineColor()));
+
+    plotObject.insert("LabelXVisible",plot->getxAxisLabelVisible());
+    plotObject.insert("LabelX", plot->getxAxisLabel());
+    plotObject.insert("LabelXColor",color_transfer::QColorToRGBAStr(plot->getxAxisLabelColor()));
+    plotObject.insert("LabelXFontFamily",plot->getxAxisLabelFont().family());
+    plotObject.insert("LabelXFontSize",plot->getxAxisLabelFontSize());
+
+    plotObject.insert("LabelYVisible",plot->getyAxisLabelVisible());
+    plotObject.insert("LabelY", plot->getyAxisLabel());
+    plotObject.insert("LabelYColor",color_transfer::QColorToRGBAStr(plot->getyAxisLabelColor()));
+    plotObject.insert("LabelYFontFamily",plot->getyAxisLabelFont().family());
+    plotObject.insert("LabelYFontSize",plot->getyAxisLabelFontSize());
 
     double lower, upper;
     plot->getCoordRangeX(lower, upper);
@@ -941,10 +959,9 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
     plotObject.insert("VertGrids", plot->getVertGrids());
     plotObject.insert("AxisWidth", plot->getAxisWidth());
     plotObject.insert("GridWidth", plot->getGridWidth());
-
-    plotObject.insert("AxisColor", plot->getAxisColor().name());
-    plotObject.insert("GridColor", plot->getGridColor().name());
-    plotObject.insert("GridFillColor", plot->getGridFillColor().name());
+    plotObject.insert("AxisColor", color_transfer::QColorToRGBAStr(plot->getAxisColor()));
+    plotObject.insert("GridColor", color_transfer::QColorToRGBAStr(plot->getGridColor()));
+    plotObject.insert("GridFillColor",color_transfer::QColorToRGBAStr(plot->getGridFillColor()));
     plotObject.insert("ShowUnitX", plot->unitsShowX());
     plotObject.insert("ShowUnitY", plot->unitsShowY());
 
@@ -965,7 +982,7 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
             plotObject.insert("DialCapRate", dialPlot->getDialCapRate());
             plotObject.insert("DialStartAngle", dialPlot->getStartAngle());
             plotObject.insert("DialEndAngle", dialPlot->getEndAngle());
-            plotObject.insert("DialCapColor", dialPlot->getCapColor().name());
+            plotObject.insert("DialCapColor", color_transfer::QColorToRGBAStr(dialPlot->getCapColor()));
             plotObject.insert("DialDrawFirstTick", dialPlot->getDrawFirstTick());
             plotObject.insert("DialDrawLastTick", dialPlot->getDrawLastTick());
             plotObject.insert("DialDrawFirstTextLabel", dialPlot->getDrawFirstTextLabel());
@@ -979,8 +996,8 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
                 QJsonObject object;
                 object.insert("DialColorStart", item.start);
                 object.insert("DialColorEnd", item.end);
-                object.insert("DialColor", item.clr.name());
-                object.insert("DialColorOutline", item.outline.name());
+                object.insert("DialColor", color_transfer::QColorToRGBAStr(item.clr));
+                object.insert("DialColorOutline", color_transfer::QColorToRGBAStr(item.outline));
                 object.insert("DialColorWidth", item.width);
                 colorInfo.append(object);
             }
@@ -995,8 +1012,8 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
             plotObject.insert("AttitudeTickRadius", attPlot->getTickRadiusPercentage());
             plotObject.insert("AttitudeTextPercentage", attPlot->getTextPercentage());
             plotObject.insert("AttitudeDialPercentage", attPlot->getDialPercentage());
-            plotObject.insert("AttitudeRollColor", attPlot->getRollColor().name());
-            plotObject.insert("AttitudePitchColor", attPlot->getPitchColor().name());
+            plotObject.insert("AttitudeRollColor", color_transfer::QColorToRGBAStr(attPlot->getRollColor()));
+            plotObject.insert("AttitudePitchColor", color_transfer::QColorToRGBAStr(attPlot->getPitchColor()));
         }
     }
     else if(type == PlotType::Type_PlotScatter)
@@ -1016,7 +1033,7 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
                 object.insert("MarkerTime",mark.time);
                 object.insert("MarkerIconType",mark.iconType);
                 object.insert("MarkerText",mark.text);
-                object.insert("MarkerColor",mark.color.name());
+                object.insert("MarkerColor",color_transfer::QColorToRGBAStr(mark.color));
                 object.insert("MarkerFontFamily",mark.fontFamily);
                 object.insert("MarkerFontSize",mark.fontSize);
 
@@ -1034,7 +1051,7 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
 
                 object.insert("GOGFilePath",gogFile);
                 object.insert("GOGIsDraw",setting.isDraw);
-                object.insert("GOGColor",setting.fillColor.name());
+                object.insert("GOGColor",color_transfer::QColorToRGBAStr(setting.fillColor));
                 object.insert("GOGLineWidth",setting.lineWidth);
 
                 gogArray.append(object);
@@ -1049,7 +1066,7 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
 
                 object.insert("ScatterEventFontFamily",event.m_eventFontFamily);
                 object.insert("ScatterEventFontSize",event.m_eventFontSize);
-                object.insert("ScatterEventColor",event.m_eventColor.name());
+                object.insert("ScatterEventColor",color_transfer::QColorToRGBAStr(event.m_eventColor));
                 object.insert("ScatterEventStyle",event.m_eventStyle);
                 object.insert("ScatterEventIncludeTag",event.m_isIncludeTag);
                 object.insert("ScatterEventType",event.m_type);
@@ -1086,8 +1103,36 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
 
     auto plot = addPlotWidget(type, QRect(x, y, width, height), plotName);
     plot->setBVisible(plotObject.value("IsDraw").toBool());
-    plot->setOuterFillColor(plotObject.value("PlotOuterFillColor").toString());
-    plot->setOutlineColor(plotObject.value("PlotOutLineColor").toString());
+    plot->setOuterFillColor(color_transfer::QColorFromRGBAStr(plotObject.value("PlotOuterFillColor").toString()));
+    plot->setOutlineColor(color_transfer::QColorFromRGBAStr(plotObject.value("PlotOutLineColor").toString()));
+    plot->setTitle(plotObject.value("Title").toString());
+    plot->setTitleVisible(plotObject.value("TitleVisible").toBool());
+    plot->setTitleColor(color_transfer::QColorFromRGBAStr(plotObject.value("TitleColor").toString()));
+    plot->setTitleFillColor(color_transfer::QColorFromRGBAStr(plotObject.value("TitleFillColor").toString()));
+    QFont font;
+    font.setFamily(plotObject.value("TitleFontFamily").toString());
+    font.setPixelSize(plotObject.value("TitleFontSize").toInt());
+    plot->setTitleFont(font);
+    plot->setTitleFontSize(plotObject.value("TitleFontSize").toInt());
+    // label
+    plot->setxAxisLabel(plotObject.value("LabelX").toString());
+    plot->setxAxisLabelVisible(plotObject.value("LabelXVisible").toBool());
+    plot->setxAxisLabelColor(color_transfer::QColorFromRGBAStr(plotObject.value("LabelXColor").toString()));
+    QFont xLabelFont;
+    xLabelFont.setFamily(plotObject.value("LabelXFontFamily").toString());
+    xLabelFont.setPixelSize(plotObject.value("LabelXFontSize").toInt());
+    plot->setxAxisLabelFont(xLabelFont);
+    plot->setxAxisLabelFontSize(plotObject.value("LabelXFontSize").toInt());
+
+    plot->setyAxisLabel(plotObject.value("LabelY").toString());
+    plot->setyAxisLabelVisible(plotObject.value("LabelYVisible").toBool());
+    plot->setyAxisLabelColor(color_transfer::QColorFromRGBAStr(plotObject.value("LabelYColor").toString()));
+    QFont yLabelFont;
+    yLabelFont.setFamily(plotObject.value("LabelYFontFamily").toString());
+    yLabelFont.setPixelSize(plotObject.value("LabelYFontSize").toInt());
+    plot->setyAxisLabelFont(yLabelFont);
+    plot->setyAxisLabelFontSize(plotObject.value("LabelYFontSize").toInt());
+
 
     double lower, upper;
     lower = plotObject.value("PlotOriginX").toDouble();
@@ -1099,11 +1144,12 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
 
     plot->setHorzGrids(plotObject.value("HorzGrids").toInt());
     plot->setVertGrids(plotObject.value("VertGrids").toInt());
-    plot->setAxisColorWidth(plotObject.value("AxisColor").toString(),
+    plot->setAxisColorWidth(color_transfer::QColorFromRGBAStr(plotObject.value("AxisColor").toString()),
                             plotObject.value("AxisWidth").toInt());
-    plot->setGridColorWidth(plotObject.value("GridColor").toString(),
+    plot->setGridColorWidth(color_transfer::QColorFromRGBAStr(plotObject.value("GridColor").toString()),
                             plotObject.value("GridWidth").toInt());
-    plot->setGridFillColor(plotObject.value("GridFillColor").toString());
+
+    plot->setGridFillColor(color_transfer::QColorFromRGBAStr(plotObject.value("GridFillColor").toString()));
     plot->setUnitsShowX(plotObject.value("ShowUnitX").toBool());
     plot->setUnitsShowY(plotObject.value("ShowUnitY").toBool());
 
@@ -1124,7 +1170,7 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
             dialPlot->setDialCapRate(plotObject.value("DialCapRate").toInt());
             dialPlot->setStartAngle(plotObject.value("DialStartAngle").toInt());
             dialPlot->setEndAngle(plotObject.value("DialEndAngle").toInt());
-            dialPlot->setCapColor(plotObject.value("DialCapColor").toString());
+            dialPlot->setCapColor(color_transfer::QColorFromRGBAStr(plotObject.value("DialCapColor").toString()));
             dialPlot->setDrawFirstTick(plotObject.value("DialDrawFirstTick").toBool());
             dialPlot->setDrawLastTick(plotObject.value("DialDrawLastTick").toBool());
             dialPlot->setDrawFirstTextLabel(plotObject.value("DialDrawFirstTextLabel").toBool());
@@ -1140,8 +1186,8 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
                 QJsonObject obj = colorInfo.at(i).toObject();
                 item.start = obj.value("DialColorStart").toInt();
                 item.end = obj.value("DialColorEnd").toInt();
-                item.clr = obj.value("DialColor").toString();
-                item.outline = obj.value("DialColorOutline").toString();
+                item.clr = color_transfer::QColorFromRGBAStr(obj.value("DialColor").toString());
+                item.outline = color_transfer::QColorFromRGBAStr(obj.value("DialColorOutline").toString());
                 item.width = obj.value("DialColorWidth").toInt();
                 list.append(item);
             }
@@ -1156,8 +1202,8 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
             attPlot->setTickRadiusPercentage(plotObject.value("AttitudeTickRadius").toInt());
             attPlot->setTextPercentage(plotObject.value("AttitudeTextPercentage").toInt());
             attPlot->setDialPercentage(plotObject.value("AttitudeDialPercentage").toInt());
-            attPlot->setRollColor(plotObject.value("AttitudeRollColor").toString());
-            attPlot->setPitchColor(plotObject.value("AttitudePitchColor").toString());
+            attPlot->setRollColor(color_transfer::QColorFromRGBAStr(plotObject.value("AttitudeRollColor").toString()));
+            attPlot->setPitchColor(color_transfer::QColorFromRGBAStr(plotObject.value("AttitudePitchColor").toString()));
         }
     }
     else if(type == PlotType::Type_PlotScatter)
@@ -1178,7 +1224,7 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
                plotMarker.time= markObject.value("MarkerTime").toDouble();
                plotMarker.iconType= markObject.value("MarkerIconType").toString();
                plotMarker.text= markObject.value("MarkerText").toString();
-               plotMarker.color= QColor( markObject.value("MarkerColor").toString());
+               plotMarker.color=color_transfer::QColorFromRGBAStr( markObject.value("MarkerColor").toString());
                plotMarker.fontFamily= markObject.value("MarkerFontFamily").toString();
                plotMarker.fontSize= markObject.value("MarkerFontSize").toInt();
 
@@ -1192,7 +1238,7 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
                 auto gogObject = gogArray.at(i).toObject();
                 GOGCustomSetting setting;
                 setting.isDraw = gogObject.value("GOGIsDraw").toBool();
-                setting.fillColor = QColor(gogObject.value("GOGColor").toString());
+                setting.fillColor = color_transfer::QColorFromRGBAStr(gogObject.value("GOGColor").toString());
                 setting.lineWidth = gogObject.value("GOGLineWidth").toInt();
                 QString gogFilePath = gogObject.value("GOGFilePath").toString();
 
@@ -1211,7 +1257,7 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
 
                 set.m_eventFontFamily = eventObject.value("ScatterEventFontFamily").toString();
                 set.m_eventFontSize = eventObject.value("ScatterEventFontSize").toInt();
-                set.m_eventColor = QColor(eventObject.value("ScatterEventColor").toString());
+                set.m_eventColor = color_transfer::QColorFromRGBAStr(eventObject.value("ScatterEventColor").toString());
                 set.m_eventStyle = eventObject.value("ScatterEventStyle").toString();
                 set.m_isIncludeTag = eventObject.value("ScatterEventIncludeTag").toBool();
                 set.m_type = eventObject.value("ScatterEventType").toString();
@@ -1244,7 +1290,8 @@ void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object, Plo
         object.insert("LineMode", dataPair->isLineMode());
         object.insert("Width", dataPair->width());
         object.insert("MatchColors", dataPair->matchColor());
-        object.insert("Color", dataPair->dataColor().name());
+
+        object.insert("Color", color_transfer::QColorToRGBAStr( dataPair->dataColor()));
         // stipple
         object.insert("StippleEnable", dataPair->getIsStippleEnable());
         object.insert("StipplePattern", dataPair->getStipplePattern());
@@ -1254,12 +1301,12 @@ void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object, Plo
     else if(type == PlotType::Type_PlotBar)
     {
         object.insert("MatchColors", dataPair->matchColor());
-        object.insert("Color", dataPair->dataColor().name());
+        object.insert("Color", color_transfer::QColorToRGBAStr(dataPair->dataColor()));
 
         object.insert("LabelSettingsEnable", dataPair->isLabelTextShow());
-        object.insert("LabelColor", dataPair->getLabelColor().name());
-        object.insert("LabelBackground", dataPair->getLabelBackground().name());
-        object.insert("LabelSecondColor", dataPair->getLabelSecColor().name());
+        object.insert("LabelColor", color_transfer::QColorToRGBAStr(dataPair->getLabelColor()));
+        object.insert("LabelBackground", color_transfer::QColorToRGBAStr(dataPair->getLabelBackground()));
+        object.insert("LabelSecondColor", color_transfer::QColorToRGBAStr(dataPair->getLabelSecColor()));
         object.insert("LabelFont", dataPair->getLabelFont().family());
         object.insert("LabelFontSize", dataPair->getLabelFontSize());
         object.insert("LabelXUint", dataPair->getUnit_x());
@@ -1267,23 +1314,23 @@ void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object, Plo
         object.insert("LabelPosition", dataPair->getLabelPosition());
 
         object.insert("ColorRangesEnable", dataPair->getColorRangeEnable());
-        object.insert("ColorRangesDefColor", dataPair->getColorRangeDefaultColor().name());
+        object.insert("ColorRangesDefColor", color_transfer::QColorToRGBAStr(dataPair->getColorRangeDefaultColor()));
         object.insert("ColorRangesMode", dataPair->getColorRangeMode());
         object.insert("ColorRangesDesc", dataPair->colorRangesToString());
     }
     else if(type == PlotType::Type_PlotDial)
     {
         object.insert("MatchColors", dataPair->matchColor());
-        object.insert("Color", dataPair->dataColor().name());
+        object.insert("Color", color_transfer::QColorToRGBAStr(dataPair->dataColor()));
     }
     else if(type == PlotType::Type_PlotLight)
     {
         object.insert("MatchColors", dataPair->matchColor());
-        object.insert("Color", dataPair->dataColor().name());
+        object.insert("Color", color_transfer::QColorToRGBAStr(dataPair->dataColor()));
 
         object.insert("LabelSettingsEnable", dataPair->isLabelTextShow());
-        object.insert("LabelColor", dataPair->getLabelColor().name());
-        object.insert("LabelBackground", dataPair->getLabelBackground().name());
+        object.insert("LabelColor", color_transfer::QColorToRGBAStr(dataPair->getLabelColor()));
+        object.insert("LabelBackground", color_transfer::QColorToRGBAStr(dataPair->getLabelBackground()));
         object.insert("LabelFont", dataPair->getLabelFont().family());
         object.insert("LabelFontSize", dataPair->getLabelFontSize());
         object.insert("LabelPosition", dataPair->getLabelPosition());
@@ -1293,11 +1340,11 @@ void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object, Plo
         object.insert("LineMode", dataPair->isLineMode());
         object.insert("Width", dataPair->width());
         object.insert("MatchColors", dataPair->matchColor());
-        object.insert("Color", dataPair->dataColor().name());
+        object.insert("Color", color_transfer::QColorToRGBAStr(dataPair->dataColor()));
 
         object.insert("LabelSettingsEnable", dataPair->isLabelTextShow());
-        object.insert("LabelColor", dataPair->getLabelColor().name());
-        object.insert("LabelBackground", dataPair->getLabelBackground().name());
+        object.insert("LabelColor", color_transfer::QColorToRGBAStr(dataPair->getLabelColor()));
+        object.insert("LabelBackground", color_transfer::QColorToRGBAStr(dataPair->getLabelBackground()));
         object.insert("LabelFont", dataPair->getLabelFont().family());
         object.insert("LabelFontSize", dataPair->getLabelFontSize());
         object.insert("LabelXUint", dataPair->getUnit_x());
@@ -1309,14 +1356,14 @@ void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object, Plo
     else if(type == PlotType::Type_PlotRTI)
     {
         object.insert("MatchColors", dataPair->matchColor());
-        object.insert("Color", dataPair->dataColor().name());
+        object.insert("Color", color_transfer::QColorToRGBAStr(dataPair->dataColor()));
     }
     else if(type == PlotType::Type_PlotScatter)
     {
         object.insert("LineMode", dataPair->isLineMode());
         object.insert("Width", dataPair->width());
         object.insert("MatchColors", dataPair->matchColor());
-        object.insert("Color", dataPair->dataColor().name());
+        object.insert("Color", color_transfer::QColorToRGBAStr(dataPair->dataColor()));
 
         // icon
         object.insert("IconEnable", dataPair->isIconDraw());
@@ -1326,11 +1373,11 @@ void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object, Plo
         object.insert("IconFlipVert", dataPair->iconFlipVert());
         object.insert("IconWidth", dataPair->iconWidth());
         object.insert("IconHeight", dataPair->iconHeight());
-        object.insert("IconOverrideColor", dataPair->iconColor().name());
+        object.insert("IconOverrideColor", color_transfer::QColorToRGBAStr(dataPair->iconColor()));
 
         object.insert("LabelSettingsEnable", dataPair->isLabelTextShow());
-        object.insert("LabelColor", dataPair->getLabelColor().name());
-        object.insert("LabelBackground", dataPair->getLabelBackground().name());
+        object.insert("LabelColor", color_transfer::QColorToRGBAStr(dataPair->getLabelColor()));
+        object.insert("LabelBackground", color_transfer::QColorToRGBAStr(dataPair->getLabelBackground()));
         object.insert("LabelFont", dataPair->getLabelFont().family());
         object.insert("LabelFontSize", dataPair->getLabelFontSize());
         object.insert("LabelXUint", dataPair->getUnit_x());
@@ -1354,7 +1401,7 @@ void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object, Plo
     else if(type == PlotType::Type_PlotText)
     {
         object.insert("MatchColors", dataPair->matchColor());
-        object.insert("Color", dataPair->dataColor().name());
+        object.insert("Color", color_transfer::QColorToRGBAStr(dataPair->dataColor()));
 
         object.insert("IconEnable", dataPair->isIconDraw());
         object.insert("IconFileName", dataPair->iconName());
@@ -1363,11 +1410,11 @@ void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object, Plo
         object.insert("IconFlipVert", dataPair->iconFlipVert());
         object.insert("IconWidth", dataPair->iconWidth());
         object.insert("IconHeight", dataPair->iconHeight());
-        object.insert("IconOverrideColor", dataPair->iconColor().name());
+        object.insert("IconOverrideColor", color_transfer::QColorToRGBAStr(dataPair->iconColor()));
 
         object.insert("LabelSettingsEnable", dataPair->isLabelTextShow());
-        object.insert("LabelColor", dataPair->getLabelColor().name());
-        object.insert("LabelBackground", dataPair->getLabelBackground().name());
+        object.insert("LabelColor", static_cast<int32_t>( dataPair->getLabelColor().rgba()));
+        object.insert("LabelBackground", color_transfer::QColorToRGBAStr(dataPair->getLabelBackground()));
         object.insert("LabelFont", dataPair->getLabelFont().family());
         object.insert("LabelFontSize", dataPair->getLabelFontSize());
         object.insert("LabelXUint", dataPair->getUnit_x());
@@ -1376,12 +1423,12 @@ void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object, Plo
     }
     else if(type == PlotType::Type_PlotTrack)
     {
-        object.insert("Color", dataPair->dataColor().name());
+        object.insert("Color", color_transfer::QColorToRGBAStr(dataPair->dataColor()));
 
         object.insert("LabelSettingsEnable", dataPair->isLabelTextShow());
-        object.insert("LabelColor", dataPair->getLabelColor().name());
-        object.insert("LabelBackground", dataPair->getLabelBackground().name());
-        object.insert("LabelSecondColor", dataPair->getLabelSecColor().name());
+        object.insert("LabelColor", color_transfer::QColorToRGBAStr(dataPair->getLabelColor()));
+        object.insert("LabelBackground", color_transfer::QColorToRGBAStr(dataPair->getLabelBackground()));
+        object.insert("LabelSecondColor", color_transfer::QColorToRGBAStr(dataPair->getLabelSecColor()));
         object.insert("LabelFont", dataPair->getLabelFont().family());
         object.insert("LabelFontSize", dataPair->getLabelFontSize());
     }
@@ -1410,7 +1457,7 @@ void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBas
         dataPair->setLineMode(dataPairObject.value("LineMode").toBool());
         dataPair->setWidth(dataPairObject.value("Width").toInt());
         dataPair->setMatchColor(dataPairObject.value("MatchColors").toBool());
-        dataPair->setColor(QColor(dataPairObject.value("Color").toString()));
+        dataPair->setColor(color_transfer::QColorFromRGBAStr(dataPairObject.value("Color").toString()));
 
         dataPair->setIsStippleEnable(dataPairObject.value("StippleEnable").toBool());
         dataPair->setStipplePattern(
@@ -1421,12 +1468,12 @@ void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBas
     else if(type == PlotType::Type_PlotBar)
     {
         dataPair->setMatchColor(dataPairObject.value("MatchColors").toBool());
-        dataPair->setColor(QColor(dataPairObject.value("Color").toString()));
+        dataPair->setColor(color_transfer::QColorFromRGBAStr(dataPairObject.value("Color").toString()));
 
         dataPair->setLabelTextShow(dataPairObject.value("LabelSettingsEnable").toBool());
-        dataPair->setLabelColor(QColor(dataPairObject.value("LabelColor").toString()));
-        dataPair->setLabelBackground(QColor(dataPairObject.value("LabelBackground").toString()));
-        dataPair->setLabelSecColor(QColor(dataPairObject.value("LabelSecondColor").toString()));
+        dataPair->setLabelColor(color_transfer::QColorFromRGBAStr(dataPairObject.value("LabelColor").toString()));
+        dataPair->setLabelBackground(color_transfer::QColorFromRGBAStr(dataPairObject.value("LabelBackground").toString()));
+        dataPair->setLabelSecColor(color_transfer::QColorFromRGBAStr(dataPairObject.value("LabelSecondColor").toString()));
         dataPair->setLabelFont(QFont(dataPairObject.value("LabelFont").toString()));
         dataPair->setLabelFontSize(dataPairObject.value("LabelFontSize").toInt());
         dataPair->setUnit_x(dataPairObject.value("LabelXUint").toString());
@@ -1444,16 +1491,16 @@ void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBas
     else if(type == PlotType::Type_PlotDial)
     {
         dataPair->setMatchColor(dataPairObject.value("MatchColors").toBool());
-        dataPair->setColor(QColor(dataPairObject.value("Color").toString()));
+        dataPair->setColor(color_transfer::QColorFromRGBAStr(dataPairObject.value("Color").toString()));
     }
     else if(type == PlotType::Type_PlotLight)
     {
         dataPair->setMatchColor(dataPairObject.value("MatchColors").toBool());
-        dataPair->setColor(QColor(dataPairObject.value("Color").toString()));
+        dataPair->setColor(color_transfer::QColorFromRGBAStr(dataPairObject.value("Color").toString()));
 
         dataPair->setLabelTextShow(dataPairObject.value("LabelSettingsEnable").toBool());
-        dataPair->setLabelColor(QColor(dataPairObject.value("LabelColor").toString()));
-        dataPair->setLabelBackground(QColor(dataPairObject.value("LabelBackground").toString()));
+        dataPair->setLabelColor(color_transfer::QColorFromRGBAStr(dataPairObject.value("LabelColor").toString()));
+        dataPair->setLabelBackground(color_transfer::QColorFromRGBAStr(dataPairObject.value("LabelBackground").toString()));
         dataPair->setLabelFont(QFont(dataPairObject.value("LabelFont").toString()));
         dataPair->setLabelFontSize(dataPairObject.value("LabelFontSize").toInt());
         dataPair->setLabelPosition(
@@ -1464,11 +1511,11 @@ void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBas
         dataPair->setLineMode(dataPairObject.value("LineMode").toBool());
         dataPair->setWidth(dataPairObject.value("Width").toInt());
         dataPair->setMatchColor(dataPairObject.value("MatchColors").toBool());
-        dataPair->setColor(QColor(dataPairObject.value("Color").toString()));
+        dataPair->setColor(color_transfer::QColorFromRGBAStr(dataPairObject.value("Color").toString()));
 
         dataPair->setLabelTextShow(dataPairObject.value("LabelSettingsEnable").toBool());
-        dataPair->setLabelColor(QColor(dataPairObject.value("LabelColor").toString()));
-        dataPair->setLabelBackground(QColor(dataPairObject.value("LabelBackground").toString()));
+        dataPair->setLabelColor(color_transfer::QColorFromRGBAStr(dataPairObject.value("LabelColor").toString()));
+        dataPair->setLabelBackground(color_transfer::QColorFromRGBAStr(dataPairObject.value("LabelBackground").toString()));
         dataPair->setLabelFont(QFont(dataPairObject.value("LabelFont").toString()));
         dataPair->setLabelFontSize(dataPairObject.value("LabelFontSize").toInt());
         dataPair->setUnit_x(dataPairObject.value("LabelXUint").toString());
@@ -1481,14 +1528,14 @@ void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBas
     else if(type == PlotType::Type_PlotRTI)
     {
         dataPair->setMatchColor(dataPairObject.value("MatchColors").toBool());
-        dataPair->setColor(QColor(dataPairObject.value("Color").toString()));
+        dataPair->setColor(color_transfer::QColorFromRGBAStr(dataPairObject.value("Color").toString()));
     }
     else if(type == PlotType::Type_PlotScatter)
     {
         dataPair->setLineMode(dataPairObject.value("LineMode").toBool());
         dataPair->setWidth(dataPairObject.value("Width").toInt());
         dataPair->setMatchColor(dataPairObject.value("MatchColors").toBool());
-        dataPair->setColor(QColor(dataPairObject.value("Color").toString()));
+        dataPair->setColor(color_transfer::QColorFromRGBAStr(dataPairObject.value("Color").toString()));
 
         dataPair->setIconDraw(dataPairObject.value("IconEnable").toBool());
         dataPair->setIconName(dataPairObject.value("IconFileName").toString());
@@ -1498,11 +1545,11 @@ void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBas
         dataPair->setIconFlipVert(dataPairObject.value("IconFlipVert").toBool());
         dataPair->setIconWidth(dataPairObject.value("IconWidth").toInt());
         dataPair->setIconHeight(dataPairObject.value("IconHeight").toInt());
-        dataPair->setIconColor(QColor(dataPairObject.value("IconOverrideColor").toString()));
+        dataPair->setIconColor(color_transfer::QColorFromRGBAStr(dataPairObject.value("IconOverrideColor").toString()));
 
         dataPair->setLabelTextShow(dataPairObject.value("LabelSettingsEnable").toBool());
-        dataPair->setLabelColor(QColor(dataPairObject.value("LabelColor").toString()));
-        dataPair->setLabelBackground(QColor(dataPairObject.value("LabelBackground").toString()));
+        dataPair->setLabelColor(color_transfer::QColorFromRGBAStr(dataPairObject.value("LabelColor").toString()));
+        dataPair->setLabelBackground(color_transfer::QColorFromRGBAStr(dataPairObject.value("LabelBackground").toString()));
         dataPair->setLabelFont(QFont(dataPairObject.value("LabelFont").toString()));
         dataPair->setLabelFontSize(dataPairObject.value("LabelFontSize").toInt());
         dataPair->setUnit_x(dataPairObject.value("LabelXUint").toString());
@@ -1529,7 +1576,7 @@ void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBas
     else if(type == PlotType::Type_PlotText)
     {
         dataPair->setMatchColor(dataPairObject.value("MatchColors").toBool());
-        dataPair->setColor(QColor(dataPairObject.value("Color").toString()));
+        dataPair->setColor(color_transfer::QColorFromRGBAStr(dataPairObject.value("Color").toString()));
 
         dataPair->setIconDraw(dataPairObject.value("IconEnable").toBool());
         dataPair->setIconName(dataPairObject.value("IconFileName").toString());
@@ -1539,11 +1586,11 @@ void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBas
         dataPair->setIconFlipVert(dataPairObject.value("IconFlipVert").toBool());
         dataPair->setIconWidth(dataPairObject.value("IconWidth").toInt());
         dataPair->setIconHeight(dataPairObject.value("IconHeight").toInt());
-        dataPair->setIconColor(QColor(dataPairObject.value("IconOverrideColor").toString()));
+        dataPair->setIconColor(color_transfer::QColorFromRGBAStr(dataPairObject.value("IconOverrideColor").toString()));
 
         dataPair->setLabelTextShow(dataPairObject.value("LabelSettingsEnable").toBool());
-        dataPair->setLabelColor(QColor(dataPairObject.value("LabelColor").toString()));
-        dataPair->setLabelBackground(QColor(dataPairObject.value("LabelBackground").toString()));
+        dataPair->setLabelColor(color_transfer::QColorFromRGBAStr(dataPairObject.value("LabelColor").toString()));
+        dataPair->setLabelBackground(color_transfer::QColorFromRGBAStr(dataPairObject.value("LabelBackground").toString()));
         dataPair->setLabelFont(QFont(dataPairObject.value("LabelFont").toString()));
         dataPair->setLabelFontSize(dataPairObject.value("LabelFontSize").toInt());
         dataPair->setUnit_x(dataPairObject.value("LabelXUint").toString());
@@ -1553,12 +1600,12 @@ void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBas
     }
     else if(type == PlotType::Type_PlotTrack)
     {
-        dataPair->setColor(QColor(dataPairObject.value("Color").toString()));
+        dataPair->setColor(color_transfer::QColorFromRGBAStr(dataPairObject.value("Color").toString()));
 
         dataPair->setLabelTextShow(dataPairObject.value("LabelSettingsEnable").toBool());
-        dataPair->setLabelColor(QColor(dataPairObject.value("LabelColor").toString()));
-        dataPair->setLabelBackground(QColor(dataPairObject.value("LabelBackground").toString()));
-        dataPair->setLabelSecColor(QColor(dataPairObject.value("LabelSecondColor").toString()));
+        dataPair->setLabelColor(color_transfer::QColorFromRGBAStr(dataPairObject.value("LabelColor").toString()));
+        dataPair->setLabelBackground(color_transfer::QColorFromRGBAStr(dataPairObject.value("LabelBackground").toString()));
+        dataPair->setLabelSecColor(color_transfer::QColorFromRGBAStr(dataPairObject.value("LabelSecondColor").toString()));
         dataPair->setLabelFont(QFont(dataPairObject.value("LabelFont").toString()));
         dataPair->setLabelFontSize(dataPairObject.value("LabelFontSize").toInt());
     }

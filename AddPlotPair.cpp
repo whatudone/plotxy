@@ -2,6 +2,8 @@
 #include "DataManager.h"
 #include "PlotManagerData.h"
 #include "ui_AddPlotPair.h"
+#include "Utils.h"
+
 #include <QDebug>
 #include <QMessageBox>
 #include <QPoint>
@@ -889,7 +891,8 @@ void AddPlotPair::onBtnLightUpdateClicked()
                 }
                 if(j == 4)
                 {
-                    colorName = item->backgroundColor().name();
+
+                    colorName = color_transfer::QColorToRGBAStr(item->backgroundColor());
                 }
             }
         }

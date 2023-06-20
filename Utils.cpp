@@ -703,3 +703,15 @@ void SmoothCurveGenerator::calculateControlPoints(const QVector<QPointF>& knots,
     delete[] rhsx;
     delete[] rhsy;
 }
+namespace color_transfer {
+QColor QColorFromRGBAStr(const QString &rgbaStr){
+    QColor color;
+
+    color.setRgba(rgbaStr.toUInt());
+    return color;
+}
+
+QString QColorToRGBAStr(const QColor &color){
+    return QString::number(color.rgba());
+}
+}

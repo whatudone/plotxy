@@ -53,11 +53,6 @@ void PlotText::updateGraphByDataPair(DataPair* data)
 
 void PlotText::customPainting(QPainter& painter)
 {
-    if(m_dataList.isEmpty())
-    {
-        return;
-    }
-
     // 图表绘制区域
     drawCellData(painter);
 }
@@ -65,7 +60,8 @@ void PlotText::customPainting(QPainter& painter)
 void PlotText::drawCellData(QPainter& painter)
 {
     QRect drawRect(0, 0, m_widget->width(), m_widget->height());
-    int32_t itemSize = m_dataList.size();
+    int32_t itemSize = m_dataList.size()==0?1:m_dataList.size();
+
     int32_t colSize = 2;
     // 没有插值只有两列，插值会出现三列，后续完善
     int horiGridWidth = drawRect.width() / colSize;

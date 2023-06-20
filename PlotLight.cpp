@@ -1,6 +1,8 @@
 ﻿#include "PlotLight.h"
 #include "DataManager.h"
 #include "PlotItemBase.h"
+#include "Utils.h"
+
 #include <QBrush>
 #include <QDebug>
 #include <QFontMetricsF>
@@ -211,7 +213,7 @@ QColor PlotLight::getColorByDataPairWithCon(int32_t id, const QString& attr, dou
                (conCondition == "<" && value < threshold))
             {
                 QString colorName = std::get<4>(tuple);
-                return QColor(colorName);
+                return color_transfer::QColorFromRGBAStr(colorName);
             }
         }
     }

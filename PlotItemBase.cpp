@@ -33,7 +33,7 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     m_yPrecision = 0;
 
     m_outerFillColor = Qt::transparent;
-    m_outlineColor = Qt::black;
+    m_outlineColor = Qt::transparent;
 
     m_horzGrids = 4;
     m_vertGrids = 4;

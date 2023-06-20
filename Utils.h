@@ -304,4 +304,10 @@ private:
                                        QList<QPointF>* firstControlPoints,
                                        QList<QPointF>* secondControlPoints);
 };
+namespace color_transfer {
+QColor QColorFromRGBAStr(const QString& rgbaStr);
+
+QString QColorToRGBAStr(const QColor& color);
+}
+
 #endif /* SIMCORE_TIME_UTILS_H */
