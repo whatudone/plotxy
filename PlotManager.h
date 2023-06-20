@@ -19,16 +19,12 @@ public:
     void init(); //初始化函数，连接信号槽
     void addPlot(const QString&, PlotItemBase*); //添加Plot
 
-	QColor m_axisColor;
-	QColor m_gridColor;
-	QColor m_girdFill;
 
 	int m_spinBoxBetween;
 	int m_spinBoxLeft;
 	int m_spinBoxRight;
 
-    int m_hrozGrids;
-    int m_vertGrids;
+
 
 private:
 	void initTreeWidgetSettings();
@@ -128,6 +124,7 @@ public slots:
 	//Light/Text
 	void onPushButton_71Clicked();
     void onPushButton_TextFillColorClicked();
+    void onPushButtonTextOutlineColorClicked();
 	void onSpinbox_10Changed();
 	void onPushButton_66Clicked();
 	void onPushButton_67Clicked();

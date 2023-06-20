@@ -316,6 +316,7 @@ void PlotManager::initTextLightUI()
     connect(ui.spinBox_10, &QSpinBox::editingFinished, this, &PlotManager::onSpinbox_10Changed);
     connect(ui.pushButton_71, &QPushButton::clicked, this, &PlotManager::onPushButton_71Clicked);
     connect(ui.pushButton_TextFillColor, &QPushButton::clicked, this, &PlotManager::onPushButton_TextFillColorClicked);
+    connect(ui.pushButtonTextOutlineColor, &QPushButton::clicked, this, &PlotManager::onPushButtonTextOutlineColorClicked);
 }
 
 void PlotManager::initScatterLimitUI()
@@ -637,7 +638,7 @@ void PlotManager::refreshPlotDataUI(PlotItemBase* plot)
 
 void PlotManager::refreshLightTextUI(PlotItemBase* plot)
 {
-    if(!(plot == nullptr))
+    if(plot)
     {
         auto dataPairs = plot->getDataPairs();
         if(plot->plotType() == PlotType::Type_PlotText)
@@ -674,10 +675,10 @@ void PlotManager::refreshLightTextUI(PlotItemBase* plot)
                 ui.tableWidget_LightDataSort->setItem(i, 0, temEntityAndAttri);
             }
         }
+        ui.pushButtonTextOutlineColor->setColor(plot->getOutlineColor());
         ui.pushButton_TextFillColor->setColor(plot->getGridFillColor());
     }
-    else
-        return;
+
 }
 
 void PlotManager::refreshGOGUI(PlotItemBase* plot)
@@ -1209,30 +1210,45 @@ void PlotManager::onBtnCloseClicked()
 
 void PlotManager::onBarHorizonChanged(int state)
 {
+     if(m_curSelectPlot){
     if(state == 2)
         m_curSelectPlot->setIsHorizonBar(true);
     else if(state == 0)
         m_curSelectPlot->setIsHorizonBar(false);
+     }
 }
 
 void PlotManager::onPushButton_71Clicked()
 {
+     if(m_curSelectPlot){
     ui.pushButton_gridColor->setColor(ui.pushButton_71->color());
     ui.lineEdit_23->setText(QString("%1").arg(ui.spinBox_10->value()));
     m_curSelectPlot->setGridColorWidth(ui.pushButton_71->color(), ui.spinBox_10->value());
+     }
 }
 
 void PlotManager::onSpinbox_10Changed()
 {
+     if(m_curSelectPlot){
     ui.pushButton_gridColor->setColor(ui.pushButton_71->color());
     ui.lineEdit_23->setText(QString("%1").arg(ui.spinBox_10->value()));
     m_curSelectPlot->setGridColorWidth(ui.pushButton_71->color(), ui.spinBox_10->value());
+     }
 }
 
 void PlotManager::onPushButton_TextFillColorClicked()
 {
+     if(m_curSelectPlot){
     QColor color = ui.pushButton_TextFillColor->color();
     m_curSelectPlot->setGridFillColor(color);
+     }
+}
+
+void PlotManager::onPushButtonTextOutlineColorClicked()
+{
+    if(m_curSelectPlot){
+        m_curSelectPlot->setOutlineColor(ui.pushButtonTextOutlineColor->color());
+    }
 }
 
 //void PlotManager::onPushButton_gridFillClicked()
