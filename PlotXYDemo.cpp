@@ -255,12 +255,12 @@ void PlotXYDemo::onStatusBtnClicked(int index)
         break;
     case MouseMode::Zoom:
         draw->setCursor(QCursor(QPixmap(":/zoom.svg")));
-        m_pCurSelectedPlot->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+        m_pCurSelectedPlot->setCustomPlotMouseTransparent(false);
         m_pCurSelectedPlot->setZoom(1);
         break;
     case MouseMode::BoxZoom:
         draw->setCursor(QCursor(QPixmap(":/box_zoom.svg")));
-        m_pCurSelectedPlot->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+        m_pCurSelectedPlot->setCustomPlotMouseTransparent(false);
         m_pCurSelectedPlot->setZoom(2);
         break;
     case MouseMode::MeasureDistance:

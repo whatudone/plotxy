@@ -34,15 +34,15 @@ PlotScatter::~PlotScatter() {}
 void PlotScatter::initPlot()
 {
     m_customPlot = new QCustomPlot();
-    m_customPlot->xAxis->setRange(m_coordBgn_x,m_coordEnd_x);
-    m_customPlot->yAxis->setRange(m_coordBgn_y,m_coordEnd_y);
+    m_customPlot->xAxis->setRange(m_coordBgn_x, m_coordEnd_x);
+    m_customPlot->yAxis->setRange(m_coordBgn_y, m_coordEnd_y);
     // 坐标轴范围切换之后，需要更新背景分段坐标信息
     connect(m_customPlot->xAxis, QOverload<const QCPRange&>::of(&QCPAxis::rangeChanged), [this]() {
         updateBackgroundColorSeg();
-        if(m_isTimeLine){
+        if(m_isTimeLine)
+        {
             updateTimelineGraph();
         }
-
     });
     connect(m_customPlot->yAxis, QOverload<const QCPRange&>::of(&QCPAxis::rangeChanged), [this]() {
         updateBackgroundColorSeg();
@@ -171,9 +171,9 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
         }
     }
     updateMarkers(secs);
-//    if(DataManagerInstance->getIsRealTime() && !m_isTimeLine){
-//        m_customPlot->rescaleAxes();
-//    }
+    //    if(DataManagerInstance->getIsRealTime() && !m_isTimeLine){
+    //        m_customPlot->rescaleAxes();
+    //    }
 	m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
@@ -184,7 +184,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
         return;
     }
     if(m_isTimeLine)
-    {
+	{
         updateTimelineGraph();
         return;
     }
@@ -197,7 +197,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
     }
     DrawComponents info;
     if(!m_mapScatter.contains(uuid))
-	{
+    {
         info.graph = m_customPlot->addGraph();
         // 默认采样值是true，在某些情况下采样会导致把原始数据处理错误，导致连线时路径错误
         info.graph->setAdaptiveSampling(false);
@@ -293,32 +293,32 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
 
 void PlotScatter::exportDataToFile(const QString& filename) const
 {
-//    QFile file(filename);
-//    if(file.open(QFile::WriteOnly | QFile::Truncate))
-//    {
-//        QTextStream out(&file); //创建写入流
-//        for(const auto& info : m_mapScatter)
-//        {
-//            if(info.graph && info.graph->visible())
-//            {
-//                out << "[" << info.tracerText->text() << "]"
-//                    << "\r\n";
-//                out << "Title=" << info.tracerText->text() << "\r\n";
-//                out << "Data="
-//                    << "\r\n";
-//                auto dataContainer = info.graph->data().get();
-//                auto size = dataContainer->size();
-//                for(int var = 0; var < size; ++var)
-//                {
-//                    double x = dataContainer->at(var)->key;
-//                    double y = dataContainer->at(var)->value;
-//                    out << x << "       " << y << "\r\n";
-//                }
-//                out << "\r\n";
-//            }
-//        }
-//    }
-//    file.close();
+    //    QFile file(filename);
+    //    if(file.open(QFile::WriteOnly | QFile::Truncate))
+    //    {
+    //        QTextStream out(&file); //创建写入流
+    //        for(const auto& info : m_mapScatter)
+    //        {
+    //            if(info.graph && info.graph->visible())
+    //            {
+    //                out << "[" << info.tracerText->text() << "]"
+    //                    << "\r\n";
+    //                out << "Title=" << info.tracerText->text() << "\r\n";
+    //                out << "Data="
+    //                    << "\r\n";
+    //                auto dataContainer = info.graph->data().get();
+    //                auto size = dataContainer->size();
+    //                for(int var = 0; var < size; ++var)
+    //                {
+    //                    double x = dataContainer->at(var)->key;
+    //                    double y = dataContainer->at(var)->value;
+    //                    out << x << "       " << y << "\r\n";
+    //                }
+    //                out << "\r\n";
+    //            }
+    //        }
+    //    }
+    //    file.close();
 }
 
 void PlotScatter::drawGOGData()
@@ -343,34 +343,37 @@ void PlotScatter::drawGOGData()
         {
             for(auto data : dataList)
             {
-//                bool isFilled = false;
-//                QColor fillColor;
-//                if(setting.fillState == Qt::Checked)
-//                {
-//                    isFilled = true;
-//                    fillColor = setting.fillColor;
-//                }
-//                else if(setting.fillState == Qt::Unchecked)
-//                {
-//                    isFilled = false;
-//                }
-//                else if(setting.fillState == Qt::PartiallyChecked)
-//                {
-//                    if(data.isFill)
-//                    {
-//                        isFilled = true;
-//                        fillColor = data.fillColor;
-//                    }
-//                    else
-//                    {
-//                        isFilled = false;
-//                    }
-//                }
+                //                bool isFilled = false;
+                //                QColor fillColor;
+                //                if(setting.fillState == Qt::Checked)
+                //                {
+                //                    isFilled = true;
+                //                    fillColor = setting.fillColor;
+                //                }
+                //                else if(setting.fillState == Qt::Unchecked)
+                //                {
+                //                    isFilled = false;
+                //                }
+                //                else if(setting.fillState == Qt::PartiallyChecked)
+                //                {
+                //                    if(data.isFill)
+                //                    {
+                //                        isFilled = true;
+                //                        fillColor = data.fillColor;
+                //                    }
+                //                    else
+                //                    {
+                //                        isFilled = false;
+                //                    }
+                //                }
 
                 QColor fillColor;
-                if(setting.fillColor.isValid()){
+                if(setting.fillColor.isValid())
+                {
                     fillColor = setting.fillColor;
-                } else {
+                }
+                else
+                {
                     fillColor = data.fillColor;
                 }
 
@@ -384,9 +387,9 @@ void PlotScatter::drawGOGData()
                     graph->setBrush(Qt::NoBrush);
                     graph->setAdaptiveSampling(false);
                     graph->setVisible(true);
-                    graph->setPen(QPen(QColor(fillColor), lineWidth));
-                    graph->setLineStyle(QCPGraph::lsNone);
-                    graph->setScatterStyle(QCPScatterStyle::ssCircle);
+                    graph->setPen(QPen(data.lineColor, lineWidth));
+                    graph->setLineStyle(QCPGraph::lsLine);
+                    graph->setScatterStyle(QCPScatterStyle::ssNone);
                     graph->setData(data.xList, data.yList, true);
                     m_gogGraphList.append(graph);
                 }
@@ -401,7 +404,7 @@ void PlotScatter::drawGOGData()
                     //                    if(isFilled)
                     //                        ellipse->setBrush(QColor(fillColor));
                     //                    else
-                    ellipse->setBrush(Qt::NoBrush);
+                    ellipse->setBrush(data.fillColor);
                     m_gogEllipseList.append(ellipse);
                 }
             }
@@ -490,70 +493,72 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
                                        int32_t yEntityID,
                                        const QString& yAttrName,
                                        const QString& yAttrUnitName,
-                                       const QHash<QString, QVariant>& extraParams, bool isFromJson)
+                                       const QHash<QString, QVariant>& extraParams,
+                                       bool isFromJson)
 {
-    if(!isFromJson){
+    if(!isFromJson)
+    {
 
-    // 更新range
-    QPair<double, double> xlimit;
-    if(xAttrName == "Time")
-    {
-        xlimit = DataManager::getInstance()->getMaxAndMinEntityAttrValue(yEntityID, xAttrName);
-    }
-    else
-    {
-        xlimit = DataManager::getInstance()->getMaxAndMinEntityAttrValue(xEntityID, xAttrName);
-    }
+        // 更新range
+        QPair<double, double> xlimit;
+        if(xAttrName == "Time")
+        {
+            xlimit = DataManager::getInstance()->getMaxAndMinEntityAttrValue(yEntityID, xAttrName);
+        }
+        else
+        {
+            xlimit = DataManager::getInstance()->getMaxAndMinEntityAttrValue(xEntityID, xAttrName);
+        }
 
-    // x轴
-    if(!m_isInitCoorRange)
-    {
-        // 表示m_min数值无意义，先赋值
-        m_coordBgn_x = xlimit.first;
-    }
-    else
-    {
-        m_coordBgn_x = m_coordBgn_x < xlimit.first ? m_coordBgn_x : xlimit.first;
-    }
+        // x轴
+        if(!m_isInitCoorRange)
+        {
+            // 表示m_min数值无意义，先赋值
+            m_coordBgn_x = xlimit.first;
+        }
+        else
+        {
+            m_coordBgn_x = m_coordBgn_x < xlimit.first ? m_coordBgn_x : xlimit.first;
+        }
 
-    if(!m_isInitCoorRange)
-    {
-        // 表示m_max数值无意义，先赋值
-        m_coordEnd_x = xlimit.second;
-    }
-    else
-    {
-        m_coordEnd_x = m_coordEnd_x > xlimit.second ? m_coordEnd_x : xlimit.second;
-    }
+        if(!m_isInitCoorRange)
+        {
+            // 表示m_max数值无意义，先赋值
+            m_coordEnd_x = xlimit.second;
+        }
+        else
+        {
+            m_coordEnd_x = m_coordEnd_x > xlimit.second ? m_coordEnd_x : xlimit.second;
+        }
 
-    // y轴
-    QPair<double, double> ylimit =
-        DataManager::getInstance()->getMaxAndMinEntityAttrValue(yEntityID, yAttrName);
-    if(!m_isInitCoorRange)
-    {
-        // 表示m_min数值无意义，先赋值
-        m_coordBgn_y = ylimit.first;
-    }
-    else
-    {
-        m_coordBgn_y = m_coordBgn_y < ylimit.first ? m_coordBgn_y : ylimit.first;
-    }
+        // y轴
+        QPair<double, double> ylimit =
+            DataManager::getInstance()->getMaxAndMinEntityAttrValue(yEntityID, yAttrName);
+        if(!m_isInitCoorRange)
+        {
+            // 表示m_min数值无意义，先赋值
+            m_coordBgn_y = ylimit.first;
+        }
+        else
+        {
+            m_coordBgn_y = m_coordBgn_y < ylimit.first ? m_coordBgn_y : ylimit.first;
+        }
 
-    if(!m_isInitCoorRange)
-    {
-        // 表示m_max数值无意义，先赋值
-        m_coordEnd_y = ylimit.second;
-    }
-    else
-    {
-        m_coordEnd_y = m_coordEnd_y > ylimit.second ? m_coordEnd_y : ylimit.second;
-    }
+        if(!m_isInitCoorRange)
+        {
+            // 表示m_max数值无意义，先赋值
+            m_coordEnd_y = ylimit.second;
+        }
+        else
+        {
+            m_coordEnd_y = m_coordEnd_y > ylimit.second ? m_coordEnd_y : ylimit.second;
+        }
 
-    m_customPlot->xAxis->setRange(m_coordBgn_x, m_coordEnd_x);
-    m_customPlot->yAxis->setRange(m_coordBgn_y, m_coordEnd_y);
-    m_customPlot->xAxis->setLabel(xAttrName);
-    m_customPlot->yAxis->setLabel(yAttrName);
-    setTitle(QString("%1 VS. %2").arg(xAttrName).arg(yAttrName));
+        m_customPlot->xAxis->setRange(m_coordBgn_x, m_coordEnd_x);
+        m_customPlot->yAxis->setRange(m_coordBgn_y, m_coordEnd_y);
+        m_customPlot->xAxis->setLabel(xAttrName);
+        m_customPlot->yAxis->setLabel(yAttrName);
+        setTitle(QString("%1 VS. %2").arg(xAttrName).arg(yAttrName));
     }
     m_isInitCoorRange = true;
     return PlotItemBase::addPlotDataPair(
@@ -624,8 +629,9 @@ void PlotScatter::clearHistoryLines()
 
 void PlotScatter::updateTimelineGraph()
 {
-    if(math::doubleEqual(m_lastTime, std::numeric_limits<double>::max())){
-         m_lastTime = PlotXYDemo::getSeconds();
+    if(math::doubleEqual(m_lastTime, std::numeric_limits<double>::max()))
+    {
+        m_lastTime = PlotXYDemo::getSeconds();
     }
     //Timeline模式 Now和event标签都是不移动，只是会移动坐标轴范围
     if(!m_timelineGraph)
@@ -638,7 +644,9 @@ void PlotScatter::updateTimelineGraph()
             m_customPlot->xAxis->setRange(timeVec.first(), timeVec.last());
             m_coordBgn_x = timeVec.first();
             m_coordEnd_x = timeVec.last();
-        }else {
+        }
+        else
+        {
             m_customPlot->xAxis->setRange(0, 10000);
             m_coordBgn_x = 0;
             m_coordEnd_x = 10000;
@@ -708,12 +716,14 @@ void PlotScatter::updateTimelineGraph()
             if(event.m_isIncludeTag)
             {
                 // 离线数据中eventname包含了平台信息，在线数据中需要自己拼接
-                if(DataManagerInstance->getIsRealTime()){
-                     text.append(data.m_platName+data.m_eventName);
-                }else{
-                     text.append(data.m_eventName);
+                if(DataManagerInstance->getIsRealTime())
+                {
+                    text.append(data.m_platName + data.m_eventName);
                 }
-
+                else
+                {
+                    text.append(data.m_eventName);
+                }
             }
             text.append(QString("(%1s)").arg(data.m_relativeTime));
             textItem->setText(text);
@@ -821,12 +831,14 @@ void PlotScatter::updateMarkers(double currentSeconds)
         m_customPlot->replot();
         return;
     }
-    for(const auto &marker:m_plotMarkers){
-        if(marker.time>currentSeconds){
+    for(const auto& marker : m_plotMarkers)
+    {
+        if(marker.time > currentSeconds)
+        {
             continue;
         }
-        QCPItemText* textItem =new QCPItemText(m_customPlot);
-        textItem->setText("× "+marker.text);
+        QCPItemText* textItem = new QCPItemText(m_customPlot);
+        textItem->setText("× " + marker.text);
         QFont font;
         font.setFamily(marker.fontFamily);
         font.setPixelSize(marker.fontSize);
@@ -836,7 +848,7 @@ void PlotScatter::updateMarkers(double currentSeconds)
         // x轴需要设置到对应的时间坐标上，y轴需要按照像素坐标从低到高排列,目前暂时设置到0.5垂直居中
         textItem->position->setType(QCPItemPosition::ptPlotCoords);
         textItem->position->setCoords(marker.x, marker.y);
-        m_plotMarkerItems.insert(marker.uuid,textItem);
+        m_plotMarkerItems.insert(marker.uuid, textItem);
     }
     m_customPlot->replot();
 }
@@ -846,7 +858,7 @@ QHash<QString, PlotMarker> PlotScatter::getPlotMarkers() const
     return m_plotMarkers;
 }
 
-PlotMarker PlotScatter::getMarkerByUuid(const QString &uuid) const
+PlotMarker PlotScatter::getMarkerByUuid(const QString& uuid) const
 {
     return m_plotMarkers.value(uuid);
 }
@@ -856,26 +868,29 @@ QMap<double, PlotScatter::BackgroundLimitSeg> PlotScatter::getBkgLimitSegMap() c
     return m_bkgLimitSegMap;
 }
 
-void PlotScatter::addMarker(const PlotMarker &marker)
+void PlotScatter::addMarker(const PlotMarker& marker)
 {
-    if(!m_plotMarkers.contains(marker.uuid)){
-        m_plotMarkers.insert(marker.uuid,marker);
+    if(!m_plotMarkers.contains(marker.uuid))
+    {
+        m_plotMarkers.insert(marker.uuid, marker);
         updateMarkers(PlotXYDemo::getSeconds());
     }
 }
 
-void PlotScatter::removeMarker(const QString &uuid)
+void PlotScatter::removeMarker(const QString& uuid)
 {
-    if(m_plotMarkers.contains(uuid)){
+    if(m_plotMarkers.contains(uuid))
+    {
         m_plotMarkers.remove(uuid);
         updateMarkers(PlotXYDemo::getSeconds());
     }
 }
 
-void PlotScatter::modifyMarker(const QString &uuid, const PlotMarker &marker)
+void PlotScatter::modifyMarker(const QString& uuid, const PlotMarker& marker)
 {
-    if(m_plotMarkers.contains(marker.uuid)){
-        m_plotMarkers.insert(uuid,marker);
+    if(m_plotMarkers.contains(marker.uuid))
+    {
+        m_plotMarkers.insert(uuid, marker);
         updateMarkers(PlotXYDemo::getSeconds());
     }
 }
