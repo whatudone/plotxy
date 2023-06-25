@@ -215,6 +215,12 @@ struct GOGDataInfo
     bool isFill;
     bool depthBuffer;
     bool tessellate;
+
+    GOGDataInfo()
+    {
+        lineColor = Qt::red;
+        lineWidth = 2;
+    }
 };
 
 struct GOGCustomSetting

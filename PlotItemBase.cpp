@@ -185,7 +185,6 @@ void PlotItemBase::setOuterFillColor(const QColor& color)
     QPalette palette = this->palette();
     palette.setColor(QPalette::Window, m_outerFillColor);
     this->setPalette(palette);
-
 }
 
 void PlotItemBase::setOutlineColor(const QColor& color)
@@ -465,23 +464,29 @@ void PlotItemBase::setUnitsShowX(bool on)
                     if(m_isHorizonBar)
                     {
                         if(on)
-                            setxAxisLabel(m_dataPairs.at(0)->getAttr_x() + "(" + m_dataPairs.at(0)->getUnit_x() + ")");
-                        else {
+                            setxAxisLabel(m_dataPairs.at(0)->getAttr_x() + "(" +
+                                          m_dataPairs.at(0)->getUnit_x() + ")");
+                        else
+                        {
                             setxAxisLabel(m_dataPairs.at(0)->getAttr_x());
                         }
                         setyAxisLabel(m_dataPairs.at(0)->getAttr_y());
                     }
                     replot();
                     return;
-                } else {
-                    if(on) {
-                        setxAxisLabel(m_dataPairs.at(0)->getAttr_x() + "(" + m_dataPairs.at(0)->getUnit_x() + ")");
+                }
+                else
+                {
+                    if(on)
+                    {
+                        setxAxisLabel(m_dataPairs.at(0)->getAttr_x() + "(" +
+                                      m_dataPairs.at(0)->getUnit_x() + ")");
                     }
-                    else {
+                    else
+                    {
                         setxAxisLabel(m_dataPairs.at(0)->getAttr_x());
                     }
                 }
-
             }
         }
     }
@@ -503,19 +508,26 @@ void PlotItemBase::setUnitsShowY(bool on)
                     if(m_isHorizonBar)
                     {
                         if(on)
-                            setyAxisLabel(m_dataPairs.at(0)->getAttr_y() + "(" + m_dataPairs.at(0)->getUnit_y() + ")");
-                        else {
+                            setyAxisLabel(m_dataPairs.at(0)->getAttr_y() + "(" +
+                                          m_dataPairs.at(0)->getUnit_y() + ")");
+                        else
+                        {
                             setyAxisLabel(m_dataPairs.at(0)->getAttr_y());
                         }
                         setxAxisLabel(m_dataPairs.at(0)->getAttr_x());
                     }
                     replot();
                     return;
-                } else {
-                    if(on) {
-                        setyAxisLabel(m_dataPairs.at(0)->getAttr_y() + "(" + m_dataPairs.at(0)->getUnit_y() + ")");
+                }
+                else
+                {
+                    if(on)
+                    {
+                        setyAxisLabel(m_dataPairs.at(0)->getAttr_y() + "(" +
+                                      m_dataPairs.at(0)->getUnit_y() + ")");
                     }
-                    else {
+                    else
+                    {
                         setyAxisLabel(m_dataPairs.at(0)->getAttr_y());
                     }
                 }
@@ -762,7 +774,8 @@ DataPair* PlotItemBase::addPlotDataPair(int32_t xEntityID,
                                         int32_t yEntityID,
                                         const QString& yAttrName,
                                         const QString& yAttrUnitName,
-                                        const QHash<QString, QVariant>& extraParams, bool isFromJson)
+                                        const QHash<QString, QVariant>& extraParams,
+                                        bool isFromJson)
 {
     // TODO:需要完善重复添加逻辑
     DataPair* data =
@@ -785,7 +798,8 @@ DataPair* PlotItemBase::addPlotDataPair(int32_t xEntityID,
             this,
             &PlotItemBase::onDataPairUpdateData,
             Qt::UniqueConnection);
-    if(!isFromJson){
+    if(!isFromJson)
+    {
         emit dataPairsChanged(this);
     }
     return data;
@@ -1067,7 +1081,8 @@ void PlotItemBase::loadGOGFile(const QString& fileName)
 
                         lineData = file.readLine();
                         if(lineData.startsWith("radius"))
-                            data.radius = lineData.split(" ").at(1).toDouble();
+                            // 将gog文件中的radius的单位从m转换成经纬度
+                            data.radius = lineData.split(" ").at(1).toDouble() / 110000;
                     }
                 }
 
@@ -1086,12 +1101,39 @@ void PlotItemBase::loadGOGFile(const QString& fileName)
 
                 if(lineData.startsWith("linecolor"))
                 {
-                    data.lineColor.setRgb(lineData.split(" ").at(2).simplified().toUInt(nullptr, 16));
+                    QString str = lineData.split(" ").at(2).simplified();
+                    if(str.size() != 10)
+                    {
+                        data.lineColor = Qt::red;
+                    }
+                    else
+                    {
+                        QString strA = str.mid(2, 2);
+                        QString strB = str.mid(4, 2);
+                        QString strG = str.mid(6, 2);
+                        QString strR = str.mid(8, 2);
+                        str = strA + strR + strG + strB;
+                        data.lineColor = str.toUInt(nullptr, 16);
+                    }
                 }
 
                 if(lineData.startsWith("fillcolor"))
                 {
-                    data.fillColor.setRgb(lineData.split(" ").at(2).simplified().toUInt(nullptr, 16));
+                    QString str = lineData.split(" ").at(2).simplified();
+                    // 0xffffffff
+                    if(str.size() != 10)
+                    {
+                        data.lineColor = Qt::red;
+                    }
+                    else
+                    {
+                        QString strA = str.mid(2, 2);
+                        QString strB = str.mid(4, 2);
+                        QString strG = str.mid(6, 2);
+                        QString strR = str.mid(8, 2);
+                        str = strA + strR + strG + strB;
+                        data.fillColor = str.toUInt(nullptr, 16);
+                    }
                 }
 
                 if(lineData.startsWith("linewidth"))
