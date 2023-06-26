@@ -1081,8 +1081,7 @@ void PlotItemBase::loadGOGFile(const QString& fileName)
 
                         lineData = file.readLine();
                         if(lineData.startsWith("radius"))
-                            // 将gog文件中的radius的单位从m转换成经纬度
-                            data.radius = lineData.split(" ").at(1).toDouble() / 110000;
+                            data.radius = lineData.split(" ").at(1).toDouble();
                     }
                 }
 
