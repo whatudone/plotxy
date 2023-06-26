@@ -7,6 +7,7 @@
 #include "PlotItemBase.h"
 #include "DataManager.h"
 #include "PlotXYDemo.h"
+#include "Utils.h"
 
 #include <QDebug>
 #include <QPainter>
@@ -1107,12 +1108,7 @@ void PlotItemBase::loadGOGFile(const QString& fileName)
                     }
                     else
                     {
-                        QString strA = str.mid(2, 2);
-                        QString strB = str.mid(4, 2);
-                        QString strG = str.mid(6, 2);
-                        QString strR = str.mid(8, 2);
-                        str = strA + strR + strG + strB;
-                        data.lineColor = str.toUInt(nullptr, 16);
+                        data.lineColor = color_transfer::QColorFromHexStr(str);
                     }
                 }
 
@@ -1120,18 +1116,9 @@ void PlotItemBase::loadGOGFile(const QString& fileName)
                 {
                     QString str = lineData.split(" ").at(2).simplified();
                     // 0xffffffff
-                    if(str.size() != 10)
+                    if(str.size() == 10)
                     {
-                        data.lineColor = Qt::red;
-                    }
-                    else
-                    {
-                        QString strA = str.mid(2, 2);
-                        QString strB = str.mid(4, 2);
-                        QString strG = str.mid(6, 2);
-                        QString strR = str.mid(8, 2);
-                        str = strA + strR + strG + strB;
-                        data.fillColor = str.toUInt(nullptr, 16);
+                        data.fillColor = color_transfer::QColorFromHexStr(str);
                     }
                 }
 
