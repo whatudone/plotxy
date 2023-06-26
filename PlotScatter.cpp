@@ -184,7 +184,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
         return;
     }
     if(m_isTimeLine)
-	{
+    {
         updateTimelineGraph();
         return;
     }
@@ -197,7 +197,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
     }
     DrawComponents info;
     if(!m_mapScatter.contains(uuid))
-    {
+	{
         info.graph = m_customPlot->addGraph();
         // 默认采样值是true，在某些情况下采样会导致把原始数据处理错误，导致连线时路径错误
         info.graph->setAdaptiveSampling(false);
@@ -396,10 +396,19 @@ void PlotScatter::drawGOGData()
                 else if(data.type == "circle")
                 {
                     QCPItemEllipse* ellipse = new QCPItemEllipse(m_customPlot);
-                    ellipse->topLeft->setCoords(data.xList.at(0) - data.radius,
-                                                data.yList.at(0) + data.radius);
-                    ellipse->bottomRight->setCoords(data.xList.at(0) + data.radius,
-                                                    data.yList.at(0) - data.radius);
+                    double radius = 0.0;
+                    if(data.altitudeUnits == "meters")
+                    {
+                        radius = data.radius / 110000;
+                    }
+                    else
+                    {
+                        radius = data.radius;
+                    }
+                    ellipse->topLeft->setCoords(data.xList.at(0) - radius,
+                                                data.yList.at(0) + radius);
+                    ellipse->bottomRight->setCoords(data.xList.at(0) + radius,
+                                                    data.yList.at(0) - radius);
                     ellipse->setPen(QPen(QColor(fillColor), lineWidth));
                     //                    if(isFilled)
                     //                        ellipse->setBrush(QColor(fillColor));
