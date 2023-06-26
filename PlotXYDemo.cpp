@@ -2068,7 +2068,7 @@ void PlotXYDemo::onOpenNetwork()
 
 void PlotXYDemo::onExportDataStore()
 {
-    QString pxyFileName = QFileDialog::getSaveFileName(nullptr, "保存", ".", "PXY (*.pxy)");
+    QString pxyFileName = QFileDialog::getSaveFileName(nullptr, "保存", "./Datas", "PXY (*.pxy)");
     savePXYData(pxyFileName);
 }
 

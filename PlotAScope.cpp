@@ -106,6 +106,7 @@ void PlotAScope::updateGraphByDataPair(DataPair* data)
     else
     {
         graph = m_customPlot->addGraph();
+        graph->setAdaptiveSampling(false);
         m_graphMap.insert(uuid, graph);
     }
     if(!graph)

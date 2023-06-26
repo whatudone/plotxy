@@ -199,8 +199,9 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
     if(!m_mapScatter.contains(uuid))
 	{
         info.graph = m_customPlot->addGraph();
+        // 默认采样值是true，在某些情况下采样会导致把原始数据处理错误，导致连线时路径错误
+        info.graph->setAdaptiveSampling(false);
         info.graph->setBrush(Qt::NoBrush);
-        info.graph->setAdaptiveSampling(true);
         info.tracerText = new QCPItemText(m_customPlot);
         info.tracerText->position->setType(QCPItemPosition::ptAbsolute);
         // 默认position的坐标是center,为了方便计算，将position的坐标改为左上角
@@ -234,7 +235,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
 
             pen.setStyle(style);
             graph->setLineStyle(QCPGraph::lsLine);
-            graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssNone));
+            graph->setScatterStyle(QCPScatterStyle::ssNone);
 		}
 		else
 		{
@@ -381,6 +382,7 @@ void PlotScatter::drawGOGData()
                     //                        graph->setBrush(fillColor);
                     //                    else
                     graph->setBrush(Qt::NoBrush);
+                    graph->setAdaptiveSampling(false);
                     graph->setVisible(true);
                     graph->setPen(QPen(QColor(fillColor), lineWidth));
                     graph->setLineStyle(QCPGraph::lsNone);

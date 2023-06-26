@@ -39,7 +39,7 @@ public:
         QColor m_fillBelowColor;
         bool operator==(const BackgroundLimitSeg& seg)
         {
-            return seg.m_limitValue == this->m_limitValue;
+            return seg.m_limitName == this->m_limitName;
         }
     };
     PlotScatter(QWidget* parent = nullptr);
