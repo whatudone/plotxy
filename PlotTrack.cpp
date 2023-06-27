@@ -167,9 +167,6 @@ void PlotTrack::updateKeyAxisTickLabel()
     QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
     textTicker->addTicks(m_barTicks, labels);
     m_customPlot->yAxis->setTicker(textTicker); // 设置为文字轴
-    // 坐标轴的范围由绘图管理器统一控制
-    //    m_customPlot->yAxis->setRange(0, index);
-    //    m_customPlot->xAxis->setRange(m_minTime, m_maxTime);
     m_customPlot->replot();
 }
 
@@ -179,7 +176,8 @@ DataPair* PlotTrack::addPlotDataPair(int32_t xEntityID,
                                      int32_t yEntityID,
                                      const QString& yAttrName,
                                      const QString& yAttrUnitName,
-                                     const QHash<QString, QVariant>& extraParams, bool isFromJson)
+                                     const QHash<QString, QVariant>& extraParams,
+                                     bool isFromJson)
 {
     Q_UNUSED(extraParams)
     DataPair* data =
@@ -235,9 +233,9 @@ DataPair* PlotTrack::addPlotDataPair(int32_t xEntityID,
     m_tickLabelMap.insert(uuid, data->getEntity_x() + '_' + xAttrName);
 
     updateKeyAxisTickLabel();
-    if(!isFromJson){
+    if(!isFromJson)
+    {
         emit dataPairsChanged(this);
-
     }
 
     return data;

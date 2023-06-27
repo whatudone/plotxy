@@ -181,7 +181,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
         return;
     }
     if(m_isTimeLine)
-    {
+	{
         updateTimelineGraph();
         return;
     }
@@ -194,7 +194,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
     }
     DrawComponents info;
     if(!m_mapScatter.contains(uuid))
-	{
+    {
         info.graph = m_customPlot->addGraph();
         // 默认采样值是true，在某些情况下采样会导致把原始数据处理错误，导致连线时路径错误
         info.graph->setAdaptiveSampling(false);
@@ -647,21 +647,15 @@ void PlotScatter::updateTimelineGraph()
         QVector<double> timeVec = DataManager::getInstance()->getTimeDataSet();
         if(!timeVec.isEmpty())
         {
-            m_customPlot->xAxis->setRange(timeVec.first(), timeVec.last());
-            m_coordBgn_x = timeVec.first();
-            m_coordEnd_x = timeVec.last();
+            setCoordRangeX(timeVec.first(), timeVec.last());
         }
         else
         {
-            m_customPlot->xAxis->setRange(0, 10000);
-            m_coordBgn_x = 0;
-            m_coordEnd_x = 10000;
+            setCoordRangeX(0, 10000);
         }
 
         m_customPlot->xAxis->setLabel("Time(s)");
-        m_customPlot->yAxis->setRange(0.0, 1.0);
-        m_coordBgn_y = 0.0;
-        m_coordEnd_y = 1.0;
+        setCoordRangeY(0.0, 1.0);
         m_customPlot->yAxis->setLabel("All Platforms");
         m_customPlot->yAxis->setTickLabels(false);
     }
@@ -751,9 +745,7 @@ void PlotScatter::updateTimelineGraph()
     double timeBegin = m_customPlot->xAxis->range().lower + delta;
     double timeEnd = m_customPlot->xAxis->range().upper + delta;
     m_lastTime = now;
-    m_customPlot->xAxis->setRange(timeBegin, timeEnd);
-    m_coordBgn_x = timeBegin;
-    m_coordEnd_x = timeEnd;
+    setCoordRangeX(timeBegin, timeEnd);
     m_customPlot->replot();
 }
 
