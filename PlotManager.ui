@@ -5021,7 +5021,11 @@ background-color: rgb(127, 127, 127);</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSpinBox" name="spinBox_12"/>
+                 <widget class="QSpinBox" name="spinBox_TextLeftPad">
+                  <property name="maximum">
+                   <number>999</number>
+                  </property>
+                 </widget>
                 </item>
                 <item>
                  <widget class="QLabel" name="label_111">
@@ -5034,7 +5038,11 @@ background-color: rgb(127, 127, 127);</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSpinBox" name="spinBox_13"/>
+                 <widget class="QSpinBox" name="spinBox_TextRightPad">
+                  <property name="maximum">
+                   <number>999</number>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </item>
@@ -5066,7 +5074,7 @@ background-color: rgb(127, 127, 127);</string>
                  </widget>
                 </item>
                 <item row="0" column="1" colspan="2">
-                 <widget class="QRadioButton" name="radioButton_3">
+                 <widget class="QRadioButton" name="radioButton_FillByRow">
                   <property name="text">
                    <string/>
                   </property>
@@ -5083,7 +5091,11 @@ background-color: rgb(127, 127, 127);</string>
                  </widget>
                 </item>
                 <item row="1" column="1" colspan="2">
-                 <widget class="QSpinBox" name="spinBox_14"/>
+                 <widget class="QSpinBox" name="spinBox_NumRows">
+                  <property name="minimum">
+                   <number>1</number>
+                  </property>
+                 </widget>
                 </item>
                 <item row="2" column="0">
                  <widget class="QLabel" name="label_114">
@@ -5096,7 +5108,7 @@ background-color: rgb(127, 127, 127);</string>
                  </widget>
                 </item>
                 <item row="2" column="1" colspan="2">
-                 <widget class="QSpinBox" name="spinBox_16"/>
+                 <widget class="QSpinBox" name="spinBox_ColPad"/>
                 </item>
                 <item row="3" column="0">
                  <widget class="QLabel" name="label_175">
@@ -5119,7 +5131,7 @@ background-color: rgb(127, 127, 127);</string>
                  </widget>
                 </item>
                 <item row="3" column="1" colspan="2">
-                 <widget class="QRadioButton" name="radioButton_4">
+                 <widget class="QRadioButton" name="radioButton_FillByCol">
                   <property name="layoutDirection">
                    <enum>Qt::LeftToRight</enum>
                   </property>
@@ -5129,7 +5141,7 @@ background-color: rgb(127, 127, 127);</string>
                  </widget>
                 </item>
                 <item row="5" column="1" colspan="2">
-                 <widget class="QSpinBox" name="spinBox_17"/>
+                 <widget class="QSpinBox" name="spinBox_RowPad"/>
                 </item>
                 <item row="4" column="0">
                  <widget class="QLabel" name="label_113">
@@ -5142,7 +5154,11 @@ background-color: rgb(127, 127, 127);</string>
                  </widget>
                 </item>
                 <item row="4" column="1" colspan="2">
-                 <widget class="QSpinBox" name="spinBox_15"/>
+                 <widget class="QSpinBox" name="spinBox_NumCols">
+                  <property name="minimum">
+                   <number>1</number>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </item>

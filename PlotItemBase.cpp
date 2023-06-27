@@ -36,6 +36,10 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     m_outerFillColor = Qt::transparent;
     m_outlineColor = Qt::transparent;
     m_outlineWidth = 5;
+    m_textLeftOffset = 0;
+    m_textRightOffset = 0;
+    m_rowsNum = 1;
+    m_colsNum = 1;
 
     m_horzGrids = 4;
     m_vertGrids = 4;
@@ -1328,6 +1332,61 @@ bool PlotItemBase::eventFilter(QObject* obj, QEvent* event)
         }
     }
     return QWidget::eventFilter(obj, event);
+}
+
+int PlotItemBase::getColsNum() const
+{
+    return m_colsNum;
+}
+
+void PlotItemBase::setColsNum(int colsNum)
+{
+    m_colsNum = colsNum;
+    replot();
+}
+
+int PlotItemBase::getRowsNum() const
+{
+    return m_rowsNum;
+}
+
+void PlotItemBase::setRowsNum(int rowsNum)
+{
+    m_rowsNum = rowsNum;
+    replot();
+}
+
+bool PlotItemBase::getIsFillByRow() const
+{
+    return m_isFillByRow;
+}
+
+void PlotItemBase::setIsFillByRow(bool isFillByRow)
+{
+    m_isFillByRow = isFillByRow;
+    replot();
+}
+
+int PlotItemBase::getTextRightOffset() const
+{
+    return m_textRightOffset;
+}
+
+void PlotItemBase::setTextRightOffset(int textRightOffset)
+{
+    m_textRightOffset = textRightOffset;
+    replot();
+}
+
+int PlotItemBase::getTextLeftOffset() const
+{
+    return m_textLeftOffset;
+}
+
+void PlotItemBase::setTextLeftOffset(int textLeftOffset)
+{
+    m_textLeftOffset = textLeftOffset;
+    replot();
 }
 
 bool PlotItemBase::getIsColGridVisible() const
