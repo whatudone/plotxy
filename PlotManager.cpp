@@ -23,10 +23,10 @@ PlotManager::PlotManager(QWidget* parent)
     : QWidget(parent)
 {
     ui.setupUi(this);
+    setWindowTitle(QString("图表管理器"));
 
-    connect(ui.pushButton_close, &QPushButton::clicked, this, &PlotManager::onBtnCloseClicked);
-    this->setWindowTitle(QString("图表管理器"));
     init();
+    connect(ui.pushButton_close, &QPushButton::clicked, this, &PlotManager::onBtnCloseClicked);
 
     connect(PlotManagerData::getInstance(),
             &PlotManagerData::plotDataChanged,
@@ -1253,7 +1253,7 @@ void PlotManager::onRadioPercentClicked()
     ui.lineEdit_plotHeight->setText(QString("%1").arg(percent));
 }
 
-void PlotManager::onGetTabWidgetRect(QRect rect)
+void PlotManager::setTabWidgetRect(const QRect& rect)
 {
     m_tabWidgetRect = rect;
 }
@@ -1315,8 +1315,7 @@ void PlotManager::onPushButtonTextOutlineColorClicked()
 {
     if(m_curSelectPlot)
     {
-        QColor color = ui.pushButtonTextOutlineColor->color();
-        m_curSelectPlot->setOutlineColor(color);
+        m_curSelectPlot->setOutlineColor(ui.pushButtonTextOutlineColor->color());
     }
 }
 
@@ -1354,11 +1353,7 @@ void PlotManager::onPlotRectEditFinished()
 
     if(bX && bY && bW && bH && (m_curSelectPlot != nullptr))
     {
-        //m_curSelectPlot->setRect(QRect(x, y, w, h));
-        connect(this, SIGNAL(sigRectChanged(QRect)), m_curSelectPlot, SLOT(slot_updateRect(QRect)));
-        emit sigRectChanged(QRect(x, y, w, h));
-        disconnect(
-            this, SIGNAL(sigRectChanged(QRect)), m_curSelectPlot, SLOT(slot_updateRect(QRect)));
+        m_curSelectPlot->setRect(QRect(x, y, w, h));
     }
 }
 

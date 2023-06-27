@@ -171,7 +171,6 @@ signals:
     // 通知图表时间轴当前时间发送变化
     void currentSecsChanged(double secs);
     void sgn_enableActionStop(bool);
-	void sgn_sendTabWidgetRect(QRect);
 	void sgn_renameTabPage(QString, QString);
     // 状态栏鼠标模式切换
     void mouseModeChanged(MouseMode mode);
@@ -200,6 +199,9 @@ private:
     void loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBase* plot);
     // 清理历史创建的tab页和其中的图表
     void clearAllTab();
+
+protected:
+    void closeEvent(QCloseEvent* e) override;
 
 private:
     Ui::PlotXYDemo ui;

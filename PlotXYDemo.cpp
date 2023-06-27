@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QButtonGroup>
+#include <QCloseEvent>
 #include <QFileDialog>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -69,12 +70,11 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
             this,
             QOverload<>::of(&PlotXYDemo::onAddPlotPair));
     connect(m_plotManager, SIGNAL(sigAdvancedDataManager()), this, SLOT(onAdvancedData()));
-    connect(
-        this, &PlotXYDemo::sgn_sendTabWidgetRect, m_plotManager, &PlotManager::onGetTabWidgetRect);
+
     connect(m_plotManager, &PlotManager::sigGetTabRect, this, &PlotXYDemo::onSendTabRect);
     connect(m_AdvancedDataManager, SIGNAL(sgnAddPlotPair()), this, SLOT(onAddPlotPair()));
-    QRect tabRect = ui.tabWidget->rect();
-    emit sgn_sendTabWidgetRect(tabRect);
+
+    m_plotManager->setTabWidgetRect(ui.tabWidget->rect());
     // 默认增加一页
     addTabPage();
     //右键菜单栏
@@ -466,8 +466,7 @@ void PlotXYDemo::onRenameTab()
 
 void PlotXYDemo::onSendTabRect()
 {
-    QRect tabRect = ui.tabWidget->rect();
-    emit sgn_sendTabWidgetRect(tabRect);
+    m_plotManager->setTabWidgetRect(ui.tabWidget->rect());
 }
 
 void PlotXYDemo::onAddPlot()
@@ -1694,6 +1693,13 @@ void PlotXYDemo::clearAllTab()
         delete ui.tabWidget->widget(var);
     }
     ui.tabWidget->clear();
+}
+
+void PlotXYDemo::closeEvent(QCloseEvent* e)
+{
+    //关闭本窗口时先关闭其他顶层窗口，才能结束进程
+    e->accept();
+    qApp->quit();
 }
 
 double PlotXYDemo::getSeconds()

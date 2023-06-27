@@ -18,6 +18,7 @@ public:
 
     void init(); //初始化函数，连接信号槽
     void addPlot(const QString&, PlotItemBase*); //添加Plot
+    void setTabWidgetRect(const QRect& rect);
 
 	int m_spinBoxBetween;
 	int m_spinBoxLeft;
@@ -81,7 +82,7 @@ public slots:
 	//General
 	void onRadioPixelClicked();
 	void onRadioPercentClicked();
-	void onGetTabWidgetRect(QRect);
+
 	void onPlotRectEditFinished();
 	void onLineEditPlotNameEditingFinished();
 	void onCheckBox_drawStateChanged();
@@ -201,7 +202,6 @@ public slots:
 signals:
     void sigAddPlotPair();
 	void sigAdvancedDataManager();
-	void sigRectChanged(QRect);
 	void sigGetTabRect();
 	void sigSetPlotVisible(bool);
 	void sigChangePlotName();
