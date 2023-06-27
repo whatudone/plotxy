@@ -6,6 +6,7 @@
 
 #include "DataManager.h"
 #include <QApplication>
+#include <QDate>
 #include <QDebug>
 #include <QDir>
 #include <QFile>
@@ -13,8 +14,8 @@
 #include <QMessageBox>
 #include <QRegularExpression>
 #include <QSettings>
-#include <QDate>
 
+#include <iostream>
 #include <limits>
 
 #include "TimeClass.h"
@@ -24,10 +25,11 @@ DataManager::DataManager()
     : m_isRealTime(false)
 {
     m_recvThread = new recvThread;
-
-//    connect(m_recvThread, &recvThread::platInfoReceived, this, &DataManager::onRecvPlatinfoData);
     connect(m_recvThread, &recvThread::genericReceived, this, &DataManager::onRecvGenericData);
-     connect(m_recvThread, &recvThread::protobufPlatInfoReceived, this, &DataManager::onRecvProtobufPlatinfoData);
+    connect(m_recvThread,
+            &recvThread::protobufPlatInfoReceived,
+            this,
+            &DataManager::onRecvProtobufPlatinfoData);
 }
 
 DataManager::~DataManager() {}
@@ -35,6 +37,93 @@ DataManager::~DataManager() {}
 bool DataManager::getIsRealTime() const
 {
     return m_isRealTime;
+}
+
+bool DataManager::saveDataToASI(const QString& asiFileName)
+{
+    QFile file(asiFileName);
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    {
+        qDebug() << "DataManager::saveDataToASI read file failure.";
+        return false;
+    }
+    QMap<int32_t, QHash<QString, QVector<double>>> dataMap;
+    if(m_isRealTime)
+    {
+        dataMap = m_realDataMap;
+    }
+    else
+    {
+        dataMap = m_newEntityDataMap;
+    }
+    auto idList = dataMap.keys();
+    if(idList.isEmpty())
+    {
+        file.close();
+        file.remove();
+        return false;
+    }
+    QTextStream stream(&file);
+    stream << "# Scenario Initialization Keywords"
+           << "\r\n";
+    stream << "RefLLA"
+           << " " << m_refLLAPoint.x() << " " << m_refLLAPoint.y() << " " << m_refLLAPoint.z()
+           << "\r\n";
+    stream << "ReferenceYear"
+           << " " << m_refYear << "\r\n";
+    stream << "\r\n";
+    // 循环输出平台数据
+    for(int32_t id : idList)
+    {
+        auto platDataHash = dataMap.value(id);
+        auto platName = getEntityNameByID(id);
+        auto platIcon = getEntityIconByID(id);
+        stream << "# Platform Keywords"
+               << "\r\n";
+        stream << "PlatformID"
+               << " " << id << "\r\n";
+        stream << "PlatformName"
+               << " " << id << " \"" << platName << "\"\r\n";
+        stream << "PlatformIcon"
+               << " " << id << " \"" << platIcon << "\"\r\n";
+        stream << "\r\n";
+
+        //开始写入属性与数据
+        auto attrUnitList = m_attrUnitHash.value(id);
+        stream << "#Keyword"
+               << ", "
+               << "PlatformID";
+        // 写入属性名列表
+        for(const auto& pair : attrUnitList)
+        {
+            stream << ", " << pair.first << "(" << pair.second << ")";
+        }
+        stream << "\r\n";
+        // 循环写入本平台的数据列表
+        if(platDataHash.contains("Time"))
+        {
+            int32_t dataSize = platDataHash.value("Time").size();
+            for(int32_t i = 0; i < dataSize; ++i)
+            {
+                stream << "PlatformData"
+                       << " " << id;
+                for(const auto& pair : attrUnitList)
+                {
+                    QString attr = pair.first;
+                    double value = platDataHash.value(attr).at(i);
+                    // 原始ASI中保存了8位数据小数的精度
+                    stream << " " << QString::number(value, 'f', 8);
+                }
+                stream << "\r\n";
+            }
+        }
+        stream << "\r\n";
+        // 循环写入本平台的事件
+    }
+
+    file.close();
+
+    return true;
 }
 
 void DataManager::loadFileData(const QString& filename)
@@ -204,7 +293,7 @@ void DataManager::loadASIData(const QString& asiFileName)
     QFile file(asiFileName);
     if(!file.open(QIODevice::ReadOnly))
     {
-        qDebug() << "DataManager::loadCSV read file failure.";
+        qDebug() << "DataManager::loadASIData read file failure.";
         return;
     }
     m_newEntityDataMap.clear();
@@ -224,9 +313,9 @@ void DataManager::loadASIData(const QString& asiFileName)
             QStringList list = lineData.split(" ", QString::SkipEmptyParts);
             if(list.size() == 4)
             {
-                m_refLLAPoint.setX(list.at(1).toDouble());
-                m_refLLAPoint.setY(list.at(2).toDouble());
-                m_refLLAPoint.setZ(list.at(3).toDouble());
+                m_refLLAPoint.setX(list.at(1).toFloat());
+                m_refLLAPoint.setY(list.at(2).toFloat());
+                m_refLLAPoint.setZ(list.at(3).toFloat());
             }
         }
         if(lineData.startsWith("ReferenceYear"))
@@ -296,7 +385,7 @@ void DataManager::loadASIData(const QString& asiFileName)
                     QStringList list = lineData.split(" ", QString::SkipEmptyParts);
                     if(list.size() == 3)
                     {
-                        p.m_platformIcon = list.at(2);
+                        p.m_platformIcon = list[2].remove('\"').remove('\r').remove('\n');
                     }
                 }
                 // Platform数据
@@ -336,16 +425,15 @@ void DataManager::loadASIData(const QString& asiFileName)
                             for(int32_t i = 2; i < valueSize; ++i)
                             {
                                 QString tmpAttrValue = attrValueList.at(i).trimmed();
-
+                                QString attrName = attrUnitList.at(i - 2).first;
                                 double value = 0.0;
                                 /*
                                  * 常规数据直接转为double类型
                                  * Time数据有两种情况:
                                  * 1、直接就是double型的相对时间，无需转化
                                  * 2、001 2000 00:00:00 这种形式的数据，需要根据偏移时间转化为
-                                 * 默认第三列数据就是Time数据
                                 */
-                                if(i == 2)
+                                if(attrName == "Time")
                                 {
                                     value = OrdinalTimeFormatter::getSecondsFromTimeStr(
                                         tmpAttrValue, m_refYear);
@@ -662,6 +750,19 @@ QString DataManager::getEntityNameByID(int32_t id)
     return "";
 }
 
+QString DataManager::getEntityIconByID(int32_t id)
+{
+    if(m_isRealTime)
+    {
+        return "";
+    }
+    else if(m_platformMap.contains(id))
+    {
+        return m_platformMap.value(id).m_platformIcon;
+    }
+    return "";
+}
+
 QStringList DataManager::getEntityNameList()
 {
     QStringList list;
@@ -809,18 +910,20 @@ QStringList DataManager::parsePlatformData(const QString& data)
     return list;
 }
 
-int32_t DataManager::findIDByName(const QString &name)
+int32_t DataManager::findIDByName(const QString& name)
 {
     QList<int32_t> lst = m_protobufPlatformMap.keys();
-    for(int i = 0;i<lst.size();i++){
-        if(name == m_protobufPlatformMap[lst.at(i)].name){
+    for(int i = 0; i < lst.size(); i++)
+    {
+        if(name == m_protobufPlatformMap[lst.at(i)].name)
+        {
             return lst.at(i);
         }
     }
     return -1;
 }
 
-void DataManager::onRecvPlatinfoData(const MARS_PlatInfoDataExcect &plat)
+void DataManager::onRecvPlatinfoData(const MARS_PlatInfoDataExcect& plat)
 {
     int32_t uID = int32_t(plat.uID);
     if(!m_realDataMap.contains(uID))
@@ -867,7 +970,7 @@ void DataManager::onRecvPlatinfoData(const MARS_PlatInfoDataExcect &plat)
 
     RealPlatform realPlatform;
     realPlatform.platformDataID = plat.uID;
-    realPlatform.platformName =QString::fromLocal8Bit(plat.PlatName);
+    realPlatform.platformName = QString::fromLocal8Bit(plat.PlatName);
     realPlatform.OpsStatus = plat.OpsStatus;
     realPlatform.Alliance = plat.Alliance;
     realPlatform.Operation_medium = plat.Operating_medium;
@@ -878,7 +981,7 @@ void DataManager::onRecvPlatinfoData(const MARS_PlatInfoDataExcect &plat)
     emit updateRealTime();
 }
 
-void DataManager::onRecvGenericData(const GenericData &generic)
+void DataManager::onRecvGenericData(const GenericData& generic)
 {
     int32_t uID = -1;
     if(!generic.m_platName.isEmpty())
@@ -894,7 +997,7 @@ void DataManager::onRecvGenericData(const GenericData &generic)
     emit updateRealTime();
 }
 
-void DataManager::onRecvProtobufPlatinfoData(const USIM_PlatInfoMessage_Proto &plat)
+void DataManager::onRecvProtobufPlatinfoData(const USIM_PlatInfoMessage_Proto& plat)
 {
     int32_t uID = int32_t(plat.uid());
     if(!m_realDataMap.contains(uID))
@@ -927,11 +1030,11 @@ void DataManager::onRecvProtobufPlatinfoData(const USIM_PlatInfoMessage_Proto &p
         protoPlatform.kind = plat.ukind();
         protoPlatform.classType = plat.uclass();
         protoPlatform.typeName = QString::fromLocal8Bit(plat.stype().data());
-        m_protobufPlatformMap.insert(uID,protoPlatform);
+        m_protobufPlatformMap.insert(uID, protoPlatform);
     }
 
     QHash<QString, QVector<double>> dataMap = m_realDataMap[uID];
-    dataMap["Time"].append(plat.dfsimtime()*3600);
+    dataMap["Time"].append(plat.dfsimtime() * 3600);
     dataMap["Fuel"].append(plat.dffuel());
     dataMap["Life"].append(plat.dflife());
     dataMap["Lon"].append(plat.dflon());

@@ -23,7 +23,7 @@ class DataManager : public QObject
 public:
     struct Platform
     {
-        uint32_t m_platformDataID;
+        int32_t m_platformDataID;
         QString m_platformName;
         QString m_platformIcon;
 
@@ -50,7 +50,8 @@ public:
         QString cStandBy; //备用字
     };
 
-    enum USIM_Alliance{
+    enum USIM_Alliance
+    {
         USIM_Alliance_UNKNOW = 0,
         USIM_RED = 1,
         USIM_BLUE = 2,
@@ -154,6 +155,8 @@ public:
 
     // 根据id获取实例(数据里面称为Platform)名称
     QString getEntityNameByID(int32_t id);
+    // 根据id获取实例(数据里面称为Platform)ICON
+    QString getEntityIconByID(int32_t id);
     // 获取所有的实例名称
     QStringList getEntityNameList();
     // 根据id获取实例对应的属性和单位列表
@@ -179,6 +182,8 @@ public:
     void setIsRealTime(bool isRealTime);
 
     bool getIsRealTime() const;
+    // 保存ASI数据，主要是用于在线模式回放数据
+    bool saveDataToASI(const QString& file);
 
 private:
     //获取实体-属性的全数据，属性默认为Time
@@ -193,7 +198,7 @@ private:
 
     // 使用正则表达式加载ASI中特定数据格式
     QStringList parsePlatformData(const QString& data);
-    int32_t findIDByName(const QString &name);
+    int32_t findIDByName(const QString& name);
 
     recvThread* m_recvThread = nullptr;
 signals:
@@ -202,10 +207,10 @@ signals:
     void updateRealTime();
 
 public Q_SLOTS:
-    void onRecvPlatinfoData(const MARS_PlatInfoDataExcect &plat);
-    void onRecvGenericData(const GenericData &generic);
+    void onRecvPlatinfoData(const MARS_PlatInfoDataExcect& plat);
+    void onRecvGenericData(const GenericData& generic);
 
-    void onRecvProtobufPlatinfoData(const USIM_PlatInfoMessage_Proto &plat);
+    void onRecvProtobufPlatinfoData(const USIM_PlatInfoMessage_Proto& plat);
 };
 
 #define DataManagerInstance DataManager::getInstance()
