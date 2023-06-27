@@ -19,12 +19,9 @@ public:
     void init(); //初始化函数，连接信号槽
     void addPlot(const QString&, PlotItemBase*); //添加Plot
 
-
 	int m_spinBoxBetween;
 	int m_spinBoxLeft;
 	int m_spinBoxRight;
-
-
 
 private:
 	void initTreeWidgetSettings();
@@ -65,6 +62,8 @@ private:
 	void enableItem_Polar();
 	void enableItem_Track();
 	void enableItem_Doppler();
+
+    void exchangeItem(QTableWidget* tableWidget, int selectedRow, int targetRow);
 
 public slots:
     void onTWSclicked(QTreeWidgetItem* item, int i);
@@ -125,11 +124,14 @@ public slots:
 	void onPushButton_71Clicked();
     void onPushButton_TextFillColorClicked();
     void onPushButtonTextOutlineColorClicked();
-	void onSpinbox_10Changed();
+    void onSpinbox_10Changed();
+    void onSpinbox_TextOutlineWidthChanged();
 	void onPushButton_66Clicked();
 	void onPushButton_67Clicked();
 	void onPushButton_69Clicked();
-	void onTableWidget_textLightDataSortItemSelectionChanged();
+    void onTableWidget_textLightDataSortItemSelectionChanged();
+    void onCheckBox_RowGridVisible(int state);
+    void onCheckBox_ColGridVisible(int state);
 
 	//Plot Data
 	void onTableWidget_plotDataItemSelectionChanged();
@@ -142,7 +144,7 @@ public slots:
 	void onAddNewClicked();
 	void onPushButton_18Clicked();
 	void onPushButton_19Clicked();
-	void onPushButton_20Clicked();
+    void onAdvancedClicked();
 	void onToolButtonClicked();
 	void onComboBox_6CurrentIndexChanged(int index);
 
