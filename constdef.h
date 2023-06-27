@@ -5,8 +5,8 @@
 #include <QFont>
 #include <QPoint>
 #include <QString>
-#include <QVector>
 #include <QUuid>
+#include <QVector>
 
 enum PlotType : int32_t
 {
@@ -186,6 +186,8 @@ struct EventSettings
 
 struct GenericData
 {
+    //事件类型
+    QString m_eventType;
     // 事件名称
     QString m_eventName;
     QString m_platName;
@@ -195,7 +197,8 @@ struct GenericData
     int32_t m_timeOffset;
     int32_t m_ID;
 
-    GenericData(){
+    GenericData()
+    {
         m_ID = -1;
     }
 };
@@ -244,7 +247,8 @@ struct GOGCustomSetting
 };
 
 // 散点图标记
-struct PlotMarker{
+struct PlotMarker
+{
     QString uuid;
     double x;
     QString xUnit;
@@ -257,7 +261,8 @@ struct PlotMarker{
     QString fontFamily;
     int32_t fontSize;
 
-    PlotMarker(){
+    PlotMarker()
+    {
         uuid = QUuid::createUuid().toString();
     }
 };

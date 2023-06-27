@@ -119,6 +119,32 @@ bool DataManager::saveDataToASI(const QString& asiFileName)
         }
         stream << "\r\n";
         // 循环写入本平台的事件
+
+        QMap<int32_t, QMap<QString, QList<GenericData>>> genericMap;
+        if(m_isRealTime)
+        {
+            genericMap = m_realGenericMap;
+        }
+        else
+        {
+            genericMap = m_genericMap;
+        }
+        if(genericMap.contains(id))
+        {
+            auto tags = genericMap.value(id).keys();
+            auto genericDataMap = genericMap.value(id);
+            for(const auto& tag : tags)
+            {
+                auto genericList = genericDataMap.value(tag);
+                for(const auto& g : genericList)
+                {
+                    stream << "GenericData"
+                           << " " << id << " \"" << g.m_eventType << "\" \"" << g.m_eventName
+                           << "\" " << g.m_relativeTime << " " << g.m_timeOffset << "\r\n";
+                }
+            }
+        }
+        stream << "\r\n";
     }
 
     file.close();
@@ -456,7 +482,7 @@ void DataManager::loadASIData(const QString& asiFileName)
                     m_newEntityDataMap.insert(p.m_platformDataID, attrDataMap);
                     m_platformMap.insert(p.m_platformDataID, p);
                 }
-                // 事件(Event)等其他类型数据
+                // 事件(Event)等其他类型数据.tag为了兼容在线数据，也可能是其他类型
                 if(lineData.startsWith("GenericData"))
                 {
                     if(lineData.contains("Event"))
@@ -468,21 +494,23 @@ void DataManager::loadASIData(const QString& asiFileName)
                             continue;
                         }
                         GenericData g;
+                        g.m_eventType = eventDataList[2].remove('\"');
                         g.m_eventName = eventDataList.at(3);
                         g.m_eventName = g.m_eventName.remove("\"").trimmed();
                         g.m_relativeTime = OrdinalTimeFormatter::getSecondsFromTimeStr(
                             eventDataList.at(4).trimmed(), m_refYear);
                         g.m_timeOffset = eventDataList.at(5).trimmed().toInt();
+
                         if(m_genericMap.contains(p.m_platformDataID) &&
-                           m_genericMap.value(p.m_platformDataID).contains("Event"))
+                           m_genericMap.value(p.m_platformDataID).contains(g.m_eventType))
                         {
                             // 直接通过引用修改值
-                            m_genericMap[p.m_platformDataID]["Event"].append(g);
+                            m_genericMap[p.m_platformDataID][g.m_eventType].append(g);
                         }
                         else
                         {
                             QMap<QString, QList<GenericData>> tmpMap;
-                            tmpMap.insert("Event", QList<GenericData>() << g);
+                            tmpMap.insert(g.m_eventType, QList<GenericData>() << g);
                             m_genericMap.insert(p.m_platformDataID, tmpMap);
                         }
                     }
@@ -818,18 +846,18 @@ QMap<int32_t, QString> DataManager::getEntityIDAndNameMap()
     return map;
 }
 
-QList<GenericData> DataManager::getGenericDataListByID(int32_t entityID)
+QList<GenericData> DataManager::getGenericDataListByID(int32_t entityID, const QString& tag)
 {
     QList<GenericData> tags;
     if(m_isRealTime)
     {
         if(m_realGenericMap.contains(entityID))
-            tags = m_realGenericMap.value(entityID).value("Event");
+            tags = m_realGenericMap.value(entityID).value(tag);
     }
     else
     {
         if(m_genericMap.contains(entityID))
-            tags = m_genericMap.value(entityID).value("Event");
+            tags = m_genericMap.value(entityID).value(tag);
     }
     return tags;
 }
@@ -847,21 +875,6 @@ QStringList DataManager::getGenericDataTagsByID(int32_t entityID)
             return m_genericMap.value(entityID).keys();
     }
     return QStringList();
-}
-
-QList<GenericData> DataManager::getGenericDatasByID(int32_t id, const QString& type)
-{
-    if(m_isRealTime)
-    {
-        if(m_realGenericMap.contains(id) && m_realGenericMap.value(id).contains(type))
-            return m_realGenericMap.value(id).value(type);
-    }
-    else
-    {
-        if(m_genericMap.contains(id) && m_genericMap.value(id).contains(type))
-            return m_genericMap.value(id).value(type);
-    }
-    return QList<GenericData>();
 }
 
 bool DataManager::isEntityContainsGenericTags(int32_t id)
@@ -984,16 +997,24 @@ void DataManager::onRecvPlatinfoData(const MARS_PlatInfoDataExcect& plat)
 void DataManager::onRecvGenericData(const GenericData& generic)
 {
     int32_t uID = -1;
-    if(!generic.m_platName.isEmpty())
-        uID = findIDByName(generic.m_platName);
-    else if(generic.m_ID != -1)
+    if(generic.m_ID != -1)
+    {
         uID = generic.m_ID;
+    }
+    else if(!generic.m_platName.isEmpty())
+    {
+        uID = findIDByName(generic.m_platName);
+    }
+    if(uID == -1)
+    {
+        return;
+    }
     if(!m_realGenericMap.contains(uID))
     {
         m_realGenericMap.insert(uID, QMap<QString, QList<GenericData>>());
     }
 
-    m_realGenericMap[uID]["Event"].append(generic);
+    m_realGenericMap[uID][generic.m_eventType].append(generic);
     emit updateRealTime();
 }
 

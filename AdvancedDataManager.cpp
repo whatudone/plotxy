@@ -777,10 +777,10 @@ void AdvancedDataManager::initEventConnections()
             this,
             SLOT(onEventBtnMoreClicked()));
 
-        connect(ui.tableWidgetEventEntity,
-                &QTableWidget::cellClicked,
-                this,
-                &AdvancedDataManager::onGenericDataEntityChanged);
+    connect(ui.tableWidgetEventEntity,
+            &QTableWidget::cellClicked,
+            this,
+            &AdvancedDataManager::onGenericDataEntityChanged);
 
     connect(ui.pushButtonAddEvent, &QPushButton::clicked, this, &AdvancedDataManager::onAddEvent);
     connect(
@@ -896,13 +896,14 @@ void AdvancedDataManager::onGenericDataEntityChanged(int32_t row, int32_t col)
     if(entityItem)
     {
         int32_t id = entityItem->data(Qt::UserRole + 1).toInt();
-        bool hasEvent = DataManagerInstance->isEntityContainsGenericTags(id);
+        auto tags = DataManagerInstance->getGenericDataTagsByID(id);
+        int32_t rowCount = tags.size();
         ui.tableWidgetGenericTag->clearContents();
-        int32_t rowCount = (hasEvent)?1:0;
         ui.tableWidgetGenericTag->setRowCount(rowCount);
-        if(hasEvent){
-            QTableWidgetItem* item =  new QTableWidgetItem("Event");
-            ui.tableWidgetGenericTag->setItem(0,0,item);
+        for(int32_t i = 0; i < rowCount; ++i)
+        {
+            QTableWidgetItem* item = new QTableWidgetItem(tags.at(i));
+            ui.tableWidgetGenericTag->setItem(i, 0, item);
         }
     }
 }

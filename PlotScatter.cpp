@@ -171,9 +171,6 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
         }
     }
     updateMarkers(secs);
-    //    if(DataManagerInstance->getIsRealTime() && !m_isTimeLine){
-    //        m_customPlot->rescaleAxes();
-    //    }
 	m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
@@ -707,7 +704,7 @@ void PlotScatter::updateTimelineGraph()
     int32_t index = 0;
     for(auto& event : eventList)
     {
-        auto dataList = DataManagerInstance->getGenericDataListByID(event.m_entityID);
+        auto dataList = DataManagerInstance->getGenericDataListByID(event.m_entityID, event.m_type);
         //如果x轴是time，那么需要绘制事件标签，整个用一个Text显示
         for(const auto& data : dataList)
         {

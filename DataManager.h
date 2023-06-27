@@ -163,12 +163,11 @@ public:
     QList<QPair<QString, QString>> getAttrAndUnitPairList(int32_t id);
     // 获取所有<entityId,entityName>键值对
     QMap<int32_t, QString> getEntityIDAndNameMap();
-    // 获取某个实体对应的所有事件数据
-    QList<GenericData> getGenericDataListByID(int32_t entityID);
+    // 获取某个实体对应的某个事件的所有数据
+    QList<GenericData> getGenericDataListByID(int32_t entityID, const QString& tag = "Event");
     // 获取某个实体对应的所有generic data tags
     QStringList getGenericDataTagsByID(int32_t entityID);
-    // 获取某个实体对应的所有事件列表
-    QList<GenericData> getGenericDatasByID(int32_t id, const QString& type = "Event");
+
     // 判断是否某个实体存在事件
     bool isEntityContainsGenericTags(int32_t id);
     // 获取数据路径
