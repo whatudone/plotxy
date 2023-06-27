@@ -712,25 +712,25 @@ Qt::Alignment DataPair::getLabelTextAlign()
         flag = Qt::AlignTop | Qt::AlignLeft;
         break;
     case DataPair::top: //top
-        flag = Qt::AlignTop;
+        flag = Qt::AlignTop | Qt::AlignHCenter;
         break;
     case DataPair::right_top: //right-top
         flag = Qt::AlignTop | Qt::AlignRight;
         break;
     case DataPair::left: //left
-        flag = Qt::AlignLeft;
+        flag = Qt::AlignLeft | Qt::AlignVCenter;
         break;
     case DataPair::center: //center
         flag = Qt::AlignCenter;
         break;
     case DataPair::right: //right
-        flag = Qt::AlignRight;
+        flag = Qt::AlignRight | Qt::AlignVCenter;
         break;
     case DataPair::left_bottom: //left-bottom
         flag = Qt::AlignBottom | Qt::AlignLeft;
         break;
     case DataPair::bottom: //bottom
-        flag = Qt::AlignBottom;
+        flag = Qt::AlignBottom | Qt::AlignHCenter;
         break;
     case DataPair::right_bottom: //right-bottom
         flag = Qt::AlignBottom | Qt::AlignRight;

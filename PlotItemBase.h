@@ -375,6 +375,21 @@ public:
     bool getIsColGridVisible() const;
     void setIsColGridVisible(bool isColGridVisible);
 
+    int getTextLeftOffset() const;
+    void setTextLeftOffset(int textLeftOffset);
+
+    int getTextRightOffset() const;
+    void setTextRightOffset(int textRightOffset);
+
+    bool getIsFillByRow() const;
+    void setIsFillByRow(bool isFillByRow);
+
+    int getRowsNum() const;
+    void setRowsNum(int rowsNum);
+
+    int getColsNum() const;
+    void setColsNum(int colsNum);
+
 private:
     void updateResizeFocusPos();
     QRect getRectByDirection(ResizeDirection direction);
@@ -431,6 +446,11 @@ protected:
     QColor m_gridFillColor; //grid填充色，即背景色
     bool m_isRowGridVisible = true; //是否显示行网格线
     bool m_isColGridVisible = true; //是否显示列网格线
+    int m_textLeftOffset; // text和light的左右偏移
+    int m_textRightOffset; // text和light的左右偏移
+    bool m_isFillByRow = false; //text和light是否按行填充
+    int m_rowsNum; //text和light的行数
+    int m_colsNum; //text和light的列数
 
     //Text
     QString m_units_x; //x轴单位

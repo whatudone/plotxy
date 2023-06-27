@@ -133,6 +133,12 @@ public slots:
     void onTableWidget_textLightDataSortItemSelectionChanged();
     void onCheckBox_RowGridVisible(int state);
     void onCheckBox_ColGridVisible(int state);
+    void onSpinBox_TextLeftPadValueChanged(int value);
+    void onSpinBox_TextRightPadValueChanged(int value);
+    void onRadioBox_FillByRowClicked();
+    void onRadioBox_FillByColClicked();
+    void onSpinBox_NumRowsChanged(int value);
+    void onSpinBox_NumColsChanged(int value);
 
 	//Plot Data
 	void onTableWidget_plotDataItemSelectionChanged();

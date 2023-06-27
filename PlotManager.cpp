@@ -333,6 +333,26 @@ void PlotManager::initTextLightUI()
             &QPushButton::clicked,
             this,
             &PlotManager::onPushButtonTextOutlineColorClicked);
+    connect(ui.spinBox_TextLeftPad,
+            SIGNAL(valueChanged(int)),
+            this,
+            SLOT(onSpinBox_TextLeftPadValueChanged(int)));
+    connect(ui.spinBox_TextRightPad,
+            SIGNAL(valueChanged(int)),
+            this,
+            SLOT(onSpinBox_TextRightPadValueChanged(int)));
+    connect(
+        ui.spinBox_NumCols, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_NumColsChanged(int)));
+    connect(
+        ui.spinBox_NumRows, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_NumRowsChanged(int)));
+    connect(ui.radioButton_FillByCol,
+            &QRadioButton::clicked,
+            this,
+            &PlotManager::onRadioBox_FillByColClicked);
+    connect(ui.radioButton_FillByRow,
+            &QRadioButton::clicked,
+            this,
+            &PlotManager::onRadioBox_FillByRowClicked);
 }
 
 void PlotManager::initScatterLimitUI()
@@ -704,6 +724,12 @@ void PlotManager::refreshLightTextUI(PlotItemBase* plot)
         ui.spinBox_10->setValue(plot->getGridWidth());
         ui.checkBox_RowGridVisible->setChecked(plot->getIsRowGridVisible());
         ui.checkBox_ColGridVisible->setChecked(plot->getIsColGridVisible());
+        ui.spinBox_TextLeftPad->setValue(plot->getTextLeftOffset());
+        ui.spinBox_TextRightPad->setValue(plot->getTextRightOffset());
+        ui.spinBox_NumCols->setValue(plot->getColsNum());
+        ui.spinBox_NumRows->setValue(plot->getRowsNum());
+        ui.radioButton_FillByRow->setChecked(plot->getIsFillByRow());
+        ui.radioButton_FillByCol->setChecked(!plot->getIsFillByRow());
     }
 }
 
@@ -1842,6 +1868,57 @@ void PlotManager::onCheckBox_ColGridVisible(int state)
     {
         m_curSelectPlot->setIsColGridVisible(false);
     }
+}
+
+void PlotManager::onSpinBox_TextLeftPadValueChanged(int value)
+{
+    if(!m_curSelectPlot)
+        return;
+    m_curSelectPlot->setTextLeftOffset(value);
+}
+
+void PlotManager::onSpinBox_TextRightPadValueChanged(int value)
+{
+    if(!m_curSelectPlot)
+        return;
+    m_curSelectPlot->setTextRightOffset(value);
+}
+
+void PlotManager::onRadioBox_FillByRowClicked()
+{
+    if(!m_curSelectPlot)
+        return;
+    ui.radioButton_FillByCol->setChecked(false);
+    m_curSelectPlot->setIsFillByRow(true);
+}
+
+void PlotManager::onRadioBox_FillByColClicked()
+{
+    if(!m_curSelectPlot)
+        return;
+    ui.radioButton_FillByRow->setChecked(false);
+    m_curSelectPlot->setIsFillByRow(false);
+}
+
+void PlotManager::onSpinBox_NumRowsChanged(int value)
+{
+    if(!m_curSelectPlot)
+        return;
+    m_curSelectPlot->setRowsNum(value);
+
+    ui.spinBox_NumCols->blockSignals(true);
+    ui.spinBox_NumCols->setValue(qCeil(double(m_curSelectPlot->getDataPairs().size()) / value));
+    ui.spinBox_NumCols->blockSignals(false);
+}
+
+void PlotManager::onSpinBox_NumColsChanged(int value)
+{
+    if(!m_curSelectPlot)
+        return;
+    m_curSelectPlot->setColsNum(value);
+    ui.spinBox_NumRows->blockSignals(true);
+    ui.spinBox_NumRows->setValue(qCeil(double(m_curSelectPlot->getDataPairs().size()) / value));
+    ui.spinBox_NumRows->blockSignals(false);
 }
 
 void PlotManager::onTableWidget_plotDataItemSelectionChanged()

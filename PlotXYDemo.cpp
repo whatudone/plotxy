@@ -1096,6 +1096,28 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
             plotObject.insert("ScatterEvents", eventArray);
         }
     }
+    else if(type == PlotType::Type_PlotText)
+    {
+        PlotText* textPlot = dynamic_cast<PlotText*>(plot);
+        if(textPlot)
+        {
+            plotObject.insert("TextRowGridsVisible", textPlot->getIsRowGridVisible());
+            plotObject.insert("TextColGridsVisible", textPlot->getIsColGridVisible());
+            plotObject.insert("TextGridWidth", textPlot->getGridWidth());
+            plotObject.insert("TextGridColor",
+                              color_transfer::QColorToRGBAStr(textPlot->getGridColor()));
+            plotObject.insert("TextOutlineWidth", textPlot->getOutlineWidth());
+            plotObject.insert("TextOutlineColor",
+                              color_transfer::QColorToRGBAStr(textPlot->getOutlineColor()));
+            plotObject.insert("TextOuterFillColor",
+                              color_transfer::QColorToRGBAStr(textPlot->getOuterFillColor()));
+            plotObject.insert("TextLeftPad", textPlot->getTextLeftOffset());
+            plotObject.insert("TextRightPad", textPlot->getTextRightOffset());
+            plotObject.insert("TextIsFillByRow", textPlot->getIsFillByRow());
+            plotObject.insert("TextNumRows", textPlot->getRowsNum());
+            plotObject.insert("TextNumCols", textPlot->getColsNum());
+        }
+    }
 
     // 图表存在多个数据对
     QJsonArray dataPairArray;
@@ -1299,6 +1321,28 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
                 set.m_entityName = eventObject.value("ScatterEventEName").toString();
                 scatter->addEvent(set);
             }
+        }
+    }
+    else if(type == PlotType::Type_PlotText)
+    {
+        PlotText* textPlot = dynamic_cast<PlotText*>(plot);
+        if(textPlot)
+        {
+            textPlot->setIsRowGridVisible(plotObject.value("TextRowGridsVisible").toBool());
+            textPlot->setIsColGridVisible(plotObject.value("TextColGridsVisible").toBool());
+            textPlot->setGridColorWidth(
+                color_transfer::QColorFromRGBAStr(plotObject.value("TextGridColor").toString()),
+                plotObject.value("TextGridWidth").toInt());
+            textPlot->setOutlineWidth(plotObject.value("TextOutlineWidth").toInt());
+            textPlot->setOutlineColor(
+                color_transfer::QColorFromRGBAStr(plotObject.value("TextOutlineColor").toString()));
+            textPlot->setOuterFillColor(color_transfer::QColorFromRGBAStr(
+                plotObject.value("TextOuterFillColor").toString()));
+            textPlot->setTextLeftOffset(plotObject.value("TextLeftPad").toInt());
+            textPlot->setTextRightOffset(plotObject.value("TextRightPad").toInt());
+            textPlot->setIsFillByRow(plotObject.value("TextIsFillByRow").toBool());
+            textPlot->setRowsNum(plotObject.value("TextNumRows").toInt());
+            textPlot->setColsNum(plotObject.value("TextNumCols").toInt());
         }
     }
 
