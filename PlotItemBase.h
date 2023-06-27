@@ -366,6 +366,15 @@ public:
     QMap<QString, GOGCustomSetting> getGogCustomSettings() const;
     void setGogCustomSettings(const QMap<QString, GOGCustomSetting>& gogCustomSettings);
 
+    int getOutlineWidth() const;
+    void setOutlineWidth(int outlineWidth);
+
+    bool getIsRowGridVisible() const;
+    void setIsRowGridVisible(bool isRowGridVisible);
+
+    bool getIsColGridVisible() const;
+    void setIsColGridVisible(bool isColGridVisible);
+
 private:
     void updateResizeFocusPos();
     QRect getRectByDirection(ResizeDirection direction);
@@ -395,6 +404,7 @@ protected:
     //General
     QColor m_outerFillColor; // 整体背景
     QColor m_outlineColor; // 外边框线
+    int m_outlineWidth; // 外边框线宽度
 
     //Axis and Grid
     double m_coordBgn_x; //x坐标起始值
@@ -419,6 +429,8 @@ protected:
     Qt::PenStyle m_gridStyle; //grid风格
     GridDensity m_gridDensity; //grid密度
     QColor m_gridFillColor; //grid填充色，即背景色
+    bool m_isRowGridVisible = true; //是否显示行网格线
+    bool m_isColGridVisible = true; //是否显示列网格线
 
     //Text
     QString m_units_x; //x轴单位

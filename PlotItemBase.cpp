@@ -35,6 +35,7 @@ PlotItemBase::PlotItemBase(QWidget* parent)
 
     m_outerFillColor = Qt::transparent;
     m_outlineColor = Qt::transparent;
+    m_outlineWidth = 5;
 
     m_horzGrids = 4;
     m_vertGrids = 4;
@@ -1158,7 +1159,7 @@ void PlotItemBase::paintEvent(QPaintEvent* event)
     QPainter painter(this);
     QPen pen;
     pen.setColor(m_outlineColor);
-    pen.setWidth(5);
+    pen.setWidth(m_outlineWidth);
     pen.setStyle(Qt::SolidLine);
     painter.setPen(pen);
 
@@ -1327,6 +1328,39 @@ bool PlotItemBase::eventFilter(QObject* obj, QEvent* event)
         }
     }
     return QWidget::eventFilter(obj, event);
+}
+
+bool PlotItemBase::getIsColGridVisible() const
+{
+    return m_isColGridVisible;
+}
+
+void PlotItemBase::setIsColGridVisible(bool isColGridVisible)
+{
+    m_isColGridVisible = isColGridVisible;
+    replot();
+}
+
+bool PlotItemBase::getIsRowGridVisible() const
+{
+    return m_isRowGridVisible;
+}
+
+void PlotItemBase::setIsRowGridVisible(bool isRowGridVisible)
+{
+    m_isRowGridVisible = isRowGridVisible;
+    replot();
+}
+
+int PlotItemBase::getOutlineWidth() const
+{
+    return m_outlineWidth;
+}
+
+void PlotItemBase::setOutlineWidth(int outlineWidth)
+{
+    m_outlineWidth = outlineWidth;
+    replot();
 }
 
 QMap<QString, QList<GOGDataInfo>> PlotItemBase::getGogDataMap() const

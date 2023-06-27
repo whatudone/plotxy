@@ -60,7 +60,7 @@ void PlotText::customPainting(QPainter& painter)
 void PlotText::drawCellData(QPainter& painter)
 {
     QRect drawRect(0, 0, m_widget->width(), m_widget->height());
-    int32_t itemSize = m_dataList.size()==0?1:m_dataList.size();
+    int32_t itemSize = m_dataList.size() == 0 ? 1 : m_dataList.size();
 
     int32_t colSize = 2;
     // 没有插值只有两列，插值会出现三列，后续完善
@@ -86,22 +86,28 @@ void PlotText::drawCellData(QPainter& painter)
     painter.setPen(pen);
 
     QRect cellRect;
-    for(int i = 0; i < colSize; ++i)
+    if(getIsColGridVisible())
     {
-        int vx1 = drawRect.x() + horiGridWidth * (i + 1);
-        int vy1 = drawRect.y();
-        int vy2 = drawRect.bottom();
-        // 垂直线
-        painter.drawLine(vx1, vy1, vx1, vy2);
+        for(int i = 0; i < colSize; ++i)
+        {
+            int vx1 = drawRect.x() + horiGridWidth * (i + 1);
+            int vy1 = drawRect.y();
+            int vy2 = drawRect.bottom();
+            // 垂直线
+            painter.drawLine(vx1, vy1, vx1, vy2);
+        }
     }
 
-    for(int j = 0; j < itemSize; ++j)
+    if(getIsRowGridVisible())
     {
-        int hy1 = drawRect.y() + verGridWidth * (j + 1);
-        int hx1 = drawRect.left();
-        int hx2 = drawRect.right();
-        // 水平线
-        painter.drawLine(hx1, hy1, hx2, hy1);
+        for(int j = 0; j < itemSize; ++j)
+        {
+            int hy1 = drawRect.y() + verGridWidth * (j + 1);
+            int hx1 = drawRect.left();
+            int hx2 = drawRect.right();
+            // 水平线
+            painter.drawLine(hx1, hy1, hx2, hy1);
+        }
     }
 
     auto dataPairList = getDataPairs();
@@ -109,7 +115,7 @@ void PlotText::drawCellData(QPainter& painter)
     {
         auto data = dataPairList.at(j);
         auto xAttr = data->getAttr_x();
-        auto entity =  data->getEntity_x();
+        auto entity = data->getEntity_x();
         // 顺便画Attr Label，减少重复循环
         int hy1 = drawRect.y() + verGridWidth * j;
         int hx1 = drawRect.left();
@@ -121,17 +127,19 @@ void PlotText::drawCellData(QPainter& painter)
         painter.setFont(font);
 
         cellRect.setRect(hx1, hy1, horiGridWidth, verGridWidth);
-        painter.drawText(cellRect, Qt::AlignCenter | Qt::TextWordWrap, entity+" "+xAttr);
+        painter.drawText(cellRect, Qt::AlignCenter | Qt::TextWordWrap, entity + " " + xAttr);
         painter.restore();
 
         if(data->isDraw())
         {
             // 绘制X和Y轴的value
-            if(data->matchColor()){
+            if(data->matchColor())
+            {
                 pen.setColor(data->dataColor());
-            }else{
+            }
+            else
+            {
                 pen.setColor(data->getLabelColor());
-
             }
             pen.setWidth(3);
             pen.setStyle(Qt::SolidLine);

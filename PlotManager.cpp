@@ -291,10 +291,15 @@ void PlotManager::initAxisGridUI()
 
 void PlotManager::initTextLightUI()
 {
-    ui.label_171->setVisible(false);
-    ui.checkBox_30->setVisible(false);
-    ui.label_172->setVisible(false);
-    ui.checkBox_31->setVisible(false);
+    connect(ui.checkBox_ColGridVisible,
+            &QCheckBox::stateChanged,
+            this,
+            &PlotManager::onCheckBox_ColGridVisible);
+    connect(ui.checkBox_RowGridVisible,
+            &QCheckBox::stateChanged,
+            this,
+            &PlotManager::onCheckBox_RowGridVisible);
+
     connect(ui.lineEdit_23, &QLineEdit::editingFinished, this, [=]() {
         ui.spinBox_10->setValue(ui.lineEdit_23->text().toInt());
     });
@@ -303,6 +308,7 @@ void PlotManager::initTextLightUI()
             this,
             SLOT(onAddNewClicked())); //这个是召唤addplotpair的按钮，懒得自己新建了，就直接用了
     connect(ui.pushButton_69, &QPushButton::clicked, this, &PlotManager::onPushButton_69Clicked);
+    connect(ui.pushButton_Advanced, &QPushButton::clicked, this, &PlotManager::onAdvancedClicked);
     connect(ui.pushButton_66, &QPushButton::clicked, this, &PlotManager::onPushButton_66Clicked);
     connect(ui.pushButton_67, &QPushButton::clicked, this, &PlotManager::onPushButton_67Clicked);
     connect(ui.tableWidget_TextDataSort,
@@ -314,9 +320,19 @@ void PlotManager::initTextLightUI()
             this,
             &PlotManager::onTableWidget_textLightDataSortItemSelectionChanged);
     connect(ui.spinBox_10, &QSpinBox::editingFinished, this, &PlotManager::onSpinbox_10Changed);
+    connect(ui.spinBox_TextOutlineWidth,
+            &QSpinBox::editingFinished,
+            this,
+            &PlotManager::onSpinbox_TextOutlineWidthChanged);
     connect(ui.pushButton_71, &QPushButton::clicked, this, &PlotManager::onPushButton_71Clicked);
-    connect(ui.pushButton_TextFillColor, &QPushButton::clicked, this, &PlotManager::onPushButton_TextFillColorClicked);
-    connect(ui.pushButtonTextOutlineColor, &QPushButton::clicked, this, &PlotManager::onPushButtonTextOutlineColorClicked);
+    connect(ui.pushButton_TextFillColor,
+            &QPushButton::clicked,
+            this,
+            &PlotManager::onPushButton_TextFillColorClicked);
+    connect(ui.pushButtonTextOutlineColor,
+            &QPushButton::clicked,
+            this,
+            &PlotManager::onPushButtonTextOutlineColorClicked);
 }
 
 void PlotManager::initScatterLimitUI()
@@ -327,17 +343,23 @@ void PlotManager::initScatterLimitUI()
     connect(
         ui.pushButtonLimitUpdate, &QPushButton::clicked, this, &PlotManager::onUpdateScatterLimit);
     connect(
-                ui.treeWidgetLimit, &QTreeWidget::itemClicked, this, &PlotManager::onCurrentLimitChanged);
+        ui.treeWidgetLimit, &QTreeWidget::itemClicked, this, &PlotManager::onCurrentLimitChanged);
 }
 
 void PlotManager::initScatterMarkersUI()
 {
     connect(ui.pushButtonAddMarker, &QPushButton::clicked, this, &PlotManager::onAddScatterMarkers);
-    connect(ui.pushButtonModifyMarker, &QPushButton::clicked, this, &PlotManager::onModifyScatterMarkers);
-    connect(ui.pushButtonDeleteMarker, &QPushButton::clicked, this, &PlotManager::onDeleteScatterMarkers);
+    connect(ui.pushButtonModifyMarker,
+            &QPushButton::clicked,
+            this,
+            &PlotManager::onModifyScatterMarkers);
+    connect(ui.pushButtonDeleteMarker,
+            &QPushButton::clicked,
+            this,
+            &PlotManager::onDeleteScatterMarkers);
 
     connect(
-                ui.treeWidgetMarker, &QTreeWidget::itemClicked, this, &PlotManager::onCurrentMarkerChanged);
+        ui.treeWidgetMarker, &QTreeWidget::itemClicked, this, &PlotManager::onCurrentMarkerChanged);
 }
 
 void PlotManager::initEditableMap()
@@ -381,7 +403,7 @@ void PlotManager::initPlotDataUI()
     connect(ui.pushButton_16, &QPushButton::clicked, this, &PlotManager::onPushButton_16Clicked);
     connect(ui.pushButton_18, &QPushButton::clicked, this, &PlotManager::onPushButton_18Clicked);
     connect(ui.pushButton_19, &QPushButton::clicked, this, &PlotManager::onPushButton_19Clicked);
-    connect(ui.pushButton_20, &QPushButton::clicked, this, &PlotManager::onPushButton_20Clicked);
+    connect(ui.pushButton_20, &QPushButton::clicked, this, &PlotManager::onAdvancedClicked);
     connect(ui.pushButton_21, &QPushButton::clicked, this, &PlotManager::onPushButton_21Clicked);
     connect(
         ui.checkBox_10, &QCheckBox::stateChanged, this, &PlotManager::onCheckBox_10StateChanged);
@@ -644,7 +666,7 @@ void PlotManager::refreshLightTextUI(PlotItemBase* plot)
         if(plot->plotType() == PlotType::Type_PlotText)
         {
             ui.stackedWidget_LightTextDataSort->setCurrentIndex(0);
-            ui.groupBox_29->setVisible(false);
+            ui.groupBox_7->setVisible(false);
             ui.tableWidget_TextDataSort->clearContents();
             auto size = plot->getDataPairs().size();
             ui.tableWidget_TextDataSort->setRowCount(size);
@@ -664,7 +686,7 @@ void PlotManager::refreshLightTextUI(PlotItemBase* plot)
         else
         {
             ui.stackedWidget_LightTextDataSort->setCurrentIndex(1);
-            ui.groupBox_29->setVisible(true);
+            ui.groupBox_7->setVisible(true);
             ui.tableWidget_LightDataSort->clearContents();
             auto size = plot->getDataPairs().size();
             ui.tableWidget_LightDataSort->setRowCount(size);
@@ -676,9 +698,13 @@ void PlotManager::refreshLightTextUI(PlotItemBase* plot)
             }
         }
         ui.pushButtonTextOutlineColor->setColor(plot->getOutlineColor());
+        ui.spinBox_TextOutlineWidth->setValue(plot->getOutlineWidth());
         ui.pushButton_TextFillColor->setColor(plot->getGridFillColor());
+        ui.pushButton_71->setColor(plot->getGridColor());
+        ui.spinBox_10->setValue(plot->getGridWidth());
+        ui.checkBox_RowGridVisible->setChecked(plot->getIsRowGridVisible());
+        ui.checkBox_ColGridVisible->setChecked(plot->getIsColGridVisible());
     }
-
 }
 
 void PlotManager::refreshGOGUI(PlotItemBase* plot)
@@ -754,7 +780,7 @@ void PlotManager::refreshScatterLimitUI(PlotItemBase* plot)
     }
 }
 
-void PlotManager::refreshScatterMarkersUI(PlotItemBase *plot)
+void PlotManager::refreshScatterMarkersUI(PlotItemBase* plot)
 {
     if(auto scatter = dynamic_cast<PlotScatter*>(plot))
     {
@@ -767,9 +793,10 @@ void PlotManager::refreshScatterMarkersUI(PlotItemBase *plot)
             item->setText(1, marker.xUnit);
             item->setText(2, QString::number(marker.y));
             item->setText(3, marker.yUnit);
-            item->setText(4, OrdinalTimeFormatter::toString(marker.time,DataManagerInstance->getRefYear()));
+            item->setText(
+                4, OrdinalTimeFormatter::toString(marker.time, DataManagerInstance->getRefYear()));
             item->setText(5, marker.text);
-            item->setData(0,Qt::UserRole+1,marker.uuid);
+            item->setData(0, Qt::UserRole + 1, marker.uuid);
             ui.treeWidgetMarker->addTopLevelItem(item);
         }
     }
@@ -943,6 +970,34 @@ void PlotManager::enableItem_Doppler()
     m_itemAttitude->setDisabled(true);
     m_itemTrackStatus->setDisabled(true);
     m_itemRangeDoppler->setDisabled(false);
+}
+
+void PlotManager::exchangeItem(QTableWidget* tableWidget, int selectedRow, int targetRow)
+{
+    QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
+    QStringList selectedRowList;
+    QStringList targetRowList;
+    for(int i = 0; i < tableWidget->columnCount(); i++)
+    {
+        selectedRowList.append(tableWidget->item(selectedRow, i)->text());
+        targetRowList.append(tableWidget->item(targetRow, i)->text());
+    }
+
+    for(int i = 0; i < tableWidget->columnCount(); i++)
+    {
+        tableWidget->setItem(selectedRow, i, new QTableWidgetItem(targetRowList.at(i)));
+        tableWidget->setItem(targetRow, i, new QTableWidgetItem(selectedRowList.at(i)));
+    }
+
+    // 交换并重新设置DataPair
+    DataPair* tmpData = vec.at(selectedRow);
+    vec.replace(selectedRow, vec.at(targetRow));
+    vec.replace(targetRow, tmpData);
+    m_curSelectPlot->setDataPair(vec);
+
+    refreshLightTextUI(m_curSelectPlot);
+    tableWidget->setCurrentItem(tableWidget->item(targetRow, 0),
+                                QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
 }
 
 void PlotManager::onTWSPclicked(QTreeWidgetItem* item, int column)
@@ -1210,44 +1265,58 @@ void PlotManager::onBtnCloseClicked()
 
 void PlotManager::onBarHorizonChanged(int state)
 {
-     if(m_curSelectPlot){
-    if(state == 2)
-        m_curSelectPlot->setIsHorizonBar(true);
-    else if(state == 0)
-        m_curSelectPlot->setIsHorizonBar(false);
-     }
+    if(m_curSelectPlot)
+    {
+        if(state == 2)
+            m_curSelectPlot->setIsHorizonBar(true);
+        else if(state == 0)
+            m_curSelectPlot->setIsHorizonBar(false);
+    }
 }
 
 void PlotManager::onPushButton_71Clicked()
 {
-     if(m_curSelectPlot){
-    ui.pushButton_gridColor->setColor(ui.pushButton_71->color());
-    ui.lineEdit_23->setText(QString("%1").arg(ui.spinBox_10->value()));
-    m_curSelectPlot->setGridColorWidth(ui.pushButton_71->color(), ui.spinBox_10->value());
-     }
+    if(m_curSelectPlot)
+    {
+        ui.pushButton_gridColor->setColor(ui.pushButton_71->color());
+        ui.lineEdit_23->setText(QString("%1").arg(ui.spinBox_10->value()));
+        m_curSelectPlot->setGridColorWidth(ui.pushButton_71->color(), ui.spinBox_10->value());
+    }
 }
 
 void PlotManager::onSpinbox_10Changed()
 {
-     if(m_curSelectPlot){
-    ui.pushButton_gridColor->setColor(ui.pushButton_71->color());
-    ui.lineEdit_23->setText(QString("%1").arg(ui.spinBox_10->value()));
-    m_curSelectPlot->setGridColorWidth(ui.pushButton_71->color(), ui.spinBox_10->value());
-     }
+    if(m_curSelectPlot)
+    {
+        ui.pushButton_gridColor->setColor(ui.pushButton_71->color());
+        ui.lineEdit_23->setText(QString("%1").arg(ui.spinBox_10->value()));
+        m_curSelectPlot->setGridColorWidth(ui.pushButton_71->color(), ui.spinBox_10->value());
+    }
+}
+
+void PlotManager::onSpinbox_TextOutlineWidthChanged()
+{
+    if(m_curSelectPlot)
+    {
+        m_curSelectPlot->setOutlineWidth(ui.spinBox_TextOutlineWidth->value());
+    }
 }
 
 void PlotManager::onPushButton_TextFillColorClicked()
 {
-     if(m_curSelectPlot){
-    QColor color = ui.pushButton_TextFillColor->color();
-    m_curSelectPlot->setGridFillColor(color);
-     }
+    if(m_curSelectPlot)
+    {
+        QColor color = ui.pushButton_TextFillColor->color();
+        m_curSelectPlot->setGridFillColor(color);
+    }
 }
 
 void PlotManager::onPushButtonTextOutlineColorClicked()
 {
-    if(m_curSelectPlot){
-        m_curSelectPlot->setOutlineColor(ui.pushButtonTextOutlineColor->color());
+    if(m_curSelectPlot)
+    {
+        QColor color = ui.pushButtonTextOutlineColor->color();
+        m_curSelectPlot->setOutlineColor(color);
     }
 }
 
@@ -1689,7 +1758,9 @@ void PlotManager::onUpdateGOGCustomSetting()
 
 void PlotManager::onTableWidget_textLightDataSortItemSelectionChanged()
 {
-    if(m_curSelectPlot->getName().startsWith("Text"))
+    if(!m_curSelectPlot)
+        return;
+    if(m_curSelectPlot->plotType() == PlotType::Type_PlotText)
     {
         //设置Move Up/Move Down的enable
         if(ui.tableWidget_TextDataSort->currentRow() < 0)
@@ -1719,7 +1790,7 @@ void PlotManager::onTableWidget_textLightDataSortItemSelectionChanged()
             ui.pushButton_67->setEnabled(true);
         }
     }
-    else
+    else // light
     {
         if(ui.tableWidget_LightDataSort->currentRow() < 0)
             return;
@@ -1747,6 +1818,34 @@ void PlotManager::onTableWidget_textLightDataSortItemSelectionChanged()
             ui.pushButton_66->setEnabled(true);
             ui.pushButton_67->setEnabled(true);
         }
+    }
+}
+
+void PlotManager::onCheckBox_RowGridVisible(int state)
+{
+    if(!m_curSelectPlot)
+        return;
+    if(state == 2)
+    {
+        m_curSelectPlot->setIsRowGridVisible(true);
+    }
+    else
+    {
+        m_curSelectPlot->setIsRowGridVisible(false);
+    }
+}
+
+void PlotManager::onCheckBox_ColGridVisible(int state)
+{
+    if(!m_curSelectPlot)
+        return;
+    if(state == 2)
+    {
+        m_curSelectPlot->setIsColGridVisible(true);
+    }
+    else
+    {
+        m_curSelectPlot->setIsColGridVisible(false);
     }
 }
 
@@ -1866,190 +1965,50 @@ void PlotManager::onPushButton_16Clicked()
     refreshPlotDataUI(m_curSelectPlot);
     ui.tableWidget_plotData->setCurrentCell(row + 1, 0);
 }
+
 // move up data pair
 void PlotManager::onPushButton_66Clicked()
 {
-    if(m_curSelectPlot->getName().startsWith("Text"))
+    if(!m_curSelectPlot)
+        return;
+
+    int row = -1;
+    if(m_curSelectPlot->plotType() == PlotType::Type_PlotText)
     {
-        int row = ui.tableWidget_TextDataSort->currentRow();
+        row = ui.tableWidget_TextDataSort->currentRow();
+        if(ui.tableWidget_TextDataSort->currentRow() < 0)
+            return;
+        exchangeItem(ui.tableWidget_TextDataSort, row, row - 1);
+    }
+    else if(m_curSelectPlot->plotType() == PlotType::Type_PlotLight)
+    {
+        row = ui.tableWidget_LightDataSort->currentRow();
         if(row < 0)
             return;
-        if(m_curSelectPlot == nullptr)
-            return;
-        if(ui.tableWidget_TextDataSort->currentColumn() == 0)
-        {
-            QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
-            int temRow = ui.tableWidget_TextDataSort->currentRow();
-
-            DataPair* temNowDataPair = vec.at(temRow);
-
-            QString temNowFront = temNowDataPair->getEntity_x();
-            QString temNowBack = temNowDataPair->getAttr_x();
-
-            DataPair* temAboveDataPair = vec.at(ui.tableWidget_TextDataSort->currentRow() - 1);
-
-            QString temAboveFront = temAboveDataPair->getEntity_x();
-            QString temAboveBack = temAboveDataPair->getAttr_x();
-            // TODO
-            //            QPair<QString, QString> newAbove =
-            //                qMakePair(temNowFront + "+" + temAboveBack, temAboveDataPair->getDataPair().second);
-            //            QPair<QString, QString> newNow =
-            //                qMakePair(temAboveFront + "+" + temNowBack, temNowDataPair->getDataPair().second);
-
-            //            temNowDataPair->setDataPair(newNow);
-            //            temAboveDataPair->setDataPair(newAbove);
-            refreshLightTextUI(m_curSelectPlot);
-            ui.tableWidget_TextDataSort->setCurrentCell(row - 1, 0);
-        }
-        else if(ui.tableWidget_TextDataSort->currentColumn() == 1)
-        {
-            // TODO
-            //            QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
-            //			int temRow = ui.tableWidget_TextDataSort->currentRow();
-
-            //            DataPair* temNowDataPair = vec.at(temRow);
-
-            //            QString temNowFront = temNowDataPair->getEntity_x();
-            //            QString temNowBack = temNowDataPair->getAttr_x();
-
-            //            DataPair* temAboveDataPair = vec.at(ui.tableWidget_TextDataSort->currentRow() - 1);
-            //            QString temAboveFirst = temAboveDataPair->getDataPair().first;
-            //			QString temAboveFront = temAboveFirst.split("+").front();
-            //			QString temAboveBack = temAboveFirst.split("+").back();
-            //            QPair<QString, QString> newAbove =
-            //                qMakePair(temAboveFront + "+" + temNowBack, temAboveDataPair->getDataPair().second);
-            //            QPair<QString, QString> newNow =
-            //                qMakePair(temNowFront + "+" + temAboveBack, temNowDataPair->getDataPair().second);
-
-            //            temNowDataPair->setDataPair(newNow);
-            //            temAboveDataPair->setDataPair(newAbove);
-            //			refreshLightTextUI(m_curSelectPlot);
-            //			ui.tableWidget_TextDataSort->setCurrentCell(row - 1, 1);
-        }
-        else
-            return;
+        exchangeItem(ui.tableWidget_LightDataSort, row, row - 1);
     }
-    else if(m_curSelectPlot->getName().startsWith("Light"))
-    {
-        int row = ui.tableWidget_LightDataSort->currentRow();
-        if(row < 0)
-            return;
-        if(m_curSelectPlot == nullptr)
-            return;
-        if(ui.tableWidget_LightDataSort->currentColumn() == 0)
-        {
-            // TODO
-            //            QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
-            //			int temRow = ui.tableWidget_LightDataSort->currentRow();
-            //            DataPair* temNowDataPair = vec.at(temRow);
-            //			QString temNowFirst = temNowDataPair->getDataPair().first;
-            //            DataPair* temAboveDataPair = vec.at(ui.tableWidget_LightDataSort->currentRow() - 1);
-            //            QString temAboveFirst = temAboveDataPair->getDataPair().first;
-            //            QPair<QString, QString> newAbove =
-            //                qMakePair(temNowFirst, temAboveDataPair->getDataPair().second);
-            //            QPair<QString, QString> newNow =
-            //                qMakePair(temAboveFirst, temNowDataPair->getDataPair().second);
-
-            //            temNowDataPair->setDataPair(newNow);
-            //            temAboveDataPair->setDataPair(newAbove);
-            //			refreshLightTextUI(m_curSelectPlot);
-            //			ui.tableWidget_LightDataSort->setCurrentCell(row - 1, 0);
-        }
-        else
-            return;
-    }
-
-    //Light改变的时候可能会用到
-    //QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
-    //vec.move(row, row - 1);
-    //m_curSelectPlot->setDataPair(vec);
-    //refreshLightTextUI(m_curSelectPlot);
-    //ui.tableWidget_TextDataSort->setCurrentCell(row - 1, 0);
 }
+
 // move down data pair
 void PlotManager::onPushButton_67Clicked()
 {
-    if(m_curSelectPlot->getName().startsWith("Text"))
+    if(!m_curSelectPlot)
+        return;
+    int row = -1;
+    if(m_curSelectPlot->plotType() == PlotType::Type_PlotText)
     {
-        int row = ui.tableWidget_TextDataSort->currentRow();
+        row = ui.tableWidget_TextDataSort->currentRow();
         if(row < 0 || row >= (ui.tableWidget_TextDataSort->rowCount() - 1))
             return;
-        if(m_curSelectPlot == nullptr)
-            return;
-        if(ui.tableWidget_TextDataSort->currentColumn() == 0)
-        {
-            // TODO
-            //            QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
-            //			int temRow = ui.tableWidget_TextDataSort->currentRow();
-            //            DataPair* temNowDataPair = vec.at(temRow);
-            //			QString temNowFirst = temNowDataPair->getDataPair().first;
-            //			QString temNowFront = temNowFirst.split("+").front();
-            //			QString temNowBack = temNowFirst.split("+").back();
-
-            //            DataPair* temAboveDataPair = vec.at(ui.tableWidget_TextDataSort->currentRow() + 1);
-            //			QString temAboveFirst = temAboveDataPair->getDataPair().first;
-            //			QString temAboveFront = temAboveFirst.split("+").front();
-            //			QString temAboveBack = temAboveFirst.split("+").back();
-            //            QPair<QString, QString> newAbove =
-            //                qMakePair(temNowFront + "+" + temAboveBack, temAboveDataPair->getDataPair().second);
-            //            QPair<QString, QString> newNow =
-            //                qMakePair(temAboveFront + "+" + temNowBack, temNowDataPair->getDataPair().second);
-
-            //            temNowDataPair->setDataPair(newNow);
-            //            temAboveDataPair->setDataPair(newAbove);
-            //			refreshLightTextUI(m_curSelectPlot);
-            //			ui.tableWidget_TextDataSort->setCurrentCell(row + 1, 0);
-        }
-        else if(ui.tableWidget_TextDataSort->currentColumn() == 1)
-        {
-            //            QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
-            //			int temRow = ui.tableWidget_TextDataSort->currentRow();
-            //            DataPair* temNowDataPair = vec.at(temRow);
-            //			QString temNowFirst = temNowDataPair->getDataPair().first;
-            //			QString temNowFront = temNowFirst.split("+").front();
-            //			QString temNowBack = temNowFirst.split("+").back();
-            //            DataPair* temAboveDataPair = vec.at(ui.tableWidget_TextDataSort->currentRow() + 1);
-            //			QString temAboveFirst = temAboveDataPair->getDataPair().first;
-            //			QString temAboveFront = temAboveFirst.split("+").front();
-            //			QString temAboveBack = temAboveFirst.split("+").back();
-            //            QPair<QString, QString> newAbove =
-            //                qMakePair(temAboveFront + "+" + temNowBack, temAboveDataPair->getDataPair().second);
-            //            QPair<QString, QString> newNow =
-            //                qMakePair(temNowFront + "+" + temAboveBack, temNowDataPair->getDataPair().second);
-            //            temNowDataPair->setDataPair(newNow);
-            //            temAboveDataPair->setDataPair(newAbove);
-            //			refreshLightTextUI(m_curSelectPlot);
-            //			ui.tableWidget_TextDataSort->setCurrentCell(row + 1, 1);
-        }
-        else
-            return;
+        exchangeItem(ui.tableWidget_TextDataSort, row, row + 1);
     }
-    else if(m_curSelectPlot->getName().startsWith("Light"))
+    else if(m_curSelectPlot->plotType() == PlotType::Type_PlotLight)
     {
-        //		int row = ui.tableWidget_LightDataSort->currentRow();
-        //        if(row < 0 || row >= (ui.tableWidget_LightDataSort->rowCount() - 1))
-        //			return;
-        //        if(m_curSelectPlot == nullptr)
-        //			return;
-        //        if(ui.tableWidget_LightDataSort->currentColumn() == 0)
-        //		{
-        //            QVector<DataPair*> vec = m_curSelectPlot->getDataPairs();
-        //			int temRow = ui.tableWidget_LightDataSort->currentRow();
-        //            DataPair* temNowDataPair = vec.at(temRow);
-        //			QString temNowFirst = temNowDataPair->getDataPair().first;
-        //            DataPair* temAboveDataPair = vec.at(ui.tableWidget_LightDataSort->currentRow() + 1);
-        //			QString temAboveFirst = temAboveDataPair->getDataPair().first;
-        //            QPair<QString, QString> newAbove =
-        //                qMakePair(temNowFirst, temAboveDataPair->getDataPair().second);
-        //            QPair<QString, QString> newNow =
-        //                qMakePair(temAboveFirst, temNowDataPair->getDataPair().second);
-        //            temNowDataPair->setDataPair(newNow);
-        //            temAboveDataPair->setDataPair(newAbove);
-        //			refreshLightTextUI(m_curSelectPlot);
-        //			ui.tableWidget_LightDataSort->setCurrentCell(row + 1, 0);
+        row = ui.tableWidget_LightDataSort->currentRow();
+        if(row < 0 || row >= (ui.tableWidget_LightDataSort->rowCount() - 1))
+            return;
+        exchangeItem(ui.tableWidget_LightDataSort, row, row + 1);
     }
-    else
-        return;
 }
 
 void PlotManager::onPushButton_69Clicked()
@@ -2082,7 +2041,7 @@ void PlotManager::onPushButton_19Clicked()
     refreshPlotDataUI(m_curSelectPlot);
 }
 
-void PlotManager::onPushButton_20Clicked()
+void PlotManager::onAdvancedClicked()
 {
     emit sigAdvancedDataManager();
 }
@@ -2557,21 +2516,22 @@ void PlotManager::onAddScatterMarkers()
     {
         PlotMarker marker;
         marker.x = ui.lineEditMarkerXValue->text().toDouble();
-        marker.xUnit=ui.comboBoxMarkerXUnit->currentText();
-        marker.y =ui.lineEditMarkerYValue->text().toDouble();
-        marker.yUnit =ui.comboBoxMarkerYUnit->currentText();
+        marker.xUnit = ui.comboBoxMarkerXUnit->currentText();
+        marker.y = ui.lineEditMarkerYValue->text().toDouble();
+        marker.yUnit = ui.comboBoxMarkerYUnit->currentText();
 
         QString odiTimeStr = QString("%1 %2 %3:%4:%5")
-                .arg(ui.spinBoxMarkerDays->value())
-                .arg(ui.spinBoxMarkerYears->value())
-                .arg(ui.spinBoxMarkerHours->value())
-                .arg(ui.spinBoxMarkerMins->value())
-                .arg(ui.lineEditSecs->text());
+                                 .arg(ui.spinBoxMarkerDays->value())
+                                 .arg(ui.spinBoxMarkerYears->value())
+                                 .arg(ui.spinBoxMarkerHours->value())
+                                 .arg(ui.spinBoxMarkerMins->value())
+                                 .arg(ui.lineEditSecs->text());
 
-        marker.time  =OrdinalTimeFormatter::convertToSeconds(odiTimeStr,DataManagerInstance->getRefYear());
+        marker.time =
+            OrdinalTimeFormatter::convertToSeconds(odiTimeStr, DataManagerInstance->getRefYear());
         marker.iconType = ui.comboBoxMarkerIcon->currentText();
         marker.color = ui.pushButtonMarkerColor->color();
-        marker.text =ui.lineEditMarkerText->text();
+        marker.text = ui.lineEditMarkerText->text();
         marker.fontFamily = ui.fontComboBoxMarker->currentText();
         marker.fontSize = ui.spinBoxMarkerFontSize->value();
         plot->addMarker(marker);
@@ -2583,7 +2543,7 @@ void PlotManager::onAddScatterMarkers()
         item->setText(3, marker.yUnit);
         item->setText(4, odiTimeStr);
         item->setText(5, marker.text);
-        item->setData(0,Qt::UserRole+1,marker.uuid);
+        item->setData(0, Qt::UserRole + 1, marker.uuid);
         ui.treeWidgetMarker->addTopLevelItem(item);
     }
 }
@@ -2592,33 +2552,36 @@ void PlotManager::onModifyScatterMarkers()
 {
     if(auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot))
     {
-        if(!ui.treeWidgetMarker->currentIndex().isValid()){
+        if(!ui.treeWidgetMarker->currentIndex().isValid())
+        {
             return;
         }
-        auto  topWidget = ui.treeWidgetMarker->topLevelItem(ui.treeWidgetMarker->currentIndex().row());
+        auto topWidget =
+            ui.treeWidgetMarker->topLevelItem(ui.treeWidgetMarker->currentIndex().row());
 
-        QString uuid = topWidget->data(0,Qt::UserRole+1).toString();
+        QString uuid = topWidget->data(0, Qt::UserRole + 1).toString();
         PlotMarker marker;
         marker.uuid = uuid;
         marker.x = ui.lineEditMarkerXValue->text().toDouble();
-        marker.xUnit=ui.comboBoxMarkerXUnit->currentText();
-        marker.y =ui.lineEditMarkerYValue->text().toDouble();
-        marker.yUnit =ui.comboBoxMarkerYUnit->currentText();
+        marker.xUnit = ui.comboBoxMarkerXUnit->currentText();
+        marker.y = ui.lineEditMarkerYValue->text().toDouble();
+        marker.yUnit = ui.comboBoxMarkerYUnit->currentText();
 
         QString odiTimeStr = QString("%1 %2 %3:%4:%5")
-                .arg(ui.spinBoxMarkerDays->value())
-                .arg(ui.spinBoxMarkerYears->value())
-                .arg(ui.spinBoxMarkerHours->value())
-                .arg(ui.spinBoxMarkerMins->value())
-                .arg(ui.lineEditSecs->text());
+                                 .arg(ui.spinBoxMarkerDays->value())
+                                 .arg(ui.spinBoxMarkerYears->value())
+                                 .arg(ui.spinBoxMarkerHours->value())
+                                 .arg(ui.spinBoxMarkerMins->value())
+                                 .arg(ui.lineEditSecs->text());
 
-        marker.time  =OrdinalTimeFormatter::convertToSeconds(odiTimeStr,DataManagerInstance->getRefYear());
+        marker.time =
+            OrdinalTimeFormatter::convertToSeconds(odiTimeStr, DataManagerInstance->getRefYear());
         marker.iconType = ui.comboBoxMarkerIcon->currentText();
         marker.color = ui.pushButtonMarkerColor->color();
-        marker.text =ui.lineEditMarkerText->text();
+        marker.text = ui.lineEditMarkerText->text();
         marker.fontFamily = ui.fontComboBoxMarker->currentText();
         marker.fontSize = ui.spinBoxMarkerFontSize->value();
-        plot->modifyMarker(uuid,marker);
+        plot->modifyMarker(uuid, marker);
     }
 }
 
@@ -2626,12 +2589,14 @@ void PlotManager::onDeleteScatterMarkers()
 {
     if(auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot))
     {
-        if(!ui.treeWidgetMarker->currentIndex().isValid()){
+        if(!ui.treeWidgetMarker->currentIndex().isValid())
+        {
             return;
         }
-        auto  topWidget = ui.treeWidgetMarker->takeTopLevelItem(ui.treeWidgetMarker->currentIndex().row());
+        auto topWidget =
+            ui.treeWidgetMarker->takeTopLevelItem(ui.treeWidgetMarker->currentIndex().row());
 
-        QString uuid = topWidget->data(0,Qt::UserRole+1).toString();
+        QString uuid = topWidget->data(0, Qt::UserRole + 1).toString();
         plot->removeMarker(uuid);
         delete topWidget;
     }
@@ -2641,13 +2606,15 @@ void PlotManager::onCurrentMarkerChanged()
 {
     if(auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot))
     {
-        if(!ui.treeWidgetMarker->currentIndex().isValid()){
+        if(!ui.treeWidgetMarker->currentIndex().isValid())
+        {
             return;
         }
-        auto  topWidget = ui.treeWidgetMarker->topLevelItem(ui.treeWidgetMarker->currentIndex().row());
+        auto topWidget =
+            ui.treeWidgetMarker->topLevelItem(ui.treeWidgetMarker->currentIndex().row());
 
-        QString uuid = topWidget->data(0,Qt::UserRole+1).toString();
-        auto marker= plot->getMarkerByUuid(uuid);
+        QString uuid = topWidget->data(0, Qt::UserRole + 1).toString();
+        auto marker = plot->getMarkerByUuid(uuid);
         ui.lineEditMarkerXValue->setText(QString::number(marker.x));
         ui.lineEditMarkerYValue->setText(QString::number(marker.y));
         ui.comboBoxMarkerXUnit->setCurrentText(marker.xUnit);
@@ -2658,17 +2625,18 @@ void PlotManager::onCurrentMarkerChanged()
         ui.fontComboBoxMarker->setCurrentText(marker.fontFamily);
         ui.spinBoxMarkerFontSize->setValue(marker.fontSize);
 
-        QString timeStr = OrdinalTimeFormatter::toString(marker.time,DataManagerInstance->getRefYear());
-       int32_t days;
-       int32_t year;
-       int32_t hour;
-       int32_t minute;
-       double seconds;
-       OrdinalTimeFormatter::convertToTime(timeStr,days,year,hour,minute,seconds);
-       ui.spinBoxMarkerDays->setValue(days);
-       ui.spinBoxMarkerYears->setValue(year);
-       ui.spinBoxMarkerHours->setValue(hour);
-       ui.spinBoxMarkerMins->setValue(minute);
-       ui.lineEditSecs->setText(QString::number(seconds));
+        QString timeStr =
+            OrdinalTimeFormatter::toString(marker.time, DataManagerInstance->getRefYear());
+        int32_t days;
+        int32_t year;
+        int32_t hour;
+        int32_t minute;
+        double seconds;
+        OrdinalTimeFormatter::convertToTime(timeStr, days, year, hour, minute, seconds);
+        ui.spinBoxMarkerDays->setValue(days);
+        ui.spinBoxMarkerYears->setValue(year);
+        ui.spinBoxMarkerHours->setValue(hour);
+        ui.spinBoxMarkerMins->setValue(minute);
+        ui.lineEditSecs->setText(QString::number(seconds));
     }
 }
