@@ -56,7 +56,8 @@ public:
                                       int32_t yEntityID,
                                       const QString& yAttrName,
                                       const QString& yAttrUnitName,
-                                      const QHash<QString, QVariant>& extraParams, bool isFromJson=false) override;
+                                      const QHash<QString, QVariant>& extraParams,
+                                      bool isFromJson = false) override;
     void delPlotPairData(const QString& uuid) override;
 
     PlotType plotType() const override
@@ -79,19 +80,16 @@ public:
     QMap<double, BackgroundLimitSeg> getBkgLimitSegMap() const;
 
     void addMarker(const PlotMarker& marker);
-    void removeMarker(const QString&uuid);
-    void modifyMarker(const QString&uuid ,const PlotMarker& marker);
+    void removeMarker(const QString& uuid);
+    void modifyMarker(const QString& uuid, const PlotMarker& marker);
 
     QHash<QString, PlotMarker> getPlotMarkers() const;
-    PlotMarker getMarkerByUuid(const QString &uuid) const;
+    PlotMarker getMarkerByUuid(const QString& uuid) const;
 
 private:
     void initPlot();
     void updateDataForDataPairsByTime(double secs) override;
     void updateGraphByDataPair(DataPair* data) override;
-
-    // 文本标签坐标,特殊情况不调用DataPair里面的通用处理方式
-    QPair<double, double> getLabelTextAlign(const QString& text, DataPair* data);
     // 删除历史事件标签
     void clearEventText();
     void clearHistoryLines();
@@ -122,7 +120,7 @@ private:
     QList<QCPAbstractItem*> m_backSegRectList;
     // markers
     QHash<QString, PlotMarker> m_plotMarkers;
-    QHash<QString,QCPItemText*> m_plotMarkerItems;
+    QHash<QString, QCPItemText*> m_plotMarkerItems;
     // 是否初始化过上下限
     bool m_isInitCoorRange = false;
     // 最后更新时间

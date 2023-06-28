@@ -252,9 +252,9 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
             {
                 pixmap->setVisible(true);
                 pixmap->setPixmap(pix);
-                // 以最后一个数据点的坐标作为图片的中心点
-                double topX = lastPosX - data->iconWidth() / 2;
-                double topY = lastPosY - data->iconHeight() / 2;
+                // 以最后一个数据点的坐标作为图片的中心点,这里不能直接使用data中原始的图片宽高作为基准，因为旋转之后，图片宽高会发生变化
+                double topX = lastPosX - pix.width() / 2;
+                double topY = lastPosY - pix.height() / 2;
                 pixmap->topLeft->setCoords(topX, topY);
             }
         }
@@ -569,48 +569,6 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
     m_isInitCoorRange = true;
     return PlotItemBase::addPlotDataPair(
         xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName, extraParams);
-}
-
-QPair<double, double> PlotScatter::getLabelTextAlign(const QString& text, DataPair* data)
-{
-    QFontMetricsF fm(data->getLabelFont());
-    double wd = (fm.size(Qt::TextSingleLine, text).width()) / 3.0;
-    double ht = fm.size(Qt::TextSingleLine, text).height() / 1.0;
-    QPair<double, double> pair;
-    switch(data->getLabelPosition())
-    {
-    case DataPair::left_top: //left-top
-        pair = qMakePair(-wd, -ht);
-        break;
-    case DataPair::top: //top
-        pair = qMakePair(0, -ht);
-        break;
-    case DataPair::right_top: //right-top
-        pair = qMakePair(wd, -ht);
-        break;
-    case DataPair::left: //left
-        pair = qMakePair(-wd, 0);
-        break;
-    case DataPair::center: //center
-        pair = qMakePair(0, 0);
-        break;
-    case DataPair::right: //right
-        pair = qMakePair(wd, 0);
-        break;
-    case DataPair::left_bottom: //left-bottom
-        pair = qMakePair(-wd, ht);
-        break;
-    case DataPair::bottom: //bottom
-        pair = qMakePair(0, ht);
-        break;
-    case DataPair::right_bottom: //right-bottom
-        pair = qMakePair(wd, ht);
-        break;
-    default: //right
-        pair = qMakePair(wd, 0);
-        break;
-    }
-    return pair;
 }
 
 void PlotScatter::clearEventText()
