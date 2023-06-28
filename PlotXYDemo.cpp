@@ -40,8 +40,7 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
     , m_mouseMode(MouseMode::SelectPlot)
 {
     ui.setupUi(this);
-    setMinimumSize(1600, 900);
-    setWindowTitle("仿真数据分析");
+    setWindowFlag(Qt::FramelessWindowHint, true);
 
     init();
 
@@ -337,8 +336,6 @@ void PlotXYDemo::onContextMenu(const QPoint& /*point*/)
     label->setStyleSheet("color:rgb(0,128,0);font:Bold");
     object_action->setDefaultWidget(label);
 
-    QMenu* ViewMenu = new QMenu(QString("View"));
-
     //主菜单
     pMenu.addAction(object_action);
     pMenu.addSeparator();
@@ -368,8 +365,6 @@ void PlotXYDemo::onContextMenu(const QPoint& /*point*/)
         pMenu.addSeparator();
     }
     pMenu.addMenu(ui.menuOrder);
-    pMenu.addMenu(ViewMenu);
-    pMenu.addMenu(ui.menuSelect_Plot);
     pMenu.addSeparator();
     pMenu.addMenu(ui.menuView);
 
@@ -2180,7 +2175,10 @@ void PlotXYDemo::onSaveScreenshot()
     }
 }
 
-void PlotXYDemo::onQuit() {}
+void PlotXYDemo::onQuit()
+{
+    qApp->quit();
+}
 
 void PlotXYDemo::onUndo() {}
 
