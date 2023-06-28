@@ -108,7 +108,7 @@ PlotXYDemo::~PlotXYDemo()
 
 void PlotXYDemo::onAdvancedData()
 {
-    m_AdvancedDataManager->show();
+    m_AdvancedDataManager->showNormal();
     m_AdvancedDataManager->activateWindow();
 }
 
@@ -121,7 +121,7 @@ void PlotXYDemo::onPlotManager()
         return;
     }
     m_plotManager->onSelectedPlot(m_pCurSelectedPlot);
-    m_plotManager->show();
+    m_plotManager->showNormal();
     m_plotManager->activateWindow();
 }
 
