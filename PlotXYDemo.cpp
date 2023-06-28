@@ -1122,6 +1122,35 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
             plotObject.insert("TextNumCols", textPlot->getColsNum());
         }
     }
+    else if(type == PlotType::Type_PlotLight)
+    {
+        PlotLight* lightPlot = dynamic_cast<PlotLight*>(plot);
+        if(lightPlot)
+        {
+            plotObject.insert("LightRowGridsVisible", lightPlot->getIsRowGridVisible());
+            plotObject.insert("LightColGridsVisible", lightPlot->getIsColGridVisible());
+            plotObject.insert("LightGridWidth", lightPlot->getGridWidth());
+            plotObject.insert("LightGridColor",
+                              color_transfer::QColorToRGBAStr(lightPlot->getGridColor()));
+            plotObject.insert("LightOutlineWidth", lightPlot->getOutlineWidth());
+            plotObject.insert("LightOutlineColor",
+                              color_transfer::QColorToRGBAStr(lightPlot->getOutlineColor()));
+            plotObject.insert("LightOuterFillColor",
+                              color_transfer::QColorToRGBAStr(lightPlot->getOuterFillColor()));
+            plotObject.insert("LightLeftPad", lightPlot->getTextLeftOffset());
+            plotObject.insert("LightRightPad", lightPlot->getTextRightOffset());
+            plotObject.insert("LightIsFillByRow", lightPlot->getIsFillByRow());
+            plotObject.insert("LightNumRows", lightPlot->getRowsNum());
+            plotObject.insert("LightNumCols", lightPlot->getColsNum());
+            plotObject.insert("LightType", lightPlot->getLightType());
+            plotObject.insert("LightWidth", lightPlot->getLightWidth());
+            plotObject.insert("LightHeight", lightPlot->getLightHeight());
+            plotObject.insert("LightTextYPos", lightPlot->getLightTextYPos());
+            plotObject.insert("LightIndOutlineWidth", lightPlot->getLightOutlineWidth());
+            plotObject.insert("LightIndOutlineColor",
+                              color_transfer::QColorToRGBAStr(lightPlot->getLightOutlineColor()));
+        }
+    }
 
     // 图表存在多个数据对
     QJsonArray dataPairArray;
@@ -1351,6 +1380,35 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
             textPlot->setIsFillByRow(plotObject.value("TextIsFillByRow").toBool());
             textPlot->setRowsNum(plotObject.value("TextNumRows").toInt());
             textPlot->setColsNum(plotObject.value("TextNumCols").toInt());
+        }
+    }
+    else if(type == PlotType::Type_PlotLight)
+    {
+        PlotLight* lightPlot = dynamic_cast<PlotLight*>(plot);
+        if(lightPlot)
+        {
+            lightPlot->setIsRowGridVisible(plotObject.value("LightRowGridsVisible").toBool());
+            lightPlot->setIsColGridVisible(plotObject.value("LightColGridsVisible").toBool());
+            lightPlot->setGridColorWidth(
+                color_transfer::QColorFromRGBAStr(plotObject.value("LightGridColor").toString()),
+                plotObject.value("LightGridWidth").toInt());
+            lightPlot->setOutlineWidth(plotObject.value("LightOutlineWidth").toInt());
+            lightPlot->setOutlineColor(color_transfer::QColorFromRGBAStr(
+                plotObject.value("LightOutlineColor").toString()));
+            lightPlot->setOuterFillColor(color_transfer::QColorFromRGBAStr(
+                plotObject.value("LightOuterFillColor").toString()));
+            lightPlot->setTextLeftOffset(plotObject.value("LightLeftPad").toInt());
+            lightPlot->setTextRightOffset(plotObject.value("LightRightPad").toInt());
+            lightPlot->setIsFillByRow(plotObject.value("LightIsFillByRow").toBool());
+            lightPlot->setRowsNum(plotObject.value("LightNumRows").toInt());
+            lightPlot->setColsNum(plotObject.value("LightNumCols").toInt());
+            lightPlot->setLightType(plotObject.value("LightType").toString());
+            lightPlot->setLightWidth(plotObject.value("LightWidth").toInt());
+            lightPlot->setLightHeight(plotObject.value("LightHeight").toInt());
+            lightPlot->setLightTextYPos(plotObject.value("LightTextYPos").toInt());
+            lightPlot->setLightOutlineWidth(plotObject.value("LightIndOutlineWidth").toInt());
+            lightPlot->setLightOutlineColor(color_transfer::QColorFromRGBAStr(
+                plotObject.value("LightIndOutlineColor").toString()));
         }
     }
 

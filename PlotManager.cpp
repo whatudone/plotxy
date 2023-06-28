@@ -8,6 +8,8 @@
 #include "PlotAttitude.h"
 #include "PlotBar.h"
 #include "PlotDial.h"
+#include "PlotLight.h"
+#include "PlotManagerData.h"
 #include "PlotScatter.h"
 
 #include <QAction>
@@ -341,6 +343,31 @@ void PlotManager::initTextLightUI()
             &QRadioButton::clicked,
             this,
             &PlotManager::onRadioBox_FillByRowClicked);
+
+    connect(ui.comboBox_LightShape,
+            &QComboBox::currentTextChanged,
+            this,
+            &PlotManager::onComboBox_LightShapeChanged);
+    connect(ui.spinBox_LightWidth,
+            SIGNAL(valueChanged(int)),
+            this,
+            SLOT(onSpinBox_LightWidthChanged(int)));
+    connect(ui.spinBox_LightHeight,
+            SIGNAL(valueChanged(int)),
+            this,
+            SLOT(onSpinBox_LightHeightChanged(int)));
+    connect(ui.spinBox_LightTextYPos,
+            SIGNAL(valueChanged(int)),
+            this,
+            SLOT(onSpinBox_LightTextYPosChanged(int)));
+    connect(ui.spinBox_LightOutlineWidth,
+            SIGNAL(valueChanged(int)),
+            this,
+            SLOT(onSpinBox_LightOutlineWidthChanged(int)));
+    connect(ui.pushButton_LightOutlineColor,
+            &QPushButton::clicked,
+            this,
+            &PlotManager::onPushButton_LightOutlineColorClicked);
 }
 
 void PlotManager::initScatterLimitUI()
@@ -736,6 +763,16 @@ void PlotManager::refreshLightTextUI(PlotItemBase* plot)
                 QString temFirst = dataPairs[i]->getXEntityAttrPair();
                 QTableWidgetItem* temEntityAndAttri = new QTableWidgetItem(temFirst);
                 ui.tableWidget_LightDataSort->setItem(i, 0, temEntityAndAttri);
+            }
+            auto item = dynamic_cast<PlotLight*>(plot);
+            if(item)
+            {
+                ui.comboBox_LightShape->setCurrentText(item->getLightType());
+                ui.spinBox_LightWidth->setValue(item->getLightWidth());
+                ui.spinBox_LightHeight->setValue(item->getLightHeight());
+                ui.spinBox_LightTextYPos->setValue(item->getLightTextYPos());
+                ui.spinBox_LightOutlineWidth->setValue(item->getLightOutlineWidth());
+                ui.pushButton_LightOutlineColor->setColor(item->getLightOutlineColor());
             }
         }
         ui.pushButtonTextOutlineColor->setColor(plot->getOutlineColor());
@@ -1948,6 +1985,71 @@ void PlotManager::onSpinBox_NumColsChanged(int value)
     ui.spinBox_NumRows->blockSignals(true);
     ui.spinBox_NumRows->setValue(qCeil(double(m_curSelectPlot->getDataPairs().size()) / value));
     ui.spinBox_NumRows->blockSignals(false);
+}
+
+void PlotManager::onComboBox_LightShapeChanged(const QString& type)
+{
+    if(!m_curSelectPlot)
+        return;
+
+    if(type == "Rectangle")
+    {
+        ui.spinBox_LightHeight->setEnabled(true);
+    }
+    else if(type == "Square")
+    {
+        ui.spinBox_LightHeight->setEnabled(false);
+    }
+    else if(type == "Ellipse")
+    {
+        ui.spinBox_LightHeight->setEnabled(true);
+    }
+    else if(type == "Circle")
+    {
+        ui.spinBox_LightHeight->setEnabled(false);
+    }
+    if(auto plot = dynamic_cast<PlotLight*>(m_curSelectPlot))
+        plot->setLightType(type);
+}
+
+void PlotManager::onSpinBox_LightWidthChanged(int value)
+{
+    if(!m_curSelectPlot)
+        return;
+    if(auto plot = dynamic_cast<PlotLight*>(m_curSelectPlot))
+        plot->setLightWidth(value);
+}
+
+void PlotManager::onSpinBox_LightHeightChanged(int value)
+{
+    if(!m_curSelectPlot)
+        return;
+    if(auto plot = dynamic_cast<PlotLight*>(m_curSelectPlot))
+        plot->setLightHeight(value);
+}
+
+void PlotManager::onSpinBox_LightTextYPosChanged(int value)
+{
+    if(!m_curSelectPlot)
+        return;
+    if(auto plot = dynamic_cast<PlotLight*>(m_curSelectPlot))
+        plot->setLightTextYPos(value);
+}
+
+void PlotManager::onSpinBox_LightOutlineWidthChanged(int value)
+{
+    if(!m_curSelectPlot)
+        return;
+    if(auto plot = dynamic_cast<PlotLight*>(m_curSelectPlot))
+        plot->setLightOutlineWidth(value);
+}
+
+void PlotManager::onPushButton_LightOutlineColorClicked()
+{
+    if(!m_curSelectPlot)
+        return;
+    if(auto plot = dynamic_cast<PlotLight*>(m_curSelectPlot))
+        plot->setLightOutlineColor(ui.pushButton_LightOutlineColor->color());
 }
 
 void PlotManager::onTableWidget_plotDataItemSelectionChanged()
