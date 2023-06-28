@@ -137,6 +137,12 @@ public slots:
     void onRadioBox_FillByColClicked();
     void onSpinBox_NumRowsChanged(int value);
     void onSpinBox_NumColsChanged(int value);
+    void onComboBox_LightShapeChanged(const QString& type);
+    void onSpinBox_LightWidthChanged(int value);
+    void onSpinBox_LightHeightChanged(int value);
+    void onSpinBox_LightTextYPosChanged(int value);
+    void onSpinBox_LightOutlineWidthChanged(int value);
+    void onPushButton_LightOutlineColorClicked();
 
 	//Plot Data
 	void onTableWidget_plotDataItemSelectionChanged();

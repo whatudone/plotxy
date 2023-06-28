@@ -18,7 +18,7 @@ class PlotLight : public PlotItemBase
 	Q_OBJECT
 public:
 	PlotLight(QWidget* parent = Q_NULLPTR);
-	~PlotLight();
+    ~PlotLight() override;
 
     static int m_instanceCount; //实体个数
 
@@ -28,15 +28,35 @@ public:
     }
     struct DrawComponents
     {
-        QPointer<QCPItemEllipse> graph;
+        QPointer<QCPItemEllipse> ellipseGraph;
+        QPointer<QCPItemRect> rectGraph;
         QPointer<QCPItemText> text;
 
         DrawComponents()
         {
-            graph = nullptr;
+            ellipseGraph = nullptr;
+            rectGraph = nullptr;
             text = nullptr;
         }
     };
+
+    QString getLightType() const;
+    void setLightType(const QString& lightType);
+
+    int getLightWidth() const;
+    void setLightWidth(int lightWidth);
+
+    int getLightHeight() const;
+    void setLightHeight(int lightHeight);
+
+    int getLightTextYPos() const;
+    void setLightTextYPos(int lightTextYPos);
+
+    int getLightOutlineWidth() const;
+    void setLightOutlineWidth(int lightOutlineWidth);
+
+    QColor getLightOutlineColor() const;
+    void setLightOutlineColor(const QColor& lightOutlineColor);
 
 public slots:
     void onLightConstraintUpdate(
@@ -59,6 +79,8 @@ private:
     // 动态计算圆圈适合的半径
     void calculateRaidus();
 
+    void clearLineList();
+
 private:
     // 原始的属性-值约束信息，由添加数据对时的界面进行编辑，和数据对是独立的两对数据 entityid,attr,condition,threshold,colorName
     QList<std::tuple<int32_t, QString, QString, double, QString>> m_constraintList;
@@ -77,7 +99,15 @@ private:
     uint32_t m_innerPadding = 10;
     // 状态灯半径
     uint32_t m_circleRadius = 100;
-    // 是否按照行显示数据
-    bool m_isFilledByRow = true;
+
+    QString m_lightType; // light的形状：1-矩形 2-正方形 3-椭圆 4-圆
+    int m_lightWidth; //light的宽度
+    int m_lightHeight; //light的高度
+    int m_lightTextYPos; //light的文字Y位置
+    int m_lightOutlineWidth; //light灯的外边框线宽度
+    QColor m_lightOutlineColor; //light灯的外边框线颜色
+    QList<QCPItemLine*> m_horLineList; //水平网格线
+    QList<QCPItemLine*> m_verLineList; //竖直网格线
+    QList<QCPItemRect*> m_outRectList; //竖直网格线
 };
 #endif // _PLOT_LIGHT_H_

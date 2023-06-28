@@ -302,7 +302,7 @@ void PlotItemBase::setGridColorWidth(const QColor& color, int32_t width)
             m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
         }
     }
-    replot();
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
 }
 
 void PlotItemBase::setGridVisible(bool enable)
@@ -452,7 +452,7 @@ void PlotItemBase::setGridFillColor(const QColor& color)
         if(m_customPlot->xAxis && m_customPlot->yAxis)
             m_customPlot->axisRect()->setBackground(color);
     }
-    replot();
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
 }
 
 void PlotItemBase::setUnitsShowX(bool on)
@@ -1302,7 +1302,7 @@ int PlotItemBase::getColsNum() const
 void PlotItemBase::setColsNum(int colsNum)
 {
     m_colsNum = colsNum;
-    replot();
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
 }
 
 int PlotItemBase::getRowsNum() const
@@ -1313,7 +1313,7 @@ int PlotItemBase::getRowsNum() const
 void PlotItemBase::setRowsNum(int rowsNum)
 {
     m_rowsNum = rowsNum;
-    replot();
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
 }
 
 bool PlotItemBase::getIsFillByRow() const
@@ -1324,7 +1324,7 @@ bool PlotItemBase::getIsFillByRow() const
 void PlotItemBase::setIsFillByRow(bool isFillByRow)
 {
     m_isFillByRow = isFillByRow;
-    replot();
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
 }
 
 int PlotItemBase::getTextRightOffset() const
@@ -1335,7 +1335,7 @@ int PlotItemBase::getTextRightOffset() const
 void PlotItemBase::setTextRightOffset(int textRightOffset)
 {
     m_textRightOffset = textRightOffset;
-    replot();
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
 }
 
 int PlotItemBase::getTextLeftOffset() const
@@ -1346,7 +1346,7 @@ int PlotItemBase::getTextLeftOffset() const
 void PlotItemBase::setTextLeftOffset(int textLeftOffset)
 {
     m_textLeftOffset = textLeftOffset;
-    replot();
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
 }
 
 bool PlotItemBase::getIsColGridVisible() const
@@ -1357,7 +1357,7 @@ bool PlotItemBase::getIsColGridVisible() const
 void PlotItemBase::setIsColGridVisible(bool isColGridVisible)
 {
     m_isColGridVisible = isColGridVisible;
-    replot();
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
 }
 
 bool PlotItemBase::getIsRowGridVisible() const
@@ -1368,7 +1368,7 @@ bool PlotItemBase::getIsRowGridVisible() const
 void PlotItemBase::setIsRowGridVisible(bool isRowGridVisible)
 {
     m_isRowGridVisible = isRowGridVisible;
-    replot();
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
 }
 
 int PlotItemBase::getOutlineWidth() const

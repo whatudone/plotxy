@@ -4727,6 +4727,9 @@ background-color: rgb(127, 127, 127);</string>
                    <attribute name="horizontalHeaderStretchLastSection">
                     <bool>false</bool>
                    </attribute>
+                   <attribute name="verticalHeaderVisible">
+                    <bool>false</bool>
+                   </attribute>
                    <attribute name="verticalHeaderShowSortIndicator" stdset="0">
                     <bool>false</bool>
                    </attribute>
@@ -4753,7 +4756,24 @@ background-color: rgb(127, 127, 127);</string>
                <widget class="QWidget" name="page_LightDataSort">
                 <layout class="QVBoxLayout" name="verticalLayout_76">
                  <item>
-                  <widget class="QTableWidget" name="tableWidget_LightDataSort"/>
+                  <widget class="QTableWidget" name="tableWidget_LightDataSort">
+                   <property name="editTriggers">
+                    <set>QAbstractItemView::NoEditTriggers</set>
+                   </property>
+                   <property name="selectionBehavior">
+                    <enum>QAbstractItemView::SelectRows</enum>
+                   </property>
+                   <property name="columnCount">
+                    <number>1</number>
+                   </property>
+                   <attribute name="horizontalHeaderVisible">
+                    <bool>false</bool>
+                   </attribute>
+                   <attribute name="verticalHeaderVisible">
+                    <bool>false</bool>
+                   </attribute>
+                   <column/>
+                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -5063,15 +5083,18 @@ background-color: rgb(127, 127, 127);</string>
               </property>
               <item>
                <layout class="QGridLayout" name="gridLayout_27">
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label_174">
+                <item row="5" column="0">
+                 <widget class="QLabel" name="label_115">
                   <property name="text">
-                   <string>Fill By Row:</string>
+                   <string>Row Pad:</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                   </property>
                  </widget>
+                </item>
+                <item row="5" column="1" colspan="2">
+                 <widget class="QSpinBox" name="spinBox_RowPad"/>
                 </item>
                 <item row="0" column="1" colspan="2">
                  <widget class="QRadioButton" name="radioButton_FillByRow">
@@ -5080,50 +5103,10 @@ background-color: rgb(127, 127, 127);</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_112">
-                  <property name="text">
-                   <string>Num Rows:</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1" colspan="2">
-                 <widget class="QSpinBox" name="spinBox_NumRows">
-                  <property name="minimum">
-                   <number>1</number>
-                  </property>
-                 </widget>
-                </item>
                 <item row="2" column="0">
                  <widget class="QLabel" name="label_114">
                   <property name="text">
                    <string>Column Pad:</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1" colspan="2">
-                 <widget class="QSpinBox" name="spinBox_ColPad"/>
-                </item>
-                <item row="3" column="0">
-                 <widget class="QLabel" name="label_175">
-                  <property name="text">
-                   <string>Fill By Col:</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="5" column="0">
-                 <widget class="QLabel" name="label_115">
-                  <property name="text">
-                   <string>Row Pad:</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -5140,8 +5123,42 @@ background-color: rgb(127, 127, 127);</string>
                   </property>
                  </widget>
                 </item>
-                <item row="5" column="1" colspan="2">
-                 <widget class="QSpinBox" name="spinBox_RowPad"/>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_174">
+                  <property name="text">
+                   <string>Fill By Row:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1" colspan="2">
+                 <widget class="QSpinBox" name="spinBox_NumRows">
+                  <property name="minimum">
+                   <number>1</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1" colspan="2">
+                 <widget class="QSpinBox" name="spinBox_ColPad"/>
+                </item>
+                <item row="4" column="1" colspan="2">
+                 <widget class="QSpinBox" name="spinBox_NumCols">
+                  <property name="minimum">
+                   <number>1</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_112">
+                  <property name="text">
+                   <string>Num Rows:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
                 </item>
                 <item row="4" column="0">
                  <widget class="QLabel" name="label_113">
@@ -5153,10 +5170,13 @@ background-color: rgb(127, 127, 127);</string>
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="1" colspan="2">
-                 <widget class="QSpinBox" name="spinBox_NumCols">
-                  <property name="minimum">
-                   <number>1</number>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="label_175">
+                  <property name="text">
+                   <string>Fill By Col:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                   </property>
                  </widget>
                 </item>
@@ -5181,22 +5201,86 @@ background-color: rgb(127, 127, 127);</string>
                <number>5</number>
               </property>
               <item>
-               <layout class="QGridLayout" name="gridLayout_28">
+               <layout class="QGridLayout" name="gridLayout_28" rowstretch="0,0,0,0" columnstretch="0,0,0,0">
                 <property name="spacing">
                  <number>0</number>
                 </property>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label_176">
+                <item row="0" column="3">
+                 <widget class="QCheckBox" name="checkBox_LightSameSizes">
                   <property name="text">
-                   <string>Shape:</string>
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QSpinBox" name="spinBox_LightTextYPos">
+                  <property name="minimum">
+                   <number>0</number>
+                  </property>
+                  <property name="maximum">
+                   <number>999</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QSpinBox" name="spinBox_LightWidth">
+                  <property name="minimum">
+                   <number>1</number>
+                  </property>
+                  <property name="maximum">
+                   <number>999</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="3">
+                 <widget class="QSpinBox" name="spinBox_LightHeight">
+                  <property name="minimum">
+                   <number>1</number>
+                  </property>
+                  <property name="maximum">
+                   <number>999</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="label_179">
+                  <property name="text">
+                   <string>Outline Width:</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="1">
-                 <widget class="QComboBox" name="comboBox_26"/>
+                <item row="3" column="2">
+                 <widget class="QLabel" name="label_182">
+                  <property name="text">
+                   <string>Outline Color:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QSpinBox" name="spinBox_LightOutlineWidth">
+                  <property name="maximum">
+                   <number>999</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="3">
+                 <widget class="ColorButton" name="pushButton_LightOutlineColor">
+                  <property name="maximumSize">
+                   <size>
+                    <width>30</width>
+                    <height>30</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
                 </item>
                 <item row="0" column="2">
                  <widget class="QLabel" name="label_180">
@@ -5205,46 +5289,6 @@ background-color: rgb(127, 127, 127);</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="3">
-                 <widget class="QCheckBox" name="checkBox">
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_177">
-                  <property name="text">
-                   <string>Width:</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QComboBox" name="comboBox_27"/>
-                </item>
-                <item row="1" column="2">
-                 <widget class="QLabel" name="label_181">
-                  <property name="text">
-                   <string>Height:</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="3">
-                 <widget class="QComboBox" name="comboBox_30">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
                   </property>
                  </widget>
                 </item>
@@ -5258,43 +5302,61 @@ background-color: rgb(127, 127, 127);</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
-                 <widget class="QComboBox" name="comboBox_28"/>
-                </item>
-                <item row="3" column="0">
-                 <widget class="QLabel" name="label_179">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_176">
                   <property name="text">
-                   <string>Outline Width:</string>
+                   <string>Shape:</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="1">
-                 <widget class="QComboBox" name="comboBox_29"/>
-                </item>
-                <item row="3" column="2">
-                 <widget class="QLabel" name="label_182">
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_177">
                   <property name="text">
-                   <string>Outline Color:</string>
+                   <string>Width:</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="3">
-                 <widget class="ColorButton" name="pushButton_96">
-                  <property name="maximumSize">
-                   <size>
-                    <width>30</width>
-                    <height>30</height>
-                   </size>
-                  </property>
+                <item row="1" column="2">
+                 <widget class="QLabel" name="label_181">
                   <property name="text">
-                   <string/>
+                   <string>Height:</string>
                   </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QComboBox" name="comboBox_LightShape">
+                  <property name="currentIndex">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <property name="text">
+                    <string>Rectangle</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Square</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Ellipse</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Circle</string>
+                   </property>
+                  </item>
                  </widget>
                 </item>
                </layout>
