@@ -238,7 +238,7 @@ private:
 	QRect m_tabWidgetRect;
     // 本界面当前选中图表，不影响主界面选中图表
     PlotItemBase* m_curSelectPlot = nullptr;
-
+    // 不同图表的Text可编辑属性不同
     QMap<PlotType, QList<QString>> m_itemTextEditableMap;
 };
 

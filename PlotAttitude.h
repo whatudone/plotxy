@@ -19,16 +19,16 @@ public:
     void drawBg(QPainter* painter, int radius);
     void drawScale_roll(QPainter* painter, int radius);
     void drawScale_pitch(QPainter* painter, int radius);
-    void drawLine_roll(QPainter* painter, int radius);
-    void drawLine_pitch(QPainter* painter, int radius);
+    void drawRollIndicator(QPainter* painter, int radius);
+    void drawPitchIndicator(QPainter* painter, int radius);
     void drawText_roll(QPainter* painter, int radius);
     void drawText_pitch(QPainter* painter, int radius);
 
 private:
     QColor m_border_ColorStart; //边框渐变开始颜色
     QColor m_border_ColorEnd; //边框渐变结束颜色
-    QColor m_rollColor; //roll主题颜色
-    QColor m_pitchColor; //pitch主题颜色
+    QColor m_rollColor; //roll主题颜色,和基类中的颜色不冲突
+    QColor m_pitchColor; //pitch主题颜色,和基类中的颜色不冲突
 
     double m_pitchValue; //旋转角度
     double m_rollValue; //滚动值
@@ -47,6 +47,9 @@ public:
     QColor getBorderOutColorEnd() const;
     QColor getRollColor() const;
     QColor getPitchColor() const;
+
+    void setRollColor(const QColor& color);
+    void setPitchColor(const QColor& color);
 
     float getPitchValue() const;
     float getRollValue() const;
@@ -99,10 +102,6 @@ public:
 
 	//设置背景色
 	void setGridFillColor(QColor bgColor);
-
-	//设置刻度尺颜色
-    void setRollColor(const QColor& color);
-    void setPitchColor(const QColor& color);
 
 	//设置刻度字体
     void setTickLabelFont(QFont& font);

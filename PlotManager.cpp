@@ -396,7 +396,12 @@ void PlotManager::initEditableMap()
     m_itemTextEditableMap.insert(PlotType::Type_PlotLight, QList<QString>() << "Title");
     m_itemTextEditableMap.insert(PlotType::Type_PlotBar, QList<QString>() << "Title");
     m_itemTextEditableMap.insert(PlotType::Type_PlotDial, QList<QString>() << "Title");
-    m_itemTextEditableMap.insert(PlotType::Type_PlotAttitude, QList<QString>() << "Title");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotAttitude,
+                                 QList<QString>() << "Title"
+                                                  << "X-Axis Data"
+                                                  << "Y-Axis Data"
+                                                  << "Roll Data"
+                                                  << "Pitch Data");
     m_itemTextEditableMap.insert(PlotType::Type_PlotPolar, QList<QString>() << "Title");
     m_itemTextEditableMap.insert(PlotType::Type_PlotTrack, QList<QString>() << "Title");
     m_itemTextEditableMap.insert(PlotType::Type_PlotDoppler, QList<QString>() << "Title");
@@ -2234,6 +2239,7 @@ void PlotManager::onListWidgetItemChanged()
 
     if(strItem == "Title")
     {
+        ui.lineEdit_26->setEnabled(true);
         ui.checkBox_14->setChecked(m_curSelectPlot->getTitleVisible());
         ui.lineEdit_26->setText(m_curSelectPlot->getTitle());
         ui.pushButton_22->setColor(m_curSelectPlot->getTitleColor());
@@ -2241,8 +2247,9 @@ void PlotManager::onListWidgetItemChanged()
         ui.fontComboBox_2->setCurrentFont(m_curSelectPlot->getTitleFont());
         ui.spinBox_FontSize->setValue(m_curSelectPlot->getTitleFontSize());
     }
-    else if(strItem == "X-Axis Description")
+    else if(strItem == "X-Axis Description" || strItem == "Roll Data")
     {
+        ui.lineEdit_26->setEnabled(true);
         ui.checkBox_14->setChecked(m_curSelectPlot->getxAxisLabelVisible());
         ui.lineEdit_26->setText(m_curSelectPlot->getxAxisLabel());
         ui.pushButton_22->setColor(m_curSelectPlot->getxAxisLabelColor());
@@ -2250,8 +2257,9 @@ void PlotManager::onListWidgetItemChanged()
         ui.fontComboBox_2->setCurrentFont(m_curSelectPlot->getxAxisLabelFont());
         ui.spinBox_FontSize->setValue(m_curSelectPlot->getxAxisLabelFontSize());
     }
-    else if(strItem == "Y-Axis Description")
+    else if(strItem == "Y-Axis Description" || strItem == "Pitch Data")
     {
+        ui.lineEdit_26->setEnabled(true);
         ui.checkBox_14->setChecked(m_curSelectPlot->getyAxisLabelVisible());
         ui.lineEdit_26->setText(m_curSelectPlot->getyAxisLabel());
         ui.pushButton_22->setColor(m_curSelectPlot->getyAxisLabelColor());
@@ -2261,7 +2269,8 @@ void PlotManager::onListWidgetItemChanged()
     }
     else if(strItem == "X-Axis Data")
     {
-        ui.checkBox_14->setChecked(m_curSelectPlot->getxAxisLabelVisible());
+        ui.lineEdit_26->setEnabled(false);
+        ui.checkBox_14->setChecked(m_curSelectPlot->getxAxisTickLabelVisible());
         ui.lineEdit_26->setText("");
         ui.pushButton_22->setColor(m_curSelectPlot->getxTickLabelColor());
         ui.pushButton_23->setColor(Qt::black);
@@ -2270,7 +2279,8 @@ void PlotManager::onListWidgetItemChanged()
     }
     else if(strItem == "Y-Axis Data")
     {
-        ui.checkBox_14->setChecked(m_curSelectPlot->getyAxisLabelVisible());
+        ui.lineEdit_26->setEnabled(false);
+        ui.checkBox_14->setChecked(m_curSelectPlot->getyAxisTickLabelVisible());
         ui.lineEdit_26->setText("");
         ui.pushButton_22->setColor(m_curSelectPlot->getyTickLabelColor());
         ui.pushButton_23->setColor(Qt::black);
@@ -2296,7 +2306,7 @@ void PlotManager::textSettingChanged()
         m_curSelectPlot->setTitleFont(ui.fontComboBox_2->currentFont());
         m_curSelectPlot->setTitleFontSize(ui.spinBox_FontSize->value());
     }
-    else if(strItem == "X-Axis Description")
+    else if(strItem == "X-Axis Description" || strItem == "Roll Data")
     {
         m_curSelectPlot->setxAxisLabel(ui.lineEdit_26->text());
         m_curSelectPlot->setxAxisLabelVisible(ui.checkBox_14->isChecked());
@@ -2304,7 +2314,7 @@ void PlotManager::textSettingChanged()
         m_curSelectPlot->setxAxisLabelFont(ui.fontComboBox_2->currentFont());
         m_curSelectPlot->setxAxisLabelFontSize(ui.spinBox_FontSize->value());
     }
-    else if(strItem == "Y-Axis Description")
+    else if(strItem == "Y-Axis Description" || strItem == "Pitch Data")
     {
         m_curSelectPlot->setyAxisLabel(ui.lineEdit_26->text());
         m_curSelectPlot->setyAxisLabelVisible(ui.checkBox_14->isChecked());

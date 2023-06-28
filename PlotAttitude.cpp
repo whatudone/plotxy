@@ -12,15 +12,19 @@ PlotAttitude::PlotAttitude(QWidget* parent)
 {
 	m_border_ColorStart = Qt::white;
 	m_border_ColorEnd = Qt::white;
-	m_rollColor = Qt::white;
-	m_pitchColor = Qt::red;
+    m_rollColor = Qt::white;
+    m_pitchColor = Qt::red;
+    m_xAxisLabelColor = Qt::white;
+    m_yAxisLabelColor = Qt::red;
+    m_xTickLabelColor = Qt::white;
+    m_yTickLabelColor = Qt::white;
 
 	m_tickRadiusPercentage = 100;
 	m_textPercentage = 125;
 	m_dialPercentage = 100;
 
-	m_pitchValue = 0.0;
-	m_rollValue = 0.0;
+    m_pitchValue = std::numeric_limits<double>::max();
+    m_rollValue = std::numeric_limits<double>::max();
 
     m_coordBgn_y = -90.0;
     m_coordEnd_y = 90.0;
@@ -80,6 +84,7 @@ void PlotAttitude::drawBg(QPainter* painter, int radius)
 
 void PlotAttitude::drawScale_roll(QPainter* painter, int radius)
 {
+    m_xTickLabelFont.setPixelSize(m_xTickLabelFontSize);
     QFontMetricsF fm(m_xTickLabelFont);
 
 	painter->save();
@@ -114,7 +119,7 @@ void PlotAttitude::drawScale_roll(QPainter* painter, int radius)
         int x_R = R * sin(rad) - w / 2;
 		int y_R = R * cos(rad) * (-1) + h / 4;
 
-		painter->setPen(QPen(m_rollColor));
+        painter->setPen(QPen(m_xTickLabelColor));
 		painter->drawText(x_R, y_R, str);
 	}
 	painter->restore();
@@ -123,18 +128,19 @@ void PlotAttitude::drawScale_roll(QPainter* painter, int radius)
 void PlotAttitude::drawScale_pitch(QPainter* painter, int radius)
 {
 	painter->save();
-    QFontMetricsF fm(m_xTickLabelFont);
+    m_yTickLabelFont.setPixelSize(m_yTickLabelFontSize);
+    QFontMetricsF fm(m_yTickLabelFont);
     double x, y;
 
-    painter->setFont(m_xTickLabelFont);
-	painter->setPen(QPen(m_pitchColor));
+    painter->setFont(m_yTickLabelFont);
+    painter->setPen(QPen(m_yTickLabelColor));
 	QString str, strNum;
     double eachMajor_pitch = (m_coordEnd_y - m_coordBgn_y) / (m_vertGrids - 1);
     // 最底下的刻度点
     QPointF tickPoint(0, radius);
     int32_t step = 2 * radius / (m_vertGrids - 1);
     // 从上往下绘制
-    for(uint i = 0; i < m_vertGrids; ++i)
+    for(int32_t i = 0; i < m_vertGrids; ++i)
 	{
         strNum = QString::number(eachMajor_pitch * i + m_coordBgn_y, 'f', m_yPrecision);
 		if(m_showUnits_y)
@@ -144,17 +150,17 @@ void PlotAttitude::drawScale_pitch(QPainter* painter, int radius)
         double tickLabelWidth = fm.size(Qt::TextSingleLine, str).width() + 10;
         double tickLabelHeight = fm.size(Qt::TextSingleLine, str).height();
         x = -tickLabelWidth;
-        y = tickPoint.y() - i * step - tickLabelHeight;
+        y = tickPoint.y() - i * step - tickLabelHeight + fm.ascent();
         painter->drawText(QPointF(x, y), str);
 	}
 
 	painter->restore();
 }
 
-void PlotAttitude::drawLine_roll(QPainter* painter, int radius)
+void PlotAttitude::drawRollIndicator(QPainter* painter, int radius)
 {
 	painter->save();
-	painter->setPen(QPen(m_rollColor, 4));
+    painter->setPen(QPen(m_rollColor, 4));
 	double range = abs(m_coordEnd_x - m_coordBgn_x);
 	painter->rotate((fmodf(m_rollValue, range) - m_coordBgn_x) * 360.0 / range);
 	painter->drawLine(QPoint(-radius / 2, 0), QPoint(radius / 2, 0));
@@ -163,10 +169,10 @@ void PlotAttitude::drawLine_roll(QPainter* painter, int radius)
 	painter->restore();
 }
 
-void PlotAttitude::drawLine_pitch(QPainter* painter, int radius)
+void PlotAttitude::drawPitchIndicator(QPainter* painter, int radius)
 {
 	painter->save();
-	painter->setPen(QPen(m_pitchColor, 4));
+    painter->setPen(QPen(m_pitchColor, 4));
 	double range = abs(m_coordEnd_y - m_coordBgn_y);
 
 	double translate_y = radius - (fmodf(m_pitchValue, range) - m_coordBgn_y) / range * 2 * radius;
@@ -180,9 +186,9 @@ void PlotAttitude::drawText_roll(QPainter* painter, int radius)
 	radius = radius * m_textPercentage / 100;
 	painter->save();
 
+    m_xAxisLabelFont.setPixelSize(m_xAxisLabelFontSize);
     painter->setFont(m_xAxisLabelFont);
-	painter->setPen(QPen(m_rollColor));
-
+    painter->setPen(QPen(m_xAxisLabelColor));
     QFontMetricsF fm(m_xAxisLabelFont);
 	double h = fm.size(Qt::TextSingleLine, m_xAxisLabel).height();
 	double w = fm.size(Qt::TextSingleLine, m_xAxisLabel).width();
@@ -212,12 +218,13 @@ void PlotAttitude::drawText_roll(QPainter* painter, int radius)
 
 void PlotAttitude::drawText_pitch(QPainter* painter, int radius)
 {
+    m_yAxisLabelFont.setPixelSize(m_yAxisLabelFontSize);
 	radius = radius * m_textPercentage / 100;
 	painter->save();
-    painter->setFont(m_xAxisLabelFont);
-	painter->setPen(QPen(m_pitchColor));
+    painter->setFont(m_yAxisLabelFont);
+    painter->setPen(QPen(m_yAxisLabelColor));
 
-    QFontMetricsF fm(m_xAxisLabelFont);
+    QFontMetricsF fm(m_yAxisLabelFont);
 	double h = fm.size(Qt::TextSingleLine, m_yAxisLabel).height();
 	double w = fm.size(Qt::TextSingleLine, m_yAxisLabel).width();
 	double rad = qDegreesToRadians(45.0);
@@ -256,12 +263,12 @@ QColor PlotAttitude::getBorderOutColorEnd() const
 
 QColor PlotAttitude::getRollColor() const
 {
-	return m_rollColor;
+    return m_rollColor;
 }
 
 QColor PlotAttitude::getPitchColor() const
 {
-	return m_pitchColor;
+    return m_pitchColor;
 }
 
 float PlotAttitude::getPitchValue() const
@@ -380,13 +387,15 @@ void PlotAttitude::setGridFillColor(QColor bgColor)
 
 void PlotAttitude::setRollColor(const QColor& color)
 {
-	m_rollColor = color;
+    m_rollColor = color;
+    m_xAxisLabelColor = color;
 	update();
 }
 
 void PlotAttitude::setPitchColor(const QColor& color)
 {
-	m_pitchColor = color;
+    m_pitchColor = color;
+    m_yAxisLabelColor = color;
 	update();
 }
 
@@ -517,8 +526,8 @@ void PlotAttitude::customPainting(QPainter& painter)
     if(dataPair->isDraw())
     {
         //绘制线条
-        drawLine_roll(&painter, radius);
-        drawLine_pitch(&painter, radius);
+        drawRollIndicator(&painter, radius);
+        drawPitchIndicator(&painter, radius);
         //绘制文本
         drawText_roll(&painter, radius);
         drawText_pitch(&painter, radius);

@@ -40,7 +40,9 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
     , m_mouseMode(MouseMode::SelectPlot)
 {
     ui.setupUi(this);
+#ifndef QT_DEBUG
     setWindowFlag(Qt::FramelessWindowHint, true);
+#endif
 
     init();
 
