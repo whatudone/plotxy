@@ -1,12 +1,13 @@
 ﻿#include "PlotManager.h"
 #include "AddPlotPair.h"
 #include "DataManager.h"
+#include "PlotManagerData.h"
 #include "TimeClass.h"
 
 #include "PlotAScope.h"
 #include "PlotAttitude.h"
+#include "PlotBar.h"
 #include "PlotDial.h"
-#include "PlotManagerData.h"
 #include "PlotScatter.h"
 
 #include <QAction>
@@ -44,19 +45,6 @@ PlotManager::PlotManager(QWidget* parent)
             SIGNAL(itemClicked(QTreeWidgetItem*, int)),
             this,
             SLOT(onTWSPclicked(QTreeWidgetItem*, int)));
-    connect(ui.spinBox_between,
-            QOverload<int>::of(&QSpinBox::valueChanged),
-            this,
-            &PlotManager::spinboxBetweenChanged);
-    connect(ui.spinBox_left,
-            QOverload<int>::of(&QSpinBox::valueChanged),
-            this,
-            &PlotManager::spinboxLeftChanged);
-    connect(ui.spinBox_right,
-            QOverload<int>::of(&QSpinBox::valueChanged),
-            this,
-            &PlotManager::spinboxRightChanged);
-    connect(ui.checkBox_32, &QCheckBox::stateChanged, this, &PlotManager::onBarHorizonChanged);
 }
 
 PlotManager::~PlotManager() {}
@@ -390,10 +378,15 @@ void PlotManager::initEditableMap()
                                                   << "Y-Axis Description"
                                                   << "X-Axis Data"
                                                   << "Y-Axis Data");
-    m_itemTextEditableMap.insert(PlotType::Type_PlotAScope, QList<QString>() << "Title");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotAScope,
+                                 QList<QString>() << "Title"
+                                                  << "X-Axis Description"
+                                                  << "Y-Axis Description"
+                                                  << "X-Axis Data"
+                                                  << "Y-Axis Data");
     m_itemTextEditableMap.insert(PlotType::Type_PlotRTI, QList<QString>() << "Title");
-    m_itemTextEditableMap.insert(PlotType::Type_PlotText, QList<QString>() << "Title");
-    m_itemTextEditableMap.insert(PlotType::Type_PlotLight, QList<QString>() << "Title");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotText, QList<QString>() << "Title"); //完成
+    m_itemTextEditableMap.insert(PlotType::Type_PlotLight, QList<QString>() << "Title"); //完成
     m_itemTextEditableMap.insert(PlotType::Type_PlotBar, QList<QString>() << "Title");
     m_itemTextEditableMap.insert(PlotType::Type_PlotDial, QList<QString>() << "Title");
     m_itemTextEditableMap.insert(PlotType::Type_PlotAttitude,
@@ -509,6 +502,23 @@ void PlotManager::initGOGUI()
     connect(ui.listWidget_2, &QListWidget::itemClicked, this, &PlotManager::onListWidget_2Clicked);
 }
 
+void PlotManager::initBarUI()
+{
+    connect(ui.checkBoxBarHor, &QCheckBox::stateChanged, this, &PlotManager::onBarHorizonChanged);
+    connect(ui.spinBox_between,
+            QOverload<int>::of(&QSpinBox::valueChanged),
+            this,
+            &PlotManager::spinboxBetweenChanged);
+    connect(ui.spinBox_left,
+            QOverload<int>::of(&QSpinBox::valueChanged),
+            this,
+            &PlotManager::spinboxLeftChanged);
+    connect(ui.spinBox_right,
+            QOverload<int>::of(&QSpinBox::valueChanged),
+            this,
+            &PlotManager::spinboxRightChanged);
+}
+
 void PlotManager::initDialUI()
 {
     connect(ui.spinBox_21, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_21ValueChanged(int)));
@@ -574,6 +584,7 @@ void PlotManager::refreshTreeWidgetSettingEnabled(PlotItemBase* plot)
     else if(type == PlotType::Type_PlotBar)
     {
         enableItem_Bar();
+        refreshBarUI(m_curSelectPlot);
     }
     else if(type == PlotType::Type_PlotDial)
     {
@@ -771,6 +782,17 @@ void PlotManager::refreshAttitudeUI(PlotItemBase* plot)
     ui.spinBox_29->setValue(item->getTickRadiusPercentage());
     ui.spinBox_30->setValue(item->getTextPercentage());
     ui.spinBox_31->setValue(item->getDialPercentage());
+}
+
+void PlotManager::refreshBarUI(PlotItemBase* plot)
+{
+    if(auto bar = dynamic_cast<PlotBar*>(plot))
+    {
+        ui.checkBoxBarHor->setChecked(bar->getIsHorizonBar());
+        ui.spinBox_between->setValue(bar->getBarBetweenPadding());
+        ui.spinBox_right->setValue(bar->getBarRightPadding());
+        ui.spinBox_left->setValue(bar->getBarLeftPadding());
+    }
 }
 
 void PlotManager::refreshDialUI(PlotItemBase* plot)

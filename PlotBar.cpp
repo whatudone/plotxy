@@ -65,8 +65,8 @@ void PlotBar::initPlot()
     m_customPlot = new QCustomPlot();
     valueAxis()->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
     keyAxis()->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
-    valueAxis()->ticker()->setTickCount(int(m_vertGrids));
-    keyAxis()->ticker()->setTickCount(int(m_horzGrids));
+    valueAxis()->ticker()->setTickCount(m_vertGrids);
+    keyAxis()->ticker()->setTickCount(m_horzGrids);
     valueAxis()->setTickLabelColor(m_yTickLabelColor);
     keyAxis()->setTickLabelColor(m_xTickLabelColor);
     valueAxis()->setTickLabelFont(m_yTickLabelFont);
