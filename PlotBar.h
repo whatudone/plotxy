@@ -59,20 +59,6 @@ protected:
 
     void setIsHorizonBar(bool isHorizonBar) override;
 
-    void setyTickLabelVisible(bool show) override;
-    void setyTickLabelColor(const QColor& color) override;
-    void setyTickLabelFont(const QFont& font) override;
-    void setyTickLabelFontSize(int size) override;
-
-    void setyAxisLabelVisible(bool on) override;
-    void setyAxisLabel(const QString& label) override;
-    void setyAxisLabelColor(const QColor& color) override;
-    void setyAxisLabelFont(const QFont& font) override;
-    void setyAxisLabelFontSize(int size) override;
-
-    void setUnitsShowX(bool on) override;
-    void setUnitsShowY(bool on) override;
-
 private:
     QMap<QString, QList<std::tuple<QString, double, QColor>>>
         m_allColorInfoList; //QString:colorname，double:lower limit,QColor:color

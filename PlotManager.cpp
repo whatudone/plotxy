@@ -5,7 +5,6 @@
 
 #include "PlotAScope.h"
 #include "PlotAttitude.h"
-#include "PlotBar.h"
 #include "PlotDial.h"
 #include "PlotManagerData.h"
 #include "PlotScatter.h"
@@ -45,6 +44,19 @@ PlotManager::PlotManager(QWidget* parent)
             SIGNAL(itemClicked(QTreeWidgetItem*, int)),
             this,
             SLOT(onTWSPclicked(QTreeWidgetItem*, int)));
+    connect(ui.spinBox_between,
+            QOverload<int>::of(&QSpinBox::valueChanged),
+            this,
+            &PlotManager::spinboxBetweenChanged);
+    connect(ui.spinBox_left,
+            QOverload<int>::of(&QSpinBox::valueChanged),
+            this,
+            &PlotManager::spinboxLeftChanged);
+    connect(ui.spinBox_right,
+            QOverload<int>::of(&QSpinBox::valueChanged),
+            this,
+            &PlotManager::spinboxRightChanged);
+    connect(ui.checkBox_32, &QCheckBox::stateChanged, this, &PlotManager::onBarHorizonChanged);
 }
 
 PlotManager::~PlotManager() {}
@@ -62,7 +74,6 @@ void PlotManager::init()
     initTextEditUI();
     initAttitudeUI();
     initTextLightUI();
-    initBarUI();
     initDialUI();
 
     initEditableMap();
@@ -379,19 +390,11 @@ void PlotManager::initEditableMap()
                                                   << "Y-Axis Description"
                                                   << "X-Axis Data"
                                                   << "Y-Axis Data");
-    m_itemTextEditableMap.insert(PlotType::Type_PlotAScope,
-                                 QList<QString>() << "Title"
-                                                  << "X-Axis Description"
-                                                  << "Y-Axis Description"
-                                                  << "X-Axis Data"
-                                                  << "Y-Axis Data");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotAScope, QList<QString>() << "Title");
     m_itemTextEditableMap.insert(PlotType::Type_PlotRTI, QList<QString>() << "Title");
     m_itemTextEditableMap.insert(PlotType::Type_PlotText, QList<QString>() << "Title");
-    m_itemTextEditableMap.insert(PlotType::Type_PlotLight, QList<QString>() << "Title"); //完成
-    m_itemTextEditableMap.insert(PlotType::Type_PlotBar,
-                                 QList<QString>() << "Title"
-                                                  << "Axis Description"
-                                                  << "Axis Data");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotLight, QList<QString>() << "Title");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotBar, QList<QString>() << "Title");
     m_itemTextEditableMap.insert(PlotType::Type_PlotDial, QList<QString>() << "Title");
     m_itemTextEditableMap.insert(PlotType::Type_PlotAttitude,
                                  QList<QString>() << "Title"
@@ -400,10 +403,7 @@ void PlotManager::initEditableMap()
                                                   << "Roll Data"
                                                   << "Pitch Data");
     m_itemTextEditableMap.insert(PlotType::Type_PlotPolar, QList<QString>() << "Title");
-    m_itemTextEditableMap.insert(PlotType::Type_PlotTrack,
-                                 QList<QString>() << "Title"
-                                                  << "Axis Description"
-                                                  << "Axis Data");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotTrack, QList<QString>() << "Title");
     m_itemTextEditableMap.insert(PlotType::Type_PlotDoppler, QList<QString>() << "Title");
 }
 
@@ -509,23 +509,6 @@ void PlotManager::initGOGUI()
     connect(ui.listWidget_2, &QListWidget::itemClicked, this, &PlotManager::onListWidget_2Clicked);
 }
 
-void PlotManager::initBarUI()
-{
-    connect(ui.checkBoxBarHor, &QCheckBox::stateChanged, this, &PlotManager::onBarHorizonChanged);
-    connect(ui.spinBox_between,
-            QOverload<int>::of(&QSpinBox::valueChanged),
-            this,
-            &PlotManager::spinboxBetweenChanged);
-    connect(ui.spinBox_left,
-            QOverload<int>::of(&QSpinBox::valueChanged),
-            this,
-            &PlotManager::spinboxLeftChanged);
-    connect(ui.spinBox_right,
-            QOverload<int>::of(&QSpinBox::valueChanged),
-            this,
-            &PlotManager::spinboxRightChanged);
-}
-
 void PlotManager::initDialUI()
 {
     connect(ui.spinBox_21, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_21ValueChanged(int)));
@@ -591,7 +574,6 @@ void PlotManager::refreshTreeWidgetSettingEnabled(PlotItemBase* plot)
     else if(type == PlotType::Type_PlotBar)
     {
         enableItem_Bar();
-        refreshBarUI(m_curSelectPlot);
     }
     else if(type == PlotType::Type_PlotDial)
     {
@@ -789,17 +771,6 @@ void PlotManager::refreshAttitudeUI(PlotItemBase* plot)
     ui.spinBox_29->setValue(item->getTickRadiusPercentage());
     ui.spinBox_30->setValue(item->getTextPercentage());
     ui.spinBox_31->setValue(item->getDialPercentage());
-}
-
-void PlotManager::refreshBarUI(PlotItemBase* plot)
-{
-    if(auto bar = dynamic_cast<PlotBar*>(plot))
-    {
-        ui.checkBoxBarHor->setChecked(bar->getIsHorizonBar());
-        ui.spinBox_between->setValue(bar->getBarBetweenPadding());
-        ui.spinBox_right->setValue(bar->getBarRightPadding());
-        ui.spinBox_left->setValue(bar->getBarLeftPadding());
-    }
 }
 
 void PlotManager::refreshDialUI(PlotItemBase* plot)
@@ -2286,8 +2257,7 @@ void PlotManager::onListWidgetItemChanged()
         ui.fontComboBox_2->setCurrentFont(m_curSelectPlot->getxAxisLabelFont());
         ui.spinBox_FontSize->setValue(m_curSelectPlot->getxAxisLabelFontSize());
     }
-    else if(strItem == "Y-Axis Description" || strItem == "Pitch Data" ||
-            strItem == "Axis Description")
+    else if(strItem == "Y-Axis Description" || strItem == "Pitch Data")
     {
         ui.lineEdit_26->setEnabled(true);
         ui.checkBox_14->setChecked(m_curSelectPlot->getyAxisLabelVisible());
@@ -2307,7 +2277,7 @@ void PlotManager::onListWidgetItemChanged()
         ui.fontComboBox_2->setCurrentFont(m_curSelectPlot->getxTickLabelFont());
         ui.spinBox_FontSize->setValue(m_curSelectPlot->getxTickLabelFontSize());
     }
-    else if(strItem == "Y-Axis Data" || strItem == "Axis Data")
+    else if(strItem == "Y-Axis Data")
     {
         ui.lineEdit_26->setEnabled(false);
         ui.checkBox_14->setChecked(m_curSelectPlot->getyAxisTickLabelVisible());
@@ -2344,8 +2314,7 @@ void PlotManager::textSettingChanged()
         m_curSelectPlot->setxAxisLabelFont(ui.fontComboBox_2->currentFont());
         m_curSelectPlot->setxAxisLabelFontSize(ui.spinBox_FontSize->value());
     }
-    else if(strItem == "Y-Axis Description" || strItem == "Pitch Data" ||
-            strItem == "Axis Description")
+    else if(strItem == "Y-Axis Description" || strItem == "Pitch Data")
     {
         m_curSelectPlot->setyAxisLabel(ui.lineEdit_26->text());
         m_curSelectPlot->setyAxisLabelVisible(ui.checkBox_14->isChecked());
@@ -2360,7 +2329,7 @@ void PlotManager::textSettingChanged()
         m_curSelectPlot->setxTickLabelFontSize(ui.spinBox_FontSize->value());
         m_curSelectPlot->setxTickLabelColor(ui.pushButton_22->color());
     }
-    else if(strItem == "Y-Axis Data" || strItem == "Axis Data")
+    else if(strItem == "Y-Axis Data")
     {
         m_curSelectPlot->setyTickLabelVisible(ui.checkBox_14->isChecked());
         m_curSelectPlot->setyTickLabelFont(ui.fontComboBox_2->currentFont());

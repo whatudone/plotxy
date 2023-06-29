@@ -392,7 +392,7 @@ void PlotItemBase::setyTickLabelFont(const QFont& font)
     m_yTickLabelFont = font;
     if(m_customPlot)
     {
-        if(m_customPlot->yAxis)
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
         {
             m_customPlot->yAxis->setTickLabelFont(m_yTickLabelFont);
         }
@@ -624,7 +624,7 @@ void PlotItemBase::setxAxisLabelColor(const QColor& color)
     m_xAxisLabelColor = color;
     if(m_customPlot)
     {
-        if(m_customPlot->xAxis)
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
         {
             m_customPlot->xAxis->setLabelColor(m_xAxisLabelColor);
         }
@@ -637,7 +637,7 @@ void PlotItemBase::setxAxisLabelFont(const QFont& font)
     m_xAxisLabelFont = font;
     if(m_customPlot)
     {
-        if(m_customPlot->xAxis)
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
         {
             m_customPlot->xAxis->setLabelFont(m_xAxisLabelFont);
         }
@@ -664,7 +664,7 @@ void PlotItemBase::setyAxisLabelColor(const QColor& color)
     m_yAxisLabelColor = color;
     if(m_customPlot)
     {
-        if(m_customPlot->yAxis)
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
         {
             m_customPlot->yAxis->setLabelColor(m_yAxisLabelColor);
         }
@@ -677,7 +677,7 @@ void PlotItemBase::setyAxisLabelFont(const QFont& font)
     m_yAxisLabelFont = font;
     if(m_customPlot)
     {
-        if(m_customPlot->yAxis)
+        if(m_customPlot->xAxis && m_customPlot->yAxis)
         {
             m_customPlot->yAxis->setLabelFont(m_yAxisLabelFont);
         }

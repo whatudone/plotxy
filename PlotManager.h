@@ -32,7 +32,6 @@ private:
 	void initTextEditUI();
 	void initAttitudeUI();
     void initGOGUI();
-    void initBarUI();
     void initDialUI();
 	void initTextLightUI();
     void initScatterLimitUI();
@@ -50,7 +49,6 @@ private:
 
 	void refreshTextEditUI(PlotItemBase* plot);
 	void refreshAttitudeUI(PlotItemBase* plot);
-    void refreshBarUI(PlotItemBase* plot);
     void refreshDialUI(PlotItemBase* plot);
     void refreshScatterLimitUI(PlotItemBase* plot);
     void refreshScatterMarkersUI(PlotItemBase* plot);
