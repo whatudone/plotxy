@@ -181,7 +181,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
         return;
     }
     if(m_isTimeLine)
-	{
+    {
         updateTimelineGraph();
         return;
     }
@@ -194,7 +194,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
     }
     DrawComponents info;
     if(!m_mapScatter.contains(uuid))
-    {
+	{
         info.graph = m_customPlot->addGraph();
         // 默认采样值是true，在某些情况下采样会导致把原始数据处理错误，导致连线时路径错误
         info.graph->setAdaptiveSampling(false);
@@ -449,50 +449,6 @@ void PlotScatter::removeBackgroundColorInfo(double value)
     updateBackgroundColorSeg();
 }
 
-void PlotScatter::setAxisVisible(bool on, AxisType type)
-{
-    switch(type)
-    {
-    case AxisType::xAxis:
-        m_customPlot->xAxis->setVisible(on);
-        break;
-    case AxisType::yAxis:
-        m_customPlot->yAxis->setVisible(on);
-        break;
-    case AxisType::xAxis2:
-        m_customPlot->xAxis2->setVisible(on);
-        break;
-    case AxisType::yAxis2:
-        m_customPlot->yAxis2->setVisible(on);
-        break;
-    default:
-        break;
-    }
-    m_customPlot->replot();
-}
-
-void PlotScatter::setAxisTickLabelShow(bool on, AxisType type)
-{
-    switch(type)
-    {
-    case AxisType::xAxis:
-        m_customPlot->xAxis->setTickLabels(on);
-        break;
-    case AxisType::yAxis:
-        m_customPlot->yAxis->setTickLabels(on);
-        break;
-    case AxisType::xAxis2:
-        m_customPlot->xAxis2->setTickLabels(on);
-        break;
-    case AxisType::yAxis2:
-        m_customPlot->yAxis2->setTickLabels(on);
-        break;
-    default:
-        break;
-    }
-    m_customPlot->replot();
-}
-
 DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
                                        const QString& xAttrName,
                                        const QString& xAttrUnitName,
@@ -562,8 +518,10 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
 
         m_customPlot->xAxis->setRange(m_coordBgn_x, m_coordEnd_x);
         m_customPlot->yAxis->setRange(m_coordBgn_y, m_coordEnd_y);
-        m_customPlot->xAxis->setLabel(xAttrName);
-        m_customPlot->yAxis->setLabel(yAttrName);
+        m_units_x = xAttrUnitName;
+        m_units_y = yAttrUnitName;
+        setxAxisLabel(xAttrName);
+        setyAxisLabel(yAttrName);
         setTitle(QString("%1 VS. %2").arg(xAttrName).arg(yAttrName));
     }
     m_isInitCoorRange = true;

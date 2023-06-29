@@ -1160,6 +1160,10 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
     plot->setTitleFont(font);
     plot->setTitleFontSize(plotObject.value("TitleFontSize").toInt());
     // label
+    // show属性需要放在前面设置，后续label会根据show进行组合
+    plot->setUnitsShowX(plotObject.value("ShowUnitX").toBool());
+    plot->setUnitsShowY(plotObject.value("ShowUnitY").toBool());
+
     plot->setxAxisLabel(plotObject.value("LabelX").toString());
     plot->setxAxisLabelVisible(plotObject.value("LabelXVisible").toBool());
     plot->setxAxisLabelColor(
@@ -1199,8 +1203,6 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
 
     plot->setGridFillColor(
         color_transfer::QColorFromRGBAStr(plotObject.value("GridFillColor").toString()));
-    plot->setUnitsShowX(plotObject.value("ShowUnitX").toBool());
-    plot->setUnitsShowY(plotObject.value("ShowUnitY").toBool());
 
     //图表特殊设置部分
     if(type == PlotType::Type_PlotBar)

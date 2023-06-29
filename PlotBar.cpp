@@ -335,7 +335,14 @@ void PlotBar::setyAxisLabelVisible(bool on)
 void PlotBar::setyAxisLabel(const QString& label)
 {
     m_yAxisLabel = label;
-    valueAxis()->setLabel(m_yAxisLabel);
+    if(m_showUnits_y)
+    {
+        valueAxis()->setLabel(m_yAxisLabel + "(" + m_units_y + ")");
+    }
+    else
+    {
+        valueAxis()->setLabel(m_yAxisLabel);
+    }
     m_customPlot->replot();
 }
 
@@ -359,6 +366,25 @@ void PlotBar::setyAxisLabelFontSize(int size)
     m_yAxisLabelFont.setPixelSize(size);
     valueAxis()->setLabelFont(m_yAxisLabelFont);
     m_customPlot->replot();
+}
+
+void PlotBar::setUnitsShowX(bool on)
+{
+    m_showUnits_x = on;
+    // Bar不对x轴的进行设置，应该这里是disable的，但是界面没有，所以此处无需处理
+}
+
+void PlotBar::setUnitsShowY(bool on)
+{
+    m_showUnits_y = on;
+    if(on)
+    {
+        valueAxis()->setLabel(m_yAxisLabel + "(" + m_units_y + ")");
+    }
+    else
+    {
+        valueAxis()->setLabel(m_yAxisLabel);
+    }
 }
 
 QCPAxis* PlotBar::keyAxis()
@@ -498,6 +524,8 @@ DataPair* PlotBar::addPlotDataPair(int32_t xEntityID,
     DataPair* data =
         new DataPair(xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
     m_dataPairs.append(data);
+    m_units_x = xAttrUnitName;
+    m_units_y = yAttrUnitName;
 
     // 目前界面上都是直接修改DataPair内部的数据，这里提供一个集中的入口虚函数处理。
     connect(data,

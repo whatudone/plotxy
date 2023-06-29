@@ -457,43 +457,18 @@ void PlotItemBase::setGridFillColor(const QColor& color)
 
 void PlotItemBase::setUnitsShowX(bool on)
 {
+    // 单位是初始在各个派生类中初始化，添加数据对之后，会重新设置单位
     m_showUnits_x = on;
     if(m_customPlot)
     {
-        if(m_customPlot->xAxis && m_customPlot->yAxis)
+        if(on)
         {
-            if(!m_dataPairs.isEmpty())
-            {
-                // PlotBar只有一个轴，只有X有单位，并且通过方向判断单位在哪个轴显示
-                if(plotType() == PlotType::Type_PlotBar)
-                {
-                    if(m_isHorizonBar)
-                    {
-                        if(on)
-                            setxAxisLabel(m_dataPairs.at(0)->getAttr_x() + "(" +
-                                          m_dataPairs.at(0)->getUnit_x() + ")");
-                        else
-                        {
-                            setxAxisLabel(m_dataPairs.at(0)->getAttr_x());
-                        }
-                        setyAxisLabel(m_dataPairs.at(0)->getAttr_y());
-                    }
-                    replot();
-                    return;
-                }
-                else
-                {
-                    if(on)
-                    {
-                        setxAxisLabel(m_dataPairs.at(0)->getAttr_x() + "(" +
-                                      m_dataPairs.at(0)->getUnit_x() + ")");
-                    }
-                    else
-                    {
-                        setxAxisLabel(m_dataPairs.at(0)->getAttr_x());
-                    }
-                }
-            }
+            // NOTE:不要调用基类的setxAxisLabel，会导致单位叠加拼接
+            m_customPlot->xAxis->setLabel(m_xAxisLabel + "(" + m_units_x + ")");
+        }
+        else
+        {
+            m_customPlot->xAxis->setLabel(m_xAxisLabel);
         }
     }
     replot();
@@ -504,40 +479,13 @@ void PlotItemBase::setUnitsShowY(bool on)
     m_showUnits_y = on;
     if(m_customPlot)
     {
-        if(m_customPlot->xAxis && m_customPlot->yAxis)
+        if(on)
         {
-            if(!m_dataPairs.isEmpty())
-            {
-                // PlotBar只有一个轴，只有X有单位，并且通过方向判断单位在哪个轴显示
-                if(plotType() == PlotType::Type_PlotBar)
-                {
-                    if(m_isHorizonBar)
-                    {
-                        if(on)
-                            setyAxisLabel(m_dataPairs.at(0)->getAttr_y() + "(" +
-                                          m_dataPairs.at(0)->getUnit_y() + ")");
-                        else
-                        {
-                            setyAxisLabel(m_dataPairs.at(0)->getAttr_y());
-                        }
-                        setxAxisLabel(m_dataPairs.at(0)->getAttr_x());
-                    }
-                    replot();
-                    return;
-                }
-                else
-                {
-                    if(on)
-                    {
-                        setyAxisLabel(m_dataPairs.at(0)->getAttr_y() + "(" +
-                                      m_dataPairs.at(0)->getUnit_y() + ")");
-                    }
-                    else
-                    {
-                        setyAxisLabel(m_dataPairs.at(0)->getAttr_y());
-                    }
-                }
-            }
+            m_customPlot->yAxis->setLabel(m_yAxisLabel + "(" + m_units_y + ")");
+        }
+        else
+        {
+            m_customPlot->yAxis->setLabel(m_yAxisLabel);
         }
     }
     replot();
@@ -608,7 +556,9 @@ void PlotItemBase::setxAxisLabelVisible(bool on)
         {
             if(on)
             {
-                m_customPlot->xAxis->setLabel(m_xAxisLabel);
+                QString finalLabel =
+                    (m_showUnits_x) ? m_xAxisLabel + "(" + m_units_x + ")" : m_xAxisLabel;
+                m_customPlot->xAxis->setLabel(finalLabel);
             }
             else
             {
@@ -628,7 +578,9 @@ void PlotItemBase::setyAxisLabelVisible(bool on)
         {
             if(on)
             {
-                m_customPlot->yAxis->setLabel(m_yAxisLabel);
+                QString finalLabel =
+                    (m_showUnits_y) ? m_yAxisLabel + "(" + m_units_y + ")" : m_yAxisLabel;
+                m_customPlot->yAxis->setLabel(finalLabel);
             }
             else
             {
@@ -642,10 +594,10 @@ void PlotItemBase::setyAxisLabelVisible(bool on)
 void PlotItemBase::setxAxisLabel(const QString& label)
 {
     m_xAxisLabel = label;
-    if(m_customPlot)
+    if(m_customPlot && m_customPlot->xAxis)
     {
-        if(m_customPlot->xAxis)
-            m_customPlot->xAxis->setLabel(m_xAxisLabel);
+        QString finalLabel = (m_showUnits_x) ? m_xAxisLabel + "(" + m_units_x + ")" : m_xAxisLabel;
+        m_customPlot->xAxis->setLabel(finalLabel);
     }
     replot();
 }
@@ -653,10 +605,16 @@ void PlotItemBase::setxAxisLabel(const QString& label)
 void PlotItemBase::setyAxisLabel(const QString& label)
 {
     m_yAxisLabel = label;
-    if(m_customPlot)
+    if(m_customPlot && m_customPlot->yAxis)
     {
-        if(m_customPlot->yAxis)
+        if(m_showUnits_y)
+        {
+            m_customPlot->yAxis->setLabel(m_yAxisLabel + "(" + m_units_y + ")");
+        }
+        else
+        {
             m_customPlot->yAxis->setLabel(m_yAxisLabel);
+        }
     }
     replot();
 }
@@ -787,6 +745,8 @@ DataPair* PlotItemBase::addPlotDataPair(int32_t xEntityID,
     DataPair* data =
         new DataPair(xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
     m_dataPairs.append(data);
+    m_units_x = xAttrUnitName;
+    m_units_y = yAttrUnitName;
     // 设置额外参数
     if(plotType() == PlotType::Type_PlotLight)
     {

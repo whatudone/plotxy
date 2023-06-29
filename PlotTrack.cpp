@@ -189,6 +189,8 @@ DataPair* PlotTrack::addPlotDataPair(int32_t xEntityID,
             &PlotItemBase::onDataPairUpdateData,
             Qt::UniqueConnection);
     m_dataPairs.append(data);
+    m_units_x = xAttrUnitName;
+    m_units_y = yAttrUnitName;
 
     QString uuid = data->getUuid();
 

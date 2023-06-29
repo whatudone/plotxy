@@ -46,16 +46,16 @@ private:
     QCPAxis* valueAxis();
 
 protected:
-    virtual DataPair* addPlotDataPair(int32_t xEntityID,
-                                      const QString& xAttrName,
-                                      const QString& xAttrUnitName,
-                                      int32_t yEntityID,
-                                      const QString& yAttrName,
-                                      const QString& yAttrUnitName,
-                                      const QHash<QString, QVariant>& extraParams,
-                                      bool isFromJson = false) override;
-    virtual void delPlotPairData(const QString& uuid) override;
-    virtual void updateGraphByDataPair(DataPair* dataPair) override;
+    DataPair* addPlotDataPair(int32_t xEntityID,
+                              const QString& xAttrName,
+                              const QString& xAttrUnitName,
+                              int32_t yEntityID,
+                              const QString& yAttrName,
+                              const QString& yAttrUnitName,
+                              const QHash<QString, QVariant>& extraParams,
+                              bool isFromJson = false) override;
+    void delPlotPairData(const QString& uuid) override;
+    void updateGraphByDataPair(DataPair* dataPair) override;
 
     void setIsHorizonBar(bool isHorizonBar) override;
 
@@ -69,6 +69,9 @@ protected:
     void setyAxisLabelColor(const QColor& color) override;
     void setyAxisLabelFont(const QFont& font) override;
     void setyAxisLabelFontSize(int size) override;
+
+    void setUnitsShowX(bool on) override;
+    void setUnitsShowY(bool on) override;
 
 private:
     QMap<QString, QList<std::tuple<QString, double, QColor>>>

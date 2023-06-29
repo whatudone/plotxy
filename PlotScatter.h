@@ -47,9 +47,6 @@ public:
 
     static int m_instanceCount; //Plot实体个数
 
-    void setAxisVisible(bool on, AxisType type);
-    void setAxisTickLabelShow(bool on, AxisType type);
-
     virtual DataPair* addPlotDataPair(int32_t xEntityID,
                                       const QString& xAttrName,
                                       const QString& xAttrUnitName,
