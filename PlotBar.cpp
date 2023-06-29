@@ -14,8 +14,8 @@ PlotBar::PlotBar(QWidget* parent)
 
     m_title = "Bar";
 
-    m_xAxisLabel = "X Axis";
-    m_yAxisLabel = "Y Axis";
+    m_xAxisLabel = "";
+    m_yAxisLabel = "Value Axis";
 
     initPlot();
     setupLayout();
@@ -65,8 +65,8 @@ void PlotBar::initPlot()
     m_customPlot = new QCustomPlot();
     valueAxis()->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
     keyAxis()->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
-    valueAxis()->ticker()->setTickCount(int(m_vertGrids));
-    keyAxis()->ticker()->setTickCount(int(m_horzGrids));
+    valueAxis()->ticker()->setTickCount(m_vertGrids);
+    keyAxis()->ticker()->setTickCount(m_horzGrids);
     valueAxis()->setTickLabelColor(m_yTickLabelColor);
     keyAxis()->setTickLabelColor(m_xTickLabelColor);
     valueAxis()->setTickLabelFont(m_yTickLabelFont);
@@ -87,12 +87,12 @@ void PlotBar::initPlot()
     valueAxis()->setPadding(30);
     valueAxis()->setUpperEnding(QCPLineEnding::esSpikeArrow);
 
-    m_customPlot->xAxis->setLabel(m_xAxisLabel);
-    m_customPlot->yAxis->setLabel(m_yAxisLabel);
-    m_customPlot->xAxis->setLabelColor(m_xAxisLabelColor);
-    m_customPlot->yAxis->setLabelColor(m_yAxisLabelColor);
-    m_customPlot->xAxis->setLabelFont(m_xAxisLabelFont);
-    m_customPlot->yAxis->setLabelFont(m_yAxisLabelFont);
+    keyAxis()->setLabel(m_xAxisLabel);
+    valueAxis()->setLabel(m_yAxisLabel);
+    keyAxis()->setLabelColor(m_xAxisLabelColor);
+    valueAxis()->setLabelColor(m_yAxisLabelColor);
+    keyAxis()->setLabelFont(m_xAxisLabelFont);
+    valueAxis()->setLabelFont(m_yAxisLabelFont);
 }
 
 void PlotBar::updateGraphByDataPair(DataPair* data)
@@ -289,6 +289,78 @@ void PlotBar::setIsHorizonBar(bool isHorizonBar)
     }
 }
 
+void PlotBar::setyTickLabelVisible(bool show)
+{
+    m_yTickLabelVisible = show;
+    valueAxis()->setTickLabels(show);
+    m_customPlot->replot();
+}
+
+void PlotBar::setyTickLabelColor(const QColor& color)
+{
+    m_yTickLabelColor = color;
+    valueAxis()->setTickLabelColor(color);
+    m_customPlot->replot();
+}
+
+void PlotBar::setyTickLabelFont(const QFont& font)
+{
+    m_yTickLabelFont = font;
+    valueAxis()->setTickLabelFont(font);
+    m_customPlot->replot();
+}
+
+void PlotBar::setyTickLabelFontSize(int size)
+{
+    m_yTickLabelFontSize = size;
+    m_yTickLabelFont.setPixelSize(size);
+    valueAxis()->setTickLabelFont(m_yTickLabelFont);
+    m_customPlot->replot();
+}
+
+void PlotBar::setyAxisLabelVisible(bool on)
+{
+    m_yAxisLabelVisible = on;
+    if(on)
+    {
+        valueAxis()->setLabel(m_yAxisLabel);
+    }
+    else
+    {
+        valueAxis()->setLabel("");
+    }
+    m_customPlot->replot();
+}
+
+void PlotBar::setyAxisLabel(const QString& label)
+{
+    m_yAxisLabel = label;
+    valueAxis()->setLabel(m_yAxisLabel);
+    m_customPlot->replot();
+}
+
+void PlotBar::setyAxisLabelColor(const QColor& color)
+{
+    m_yAxisLabelColor = color;
+    valueAxis()->setLabelColor(m_yAxisLabelColor);
+    m_customPlot->replot();
+}
+
+void PlotBar::setyAxisLabelFont(const QFont& font)
+{
+    m_yAxisLabelFont = font;
+    valueAxis()->setLabelFont(m_yAxisLabelFont);
+    m_customPlot->replot();
+}
+
+void PlotBar::setyAxisLabelFontSize(int size)
+{
+    m_yAxisLabelFontSize = size;
+    m_yAxisLabelFont.setPixelSize(size);
+    valueAxis()->setLabelFont(m_yAxisLabelFont);
+    m_customPlot->replot();
+}
+
 QCPAxis* PlotBar::keyAxis()
 {
     return getIsHorizonBar() ? m_customPlot->yAxis : m_customPlot->xAxis;
@@ -369,6 +441,27 @@ void PlotBar::exchangeKeyAndValueAxisTickLabel()
     auto oldValueTicker = valueAxis()->ticker();
     keyAxis()->setTicker(oldValueTicker);
     valueAxis()->setTicker(oldKeyTicker);
+
+    keyAxis()->setTickLabelColor(m_xTickLabelColor);
+    keyAxis()->setTickLabelFont(m_xTickLabelFont);
+    keyAxis()->setTickLabels(m_xTickLabelVisible);
+    valueAxis()->setTickLabelColor(m_yTickLabelColor);
+    valueAxis()->setTickLabelFont(m_yTickLabelFont);
+    valueAxis()->setTickLabels(m_yTickLabelVisible);
+
+    keyAxis()->setLabel("");
+    if(m_yAxisLabelVisible)
+    {
+        valueAxis()->setLabel(m_yAxisLabel);
+        valueAxis()->setLabel(m_yAxisLabel);
+        valueAxis()->setLabelColor(m_yAxisLabelColor);
+        m_yTickLabelFont.setPixelSize(m_yTickLabelFontSize);
+        valueAxis()->setLabelFont(m_yTickLabelFont);
+    }
+    else
+    {
+        valueAxis()->setLabel("");
+    }
 }
 
 bool PlotBar::isValidColorRange(DataPair* data)
@@ -398,7 +491,8 @@ DataPair* PlotBar::addPlotDataPair(int32_t xEntityID,
                                    int32_t yEntityID,
                                    const QString& yAttrName,
                                    const QString& yAttrUnitName,
-                                   const QHash<QString, QVariant>& extraParams, bool isFromJson)
+                                   const QHash<QString, QVariant>& extraParams,
+                                   bool isFromJson)
 {
     Q_UNUSED(extraParams)
     DataPair* data =
@@ -434,9 +528,9 @@ DataPair* PlotBar::addPlotDataPair(int32_t xEntityID,
     m_itemData.insert(uuid, limit.first);
 
     updateKeyAxisTickLabel();
-    if(!isFromJson){
+    if(!isFromJson)
+    {
         emit dataPairsChanged(this);
-
     }
 
     return data;

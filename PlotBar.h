@@ -40,21 +40,35 @@ private:
 
     bool isValidColorRange(DataPair* data);
 
+    // 针对target-属性轴
+    QCPAxis* keyAxis();
+    // 针对数字value轴
+    QCPAxis* valueAxis();
+
+protected:
     virtual DataPair* addPlotDataPair(int32_t xEntityID,
                                       const QString& xAttrName,
                                       const QString& xAttrUnitName,
                                       int32_t yEntityID,
                                       const QString& yAttrName,
                                       const QString& yAttrUnitName,
-                                      const QHash<QString, QVariant>& extraParams, bool isFromJson=false) override;
+                                      const QHash<QString, QVariant>& extraParams,
+                                      bool isFromJson = false) override;
     virtual void delPlotPairData(const QString& uuid) override;
     virtual void updateGraphByDataPair(DataPair* dataPair) override;
 
     void setIsHorizonBar(bool isHorizonBar) override;
-    // 针对target-属性轴
-    QCPAxis* keyAxis();
-    // 针对数字value轴
-    QCPAxis* valueAxis();
+
+    void setyTickLabelVisible(bool show) override;
+    void setyTickLabelColor(const QColor& color) override;
+    void setyTickLabelFont(const QFont& font) override;
+    void setyTickLabelFontSize(int size) override;
+
+    void setyAxisLabelVisible(bool on) override;
+    void setyAxisLabel(const QString& label) override;
+    void setyAxisLabelColor(const QColor& color) override;
+    void setyAxisLabelFont(const QFont& font) override;
+    void setyAxisLabelFontSize(int size) override;
 
 private:
     QMap<QString, QList<std::tuple<QString, double, QColor>>>
