@@ -474,20 +474,36 @@ void PlotLight::delPlotPairData(const QString& uuid)
         {
             delete m_drawItemHash[uuid].text;
             m_drawItemHash[uuid].text = nullptr;
+            m_customPlot->removeItem(m_drawItemHash.value(uuid).text);
         }
         if(m_drawItemHash[uuid].ellipseGraph)
         {
             delete m_drawItemHash[uuid].ellipseGraph;
             m_drawItemHash[uuid].ellipseGraph = nullptr;
+            m_customPlot->removeItem(m_drawItemHash.value(uuid).ellipseGraph);
         }
         if(m_drawItemHash[uuid].rectGraph)
         {
             delete m_drawItemHash[uuid].rectGraph;
             m_drawItemHash[uuid].rectGraph = nullptr;
+            m_customPlot->removeItem(m_drawItemHash.value(uuid).rectGraph);
         }
         m_drawItemHash.remove(uuid);
     }
     PlotItemBase::delPlotPairData(uuid);
+}
+
+void PlotLight::setGridColorWidth(const QColor& color, int32_t width)
+{
+    m_gridColor = color;
+    m_gridWidth = width;
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
+}
+
+void PlotLight::setGridFillColor(const QColor& color)
+{
+    m_gridFillColor = color;
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
 }
 
 void PlotLight::processDataByConstraints()
