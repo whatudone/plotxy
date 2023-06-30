@@ -1233,20 +1233,17 @@ void PlotManager::onTWSclicked(QTreeWidgetItem* item, int column)
 
 void PlotManager::spinboxBetweenChanged()
 {
-    m_spinBoxBetween = ui.spinBox_between->value();
-    m_curSelectPlot->setBarBetweenPadding(m_spinBoxBetween);
+    m_curSelectPlot->setBarBetweenPadding(ui.spinBox_between->value());
 }
 
 void PlotManager::spinboxLeftChanged()
 {
-    m_spinBoxLeft = ui.spinBox_left->value();
-    m_curSelectPlot->setBarLeftPadding(m_spinBoxLeft);
+    m_curSelectPlot->setBarLeftPadding(ui.spinBox_left->value());
 }
 
 void PlotManager::spinboxRightChanged()
 {
-    m_spinBoxRight = ui.spinBox_right->value();
-    m_curSelectPlot->setBarRightPadding(m_spinBoxRight);
+    m_curSelectPlot->setBarRightPadding(ui.spinBox_right->value());
 }
 
 void PlotManager::onRadioPixelClicked()

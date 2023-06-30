@@ -394,7 +394,8 @@ void PlotScatter::drawGOGData()
                 {
                     QCPItemEllipse* ellipse = new QCPItemEllipse(m_customPlot);
                     double radius = 0.0;
-                    if(data.altitudeUnits == "meters")
+                    // GOG的数据内容都是基于经纬度的数据点，所以只需要考虑rangeUnits的单位，然后做出对应的单位转换即可
+                    if(data.rangeUnits == "meters")
                     {
                         radius = data.radius / 110000;
                     }

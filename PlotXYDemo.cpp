@@ -949,12 +949,14 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
 
     plotObject.insert("LabelXVisible", plot->getxAxisLabelVisible());
     plotObject.insert("LabelX", plot->getxAxisLabel());
+    plotObject.insert("LabelXUnit", plot->getUnitsX());
     plotObject.insert("LabelXColor", color_transfer::QColorToRGBAStr(plot->getxAxisLabelColor()));
     plotObject.insert("LabelXFontFamily", plot->getxAxisLabelFont().family());
     plotObject.insert("LabelXFontSize", plot->getxAxisLabelFontSize());
 
     plotObject.insert("LabelYVisible", plot->getyAxisLabelVisible());
     plotObject.insert("LabelY", plot->getyAxisLabel());
+    plotObject.insert("LabelYUnit", plot->getUnitsY());
     plotObject.insert("LabelYColor", color_transfer::QColorToRGBAStr(plot->getyAxisLabelColor()));
     plotObject.insert("LabelYFontFamily", plot->getyAxisLabelFont().family());
     plotObject.insert("LabelYFontSize", plot->getyAxisLabelFontSize());
@@ -1164,6 +1166,7 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
     plot->setUnitsShowX(plotObject.value("ShowUnitX").toBool());
     plot->setUnitsShowY(plotObject.value("ShowUnitY").toBool());
 
+    plot->setUnitsX(plotObject.value("LabelXUnit").toString());
     plot->setxAxisLabel(plotObject.value("LabelX").toString());
     plot->setxAxisLabelVisible(plotObject.value("LabelXVisible").toBool());
     plot->setxAxisLabelColor(
@@ -1174,6 +1177,7 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
     plot->setxAxisLabelFont(xLabelFont);
     plot->setxAxisLabelFontSize(plotObject.value("LabelXFontSize").toInt());
 
+    plot->setUnitsY(plotObject.value("LabelYUnit").toString());
     plot->setyAxisLabel(plotObject.value("LabelY").toString());
     plot->setyAxisLabelVisible(plotObject.value("LabelYVisible").toBool());
     plot->setyAxisLabelColor(

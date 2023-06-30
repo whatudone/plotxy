@@ -20,10 +20,6 @@ public:
     void addPlot(const QString&, PlotItemBase*); //添加Plot
     void setTabWidgetRect(const QRect& rect);
 
-	int m_spinBoxBetween;
-	int m_spinBoxLeft;
-	int m_spinBoxRight;
-
 private:
 	void initTreeWidgetSettings();
 	void initGeneralUI();
