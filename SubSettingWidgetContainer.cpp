@@ -40,6 +40,9 @@ SubSettingWidgetContainer::SubSettingWidgetContainer(QWidget* parent)
 	m_colorRanges = new ColorRanges(this);
     toolBox->addWidget("ColorRanges", m_colorRanges);
 
+    // Connections
+    m_connections = new Connections(this);
+    toolBox->addWidget("Connections", m_connections);
 	setCentralWidget(toolBox);
 
     connect(m_labelSettings,
@@ -60,51 +63,52 @@ void SubSettingWidgetContainer::updateVisibleOnPlotTypeChanged(PlotType curType)
     list << toolBox->pageWidget("General") << toolBox->pageWidget("Extrapolation")
          << toolBox->pageWidget("Icon") << toolBox->pageWidget("Label Settings")
          << toolBox->pageWidget("LabelText") << toolBox->pageWidget("Stipple")
-         << toolBox->pageWidget("Events") << toolBox->pageWidget("ColorRanges");
+         << toolBox->pageWidget("Events") << toolBox->pageWidget("ColorRanges")
+         << toolBox->pageWidget("Connections");
     QList<bool> visibleList;
     if(curType == PlotType::Type_PlotAScope)
     {
-        visibleList << true << true << false << false << false << true << false << false;
+        visibleList << true << true << false << false << false << true << false << false << false;
     }
     else if(curType == PlotType::Type_PlotAttitude)
     {
-        visibleList << true << true << false << false << false << false << false << false;
+        visibleList << true << true << false << false << false << false << false << false << false;
     }
     else if(curType == PlotType::Type_PlotBar)
     {
-        visibleList << true << true << false << true << true << false << false << true;
+        visibleList << true << true << false << true << true << false << false << true << false;
     }
     else if(curType == PlotType::Type_PlotDial)
     {
-        visibleList << true << true << false << false << false << false << false << false;
+        visibleList << true << true << false << false << false << false << false << false << false;
     }
     else if(curType == PlotType::Type_PlotLight)
     {
-        visibleList << true << true << false << true << true << false << false << false;
+        visibleList << true << true << false << true << true << false << false << false << false;
     }
     else if(curType == PlotType::Type_PlotPolar)
     {
-        visibleList << true << true << true << true << true << true << false << false;
+        visibleList << true << true << true << true << true << true << false << false << false;
     }
     else if(curType == PlotType::Type_PlotDoppler)
     {
-        visibleList << true << false << false << false << false << false << false << false;
+        visibleList << true << false << false << false << false << false << false << false << false;
     }
     else if(curType == PlotType::Type_PlotRTI)
     {
-        visibleList << true << true << false << false << false << false << false << false;
+        visibleList << true << true << false << false << false << false << false << false << false;
     }
     else if(curType == PlotType::Type_PlotScatter)
     {
-        visibleList << true << true << true << true << true << true << true << true;
+        visibleList << true << true << true << true << true << true << true << true << true;
     }
     else if(curType == PlotType::Type_PlotText)
     {
-        visibleList << true << true << true << true << true << false << false << false;
+        visibleList << true << true << true << true << true << false << false << false << false;
     }
     else if(curType == PlotType::Type_PlotTrack)
     {
-        visibleList << true << false << false << true << true << false << false << false;
+        visibleList << true << false << false << true << true << false << false << false << false;
     }
     else
     {
@@ -694,4 +698,18 @@ void ColorRanges::initComboBox()
     m_comboMap.insert(DataPair::MutilColor, 1);
     ui.comboBoxMode->addItem("渐变", QVariant::fromValue(static_cast<int32_t>(DataPair::Gradient)));
     m_comboMap.insert(DataPair::Gradient, 2);
+}
+
+Connections::Connections(QWidget* parent)
+{
+    QLabel* pLabel = new QLabel("编辑连接");
+    pLabel->setFrameShadow(QLabel::Sunken);
+    pLabel->setFrameShape(QLabel::Box);
+    m_pMoreConVBtn = new QPushButton("更多>>");
+    QHBoxLayout* hLayout = new QHBoxLayout;
+    hLayout->setContentsMargins(0, 0, 0, 0);
+    hLayout->addWidget(pLabel);
+    hLayout->addWidget(m_pMoreConVBtn);
+    hLayout->addItem(new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum));
+    setLayout(hLayout);
 }

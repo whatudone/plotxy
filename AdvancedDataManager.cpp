@@ -566,6 +566,7 @@ void AdvancedDataManager::initConnections()
     initColorRangeConnections();
     initEventConnections();
     initStippleConnections();
+    initConConnections();
 }
 
 void AdvancedDataManager::initGeneralConnections()
@@ -769,6 +770,14 @@ void AdvancedDataManager::initColorRangeConnections()
             &AdvancedDataManager::onColorRangesModeChanged);
 }
 
+void AdvancedDataManager::initConConnections()
+{
+    connect(subSettingWidgetContainer->m_connections->m_pMoreConVBtn,
+            &QPushButton::clicked,
+            this,
+            &AdvancedDataManager::onConBtnMoreClicked);
+}
+
 void AdvancedDataManager::initEventConnections()
 {
     //Event
@@ -943,6 +952,17 @@ void AdvancedDataManager::onRemoveEvent()
         refreshAddedEventList();
     }
 }
+
+void AdvancedDataManager::onConBtnMoreClicked()
+{
+    ui.stackedWidget_aDMrpart->setCurrentIndex(4);
+}
+
+void AdvancedDataManager::onAddConnection() {}
+
+void AdvancedDataManager::onUpdateConnection() {}
+
+void AdvancedDataManager::onRemoveConnection() {}
 
 void AdvancedDataManager::onUpdatePlotPair()
 {

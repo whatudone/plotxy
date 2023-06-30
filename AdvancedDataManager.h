@@ -95,6 +95,12 @@ public slots:
     void onAddEvent();
     void onRemoveEvent();
 
+    // connections
+    void onConBtnMoreClicked();
+    void onAddConnection();
+    void onUpdateConnection();
+    void onRemoveConnection();
+
 private:
     // 根据数据对数据刷新UI
 	void refreshUI();
@@ -106,11 +112,11 @@ private:
 	void refreshEvent();
     void refreshAddedEventList();
 
-
 	void refreshLabelText();
 	void refreshColorRanges();
 
     void initConnections();
+
     void initGeneralConnections();
     void initIconConnections();
     void initLabelSettingsConnections();
@@ -118,6 +124,7 @@ private:
     void initEventConnections();
     void initStippleConnections();
     void initColorRangeConnections();
+    void initConConnections();
 
 private:
     Ui::AdvancedDataManager ui;

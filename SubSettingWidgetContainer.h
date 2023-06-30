@@ -20,6 +20,7 @@ class ColorRanges;
 class Extrapolation;
 class LabelSettings;
 class LabelText;
+class Connections;
 
 class SubSettingWidgetContainer : public QMainWindow
 {
@@ -37,6 +38,7 @@ public:
 	Extrapolation* m_extrapolation;
 	LabelSettings* m_labelSettings;
 	LabelText* m_labelText;
+    Connections* m_connections;
     // 更新大的tab页显示情况，tab页内部调整需要每个业内自己实现
     void updateVisibleOnPlotTypeChanged(PlotType curType);
 };
@@ -207,6 +209,14 @@ private:
 	Ui::ColorRanges ui;
 
     QHash<DataPair::ColorRangeMode, int32_t> m_comboMap;
+};
+
+class Connections : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit Connections(QWidget* parent = nullptr);
+    QPushButton* m_pMoreConVBtn = nullptr;
 };
 
 #endif // _SUB_SETTING_WIDGET_CONTAINER_H
