@@ -20,6 +20,9 @@ public:
 	PlotLight(QWidget* parent = Q_NULLPTR);
     ~PlotLight() override;
 
+    virtual void setGridColorWidth(const QColor& color, int32_t width) override;
+    virtual void setGridFillColor(const QColor& color) override;
+
     static int m_instanceCount; //实体个数
 
     PlotType plotType() const override

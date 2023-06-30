@@ -302,7 +302,7 @@ void PlotItemBase::setGridColorWidth(const QColor& color, int32_t width)
             m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
         }
     }
-    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
+    replot();
 }
 
 void PlotItemBase::setGridVisible(bool enable)
@@ -452,14 +452,14 @@ void PlotItemBase::setGridFillColor(const QColor& color)
         if(m_customPlot->xAxis && m_customPlot->yAxis)
             m_customPlot->axisRect()->setBackground(color);
     }
-    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
+    replot();
 }
 
 void PlotItemBase::setUnitsShowX(bool on)
 {
     // 单位是初始在各个派生类中初始化，添加数据对之后，会重新设置单位
     m_showUnits_x = on;
-    if(m_customPlot)
+    if(m_customPlot && m_customPlot->xAxis)
     {
         if(on)
         {
@@ -477,7 +477,7 @@ void PlotItemBase::setUnitsShowX(bool on)
 void PlotItemBase::setUnitsShowY(bool on)
 {
     m_showUnits_y = on;
-    if(m_customPlot)
+    if(m_customPlot && m_customPlot->yAxis)
     {
         if(on)
         {
