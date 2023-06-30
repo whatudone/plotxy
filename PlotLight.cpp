@@ -471,23 +471,11 @@ void PlotLight::delPlotPairData(const QString& uuid)
     if(m_drawItemHash.contains(uuid))
     {
         if(m_drawItemHash[uuid].text)
-        {
-            delete m_drawItemHash[uuid].text;
-            m_drawItemHash[uuid].text = nullptr;
             m_customPlot->removeItem(m_drawItemHash.value(uuid).text);
-        }
         if(m_drawItemHash[uuid].ellipseGraph)
-        {
-            delete m_drawItemHash[uuid].ellipseGraph;
-            m_drawItemHash[uuid].ellipseGraph = nullptr;
             m_customPlot->removeItem(m_drawItemHash.value(uuid).ellipseGraph);
-        }
         if(m_drawItemHash[uuid].rectGraph)
-        {
-            delete m_drawItemHash[uuid].rectGraph;
-            m_drawItemHash[uuid].rectGraph = nullptr;
             m_customPlot->removeItem(m_drawItemHash.value(uuid).rectGraph);
-        }
         m_drawItemHash.remove(uuid);
     }
     PlotItemBase::delPlotPairData(uuid);
