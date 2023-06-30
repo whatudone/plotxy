@@ -388,14 +388,19 @@ void PlotManager::initEditableMap()
     m_itemTextEditableMap.insert(PlotType::Type_PlotText, QList<QString>() << "Title"); //完成
     m_itemTextEditableMap.insert(PlotType::Type_PlotLight, QList<QString>() << "Title"); //完成
     m_itemTextEditableMap.insert(PlotType::Type_PlotBar, QList<QString>() << "Title");
-    m_itemTextEditableMap.insert(PlotType::Type_PlotDial, QList<QString>() << "Title");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotDial,
+                                 QList<QString>() << "Title"
+                                                  << "X-Axis Data");
     m_itemTextEditableMap.insert(PlotType::Type_PlotAttitude,
                                  QList<QString>() << "Title"
                                                   << "X-Axis Data"
                                                   << "Y-Axis Data"
                                                   << "Roll Data"
                                                   << "Pitch Data");
-    m_itemTextEditableMap.insert(PlotType::Type_PlotPolar, QList<QString>() << "Title");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotPolar,
+                                 QList<QString>() << "Title"
+                                                  << "X-Axis Data"
+                                                  << "Y-Axis Data");
     m_itemTextEditableMap.insert(PlotType::Type_PlotTrack, QList<QString>() << "Title");
     m_itemTextEditableMap.insert(PlotType::Type_PlotDoppler, QList<QString>() << "Title");
 }

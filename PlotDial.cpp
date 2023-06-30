@@ -232,7 +232,6 @@ void PlotDial::customPainting(QPainter& painter)
                     rect.height() * m_dialCapRate / 1000.0);
     outLinePath.arcTo(capRect, 90 - m_endAngle, m_endAngle - m_startAngle);
 
-    QPainterPath polyPath;
     QVector<QPointF> polyPoint;
     polyPoint.push_back(QPointF(0, 0));
     polyPoint.push_back(
@@ -291,9 +290,7 @@ void PlotDial::customPainting(QPainter& painter)
     double perAngle = double(m_endAngle - m_startAngle) / (m_horzGrids - 1);
     double perSpan = (m_coordEnd_x - m_coordBgn_x) / (m_horzGrids - 1);
 
-    pen.setWidth(int(m_gridWidth));
-    pen.setColor(m_axisColor);
-    painter.setPen(pen);
+    pen.setWidth(m_gridWidth);
     QFont font = m_xTickLabelFont;
 
     // pixelSize = 0的时候，设置不生效
@@ -323,9 +320,14 @@ void PlotDial::customPainting(QPainter& painter)
     {
         posX = m_circleRadius * cos((m_endAngle - perAngle * i - 90) * M_PI / 180);
         posY = m_circleRadius * sin((m_endAngle - perAngle * i - 90) * M_PI / 180);
+        pen.setColor(m_axisColor);
+        painter.setPen(pen);
         painter.drawLine(
             QPointF(posX, posY),
             QPointF(posX * (1000 - m_dialRate) / 1000, posY * (1000 - m_dialRate) / 1000));
+
+        pen.setColor(m_xTickLabelColor);
+        painter.setPen(pen);
         if(!m_showUnits_x)
         {
             w = fm.width(QString("%1").arg(m_coordEnd_x - perSpan * i));
@@ -344,6 +346,8 @@ void PlotDial::customPainting(QPainter& painter)
     {
         posX = m_circleRadius * cos((m_endAngle - perAngle * (m_horzGrids - 1) - 90) * M_PI / 180);
         posY = m_circleRadius * sin((m_endAngle - perAngle * (m_horzGrids - 1) - 90) * M_PI / 180);
+        pen.setColor(m_axisColor);
+        painter.setPen(pen);
         painter.drawLine(
             QPointF(posX, posY),
             QPointF(posX * (1000 - m_dialRate) / 1000, posY * (1000 - m_dialRate) / 1000));
@@ -352,6 +356,8 @@ void PlotDial::customPainting(QPainter& painter)
     {
         posX = m_circleRadius * cos((m_endAngle - perAngle * (m_horzGrids - 1) - 90) * M_PI / 180);
         posY = m_circleRadius * sin((m_endAngle - perAngle * (m_horzGrids - 1) - 90) * M_PI / 180);
+        pen.setColor(m_xTickLabelColor);
+        painter.setPen(pen);
         if(!m_showUnits_x)
         {
             w = fm.width(QString("%1").arg(m_coordEnd_x - perSpan * (m_horzGrids - 1)));
@@ -371,6 +377,8 @@ void PlotDial::customPainting(QPainter& painter)
     {
         posX = m_circleRadius * cos((m_endAngle - 90) * M_PI / 180);
         posY = m_circleRadius * sin((m_endAngle - 90) * M_PI / 180);
+        pen.setColor(m_axisColor);
+        painter.setPen(pen);
         painter.drawLine(
             QPointF(posX, posY),
             QPointF(posX * (1000 - m_dialRate) / 1000, posY * (1000 - m_dialRate) / 1000));
@@ -379,6 +387,8 @@ void PlotDial::customPainting(QPainter& painter)
     {
         posX = m_circleRadius * cos((m_endAngle - 90) * M_PI / 180);
         posY = m_circleRadius * sin((m_endAngle - 90) * M_PI / 180);
+        pen.setColor(m_xTickLabelColor);
+        painter.setPen(pen);
         if(!m_showUnits_x)
         {
             w = fm.width(QString("%1").arg(m_coordEnd_x));

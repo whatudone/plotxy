@@ -41,11 +41,13 @@ void PlotPolar::initPlot()
     m_angularAxis->setTickLabelMode(QCPPolarAxisAngular::lmUpright);
 
     m_angularAxis->setTickLabelColor(m_xTickLabelColor);
+    m_xTickLabelFont.setPixelSize(m_xTickLabelFontSize);
     m_angularAxis->setTickLabelFont(m_xTickLabelFont);
     m_angularAxis->setTickPen(QPen(m_gridColor, 1));
 
-    m_angularAxis->radialAxis()->setTickLabelColor(m_xTickLabelColor);
-    m_angularAxis->radialAxis()->setTickLabelFont(m_xTickLabelFont);
+    m_angularAxis->radialAxis()->setTickLabelColor(m_yTickLabelColor);
+    m_yTickLabelFont.setPixelSize(m_yTickLabelFontSize);
+    m_angularAxis->radialAxis()->setTickLabelFont(m_yTickLabelFont);
 
     m_angularAxis->radialAxis()->setTickLabelMode(QCPPolarAxisRadial::lmUpright);
     m_angularAxis->radialAxis()->setTickLabelRotation(0);
@@ -65,7 +67,7 @@ void PlotPolar::initPlot()
     m_customPlot->replot();
 }
 
-void PlotPolar::setAxisColorWidth(QColor color, uint width)
+void PlotPolar::setAxisColorWidth(const QColor& color, int32_t width)
 {
     if(m_axisColor == color && m_axisWidth == width)
         return;
@@ -77,7 +79,7 @@ void PlotPolar::setAxisColorWidth(QColor color, uint width)
     m_customPlot->replot();
 }
 
-void PlotPolar::setGridColorWidth(QColor color, uint width)
+void PlotPolar::setGridColorWidth(const QColor& color, int32_t width)
 {
     if(m_gridColor == color && m_gridWidth == width)
         return;
@@ -90,7 +92,7 @@ void PlotPolar::setGridColorWidth(QColor color, uint width)
     m_customPlot->replot();
 }
 
-void PlotPolar::setHorzGrids(uint count)
+void PlotPolar::setHorzGrids(int32_t count)
 {
     if(m_horzGrids == count || count <= 0)
     {
@@ -102,7 +104,7 @@ void PlotPolar::setHorzGrids(uint count)
     m_customPlot->replot();
 }
 
-void PlotPolar::setVertGrids(uint count)
+void PlotPolar::setVertGrids(int32_t count)
 {
     if(m_vertGrids == count)
     {
@@ -128,27 +130,62 @@ void PlotPolar::setGridVisible(bool enable)
     m_customPlot->replot();
 }
 
-void PlotPolar::setTickLabelColor(QColor& color)
+void PlotPolar::setxTickLabelVisible(bool show)
 {
-    m_xTickLabelColor = color;
-    m_angularAxis->setTickLabelColor(m_xTickLabelColor);
-    m_angularAxis->radialAxis()->setTickLabelColor(m_xTickLabelColor);
+    m_xTickLabelVisible = show;
+    m_angularAxis->setTickLabels(show);
     m_customPlot->replot();
 }
 
-void PlotPolar::setTickLabelFont(QFont& font)
+void PlotPolar::setxTickLabelColor(const QColor& color)
+{
+    m_xTickLabelColor = color;
+    m_angularAxis->setTickLabelColor(m_xTickLabelColor);
+    m_customPlot->replot();
+}
+
+void PlotPolar::setxTickLabelFont(const QFont& font)
 {
     m_xTickLabelFont = font;
     m_angularAxis->setTickLabelFont(font);
+    m_customPlot->replot();
+}
+
+void PlotPolar::setxTickLabelFontSize(int size)
+{
+    m_xTickLabelFontSize = size;
+    m_xTickLabelFont.setPixelSize(size);
+    m_angularAxis->setTickLabelFont(m_xTickLabelFont);
+    m_customPlot->replot();
+}
+
+void PlotPolar::setyTickLabelVisible(bool show)
+{
+    m_yTickLabelVisible = show;
+    m_angularAxis->radialAxis()->setTickLabels(show);
+    m_customPlot->replot();
+}
+
+void PlotPolar::setyTickLabelColor(const QColor& color)
+{
+    m_yTickLabelColor = color;
+    m_angularAxis->radialAxis()->setTickLabelColor(m_yTickLabelColor);
+    m_customPlot->replot();
+}
+
+void PlotPolar::setyTickLabelFont(const QFont& font)
+{
+    m_yTickLabelFont = font;
     m_angularAxis->radialAxis()->setTickLabelFont(font);
     m_customPlot->replot();
 }
 
-void PlotPolar::setTickLabelFontSize(int size)
+void PlotPolar::setyTickLabelFontSize(int size)
 {
-    m_xTickLabelFontSize = size;
-    m_xTickLabelFont.setPixelSize(size);
-    setTickLabelFont(m_xTickLabelFont);
+    m_yTickLabelFontSize = size;
+    m_yTickLabelFont.setPixelSize(size);
+    m_angularAxis->radialAxis()->setTickLabelFont(m_yTickLabelFont);
+    m_customPlot->replot();
 }
 
 void PlotPolar::setGridStyle(GridStyle style)

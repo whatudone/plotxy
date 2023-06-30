@@ -10,17 +10,22 @@ public:
 
 	void initPlot();
 
-    void setAxisColorWidth(QColor color, uint width);
-    void setGridColorWidth(QColor color, uint width);
-    void setHorzGrids(uint count);
-    void setVertGrids(uint count);
-    void setGridFillColor(QColor color);
+    void setAxisColorWidth(const QColor& color, int32_t width) override;
+    void setGridColorWidth(const QColor& color, int32_t width) override;
+    void setHorzGrids(int32_t count) override;
+    void setVertGrids(int32_t count) override;
+    void setGridVisible(bool enable) override;
+    void setGridStyle(GridStyle style) override;
 
-    void setGridVisible(bool enable);
-    void setTickLabelColor(QColor& color);
-    void setTickLabelFont(QFont& font);
-    void setTickLabelFontSize(int size);
-    void setGridStyle(GridStyle style);
+    void setxTickLabelVisible(bool show);
+    void setxTickLabelColor(const QColor& color);
+    void setxTickLabelFont(const QFont& font);
+    void setxTickLabelFontSize(int size);
+
+    void setyTickLabelVisible(bool show);
+    void setyTickLabelColor(const QColor& color);
+    void setyTickLabelFont(const QFont& font);
+    void setyTickLabelFontSize(int size);
 
 	//unit
 	void setUnitsShowX(bool on);
