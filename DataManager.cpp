@@ -942,8 +942,6 @@ QString DataManager::getGroupNameByID(int32_t id)
     QStringList groupNames = m_settings->childGroups();
     foreach(QString groupName, groupNames)
     {
-        QString newGroup = QString::fromUtf8(groupName.toLatin1());
-
         m_settings->beginGroup(groupName);
 
         QStringList keys = m_settings->allKeys();
@@ -951,7 +949,7 @@ QString DataManager::getGroupNameByID(int32_t id)
         {
             QStringList value = m_settings->value(key).toStringList();
             if(value.contains(QString::number(id)))
-                return newGroup;
+                return m_settings->value("TypeName").toString();
         }
         m_settings->endGroup();
     }

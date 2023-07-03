@@ -6,7 +6,6 @@
 #include <string>
 
 #include <QPainterPath>
-#include <QSettings>
 class TimeStamp;
 
 namespace simCore
