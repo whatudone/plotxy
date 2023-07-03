@@ -608,6 +608,7 @@ void AdvancedDataManager::refreshConnections()
                     QTableWidgetItem* itemX = new QTableWidgetItem(setting.endXEntityAttr);
                     itemX->setData(Qt::UserRole + 1, setting.uuid);
                     QTableWidgetItem* itemY = new QTableWidgetItem(setting.endYEntityAttr);
+                    itemY->setData(Qt::UserRole + 1, setting.color.rgba());
                     QTableWidgetItem* itemWidth =
                         new QTableWidgetItem(QString::number(setting.width));
                     QTableWidgetItem* itemStipple = new QTableWidgetItem(setting.stipple);
@@ -856,6 +857,11 @@ void AdvancedDataManager::initConConnections()
             &QPushButton::clicked,
             this,
             &AdvancedDataManager::onRemoveConnection);
+
+    connect(ui.tableWidgetConnections,
+            &QTableWidget::cellClicked,
+            this,
+            &AdvancedDataManager::onConnectionItemClicked);
 }
 
 void AdvancedDataManager::initEventConnections()
@@ -1065,6 +1071,7 @@ void AdvancedDataManager::onAddConnection()
         QTableWidgetItem* itemX = new QTableWidgetItem(setting.endXEntityAttr);
         itemX->setData(Qt::UserRole + 1, setting.uuid);
         QTableWidgetItem* itemY = new QTableWidgetItem(setting.endYEntityAttr);
+        itemY->setData(Qt::UserRole + 1, setting.color.rgba());
         QTableWidgetItem* itemWidth = new QTableWidgetItem(QString::number(setting.width));
         QTableWidgetItem* itemStipple = new QTableWidgetItem(setting.stipple);
         QTableWidgetItem* itemSpeed = new QTableWidgetItem(QString::number(setting.speed));
@@ -1120,6 +1127,24 @@ void AdvancedDataManager::onRemoveConnection()
         plot->removeConnection(uuid);
         ui.tableWidgetConnections->removeRow(curRow);
     }
+}
+
+void AdvancedDataManager::onConnectionItemClicked()
+{
+    if(!ui.tableWidgetConnections->currentIndex().isValid())
+    {
+        return;
+    }
+    int32_t curRow = ui.tableWidgetConnections->currentRow();
+    auto curItemY = ui.tableWidgetConnections->item(curRow, 1);
+    QColor color = QColor::fromRgba(curItemY->data(Qt::UserRole + 1).toUInt());
+    int32_t width = ui.tableWidgetConnections->item(curRow, 2)->text().toInt();
+    QString stipple = ui.tableWidgetConnections->item(curRow, 3)->text();
+    int32_t speed = ui.tableWidgetConnections->item(curRow, 4)->text().toInt();
+    ui.pushButtonConColor->setColor(color);
+    ui.spinBoxConWidth->setValue(width);
+    ui.lineEditConStipple->setText(stipple);
+    ui.spinBoxAniSpeed->setValue(speed);
 }
 
 void AdvancedDataManager::onUpdatePlotPair()

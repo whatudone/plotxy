@@ -100,6 +100,7 @@ public slots:
     void onAddConnection();
     void onUpdateConnection();
     void onRemoveConnection();
+    void onConnectionItemClicked();
 
 private:
     // 根据数据对数据刷新UI

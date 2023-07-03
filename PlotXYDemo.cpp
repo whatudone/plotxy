@@ -1038,6 +1038,7 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
         PlotScatter* scatter = dynamic_cast<PlotScatter*>(plot);
         if(scatter)
         {
+            // marks
             auto markers = scatter->getPlotMarkers();
             QJsonArray array;
             for(const auto& mark : markers)
@@ -1057,8 +1058,11 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
 
                 array.append(object);
             }
-            plotObject.insert("ScatterMarkers", array);
-
+            if(!array.isEmpty())
+            {
+                plotObject.insert("ScatterMarkers", array);
+            }
+            // GOG
             auto gogList = scatter->getGOGFileList();
             QJsonArray gogArray;
             auto settingMap = scatter->getGogCustomSettings();
@@ -1075,7 +1079,10 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
 
                 gogArray.append(object);
             }
-            plotObject.insert("ScatterGOGs", gogArray);
+            if(!gogArray.isEmpty())
+            {
+                plotObject.insert("ScatterGOGs", gogArray);
+            }
             // Event
             auto eventList = scatter->getEventList();
             QJsonArray eventArray;
@@ -1096,8 +1103,32 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
 
                 eventArray.append(object);
             }
+            if(!eventArray.isEmpty())
+            {
+                plotObject.insert("ScatterEvents", eventArray);
+            }
+            // connections连线
+            auto conHash = scatter->getConHash();
+            QJsonArray conArray;
+            for(const auto& conSetting : conHash)
+            {
+                QJsonObject object;
+                object.insert("ScatterConUUID", conSetting.uuid);
+                object.insert("ScatterConColor", color_transfer::QColorToRGBAStr(conSetting.color));
+                object.insert("ScatterConWidth", conSetting.width);
+                object.insert("ScatterConStipple", conSetting.stipple);
+                object.insert("ScatterConSpeed", conSetting.speed);
+                object.insert("ScatterStartUUID", conSetting.startDataPairUuid);
+                object.insert("ScatterEndUUID", conSetting.endDataPairUuid);
+                object.insert("ScatterConXEntityAttr", conSetting.endXEntityAttr);
+                object.insert("ScatterConYEntityAttr", conSetting.endYEntityAttr);
 
-            plotObject.insert("ScatterEvents", eventArray);
+                conArray.append(object);
+            }
+            if(!conArray.isEmpty())
+            {
+                plotObject.insert("ScatterCons", conArray);
+            }
         }
     }
     else if(type == PlotType::Type_PlotText)
@@ -1357,6 +1388,27 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
                 set.m_entityID = eventObject.value("ScatterEventEID").toInt();
                 set.m_entityName = eventObject.value("ScatterEventEName").toString();
                 scatter->addEvent(set);
+            }
+            // 连线
+            auto conArray = plotObject.value("ScatterCons").toArray();
+
+            for(int32_t i = 0; i < conArray.size(); i++)
+            {
+
+                auto conObject = conArray.at(i).toObject();
+                ConnectionSetting set;
+
+                set.uuid = conObject.value("ScatterConUUID").toString();
+                set.color = color_transfer::QColorFromRGBAStr(
+                    conObject.value("ScatterConColor").toString());
+                set.width = conObject.value("ScatterConWidth").toInt();
+                set.stipple = conObject.value("ScatterConStipple").toString();
+                set.speed = conObject.value("ScatterConSpeed").toInt();
+                set.startDataPairUuid = conObject.value("ScatterStartUUID").toString();
+                set.endDataPairUuid = conObject.value("ScatterEndUUID").toString();
+                set.endXEntityAttr = conObject.value("ScatterConXEntityAttr").toString();
+                set.endYEntityAttr = conObject.value("ScatterConYEntityAttr").toString();
+                scatter->addConnection(set);
             }
         }
     }
