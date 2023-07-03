@@ -266,4 +266,24 @@ struct PlotMarker
         uuid = QUuid::createUuid().toString();
     }
 };
+// 连接
+struct ConnectionSetting
+{
+    QString uuid;
+    QColor color;
+    int32_t width;
+    QString stipple;
+    int32_t speed;
+    QString startDataPairUuid;
+    QString endDataPairUuid;
+    //entity + attr
+    QString endXEntityAttr;
+    QString endYEntityAttr;
+
+    ConnectionSetting()
+    {
+        uuid = QUuid::createUuid().toString();
+    }
+};
+
 #endif // _CONST_DEF_H_

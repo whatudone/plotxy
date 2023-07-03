@@ -415,6 +415,7 @@ protected:
     virtual void updateTimelineGraph() {}
 
 protected:
+    // 数据对列表
     QVector<DataPair*> m_dataPairs;
     //General
     QColor m_outerFillColor; // 整体背景

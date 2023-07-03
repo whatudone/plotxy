@@ -1,6 +1,7 @@
 ﻿#include "AdvancedDataManager.h"
 #include "DataManager.h"
 #include "PlotManagerData.h"
+#include "PlotScatter.h"
 
 #include <QColor>
 #include <QColorDialog>
@@ -411,6 +412,7 @@ void AdvancedDataManager::refreshUI()
         refreshEvent();
         refreshLabelText();
         refreshColorRanges();
+        refreshConnections();
     }
 }
 
@@ -553,6 +555,73 @@ void AdvancedDataManager::refreshColorRanges()
             addUnion->setText(1, QString::number(value));
             addUnion->setBackgroundColor(2, color);
             ui.treeWidgetColorRange->addTopLevelItem(addUnion);
+        }
+    }
+}
+
+void AdvancedDataManager::refreshConnections()
+{
+    if(m_curSelectDatapair && m_curSelectPlot)
+    {
+        // 刷新上面的数据对列表
+        ui.tableWidgetExtraDataPairs->clearContents();
+        auto dataPairList = m_curSelectPlot->getDataPairs();
+        int32_t size = dataPairList.size();
+        if(size <= 1)
+        {
+            ui.tableWidgetExtraDataPairs->setRowCount(0);
+            return;
+        }
+        else
+        {
+            ui.tableWidgetExtraDataPairs->setRowCount(size - 1);
+        }
+        int32_t row = 0;
+        for(DataPair* dataPair : dataPairList)
+        {
+            if(dataPair == m_curSelectDatapair)
+            {
+                continue;
+            }
+            QTableWidgetItem* itemX =
+                new QTableWidgetItem(dataPair->getEntity_x() + " " + dataPair->getAttr_x());
+            itemX->setData(Qt::UserRole + 1, dataPair->getUuid());
+            QTableWidgetItem* itemY =
+                new QTableWidgetItem(dataPair->getEntity_y() + " " + dataPair->getAttr_y());
+            ui.tableWidgetExtraDataPairs->setItem(row, 0, itemX);
+            ui.tableWidgetExtraDataPairs->setItem(row, 1, itemY);
+            ++row;
+        }
+        // 刷新下部的已经添加的连接信息
+        ui.tableWidgetConnections->clearContents();
+        ui.tableWidgetConnections->setRowCount(0);
+        PlotScatter* scatter = dynamic_cast<PlotScatter*>(m_curSelectPlot);
+        if(scatter)
+        {
+            auto conSettingMap = scatter->getConHash();
+            int32_t row = 0;
+            for(const auto& setting : conSettingMap)
+            {
+                // 筛选出本数据对对应的连线
+                if(setting.startDataPairUuid == m_curSelectDatapair->getUuid())
+                {
+                    QTableWidgetItem* itemX = new QTableWidgetItem(setting.endXEntityAttr);
+                    itemX->setData(Qt::UserRole + 1, setting.uuid);
+                    QTableWidgetItem* itemY = new QTableWidgetItem(setting.endYEntityAttr);
+                    QTableWidgetItem* itemWidth =
+                        new QTableWidgetItem(QString::number(setting.width));
+                    QTableWidgetItem* itemStipple = new QTableWidgetItem(setting.stipple);
+                    QTableWidgetItem* itemSpeed =
+                        new QTableWidgetItem(QString::number(setting.speed));
+                    ui.tableWidgetConnections->insertRow(row);
+                    ui.tableWidgetConnections->setItem(row, 0, itemX);
+                    ui.tableWidgetConnections->setItem(row, 1, itemY);
+                    ui.tableWidgetConnections->setItem(row, 2, itemWidth);
+                    ui.tableWidgetConnections->setItem(row, 3, itemStipple);
+                    ui.tableWidgetConnections->setItem(row, 4, itemSpeed);
+                    ++row;
+                }
+            }
         }
     }
 }
@@ -776,6 +845,17 @@ void AdvancedDataManager::initConConnections()
             &QPushButton::clicked,
             this,
             &AdvancedDataManager::onConBtnMoreClicked);
+
+    connect(
+        ui.pushButtonAddCon, &QPushButton::clicked, this, &AdvancedDataManager::onAddConnection);
+    connect(ui.pushButtonUpdateCon,
+            &QPushButton::clicked,
+            this,
+            &AdvancedDataManager::onUpdateConnection);
+    connect(ui.pushButtonRemoveCon,
+            &QPushButton::clicked,
+            this,
+            &AdvancedDataManager::onRemoveConnection);
 }
 
 void AdvancedDataManager::initEventConnections()
@@ -820,9 +900,9 @@ void AdvancedDataManager::initStippleConnections()
 void AdvancedDataManager::onBtnAddColorRange()
 {
     QColor color = ui.pushButton_color->color();
-	QTreeWidgetItem* addUnion = new QTreeWidgetItem;
-	addUnion->setText(0, ui.lineEdit_name->text());
-	addUnion->setText(1, ui.lineEdit_value->text());
+    QTreeWidgetItem* addUnion = new QTreeWidgetItem;
+    addUnion->setText(0, ui.lineEdit_name->text());
+    addUnion->setText(1, ui.lineEdit_value->text());
     addUnion->setBackgroundColor(2, color);
 
     ui.treeWidgetColorRange->addTopLevelItem(addUnion);
@@ -862,7 +942,7 @@ void AdvancedDataManager::onBtnRemoveColorRange()
 
 void AdvancedDataManager::onBtnMore()
 {
-	ui.stackedWidget_aDMrpart->setCurrentIndex(1);
+    ui.stackedWidget_aDMrpart->setCurrentIndex(1);
 }
 
 void AdvancedDataManager::onBtnColorMore()
@@ -958,19 +1038,97 @@ void AdvancedDataManager::onConBtnMoreClicked()
     ui.stackedWidget_aDMrpart->setCurrentIndex(4);
 }
 
-void AdvancedDataManager::onAddConnection() {}
+void AdvancedDataManager::onAddConnection()
+{
+    if(auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot))
+    {
+        if(!ui.tableWidgetExtraDataPairs->currentIndex().isValid())
+        {
+            return;
+        }
+        int32_t currentRow = ui.tableWidgetExtraDataPairs->currentRow();
+        QString endUUID =
+            ui.tableWidgetExtraDataPairs->item(currentRow, 0)->data(Qt::UserRole + 1).toString();
+        QString endXEntityAttr = ui.tableWidgetExtraDataPairs->item(currentRow, 0)->text();
+        QString endYEntityAttr = ui.tableWidgetExtraDataPairs->item(currentRow, 1)->text();
+        ConnectionSetting setting;
+        setting.color = ui.pushButtonConColor->color();
+        setting.width = ui.spinBoxConWidth->value();
+        setting.stipple = ui.lineEditConStipple->text();
+        setting.speed = ui.spinBoxAniSpeed->value();
+        setting.startDataPairUuid = m_curSelectDatapair->getUuid();
+        setting.endDataPairUuid = endUUID;
+        setting.endXEntityAttr = endXEntityAttr;
+        setting.endYEntityAttr = endYEntityAttr;
+        plot->addConnection(setting);
 
-void AdvancedDataManager::onUpdateConnection() {}
+        QTableWidgetItem* itemX = new QTableWidgetItem(setting.endXEntityAttr);
+        itemX->setData(Qt::UserRole + 1, setting.uuid);
+        QTableWidgetItem* itemY = new QTableWidgetItem(setting.endYEntityAttr);
+        QTableWidgetItem* itemWidth = new QTableWidgetItem(QString::number(setting.width));
+        QTableWidgetItem* itemStipple = new QTableWidgetItem(setting.stipple);
+        QTableWidgetItem* itemSpeed = new QTableWidgetItem(QString::number(setting.speed));
 
-void AdvancedDataManager::onRemoveConnection() {}
+        ui.tableWidgetConnections->insertRow(ui.tableWidgetConnections->rowCount());
+        int32_t row = ui.tableWidgetConnections->rowCount() - 1;
+        ui.tableWidgetConnections->setItem(row, 0, itemX);
+        ui.tableWidgetConnections->setItem(row, 1, itemY);
+        ui.tableWidgetConnections->setItem(row, 2, itemWidth);
+        ui.tableWidgetConnections->setItem(row, 3, itemStipple);
+        ui.tableWidgetConnections->setItem(row, 4, itemSpeed);
+        ui.tableWidgetConnections->setCurrentItem(itemX);
+    }
+}
+
+void AdvancedDataManager::onUpdateConnection()
+{
+    if(auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot))
+    {
+        if(!ui.tableWidgetConnections->currentIndex().isValid())
+        {
+            return;
+        }
+        int32_t curRow = ui.tableWidgetConnections->currentRow();
+        auto curItemX = ui.tableWidgetConnections->item(curRow, 0);
+        QString uuid = curItemX->data(Qt::UserRole + 1).toString();
+        QColor color = ui.pushButtonConColor->color();
+        int32_t width = ui.spinBoxConWidth->value();
+        QString stipple = ui.lineEditConStipple->text();
+        int32_t speed = ui.spinBoxAniSpeed->value();
+        plot->updateConnection(uuid, color, width, stipple, speed);
+
+        auto curItemWidth = ui.tableWidgetConnections->item(curRow, 2);
+        curItemWidth->setText(QString::number(width));
+        auto curItemStipple = ui.tableWidgetConnections->item(curRow, 3);
+        curItemStipple->setText(stipple);
+        auto curItemSpeed = ui.tableWidgetConnections->item(curRow, 4);
+        curItemSpeed->setText(QString::number(speed));
+    }
+}
+
+void AdvancedDataManager::onRemoveConnection()
+{
+    if(auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot))
+    {
+        if(!ui.tableWidgetConnections->currentIndex().isValid())
+        {
+            return;
+        }
+        int32_t curRow = ui.tableWidgetConnections->currentRow();
+        auto curItemX = ui.tableWidgetConnections->item(curRow, 0);
+        QString uuid = curItemX->data(Qt::UserRole + 1).toString();
+        plot->removeConnection(uuid);
+        ui.tableWidgetConnections->removeRow(curRow);
+    }
+}
 
 void AdvancedDataManager::onUpdatePlotPair()
 {
     auto plotData = PlotManagerData::getInstance()->getPlotManagerData();
     if(plotData.isEmpty())
-		return;
+        return;
     ui.tableWidget_plotpair->clearContents();
-	ui.tableWidget_plotpair->setRowCount(0);
+    ui.tableWidget_plotpair->setRowCount(0);
     for(int i = 0; i < plotData.size(); ++i)
 	{
         QString tabString = plotData.keys().at(i);
@@ -981,21 +1139,21 @@ void AdvancedDataManager::onUpdatePlotPair()
             for(int k = 0; k < dataPairs.size(); ++k)
 			{
                 auto dataPair = dataPairs[k];
-				//界面更新
+                //界面更新
                 QTableWidgetItem* data1 = new QTableWidgetItem(dataPair->getXEntityAttrPair());
                 data1->setData(Qt::UserRole + 1, dataPair->getUuid());
                 QTableWidgetItem* data2 = new QTableWidgetItem(dataPair->getYEntityAttrPair());
-				QTableWidgetItem* data3 = new QTableWidgetItem(tempPlot->getName());
-				QTableWidgetItem* data4 = new QTableWidgetItem(tempPlot->getTabName());
-				int row = ui.tableWidget_plotpair->rowCount();
-				ui.tableWidget_plotpair->insertRow(row);
-				ui.tableWidget_plotpair->setItem(row, 0, data1);
-				ui.tableWidget_plotpair->setItem(row, 1, data2);
-				ui.tableWidget_plotpair->setItem(row, 2, data3);
-				ui.tableWidget_plotpair->setItem(row, 3, data4);
+                QTableWidgetItem* data3 = new QTableWidgetItem(tempPlot->getName());
+                QTableWidgetItem* data4 = new QTableWidgetItem(tempPlot->getTabName());
+                int row = ui.tableWidget_plotpair->rowCount();
+                ui.tableWidget_plotpair->insertRow(row);
+                ui.tableWidget_plotpair->setItem(row, 0, data1);
+                ui.tableWidget_plotpair->setItem(row, 1, data2);
+                ui.tableWidget_plotpair->setItem(row, 2, data3);
+                ui.tableWidget_plotpair->setItem(row, 3, data4);
                 if(ui.tableWidget_plotpair->currentItem() == NULL)
 				{
-					ui.tableWidget_plotpair->setCurrentItem(data1);
+                    ui.tableWidget_plotpair->setCurrentItem(data1);
 				}
 			}
 		}

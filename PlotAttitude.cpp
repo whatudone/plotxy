@@ -93,7 +93,7 @@ void PlotAttitude::drawScale_roll(QPainter* painter, int radius)
 	double x, y, w, h;
     QString str, strNum;
 
-    for(uint i = 0; i < m_horzGrids; ++i)
+    for(int i = 0; i < m_horzGrids; ++i)
 	{
         double rollTickNum = eachMajor_roll * i + m_coordBgn_x;
         // roll刻度不超过180

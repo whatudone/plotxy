@@ -111,9 +111,9 @@ private:
 	void refreshStipple();
 	void refreshEvent();
     void refreshAddedEventList();
-
 	void refreshLabelText();
 	void refreshColorRanges();
+    void refreshConnections();
 
     void initConnections();
 

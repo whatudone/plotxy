@@ -83,6 +83,17 @@ public:
     QHash<QString, PlotMarker> getPlotMarkers() const;
     PlotMarker getMarkerByUuid(const QString& uuid) const;
 
+    void addConnection(const ConnectionSetting& con);
+    void removeConnection(const QString& uuid);
+    void updateConnection(const QString& uuid,
+                          const QColor& color,
+                          int32_t width,
+                          const QString& stipple,
+                          int32_t speed);
+
+    QHash<QString, ConnectionSetting> getConHash() const;
+    void setConHash(const QHash<QString, ConnectionSetting>& conHash);
+
 private:
     void initPlot();
     void updateDataForDataPairsByTime(double secs) override;
@@ -96,6 +107,8 @@ private:
     void updateBackgroundColorSeg();
     // 刷新marker
     void updateMarkers(double currentSeconds);
+    // 刷新连线
+    void updateConnectionLines();
 
 private:
     QHash<QString, QPair<QVector<double>, QVector<double>>> m_dataHash;
@@ -122,6 +135,12 @@ private:
     bool m_isInitCoorRange = false;
     // 最后更新时间
     double m_lastTime = std::numeric_limits<double>::max();
+    // 连接
+    // <setting uuid,setting>
+    QHash<QString, ConnectionSetting> m_conHash;
+    QList<QCPItemLine*> m_connectionLines;
+    //<data pari uuid,last value point>
+    QHash<QString, QPointF> m_lastDataHash;
 };
 
 #endif // PLOTSCATTER_H

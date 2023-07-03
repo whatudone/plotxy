@@ -108,6 +108,7 @@ void PlotScatter::delPlotPairData(const QString& uuid)
 void PlotScatter::updateDataForDataPairsByTime(double secs)
 {
     m_dataHash.clear();
+    m_lastDataHash.clear();
     m_isTimeLine = false;
     int itemCnt = getDataPairs().size();
 
@@ -157,6 +158,10 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
                     yEntityID, yAttr, secs);
             }
             m_dataHash.insert(uuid, qMakePair(x, y));
+            if(!x.isEmpty() && !y.isEmpty())
+            {
+                m_lastDataHash.insert(uuid, QPointF(x.last(), y.last()));
+            }
         }
     }
     if(m_isTimeLine)
@@ -171,13 +176,14 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
         }
     }
     updateMarkers(secs);
+    updateConnectionLines();
 	m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
 void PlotScatter::updateGraphByDataPair(DataPair* data)
 {
     if(!data)
-	{
+    {
         return;
     }
     if(m_isTimeLine)
@@ -189,7 +195,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
     auto x = m_dataHash.value(uuid).first;
     auto y = m_dataHash.value(uuid).second;
     if(x.isEmpty() || y.isEmpty())
-    {
+	{
         return;
     }
     DrawComponents info;
@@ -768,6 +774,46 @@ void PlotScatter::updateMarkers(double currentSeconds)
     m_customPlot->replot();
 }
 
+void PlotScatter::updateConnectionLines()
+{
+    // 清理历史连线
+    for(auto lines : m_connectionLines)
+    {
+        m_customPlot->removeItem(lines);
+    }
+    m_connectionLines.clear();
+    for(const auto& setting : m_conHash)
+    {
+
+        if(m_lastDataHash.contains(setting.startDataPairUuid) &&
+           m_lastDataHash.contains(setting.endDataPairUuid))
+        {
+            QPointF startPoint = m_lastDataHash.value(setting.startDataPairUuid);
+            QPointF endPoint = m_lastDataHash.value(setting.endDataPairUuid);
+            QCPItemLine* line = new QCPItemLine(m_customPlot);
+            QPen pen(setting.color, setting.width);
+            line->setPen(pen);
+            line->start->setType(QCPItemPosition::ptPlotCoords);
+            line->end->setType(QCPItemPosition::ptPlotCoords);
+            line->start->setCoords(startPoint);
+            line->end->setCoords(endPoint);
+
+            m_connectionLines.append(line);
+        }
+    }
+    m_customPlot->replot();
+}
+
+QHash<QString, ConnectionSetting> PlotScatter::getConHash() const
+{
+    return m_conHash;
+}
+
+void PlotScatter::setConHash(const QHash<QString, ConnectionSetting>& conHash)
+{
+    m_conHash = conHash;
+}
+
 QHash<QString, PlotMarker> PlotScatter::getPlotMarkers() const
 {
     return m_plotMarkers;
@@ -776,6 +822,37 @@ QHash<QString, PlotMarker> PlotScatter::getPlotMarkers() const
 PlotMarker PlotScatter::getMarkerByUuid(const QString& uuid) const
 {
     return m_plotMarkers.value(uuid);
+}
+
+void PlotScatter::addConnection(const ConnectionSetting& con)
+{
+    if(!m_conHash.contains(con.uuid))
+    {
+        m_conHash.insert(con.uuid, con);
+        updateConnectionLines();
+    }
+}
+
+void PlotScatter::removeConnection(const QString& uuid)
+{
+    if(m_conHash.contains(uuid))
+    {
+        m_conHash.remove(uuid);
+        updateConnectionLines();
+    }
+}
+
+void PlotScatter::updateConnection(
+    const QString& uuid, const QColor& color, int32_t width, const QString& stipple, int32_t speed)
+{
+    if(m_conHash.contains(uuid))
+    {
+        m_conHash[uuid].color = color;
+        m_conHash[uuid].width = width;
+        m_conHash[uuid].stipple = stipple;
+        m_conHash[uuid].speed = speed;
+        updateConnectionLines();
+    }
 }
 
 QMap<double, PlotScatter::BackgroundLimitSeg> PlotScatter::getBkgLimitSegMap() const

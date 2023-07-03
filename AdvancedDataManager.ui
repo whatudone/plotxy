@@ -840,7 +840,27 @@ p, li { white-space: pre-wrap; }
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_14">
                  <item>
-                  <widget class="QTableWidget" name="tableWidgetExtraDataPairs"/>
+                  <widget class="QTableWidget" name="tableWidgetExtraDataPairs">
+                   <property name="selectionMode">
+                    <enum>QAbstractItemView::SingleSelection</enum>
+                   </property>
+                   <property name="selectionBehavior">
+                    <enum>QAbstractItemView::SelectRows</enum>
+                   </property>
+                   <attribute name="horizontalHeaderStretchLastSection">
+                    <bool>true</bool>
+                   </attribute>
+                   <column>
+                    <property name="text">
+                     <string>X</string>
+                    </property>
+                   </column>
+                   <column>
+                    <property name="text">
+                     <string>Y</string>
+                    </property>
+                   </column>
+                  </widget>
                  </item>
                  <item>
                   <layout class="QGridLayout" name="gridLayout" columnstretch="1,1">
@@ -936,7 +956,42 @@ p, li { white-space: pre-wrap; }
                </layout>
               </item>
               <item>
-               <widget class="QTableWidget" name="tableWidgetConnections"/>
+               <widget class="QTableWidget" name="tableWidgetConnections">
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::SingleSelection</enum>
+                </property>
+                <property name="selectionBehavior">
+                 <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+                <attribute name="horizontalHeaderStretchLastSection">
+                 <bool>true</bool>
+                </attribute>
+                <column>
+                 <property name="text">
+                  <string>X</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Y</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Width</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Stipple</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Speed</string>
+                 </property>
+                </column>
+               </widget>
               </item>
              </layout>
             </widget>
