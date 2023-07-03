@@ -12,6 +12,7 @@
 #include "constdef.h"
 
 #include <QMap>
+#include <QSettings>
 #include <QVector3D>
 
 #include <set>
@@ -184,6 +185,8 @@ public:
     // 保存ASI数据，主要是用于在线模式回放数据
     bool saveDataToASI(const QString& file);
 
+    QSettings* getSettings() const;
+
 private:
     //获取实体-属性的全数据，属性默认为Time
     QVector<double> getEntityAttrValueList(int32_t entityID, const QString& attr = "Time");
@@ -198,6 +201,7 @@ private:
     // 使用正则表达式加载ASI中特定数据格式
     QStringList parsePlatformData(const QString& data);
     int32_t findIDByName(const QString& name);
+    QSettings* m_settings = nullptr;
 
     recvThread* m_recvThread = nullptr;
 signals:

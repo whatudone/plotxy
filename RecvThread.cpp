@@ -1,6 +1,7 @@
 #include "RecvThread.h"
 #include "DataManager.h"
 #include "IO_USIM_MessageType.h"
+#include "Utils.h"
 
 #include <QApplication>
 #include <QFile>
@@ -149,7 +150,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.sscinarioname().data());
                 data.m_eventName = QString("仿真信息");
-                data.m_eventType = QString("仿真信息");
+                data.m_eventType =
+                    getGroupNameByID(DataManagerInstance->getSettings(), USIM_SIM_MESSAGE);
             }
             else if(header->iMessageType == USIM_COMMANDSTRUCTURE_MESSAGE)
             {
@@ -157,14 +159,20 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.snodename().data());
                 data.m_eventName = QString("指挥结构信息");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_COMMANDSTRUCTURE_MESSAGE);
             }
             else if(header->iMessageType == USIM_PLATLOADING_MESSAGE)
             {
                 data.m_eventName = QString("装备挂载信息");
+                data.m_eventType =
+                    getGroupNameByID(DataManagerInstance->getSettings(), USIM_PLATLOADING_MESSAGE);
             }
             else if(header->iMessageType == USIM_TIME_MESSAGE)
             {
                 data.m_eventName = QString("时间信息");
+                data.m_eventType =
+                    getGroupNameByID(DataManagerInstance->getSettings(), USIM_TIME_MESSAGE);
             }
             else if(header->iMessageType == USIM_DETECT_MESSAGE)
             {
@@ -172,6 +180,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.csensorname().data());
                 data.m_eventName = QString("探测信息");
+                data.m_eventType =
+                    getGroupNameByID(DataManagerInstance->getSettings(), USIM_DETECT_MESSAGE);
                 data.m_ID = generic.uid();
             }
             else if(header->iMessageType == USIM_FUSION_MESSAGE)
@@ -180,7 +190,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_ID = generic.uid();
                 data.m_eventName = QString("融合信息");
-                data.m_ID = generic.uid();
+                data.m_eventType =
+                    getGroupNameByID(DataManagerInstance->getSettings(), USIM_FUSION_MESSAGE);
             }
             else if(header->iMessageType == USIM_DETECTEVENT_MESSAGE)
             {
@@ -188,6 +199,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.csensorname().data());
                 data.m_eventName = QString("探测事件信息");
+                data.m_eventType =
+                    getGroupNameByID(DataManagerInstance->getSettings(), USIM_DETECTEVENT_MESSAGE);
                 data.m_ID = generic.uplatid();
             }
             else if(header->iMessageType == USIM_FUSIONEVENT_MESSAGE)
@@ -196,7 +209,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_ID = generic.uid();
                 data.m_eventName = QString("融合事件信息");
-                data.m_ID = generic.uid();
+                data.m_eventType =
+                    getGroupNameByID(DataManagerInstance->getSettings(), USIM_FUSIONEVENT_MESSAGE);
             }
             else if(header->iMessageType == USIM_COMMUNICATIONEVENT_MESSAGE)
             {
@@ -204,7 +218,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_ID = generic.uid();
                 data.m_eventName = QString("通信事件信息");
-                data.m_ID = generic.uid();
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_COMMUNICATIONEVENT_MESSAGE);
             }
             else if(header->iMessageType == USIM_COMMANDEVENT_MESSAGE)
             {
@@ -212,6 +227,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.sslaveequipmentname().data());
                 data.m_eventName = QString("指挥控制事件信息");
+                data.m_eventType =
+                    getGroupNameByID(DataManagerInstance->getSettings(), USIM_COMMANDEVENT_MESSAGE);
                 data.m_ID = generic.uhostid();
             }
             else if(header->iMessageType == USIM_WEAPONEVENT_MESSAGE)
@@ -220,6 +237,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.cweaponname().data());
                 data.m_eventName = QString("武器系统事件信息");
+                data.m_eventType =
+                    getGroupNameByID(DataManagerInstance->getSettings(), USIM_WEAPONEVENT_MESSAGE);
                 data.m_ID = generic.uid();
             }
             else if(header->iMessageType == USIM_WEAPONLAUNCHEVENT_MESSAGE)
@@ -228,6 +247,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.cweaponname().data());
                 data.m_eventName = QString("武器发射事件信息");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_WEAPONLAUNCHEVENT_MESSAGE);
                 data.m_ID = generic.uid();
             }
             else if(header->iMessageType == USIM_BAITLAUNCHEVENT_MESSAGE)
@@ -236,6 +257,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.cbaitname().data());
                 data.m_eventName = QString("诱饵发射事件信息");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_BAITLAUNCHEVENT_MESSAGE);
                 data.m_ID = generic.uid();
             }
             else if(header->iMessageType == USIM_EWEVENT_MESSAGE)
@@ -244,11 +267,15 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.cjammingsystemname().data());
                 data.m_eventName = QString("电子战事件信息");
+                data.m_eventType =
+                    getGroupNameByID(DataManagerInstance->getSettings(), USIM_EWEVENT_MESSAGE);
                 data.m_ID = generic.uid();
             }
             else if(header->iMessageType == USIM_ACOUSTICJAMMINGEVENT_MESSAGE)
             {
                 data.m_eventName = QString("水声干扰事件信息");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_ACOUSTICJAMMINGEVENT_MESSAGE);
             }
             else if(header->iMessageType == USIM_SENSORSTATEEVENT_MESSAGE)
             {
@@ -256,6 +283,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.ssensorname().data());
                 data.m_eventName = QString("传感器开关机事件信息");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_SENSORSTATEEVENT_MESSAGE);
                 data.m_ID = generic.uid();
             }
             else if(header->iMessageType == USIM_ENGAGEMENTRESULTEVENT_MESSAGE)
@@ -264,6 +293,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.sweaponname().data());
                 data.m_eventName = QString("交战结果事件信息");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_ENGAGEMENTRESULTEVENT_MESSAGE);
                 data.m_ID = generic.uid();
             }
             else if(header->iMessageType == USIM_DAMAGEEVENT_MESSAGE)
@@ -272,6 +303,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.sweaponname().data());
                 data.m_eventName = QString("毁伤事件信息");
+                data.m_eventType =
+                    getGroupNameByID(DataManagerInstance->getSettings(), USIM_DAMAGEEVENT_MESSAGE);
                 data.m_ID = generic.uattackerid();
             }
             else if(header->iMessageType == USIM_LOGISTICSUPPLYEVENT_MESSAGE)
@@ -280,7 +313,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_ID = generic.usenderid();
                 data.m_eventName = QString("后勤补给事件信息");
-                data.m_ID = generic.usenderid();
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_LOGISTICSUPPLYEVENT_MESSAGE);
             }
             else if(header->iMessageType == USIM_AIRCRAFTLAUNCHEVENT_MESSAGE)
             {
@@ -288,6 +322,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.splanename().data());
                 data.m_eventName = QString("飞机起飞事件信息");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AIRCRAFTLAUNCHEVENT_MESSAGE);
                 data.m_ID = generic.uplaneid();
             }
             else if(header->iMessageType == USIM_AIRCRAFTLANDINGEVENT_MESSAGE)
@@ -296,6 +332,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_ID = generic.uplaneid();
                 data.m_eventName = QString("飞机降落事件信息");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AIRCRAFTLANDINGEVENT_MESSAGE);
             }
             else if(header->iMessageType == USIM_RTBEVENT_MESSAGE)
             {
@@ -303,6 +341,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_ID = generic.uplaneid();
                 data.m_eventName = QString("飞机返回基地事件信息");
+                data.m_eventType =
+                    getGroupNameByID(DataManagerInstance->getSettings(), USIM_RTBEVENT_MESSAGE);
             }
             else if(header->iMessageType == USIM_THROWBUOYEVENT_MESSAGE)
             {
@@ -310,6 +350,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.sbuoy().data());
                 data.m_eventName = QString("撒浮标事件信息");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_THROWBUOYEVENT_MESSAGE);
                 data.m_ID = generic.uid();
             }
             else if(header->iMessageType == USIM_SONARBUOYREUSINGEVENT_MESSAGE)
@@ -318,6 +360,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.ssonarname().data());
                 data.m_eventName = QString("声纳吊放回收事件信息");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_SONARBUOYREUSINGEVENT_MESSAGE);
                 data.m_ID = generic.uid();
             }
             else if(header->iMessageType == USIM_FORCEOPROJECTIONEVENT_MESSAGE)
@@ -326,6 +370,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.cforcename().data());
                 data.m_eventName = QString("兵力投送事件信息");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_FORCEOPROJECTIONEVENT_MESSAGE);
                 data.m_ID = generic.uid();
             }
             else if(header->iMessageType == USIM_FORCEREUSINGEVENT_MESSAGE)
@@ -334,6 +380,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_ID = generic.uid();
                 data.m_eventName = QString("兵力回收事件信息");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_FORCEREUSINGEVENT_MESSAGE);
             }
             else if(header->iMessageType == USIM_DYNAMICRADIATIONCIRCLE_MESSAGE)
             {
@@ -341,6 +389,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.suuid().data());
                 data.m_eventName = QString("动态放射圈信息");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_DYNAMICRADIATIONCIRCLE_MESSAGE);
                 data.m_ID = generic.uid();
             }
             else if(header->iMessageType == USIM_DRAWING_WEDGE_MESSAGE)
@@ -349,6 +399,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.suuid().data());
                 data.m_eventName = QString("楔形波束体信息");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_DRAWING_WEDGE_MESSAGE);
                 data.m_ID = generic.uid();
             }
             else if(header->iMessageType == USIM_DRAWING_BALL_MESSAGE)
@@ -357,6 +409,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.suuid().data());
                 data.m_eventName = QString("球形波束体信息");
+                data.m_eventType =
+                    getGroupNameByID(DataManagerInstance->getSettings(), USIM_DRAWING_BALL_MESSAGE);
                 data.m_ID = generic.uid();
             }
             else if(header->iMessageType == USIM_DRAWING_CIRCULARRING_MESSAGE)
@@ -365,6 +419,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.suuid().data());
                 data.m_eventName = QString("圆环形波束体信息");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_DRAWING_CIRCULARRING_MESSAGE);
                 data.m_ID = generic.uid();
             }
             else if(header->iMessageType == USIM_DRAWING_CIRCULARCONE_MESSAGE)
@@ -373,6 +429,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.suuid().data());
                 data.m_eventName = QString("圆锥形波束体信息");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_DRAWING_CIRCULARCONE_MESSAGE);
                 data.m_ID = generic.uid();
             }
             else if(header->iMessageType == USIM_DRAWING_PYRAMID_MESSAGE)
@@ -381,6 +439,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.suuid().data());
                 data.m_eventName = QString("方锥形波束体信息");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_DRAWING_PYRAMID_MESSAGE);
                 data.m_ID = generic.uid();
             }
             else if(header->iMessageType == USIM_DRAWING_CYLINDER_MESSAGE)
@@ -389,6 +449,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.suuid().data());
                 data.m_eventName = QString("圆柱形波束体信息");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_DRAWING_CYLINDER_MESSAGE);
                 data.m_ID = generic.uid();
             }
             else if(header->iMessageType == USIM_LINETYPE_MESSAGE)
@@ -397,6 +459,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.suuid().data());
                 data.m_eventName = QString("线型信息");
+                data.m_eventType =
+                    getGroupNameByID(DataManagerInstance->getSettings(), USIM_LINETYPE_MESSAGE);
                 data.m_ID = generic.uid();
             }
             else if(header->iMessageType == USIM_DISABLEDISPLAY_MESSAGE)
@@ -405,6 +469,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.suuid().data());
                 data.m_eventName = QString("图形显示关闭信息");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_DISABLEDISPLAY_MESSAGE);
             }
             else if(header->iMessageType == USIM_SONARDETECTINFO_MESSAGE)
             {
@@ -412,11 +478,15 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.detector().data());
                 data.m_eventName = QString("声纳探测详情");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_SONARDETECTINFO_MESSAGE);
                 data.m_ID = generic.plat_id();
             }
             else if(header->iMessageType == USIM_SONOBOUYDETECTINFO_MESSAGE)
             {
                 data.m_eventName = QString("浮标阵探测详情");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_SONOBOUYDETECTINFO_MESSAGE);
             }
             else if(header->iMessageType == USIM_AirDeckAbort_MESSAGE)
             {
@@ -424,6 +494,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.aircraft().data());
                 data.m_eventName = QString("飞机甲板中止事件信息");
+                data.m_eventType =
+                    getGroupNameByID(DataManagerInstance->getSettings(), USIM_AirDeckAbort_MESSAGE);
                 data.m_ID = generic.major_p();
             }
             else if(header->iMessageType == USIM_IssuingTaskAssignment_MESSAGE)
@@ -432,6 +504,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.thewarfarecommander().data());
                 data.m_eventName = QString("指挥任务分派信息");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_IssuingTaskAssignment_MESSAGE);
                 data.m_ID = generic.commandertrackid();
             }
             else if(header->iMessageType == USIM_CommandTaskCompleted_MESSAGE)
@@ -440,11 +514,15 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.thewarfarecommander().data());
                 data.m_eventName = QString("指挥任务完成信息");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_CommandTaskCompleted_MESSAGE);
                 data.m_ID = generic.commandertrackid();
             }
             else if(header->iMessageType == USIM_SetUpTrack_MESSAGE)
             {
                 data.m_eventName = QString("航线信息");
+                data.m_eventType =
+                    getGroupNameByID(DataManagerInstance->getSettings(), USIM_SetUpTrack_MESSAGE);
             }
             else if(header->iMessageType == USIM_SetUpArea_MESSAGE)
             {
@@ -452,6 +530,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.name().data());
                 data.m_eventName = QString("区域信息");
+                data.m_eventType =
+                    getGroupNameByID(DataManagerInstance->getSettings(), USIM_SetUpArea_MESSAGE);
             }
             else if(header->iMessageType == USIM_AmpHeliLaunch_Message)
             {
@@ -459,6 +539,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.transportasset().data());
                 data.m_eventName = QString("直升机垂直登陆起飞");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpHeliLaunch_Message);
             }
             else if(header->iMessageType == USIM_AmpHeliRecovery_Message)
             {
@@ -466,6 +548,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.heliasset().data());
                 data.m_eventName = QString("直升机垂直登陆回位");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpHeliRecovery_Message);
             }
             else if(header->iMessageType == USIM_AmpHeliDamage_Message)
             {
@@ -473,6 +557,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.heliasset().data());
                 data.m_eventName = QString("直升机垂直登陆过程中损毁");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpHeliDamage_Message);
             }
             else if(header->iMessageType == USIM_AmpHeliUnloadBegin_Message)
             {
@@ -480,6 +566,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.unloadasset().data());
                 data.m_eventName = QString("直升机卸载开始");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpHeliUnloadBegin_Message);
             }
             else if(header->iMessageType == USIM_AmpHeliUnloadEnd_Message)
             {
@@ -487,6 +575,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.unloadasset().data());
                 data.m_eventName = QString("直升机卸载结束");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpHeliUnloadEnd_Message);
             }
             else if(header->iMessageType == USIM_AmpHeliUnloadDamage_Message)
             {
@@ -494,6 +584,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.unloadasset().data());
                 data.m_eventName = QString("直升机卸载过程中损毁");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpHeliUnloadDamage_Message);
             }
             else if(header->iMessageType == USIM_AmpCraftFlashBegin_Message)
             {
@@ -501,6 +593,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.transportasset().data());
                 data.m_eventName = QString("气垫艇泛水开始");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpCraftFlashBegin_Message);
             }
             else if(header->iMessageType == USIM_AmpCraftFlashEnd_Message)
             {
@@ -508,6 +602,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.flashingasset().data());
                 data.m_eventName = QString("气垫艇泛水结束");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpCraftFlashEnd_Message);
             }
             else if(header->iMessageType == USIM_AmpCraftFlashDamage_Message)
             {
@@ -515,6 +611,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.flashingasset().data());
                 data.m_eventName = QString("气垫艇泛水损毁");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpCraftFlashDamage_Message);
             }
             else if(header->iMessageType == USIM_AmpVehicleFlashBegin_Message)
             {
@@ -522,6 +620,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.transportasset().data());
                 data.m_eventName = QString("两栖装甲泛水开始");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpVehicleFlashBegin_Message);
             }
             else if(header->iMessageType == USIM_AmpVehicleFlashEnd_Message)
             {
@@ -529,6 +629,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.flashingasset().data());
                 data.m_eventName = QString("两栖装甲泛水结束");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpVehicleFlashEnd_Message);
             }
             else if(header->iMessageType == USIM_AmpVehicleFlashDamage_Message)
             {
@@ -536,6 +638,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.flashingasset().data());
                 data.m_eventName = QString("两栖装甲泛水损毁");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpVehicleFlashDamage_Message);
             }
             else if(header->iMessageType == USIM_AmpCraftTransBegin_Message)
             {
@@ -543,6 +647,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.transportasset().data());
                 data.m_eventName = QString("气垫艇换乘开始");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpCraftTransBegin_Message);
             }
             else if(header->iMessageType == USIM_AmpCraftTransEnd_Message)
             {
@@ -550,6 +656,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.subasset().data());
                 data.m_eventName = QString("气垫艇换乘结束");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpCraftTransEnd_Message);
             }
             else if(header->iMessageType == USIM_AmpCraftTransDamage_Message)
             {
@@ -557,6 +665,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.subasset().data());
                 data.m_eventName = QString("气垫艇换乘损毁");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpCraftTransDamage_Message);
             }
             else if(header->iMessageType == USIM_AmpHeliTransBegin_Message)
             {
@@ -564,6 +674,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.transportasset().data());
                 data.m_eventName = QString("直升机换乘开始");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpHeliTransBegin_Message);
             }
             else if(header->iMessageType == USIM_AmpHeliTransEnd_Message)
             {
@@ -571,6 +683,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.subasset().data());
                 data.m_eventName = QString("直升机换乘结束");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpHeliTransEnd_Message);
             }
             else if(header->iMessageType == USIM_AmpHeliTransDamage_Message)
             {
@@ -578,6 +692,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.subasset().data());
                 data.m_eventName = QString("直升机换乘损毁");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpHeliTransDamage_Message);
             }
             else if(header->iMessageType == USIM_AmpCraftUnloadBegin_Message)
             {
@@ -585,6 +701,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.unloadasset().data());
                 data.m_eventName = QString("气垫船卸载开始");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpCraftUnloadBegin_Message);
             }
             else if(header->iMessageType == USIM_AmpCraftUnloadEnd_Message)
             {
@@ -592,6 +710,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.unloadasset().data());
                 data.m_eventName = QString("气垫船卸载结束");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpCraftUnloadEnd_Message);
             }
             else if(header->iMessageType == USIM_AmpCraftUnloadDamage_Message)
             {
@@ -599,6 +719,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.unloadasset().data());
                 data.m_eventName = QString("气垫船卸载损毁");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpCraftUnloadDamage_Message);
             }
             else if(header->iMessageType == USIM_AmpSteamBoatUnloadBegin_Message)
             {
@@ -606,6 +728,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.unloadasset().data());
                 data.m_eventName = QString("冲锋舟卸载开始");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpSteamBoatUnloadBegin_Message);
             }
             else if(header->iMessageType == USIM_AmpSteamBoatUnloadBegin_Message)
             {
@@ -613,6 +737,8 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.unloadasset().data());
                 data.m_eventName = QString("冲锋舟卸载结束");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpSteamBoatUnloadBegin_Message);
             }
             else if(header->iMessageType == USIM_AmpSteamBoatUnloadBegin_Message)
             {
@@ -620,22 +746,32 @@ void recvThread::onProtoBufReadyRead()
                 generic.ParseFromString(str);
                 data.m_platName = QString::fromLocal8Bit(generic.unloadasset().data());
                 data.m_eventName = QString("冲锋舟卸载损毁");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_AmpSteamBoatUnloadBegin_Message);
             }
             else if(header->iMessageType == USIM_MineSweepStart_Message)
             {
                 data.m_eventName = QString("扫雷开始");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_MineSweepStart_Message);
             }
             else if(header->iMessageType == USIM_MineSweepEnd_Message)
             {
                 data.m_eventName = QString("扫雷结束");
+                data.m_eventType =
+                    getGroupNameByID(DataManagerInstance->getSettings(), USIM_MineSweepEnd_Message);
             }
             else if(header->iMessageType == USIM_MineSweepSuccess_Message)
             {
                 data.m_eventName = QString("扫雷成功");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_MineSweepSuccess_Message);
             }
             else if(header->iMessageType == USIM_MineSweepExploded_Message)
             {
                 data.m_eventName = QString("水雷爆炸");
+                data.m_eventType = getGroupNameByID(DataManagerInstance->getSettings(),
+                                                    USIM_MineSweepExploded_Message);
             }
             emit genericReceived(data);
         }
