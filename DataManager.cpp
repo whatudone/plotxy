@@ -937,9 +937,25 @@ int32_t DataManager::findIDByName(const QString& name)
     return -1;
 }
 
-QSettings* DataManager::getSettings() const
+QString DataManager::getGroupNameByID(int32_t id)
 {
-    return m_settings;
+    QStringList groupNames = m_settings->childGroups();
+    foreach(QString groupName, groupNames)
+    {
+        QString newGroup = QString::fromUtf8(groupName.toLatin1());
+
+        m_settings->beginGroup(groupName);
+
+        QStringList keys = m_settings->allKeys();
+        foreach(QString key, keys)
+        {
+            QStringList value = m_settings->value(key).toStringList();
+            if(value.contains(QString::number(id)))
+                return newGroup;
+        }
+        m_settings->endGroup();
+    }
+    return QString();
 }
 
 void DataManager::onRecvPlatinfoData(const MARS_PlatInfoDataExcect& plat)
@@ -1098,17 +1114,14 @@ void DataManager::setIsRealTime(bool isRealTime)
     if(m_isRealTime)
     {
         // 只有在每次开始获取在线数据时更新配置文件信息
-        if(!m_settings)
+        QString iniFileName = QCoreApplication::applicationDirPath() + "/PlotXY.ini";
+        if(!QFile::exists(iniFileName))
         {
-            QString iniFileName = QCoreApplication::applicationDirPath() + "/PlotXY.ini";
-            if(!QFile::exists(iniFileName))
-            {
-                qCritical() << "File not exist";
-                return;
-            }
-            m_settings = new QSettings(iniFileName, QSettings::IniFormat);
-            m_settings->setIniCodec(QTextCodec::codecForName("utf-8"));
+            qCritical() << "File not exist";
+            return;
         }
+        m_settings = new QSettings(iniFileName, QSettings::IniFormat);
+        m_settings->setIniCodec(QTextCodec::codecForName("utf-8"));
     }
 }
 

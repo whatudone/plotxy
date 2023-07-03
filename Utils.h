@@ -314,6 +314,4 @@ QString QColorToRGBAStr(const QColor& color);
 QColor QColorFromHexStr(const QString& hexStr);
 } // namespace color_transfer
 
-QString getGroupNameByID(QSettings* setting, int32_t id);
-
 #endif /* SIMCORE_TIME_UTILS_H */
