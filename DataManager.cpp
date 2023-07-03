@@ -14,6 +14,7 @@
 #include <QMessageBox>
 #include <QRegularExpression>
 #include <QSettings>
+#include <QTextCodec>
 
 #include <iostream>
 #include <limits>
@@ -936,6 +937,11 @@ int32_t DataManager::findIDByName(const QString& name)
     return -1;
 }
 
+QSettings* DataManager::getSettings() const
+{
+    return m_settings;
+}
+
 void DataManager::onRecvPlatinfoData(const MARS_PlatInfoDataExcect& plat)
 {
     int32_t uID = int32_t(plat.uID);
@@ -1088,6 +1094,22 @@ recvThread* DataManager::getRecvThread() const
 void DataManager::setIsRealTime(bool isRealTime)
 {
     m_isRealTime = isRealTime;
+
+    if(m_isRealTime)
+    {
+        // 只有在每次开始获取在线数据时更新配置文件信息
+        if(!m_settings)
+        {
+            QString iniFileName = QCoreApplication::applicationDirPath() + "/PlotXY.ini";
+            if(!QFile::exists(iniFileName))
+            {
+                qCritical() << "File not exist";
+                return;
+            }
+            m_settings = new QSettings(iniFileName, QSettings::IniFormat);
+            m_settings->setIniCodec(QTextCodec::codecForName("utf-8"));
+        }
+    }
 }
 
 QString DataManager::getDataFileName() const
