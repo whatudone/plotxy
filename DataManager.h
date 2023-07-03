@@ -185,7 +185,7 @@ public:
     // 保存ASI数据，主要是用于在线模式回放数据
     bool saveDataToASI(const QString& file);
 
-    QSettings* getSettings() const;
+    QString getGroupNameByID(int32_t id);
 
 private:
     //获取实体-属性的全数据，属性默认为Time

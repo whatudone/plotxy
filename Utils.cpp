@@ -729,24 +729,3 @@ QColor QColorFromHexStr(const QString& hexStr)
 }
 
 } // namespace color_transfer
-
-QString getGroupNameByID(QSettings* setting, int32_t id)
-{
-    QStringList groupNames = setting->childGroups();
-    foreach(QString groupName, groupNames)
-    {
-        QString newGroup = QString::fromUtf8(groupName.toLatin1());
-
-        setting->beginGroup(groupName);
-
-        QStringList keys = setting->allKeys();
-        foreach(QString key, keys)
-        {
-            QStringList value = setting->value(key).toStringList();
-            if(value.contains(QString::number(id)))
-                return newGroup;
-        }
-        setting->endGroup();
-    }
-    return QString();
-}
