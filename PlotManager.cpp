@@ -1925,30 +1925,26 @@ void PlotManager::onCheckBox_RowGridVisible(int state)
 {
     if(!m_curSelectPlot)
         return;
-    auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
-    if(plotText)
+    if(m_curSelectPlot->plotType() == PlotType::Type_PlotText)
     {
-        if(state == 2)
+        auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
+        if(plotText)
         {
-            plotText->setIsRowGridVisible(true);
+            if(state == 2)
+                plotText->setIsRowGridVisible(true);
+            else
+                plotText->setIsRowGridVisible(false);
         }
-        else
-        {
-            plotText->setIsRowGridVisible(false);
-        }
-        return;
     }
-
-    auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
-    if(plotLight)
+    else if(m_curSelectPlot->plotType() == PlotType::Type_PlotLight)
     {
-        if(state == 2)
+        auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
+        if(plotLight)
         {
-            plotLight->setIsRowGridVisible(true);
-        }
-        else
-        {
-            plotLight->setIsRowGridVisible(false);
+            if(state == 2)
+                plotLight->setIsRowGridVisible(true);
+            else
+                plotLight->setIsRowGridVisible(false);
         }
     }
 }
@@ -1958,30 +1954,26 @@ void PlotManager::onCheckBox_ColGridVisible(int state)
     if(!m_curSelectPlot)
         return;
 
-    auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
-    if(plotText)
+    if(m_curSelectPlot->plotType() == PlotType::Type_PlotText)
     {
-        if(state == 2)
+        auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
+        if(plotText)
         {
-            plotText->setIsColGridVisible(true);
+            if(state == 2)
+                plotText->setIsColGridVisible(true);
+            else
+                plotText->setIsColGridVisible(false);
         }
-        else
-        {
-            plotText->setIsColGridVisible(false);
-        }
-        return;
     }
-
-    auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
-    if(plotLight)
+    else if(m_curSelectPlot->plotType() == PlotType::Type_PlotLight)
     {
-        if(state == 2)
+        auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
+        if(plotLight)
         {
-            plotLight->setIsColGridVisible(true);
-        }
-        else
-        {
-            plotLight->setIsColGridVisible(false);
+            if(state == 2)
+                plotLight->setIsColGridVisible(true);
+            else
+                plotLight->setIsColGridVisible(false);
         }
     }
 }
@@ -1991,17 +1983,17 @@ void PlotManager::onSpinBox_TextLeftPadValueChanged(int value)
     if(!m_curSelectPlot)
         return;
 
-    auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
-    if(plotText)
+    if(m_curSelectPlot->plotType() == PlotType::Type_PlotText)
     {
-        plotText->setTextLeftOffset(value);
-        return;
+        auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
+        if(plotText)
+            plotText->setTextLeftOffset(value);
     }
-
-    auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
-    if(plotLight)
+    else if(m_curSelectPlot->plotType() == PlotType::Type_PlotLight)
     {
-        plotLight->setTextLeftOffset(value);
+        auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
+        if(plotLight)
+            plotLight->setTextLeftOffset(value);
     }
 }
 
@@ -2010,17 +2002,17 @@ void PlotManager::onSpinBox_TextRightPadValueChanged(int value)
     if(!m_curSelectPlot)
         return;
 
-    auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
-    if(plotText)
+    if(m_curSelectPlot->plotType() == PlotType::Type_PlotText)
     {
-        plotText->setTextRightOffset(value);
-        return;
+        auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
+        if(plotText)
+            plotText->setTextRightOffset(value);
     }
-
-    auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
-    if(plotLight)
+    else if(m_curSelectPlot->plotType() == PlotType::Type_PlotLight)
     {
-        plotLight->setTextRightOffset(value);
+        auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
+        if(plotLight)
+            plotLight->setTextRightOffset(value);
     }
 }
 
@@ -2029,17 +2021,18 @@ void PlotManager::onRadioBox_FillByRowClicked()
     if(!m_curSelectPlot)
         return;
     ui.radioButton_FillByCol->setChecked(false);
-    auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
-    if(plotText)
-    {
-        plotText->setIsFillByRow(true);
-        return;
-    }
 
-    auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
-    if(plotLight)
+    if(m_curSelectPlot->plotType() == PlotType::Type_PlotText)
     {
-        plotLight->setIsFillByRow(true);
+        auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
+        if(plotText)
+            plotText->setIsFillByRow(true);
+    }
+    else if(m_curSelectPlot->plotType() == PlotType::Type_PlotLight)
+    {
+        auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
+        if(plotLight)
+            plotLight->setIsFillByRow(true);
     }
 }
 
@@ -2048,17 +2041,17 @@ void PlotManager::onRadioBox_FillByColClicked()
     if(!m_curSelectPlot)
         return;
     ui.radioButton_FillByRow->setChecked(false);
-    auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
-    if(plotText)
+    if(m_curSelectPlot->plotType() == PlotType::Type_PlotText)
     {
-        plotText->setIsFillByRow(false);
-        return;
+        auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
+        if(plotText)
+            plotText->setIsFillByRow(false);
     }
-
-    auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
-    if(plotLight)
+    else if(m_curSelectPlot->plotType() == PlotType::Type_PlotLight)
     {
-        plotLight->setIsFillByRow(false);
+        auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
+        if(plotLight)
+            plotLight->setIsFillByRow(false);
     }
 }
 
@@ -2067,17 +2060,20 @@ void PlotManager::onSpinBox_NumRowsChanged(int value)
     if(!m_curSelectPlot)
         return;
 
-    auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
-    if(plotText)
+    if(m_curSelectPlot->plotType() == PlotType::Type_PlotText)
     {
-        plotText->setRowsNum(value);
+        auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
+        if(plotText)
+            plotText->setRowsNum(value);
     }
-
-    auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
-    if(plotLight)
+    else if(m_curSelectPlot->plotType() == PlotType::Type_PlotLight)
     {
-        plotLight->setRowsNum(value);
+        auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
+        if(plotLight)
+            plotLight->setRowsNum(value);
     }
+    else
+        return;
 
     ui.spinBox_NumCols->blockSignals(true);
     ui.spinBox_NumCols->setValue(qCeil(double(m_curSelectPlot->getDataPairs().size()) / value));
@@ -2089,17 +2085,20 @@ void PlotManager::onSpinBox_NumColsChanged(int value)
     if(!m_curSelectPlot)
         return;
 
-    auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
-    if(plotText)
+    if(m_curSelectPlot->plotType() == PlotType::Type_PlotText)
     {
-        plotText->setColsNum(value);
+        auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
+        if(plotText)
+            plotText->setColsNum(value);
     }
-
-    auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
-    if(plotLight)
+    else if(m_curSelectPlot->plotType() == PlotType::Type_PlotLight)
     {
-        plotLight->setColsNum(value);
+        auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
+        if(plotLight)
+            plotLight->setColsNum(value);
     }
+    else
+        return;
 
     ui.spinBox_NumRows->blockSignals(true);
     ui.spinBox_NumRows->setValue(qCeil(double(m_curSelectPlot->getDataPairs().size()) / value));
