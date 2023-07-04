@@ -66,7 +66,7 @@ void PlotManager::init()
     initAttitudeUI();
     initTextLightUI();
     initDialUI();
-
+    initBarUI();
     initEditableMap();
 }
 
@@ -415,7 +415,12 @@ void PlotManager::initEditableMap()
     m_itemTextEditableMap.insert(PlotType::Type_PlotRTI, QList<QString>() << "Title");
     m_itemTextEditableMap.insert(PlotType::Type_PlotText, QList<QString>() << "Title"); //完成
     m_itemTextEditableMap.insert(PlotType::Type_PlotLight, QList<QString>() << "Title"); //完成
-    m_itemTextEditableMap.insert(PlotType::Type_PlotBar, QList<QString>() << "Title");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotBar,
+                                 QList<QString>() << "Title"
+                                                  << "X-Axis Description"
+                                                  << "Y-Axis Description"
+                                                  << "X-Axis Data"
+                                                  << "Y-Axis Data");
     m_itemTextEditableMap.insert(PlotType::Type_PlotDial,
                                  QList<QString>() << "Title"
                                                   << "X-Axis Data");

@@ -455,7 +455,7 @@ void PlotItemBase::setUnitsShowX(bool on)
 {
     // 单位是初始在各个派生类中初始化，添加数据对之后，会重新设置单位
     m_showUnits_x = on;
-    if(m_customPlot && m_customPlot->xAxis)
+    if(m_xAxisLabelVisible && m_customPlot && m_customPlot->xAxis)
     {
         if(on)
         {
@@ -473,7 +473,7 @@ void PlotItemBase::setUnitsShowX(bool on)
 void PlotItemBase::setUnitsShowY(bool on)
 {
     m_showUnits_y = on;
-    if(m_customPlot && m_customPlot->yAxis)
+    if(m_yAxisLabelVisible && m_customPlot && m_customPlot->yAxis)
     {
         if(on)
         {
@@ -590,7 +590,7 @@ void PlotItemBase::setyAxisLabelVisible(bool on)
 void PlotItemBase::setxAxisLabel(const QString& label)
 {
     m_xAxisLabel = label;
-    if(m_customPlot && m_customPlot->xAxis)
+    if(m_xAxisLabelVisible && m_customPlot && m_customPlot->xAxis)
     {
         QString finalLabel = (m_showUnits_x) ? m_xAxisLabel + "(" + m_units_x + ")" : m_xAxisLabel;
         m_customPlot->xAxis->setLabel(finalLabel);
@@ -601,7 +601,7 @@ void PlotItemBase::setxAxisLabel(const QString& label)
 void PlotItemBase::setyAxisLabel(const QString& label)
 {
     m_yAxisLabel = label;
-    if(m_customPlot && m_customPlot->yAxis)
+    if(m_yAxisLabelVisible && m_customPlot && m_customPlot->yAxis)
     {
         if(m_showUnits_y)
         {
@@ -611,8 +611,8 @@ void PlotItemBase::setyAxisLabel(const QString& label)
         {
             m_customPlot->yAxis->setLabel(m_yAxisLabel);
         }
+        replot();
     }
-    replot();
 }
 
 void PlotItemBase::setxAxisLabelColor(const QColor& color)
