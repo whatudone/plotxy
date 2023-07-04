@@ -36,7 +36,7 @@ PlotLight::PlotLight(QWidget* parent)
 PlotLight::~PlotLight() {}
 
 void PlotLight::onLightConstraintUpdate(
-    const QList<std::tuple<int32_t, QString, QString, double, QString>>& constraintList)
+    const QList<std::tuple<int32_t, QString, QString, double, QString, QString>>& constraintList)
 {
     m_constraintList = constraintList;
     if(!m_dataHash.isEmpty())
@@ -538,12 +538,18 @@ QColor PlotLight::getColorByDataPairWithCon(int32_t id, const QString& attr, dou
             QString conCondition = std::get<2>(tuple);
             double threshold = std::get<3>(tuple);
             // 符合约束条件
+            QString colorName = std::get<4>(tuple);
             if((conCondition == "≥" && value > threshold) ||
                (conCondition == "<" && value < threshold))
             {
-                QString colorName = std::get<4>(tuple);
-                return color_transfer::QColorFromRGBAStr(colorName);
+                colorName = std::get<4>(tuple);
             }
+            else if((conCondition == "≥" && value < threshold) ||
+                    (conCondition == "<" && value > threshold))
+            {
+                colorName = std::get<5>(tuple);
+            }
+            return color_transfer::QColorFromRGBAStr(colorName);
         }
     }
     return QColor();

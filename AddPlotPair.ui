@@ -1958,7 +1958,12 @@
             </column>
             <column>
              <property name="text">
-              <string>颜色</string>
+              <string>符合颜色</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>不符合颜色</string>
              </property>
             </column>
            </widget>
