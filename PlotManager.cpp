@@ -11,6 +11,7 @@
 #include "PlotLight.h"
 #include "PlotManagerData.h"
 #include "PlotScatter.h"
+#include "PlotText.h"
 
 #include <QAction>
 #include <QColorDialog>
@@ -750,6 +751,18 @@ void PlotManager::refreshLightTextUI(PlotItemBase* plot)
                 ui.tableWidget_TextDataSort->setItem(i, 0, temEntity);
                 ui.tableWidget_TextDataSort->setItem(i, 1, temAttri);
             }
+            auto item = dynamic_cast<PlotText*>(plot);
+            if(item)
+            {
+                ui.checkBox_RowGridVisible->setChecked(item->isRowGridVisible());
+                ui.checkBox_ColGridVisible->setChecked(item->isColGridVisible());
+                ui.spinBox_TextLeftPad->setValue(item->textLeftOffset());
+                ui.spinBox_TextRightPad->setValue(item->textRightOffset());
+                ui.spinBox_NumCols->setValue(item->colsNum());
+                ui.spinBox_NumRows->setValue(item->rowsNum());
+                ui.radioButton_FillByRow->setChecked(item->isFillByRow());
+                ui.radioButton_FillByCol->setChecked(!item->isFillByRow());
+            }
         }
         else
         {
@@ -773,6 +786,14 @@ void PlotManager::refreshLightTextUI(PlotItemBase* plot)
                 ui.spinBox_LightTextYPos->setValue(item->getLightTextYPos());
                 ui.spinBox_LightOutlineWidth->setValue(item->getLightOutlineWidth());
                 ui.pushButton_LightOutlineColor->setColor(item->getLightOutlineColor());
+                ui.checkBox_RowGridVisible->setChecked(item->getIsRowGridVisible());
+                ui.checkBox_ColGridVisible->setChecked(item->getIsColGridVisible());
+                ui.spinBox_TextLeftPad->setValue(item->getTextLeftOffset());
+                ui.spinBox_TextRightPad->setValue(item->getTextRightOffset());
+                ui.spinBox_NumCols->setValue(item->getColsNum());
+                ui.spinBox_NumRows->setValue(item->getRowsNum());
+                ui.radioButton_FillByRow->setChecked(item->getIsFillByRow());
+                ui.radioButton_FillByCol->setChecked(!item->getIsFillByRow());
             }
         }
         ui.pushButtonTextOutlineColor->setColor(plot->getOutlineColor());
@@ -780,14 +801,6 @@ void PlotManager::refreshLightTextUI(PlotItemBase* plot)
         ui.pushButton_TextFillColor->setColor(plot->getGridFillColor());
         ui.pushButton_71->setColor(plot->getGridColor());
         ui.spinBox_10->setValue(plot->getGridWidth());
-        ui.checkBox_RowGridVisible->setChecked(plot->getIsRowGridVisible());
-        ui.checkBox_ColGridVisible->setChecked(plot->getIsColGridVisible());
-        ui.spinBox_TextLeftPad->setValue(plot->getTextLeftOffset());
-        ui.spinBox_TextRightPad->setValue(plot->getTextRightOffset());
-        ui.spinBox_NumCols->setValue(plot->getColsNum());
-        ui.spinBox_NumRows->setValue(plot->getRowsNum());
-        ui.radioButton_FillByRow->setChecked(plot->getIsFillByRow());
-        ui.radioButton_FillByCol->setChecked(!plot->getIsFillByRow());
     }
 }
 
@@ -1912,13 +1925,31 @@ void PlotManager::onCheckBox_RowGridVisible(int state)
 {
     if(!m_curSelectPlot)
         return;
-    if(state == 2)
+    auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
+    if(plotText)
     {
-        m_curSelectPlot->setIsRowGridVisible(true);
+        if(state == 2)
+        {
+            plotText->setIsRowGridVisible(true);
+        }
+        else
+        {
+            plotText->setIsRowGridVisible(false);
+        }
+        return;
     }
-    else
+
+    auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
+    if(plotLight)
     {
-        m_curSelectPlot->setIsRowGridVisible(false);
+        if(state == 2)
+        {
+            plotLight->setIsRowGridVisible(true);
+        }
+        else
+        {
+            plotLight->setIsRowGridVisible(false);
+        }
     }
 }
 
@@ -1926,13 +1957,32 @@ void PlotManager::onCheckBox_ColGridVisible(int state)
 {
     if(!m_curSelectPlot)
         return;
-    if(state == 2)
+
+    auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
+    if(plotText)
     {
-        m_curSelectPlot->setIsColGridVisible(true);
+        if(state == 2)
+        {
+            plotText->setIsColGridVisible(true);
+        }
+        else
+        {
+            plotText->setIsColGridVisible(false);
+        }
+        return;
     }
-    else
+
+    auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
+    if(plotLight)
     {
-        m_curSelectPlot->setIsColGridVisible(false);
+        if(state == 2)
+        {
+            plotLight->setIsColGridVisible(true);
+        }
+        else
+        {
+            plotLight->setIsColGridVisible(false);
+        }
     }
 }
 
@@ -1940,14 +1990,38 @@ void PlotManager::onSpinBox_TextLeftPadValueChanged(int value)
 {
     if(!m_curSelectPlot)
         return;
-    m_curSelectPlot->setTextLeftOffset(value);
+
+    auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
+    if(plotText)
+    {
+        plotText->setTextLeftOffset(value);
+        return;
+    }
+
+    auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
+    if(plotLight)
+    {
+        plotLight->setTextLeftOffset(value);
+    }
 }
 
 void PlotManager::onSpinBox_TextRightPadValueChanged(int value)
 {
     if(!m_curSelectPlot)
         return;
-    m_curSelectPlot->setTextRightOffset(value);
+
+    auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
+    if(plotText)
+    {
+        plotText->setTextRightOffset(value);
+        return;
+    }
+
+    auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
+    if(plotLight)
+    {
+        plotLight->setTextRightOffset(value);
+    }
 }
 
 void PlotManager::onRadioBox_FillByRowClicked()
@@ -1955,7 +2029,18 @@ void PlotManager::onRadioBox_FillByRowClicked()
     if(!m_curSelectPlot)
         return;
     ui.radioButton_FillByCol->setChecked(false);
-    m_curSelectPlot->setIsFillByRow(true);
+    auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
+    if(plotText)
+    {
+        plotText->setIsFillByRow(true);
+        return;
+    }
+
+    auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
+    if(plotLight)
+    {
+        plotLight->setIsFillByRow(true);
+    }
 }
 
 void PlotManager::onRadioBox_FillByColClicked()
@@ -1963,14 +2048,36 @@ void PlotManager::onRadioBox_FillByColClicked()
     if(!m_curSelectPlot)
         return;
     ui.radioButton_FillByRow->setChecked(false);
-    m_curSelectPlot->setIsFillByRow(false);
+    auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
+    if(plotText)
+    {
+        plotText->setIsFillByRow(false);
+        return;
+    }
+
+    auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
+    if(plotLight)
+    {
+        plotLight->setIsFillByRow(false);
+    }
 }
 
 void PlotManager::onSpinBox_NumRowsChanged(int value)
 {
     if(!m_curSelectPlot)
         return;
-    m_curSelectPlot->setRowsNum(value);
+
+    auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
+    if(plotText)
+    {
+        plotText->setRowsNum(value);
+    }
+
+    auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
+    if(plotLight)
+    {
+        plotLight->setRowsNum(value);
+    }
 
     ui.spinBox_NumCols->blockSignals(true);
     ui.spinBox_NumCols->setValue(qCeil(double(m_curSelectPlot->getDataPairs().size()) / value));
@@ -1981,7 +2088,19 @@ void PlotManager::onSpinBox_NumColsChanged(int value)
 {
     if(!m_curSelectPlot)
         return;
-    m_curSelectPlot->setColsNum(value);
+
+    auto plotText = dynamic_cast<PlotText*>(m_curSelectPlot);
+    if(plotText)
+    {
+        plotText->setColsNum(value);
+    }
+
+    auto plotLight = dynamic_cast<PlotLight*>(m_curSelectPlot);
+    if(plotLight)
+    {
+        plotLight->setColsNum(value);
+    }
+
     ui.spinBox_NumRows->blockSignals(true);
     ui.spinBox_NumRows->setValue(qCeil(double(m_curSelectPlot->getDataPairs().size()) / value));
     ui.spinBox_NumRows->blockSignals(false);

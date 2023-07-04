@@ -29,6 +29,10 @@ PlotLight::PlotLight(QWidget* parent)
     m_lightTextYPos = 0; //light的文字Y位置
     m_lightOutlineWidth = 0; //light灯的外边框线宽度
     m_lightOutlineColor = Qt::transparent; //light灯的外边框线颜色
+    m_textLeftOffset = 0;
+    m_textRightOffset = 0;
+    m_rowsNum = 1;
+    m_colsNum = 1;
     initPlot();
     setupLayout();
 }
@@ -582,6 +586,83 @@ void PlotLight::clearLineList()
     m_horLineList.clear();
     m_verLineList.clear();
     m_outRectList.clear();
+}
+
+int PlotLight::getColsNum() const
+{
+    return m_colsNum;
+}
+
+void PlotLight::setColsNum(int colsNum)
+{
+    m_colsNum = colsNum;
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
+}
+
+int PlotLight::getRowsNum() const
+{
+    return m_rowsNum;
+}
+
+void PlotLight::setRowsNum(int rowsNum)
+{
+    m_rowsNum = rowsNum;
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
+}
+
+bool PlotLight::getIsFillByRow() const
+{
+    return m_isFillByRow;
+}
+
+void PlotLight::setIsFillByRow(bool isFillByRow)
+{
+    m_isFillByRow = isFillByRow;
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
+}
+
+int PlotLight::getTextRightOffset() const
+{
+    return m_textRightOffset;
+}
+
+void PlotLight::setTextRightOffset(int textRightOffset)
+{
+    m_textRightOffset = textRightOffset;
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
+}
+
+int PlotLight::getTextLeftOffset() const
+{
+    return m_textLeftOffset;
+}
+
+void PlotLight::setTextLeftOffset(int textLeftOffset)
+{
+    m_textLeftOffset = textLeftOffset;
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
+}
+
+bool PlotLight::getIsColGridVisible() const
+{
+    return m_isColGridVisible;
+}
+
+void PlotLight::setIsColGridVisible(bool isColGridVisible)
+{
+    m_isColGridVisible = isColGridVisible;
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
+}
+
+bool PlotLight::getIsRowGridVisible() const
+{
+    return m_isRowGridVisible;
+}
+
+void PlotLight::setIsRowGridVisible(bool isRowGridVisible)
+{
+    m_isRowGridVisible = isRowGridVisible;
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
 }
 
 QColor PlotLight::getLightOutlineColor() const

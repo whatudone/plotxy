@@ -20,6 +20,10 @@ PlotText::PlotText(QWidget* parent)
 	QString name = QString("Text%1").arg(m_instanceCount);
 	this->setName(name);
 	m_instanceCount += 1;
+    m_textLeftOffset = 0;
+    m_textRightOffset = 0;
+    m_rowsNum = 1;
+    m_colsNum = 1;
 
     m_widget = new QWidget;
     setupLayout();
@@ -81,9 +85,9 @@ void PlotText::drawCellData(QPainter& painter)
     pen.setStyle(getGridStyle());
     painter.setPen(pen);
 
-    if(getIsFillByRow())
+    if(m_isFillByRow)
     {
-        int rowNum = getRowsNum();
+        int rowNum = m_rowsNum;
         int colNum = qCeil(double(itemSize) / rowNum);
 
         int32_t colSize = 2 * colNum;
@@ -91,7 +95,7 @@ void PlotText::drawCellData(QPainter& painter)
         int verGridWidth = drawRect.height() / rowNum;
 
         QRect cellRect;
-        if(getIsColGridVisible())
+        if(m_isColGridVisible)
         {
             for(int i = 0; i < colSize; ++i)
             {
@@ -103,7 +107,7 @@ void PlotText::drawCellData(QPainter& painter)
             }
         }
 
-        if(getIsRowGridVisible())
+        if(m_isRowGridVisible)
         {
             for(int j = 0; j < rowNum; ++j)
             {
@@ -131,7 +135,7 @@ void PlotText::drawCellData(QPainter& painter)
                 if(data->isDraw())
                 {
                     // 顺便画Attr Label，减少重复循环
-                    int offset = getTextLeftOffset() - getTextRightOffset();
+                    int offset = m_textLeftOffset - m_textRightOffset;
                     int hx1 = drawRect.left() + horiGridWidth * colIndex * 2 + offset;
                     int hy1 = drawRect.y() + verGridWidth * rowIndex;
                     painter.save();
@@ -184,7 +188,7 @@ void PlotText::drawCellData(QPainter& painter)
     else
     {
         // fill by col
-        int colNum = getColsNum();
+        int colNum = m_colsNum;
         int rowNum = qCeil(double(itemSize) / colNum);
 
         int32_t colSize = 2 * colNum;
@@ -192,7 +196,7 @@ void PlotText::drawCellData(QPainter& painter)
         int verGridWidth = drawRect.height() / rowNum;
 
         QRect cellRect;
-        if(getIsColGridVisible())
+        if(m_isColGridVisible)
         {
             for(int i = 0; i < colSize; ++i)
             {
@@ -204,7 +208,7 @@ void PlotText::drawCellData(QPainter& painter)
             }
         }
 
-        if(getIsRowGridVisible())
+        if(m_isRowGridVisible)
         {
             for(int j = 0; j < rowNum; ++j)
             {
@@ -232,7 +236,7 @@ void PlotText::drawCellData(QPainter& painter)
                 if(data->isDraw())
                 {
                     // 顺便画Attr Label，减少重复循环
-                    int offset = getTextLeftOffset() - getTextRightOffset();
+                    int offset = m_textLeftOffset - m_textRightOffset;
                     int hx1 = drawRect.left() + horiGridWidth * colIndex * 2 + offset;
                     int hy1 = drawRect.y() + verGridWidth * rowIndex;
                     painter.save();
@@ -282,4 +286,81 @@ void PlotText::drawCellData(QPainter& painter)
             }
         }
     }
+}
+
+int PlotText::colsNum() const
+{
+    return m_colsNum;
+}
+
+void PlotText::setColsNum(int colsNum)
+{
+    m_colsNum = colsNum;
+    update();
+}
+
+int PlotText::rowsNum() const
+{
+    return m_rowsNum;
+}
+
+void PlotText::setRowsNum(int rowsNum)
+{
+    m_rowsNum = rowsNum;
+    update();
+}
+
+bool PlotText::isFillByRow() const
+{
+    return m_isFillByRow;
+}
+
+void PlotText::setIsFillByRow(bool isFillByRow)
+{
+    m_isFillByRow = isFillByRow;
+    update();
+}
+
+int PlotText::textRightOffset() const
+{
+    return m_textRightOffset;
+}
+
+void PlotText::setTextRightOffset(int textRightOffset)
+{
+    m_textRightOffset = textRightOffset;
+    update();
+}
+
+int PlotText::textLeftOffset() const
+{
+    return m_textLeftOffset;
+}
+
+void PlotText::setTextLeftOffset(int textLeftOffset)
+{
+    m_textLeftOffset = textLeftOffset;
+    update();
+}
+
+bool PlotText::isColGridVisible() const
+{
+    return m_isColGridVisible;
+}
+
+void PlotText::setIsColGridVisible(bool isColGridVisible)
+{
+    m_isColGridVisible = isColGridVisible;
+    update();
+}
+
+bool PlotText::isRowGridVisible() const
+{
+    return m_isRowGridVisible;
+}
+
+void PlotText::setIsRowGridVisible(bool isRowGridVisible)
+{
+    m_isRowGridVisible = isRowGridVisible;
+    update();
 }
