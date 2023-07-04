@@ -1136,8 +1136,8 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
         PlotText* textPlot = dynamic_cast<PlotText*>(plot);
         if(textPlot)
         {
-            plotObject.insert("TextRowGridsVisible", textPlot->getIsRowGridVisible());
-            plotObject.insert("TextColGridsVisible", textPlot->getIsColGridVisible());
+            plotObject.insert("TextRowGridsVisible", textPlot->isRowGridVisible());
+            plotObject.insert("TextColGridsVisible", textPlot->isColGridVisible());
             plotObject.insert("TextGridWidth", textPlot->getGridWidth());
             plotObject.insert("TextGridColor",
                               color_transfer::QColorToRGBAStr(textPlot->getGridColor()));
@@ -1146,11 +1146,11 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
                               color_transfer::QColorToRGBAStr(textPlot->getOutlineColor()));
             plotObject.insert("TextOuterFillColor",
                               color_transfer::QColorToRGBAStr(textPlot->getOuterFillColor()));
-            plotObject.insert("TextLeftPad", textPlot->getTextLeftOffset());
-            plotObject.insert("TextRightPad", textPlot->getTextRightOffset());
-            plotObject.insert("TextIsFillByRow", textPlot->getIsFillByRow());
-            plotObject.insert("TextNumRows", textPlot->getRowsNum());
-            plotObject.insert("TextNumCols", textPlot->getColsNum());
+            plotObject.insert("TextLeftPad", textPlot->textLeftOffset());
+            plotObject.insert("TextRightPad", textPlot->textRightOffset());
+            plotObject.insert("TextIsFillByRow", textPlot->isFillByRow());
+            plotObject.insert("TextNumRows", textPlot->rowsNum());
+            plotObject.insert("TextNumCols", textPlot->colsNum());
         }
     }
     else if(type == PlotType::Type_PlotLight)
