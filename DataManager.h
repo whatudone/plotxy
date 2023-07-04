@@ -201,9 +201,10 @@ private:
     // 使用正则表达式加载ASI中特定数据格式
     QStringList parsePlatformData(const QString& data);
     int32_t findIDByName(const QString& name);
-    QSettings* m_settings = nullptr;
 
     recvThread* m_recvThread = nullptr;
+    // 在线数据时间类型配置信息
+    QHash<QString, QStringList> m_realEventTypeInfo;
 signals:
     void loadDataFinished();
     void recvData();

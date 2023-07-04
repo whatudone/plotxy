@@ -939,19 +939,15 @@ int32_t DataManager::findIDByName(const QString& name)
 
 QString DataManager::getGroupNameByID(int32_t id)
 {
-    QStringList groupNames = m_settings->childGroups();
-    foreach(QString groupName, groupNames)
+    QString idStr = QString::number(id);
+    QStringList typeList = m_realEventTypeInfo.keys();
+    for(const QString& type : typeList)
     {
-        m_settings->beginGroup(groupName);
-
-        QStringList keys = m_settings->allKeys();
-        foreach(QString key, keys)
+        QStringList idList = m_realEventTypeInfo.value(type);
+        if(idList.contains(idStr))
         {
-            QStringList value = m_settings->value(key).toStringList();
-            if(value.contains(QString::number(id)))
-                return m_settings->value("TypeName").toString();
+            return type;
         }
-        m_settings->endGroup();
     }
     return QString();
 }
@@ -1118,8 +1114,22 @@ void DataManager::setIsRealTime(bool isRealTime)
             qCritical() << "File not exist";
             return;
         }
-        m_settings = new QSettings(iniFileName, QSettings::IniFormat);
-        m_settings->setIniCodec(QTextCodec::codecForName("utf-8"));
+        QSettings settings(iniFileName, QSettings::IniFormat);
+        settings.setIniCodec(QTextCodec::codecForName("utf-8"));
+
+        QStringList groupNames = settings.childGroups();
+        foreach(const QString& groupName, groupNames)
+        {
+            if(!groupName.contains("Event"))
+            {
+                continue;
+            }
+            settings.beginGroup(groupName);
+            QString type = settings.value("TypeName").toString();
+            QStringList list = settings.value("EventList").toStringList();
+            m_realEventTypeInfo.insert(type, list);
+            settings.endGroup();
+        }
     }
 }
 
