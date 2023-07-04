@@ -63,7 +63,8 @@ public:
 
 public slots:
     void onLightConstraintUpdate(
-        const QList<std::tuple<int32_t, QString, QString, double, QString>>& constraintList);
+        const QList<std::tuple<int32_t, QString, QString, double, QString, QString>>&
+            constraintList);
 
 private:
     void updateDataForDataPairsByTime(double secs) override;
@@ -86,7 +87,7 @@ private:
 
 private:
     // 原始的属性-值约束信息，由添加数据对时的界面进行编辑，和数据对是独立的两对数据 entityid,attr,condition,threshold,colorName
-    QList<std::tuple<int32_t, QString, QString, double, QString>> m_constraintList;
+    QList<std::tuple<int32_t, QString, QString, double, QString, QString>> m_constraintList;
     // 缓存数据 desc,entityid,entityName,attr,value
     QHash<QString, std::tuple<QString, int32_t, QString, QString, double>> m_dataHash;
     // 处理后的用于直接绘制的数据 desc,color

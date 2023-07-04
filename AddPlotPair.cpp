@@ -1,8 +1,8 @@
 ﻿#include "AddPlotPair.h"
 #include "DataManager.h"
 #include "PlotManagerData.h"
-#include "ui_AddPlotPair.h"
 #include "Utils.h"
+#include "ui_AddPlotPair.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -641,8 +641,8 @@ void AddPlotPair::onTableWidgetLightEntityClicked(QTableWidgetItem* curItem)
 
 void AddPlotPair::onLightSetDbClicked(QTableWidgetItem* item)
 {
-    // 只响应第四列的双击事件
-    if(item->column() == 4)
+    // 只响应第四列和第五列的双击事件
+    if(item->column() == 4 || item->column() == 5)
     {
         auto color = QColorDialog::getColor();
         if(color.isValid())
@@ -825,10 +825,15 @@ void AddPlotPair::onBtnLightAddClicked()
 
     QTableWidgetItem* threshold = new QTableWidgetItem("0.0");
 
-    QTableWidgetItem* colorNameItem = new QTableWidgetItem();
-    // 默认绿色
-    colorNameItem->setBackgroundColor(Qt::green);
-    colorNameItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    QTableWidgetItem* conformityColorNameItem = new QTableWidgetItem();
+    // 符合颜色默认绿色
+    conformityColorNameItem->setBackgroundColor(Qt::green);
+    conformityColorNameItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+    QTableWidgetItem* inconformityColorNameItem = new QTableWidgetItem();
+    // 不符合颜色默认红色
+    inconformityColorNameItem->setBackgroundColor(Qt::red);
+    inconformityColorNameItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
     QComboBox* constraintCom = new QComboBox;
     constraintCom->addItem(QString("≥"));
@@ -838,7 +843,9 @@ void AddPlotPair::onBtnLightAddClicked()
     ui.tableWidget_LightSet->setItem(iRow, 1, attrNameItem);
     ui.tableWidget_LightSet->setCellWidget(iRow, 2, constraintCom);
     ui.tableWidget_LightSet->setItem(iRow, 3, threshold);
-    ui.tableWidget_LightSet->setItem(iRow, 4, colorNameItem);
+    ui.tableWidget_LightSet->setItem(iRow, 4, conformityColorNameItem);
+    ui.tableWidget_LightSet->setItem(iRow, 5, inconformityColorNameItem);
+    onBtnLightUpdateClicked();
 }
 
 void AddPlotPair::onBtnLightDeleteClicked()
@@ -850,18 +857,20 @@ void AddPlotPair::onBtnLightDeleteClicked()
     }
 
     ui.tableWidget_LightSet->setCurrentCell(0, 0);
+    onBtnLightUpdateClicked();
 }
 
 void AddPlotPair::onBtnLightUpdateClicked()
 {
-    QList<std::tuple<int32_t, QString, QString, double, QString>> constraintList;
+    QList<std::tuple<int32_t, QString, QString, double, QString, QString>> constraintList;
     for(int i = 0; i < ui.tableWidget_LightSet->rowCount(); i++)
     {
         int32_t id = -1;
         QString attrName;
         QString constraint;
         double threshold = 0.0;
-        QString colorName;
+        QString conformityColorName;
+        QString inconformityColorName;
         for(int j = 0; j < ui.tableWidget_LightSet->columnCount(); j++)
         {
 
@@ -891,12 +900,15 @@ void AddPlotPair::onBtnLightUpdateClicked()
                 }
                 if(j == 4)
                 {
-
-                    colorName = color_transfer::QColorToRGBAStr(item->backgroundColor());
+                    conformityColorName = color_transfer::QColorToRGBAStr(item->backgroundColor());
                 }
+                if(j == 5)
+                    inconformityColorName =
+                        color_transfer::QColorToRGBAStr(item->backgroundColor());
             }
         }
-        constraintList.append(std::make_tuple(id, attrName, constraint, threshold, colorName));
+        constraintList.append(std::make_tuple(
+            id, attrName, constraint, threshold, conformityColorName, inconformityColorName));
     }
     // 更新的时候才发送信号通知图表刷新 TODO:此处信号会通知所有light图表刷新，是一个错误逻辑，应该针对当前图表进行刷新
     if(!constraintList.isEmpty())
