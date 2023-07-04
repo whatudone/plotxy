@@ -1248,14 +1248,6 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
     plot->setyAxisLabelFont(yLabelFont);
     plot->setyAxisLabelFontSize(plotObject.value("LabelYFontSize").toInt());
 
-    double lower, upper;
-    lower = plotObject.value("PlotOriginX").toDouble();
-    upper = plotObject.value("PlotEndX").toDouble();
-    plot->setCoordRangeX(lower, upper);
-    lower = plotObject.value("PlotOriginY").toDouble();
-    upper = plotObject.value("PlotEndY").toDouble();
-    plot->setCoordRangeY(lower, upper);
-
     plot->setHorzGrids(plotObject.value("HorzGrids").toInt());
     plot->setVertGrids(plotObject.value("VertGrids").toInt());
     plot->setAxisColorWidth(
@@ -1463,6 +1455,14 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
                 plotObject.value("LightIndOutlineColor").toString()));
         }
     }
+    // 坐标变换的部分需要放到最后，前面有些设置还原时会影响坐标轴的效果，比如Bar切换横竖
+    double lower, upper;
+    lower = plotObject.value("PlotOriginX").toDouble();
+    upper = plotObject.value("PlotEndX").toDouble();
+    plot->setCoordRangeX(lower, upper);
+    lower = plotObject.value("PlotOriginY").toDouble();
+    upper = plotObject.value("PlotEndY").toDouble();
+    plot->setCoordRangeY(lower, upper);
 
     return plot;
 }
