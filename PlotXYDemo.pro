@@ -32,4 +32,5 @@ win32-g++{
     INCLUDEPATH += $$PWD/third_party/protobuf/mingw53_32/include
     LIBS+= -L$$PWD/third_party/protobuf/mingw53_32/lib -lprotobuf.dll
 }
+RC_ICONS = logo.ico
 include(PlotXYDemo.pri)
