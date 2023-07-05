@@ -1,6 +1,7 @@
 ﻿#include "DataPair.h"
 #include "DataManager.h"
 #include "PlotXYDemo.h"
+#include "Utils.h"
 
 #include <QDebug>
 #include <QFileInfo>
@@ -904,6 +905,34 @@ void DataPair::setColorRangeMode(const ColorRangeMode& colorRangeMode)
     if(m_colorRangeMode != colorRangeMode)
     {
         m_colorRangeMode = colorRangeMode;
+        emit dataUpdate();
+    }
+}
+
+double DataPair::getSecondsLimit() const
+{
+    return m_secondsLimit;
+}
+
+void DataPair::setSecondsLimit(double secondsLimit)
+{
+    if(!math::doubleEqual(m_secondsLimit, secondsLimit))
+    {
+        m_secondsLimit = secondsLimit;
+        emit dataUpdate();
+    }
+}
+
+int32_t DataPair::getPointsLimit() const
+{
+    return m_pointsLimit;
+}
+
+void DataPair::setPointsLimit(const int32_t& pointsLimit)
+{
+    if(m_pointsLimit != pointsLimit)
+    {
+        m_pointsLimit = pointsLimit;
         emit dataUpdate();
     }
 }

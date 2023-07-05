@@ -34,7 +34,7 @@ private:
     // 响应时间变化刷新图表
     void updateDataForDataPairsByTime(double secs) override;
     // 响应DataPair的修改
-    void updateGraphByDataPair(DataPair* data);
+    void updateGraphByDataPair(DataPair* data, double curSecs);
     // 响应游标移动时，切片点移动，更新水平和垂直的切片图表
     void updateAScopesBySlicePoint(const QPointF& point);
 

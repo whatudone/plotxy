@@ -115,6 +115,6 @@ public:
 
 private:
     void updateDataForDataPairsByTime(double secs) override;
-    void updateGraphByDataPair(DataPair* data) override;
+    void updateGraphByDataPair(DataPair* data, double curSecs) override;
     void customPainting(QPainter& painter) override;
 };

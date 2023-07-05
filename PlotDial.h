@@ -56,7 +56,7 @@ public:
 private:
     void updateDataForDataPairsByTime(double secs) override;
     void customPainting(QPainter& painter) override;
-    void updateGraphByDataPair(DataPair* data) override;
+    void updateGraphByDataPair(DataPair* data, double curSecs) override;
     void updateCenterPoint();
 
 private:

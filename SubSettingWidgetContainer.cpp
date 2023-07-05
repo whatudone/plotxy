@@ -136,18 +136,26 @@ General::General(QWidget* parent)
             &General::onCheckBoxLineModeStateChanged);
     connect(
         ui.lineEditWidth, &QLineEdit::editingFinished, this, &General::onLineEditWidthEditFinished);
+    connect(ui.lineEditGeneralSecsLimit, &QLineEdit::editingFinished, this, [this]() {
+        emit secsLimitChanged(ui.lineEditGeneralSecsLimit->text().toDouble());
+    });
+    connect(ui.spinBoxGeneralPointsLimit,
+            QOverload<int>::of(&QSpinBox::valueChanged),
+            this,
+            [this](int value) { emit pointsLimitChanged(value); });
 }
 
 General::~General() {}
 
 void General::updateVisibleOnPlotTypeChanged(PlotType curType)
 {
-    static QList<QWidget*> list =
-        QList<QWidget*>() << ui.label_30 << ui.checkBox_16 << ui.labelLineMode
-                          << ui.checkBoxLineMode << ui.labelWidth << ui.lineEditWidth << ui.label_31
-                          << ui.checkBox_14 << ui.label_26 << ui.pushButton_12 << ui.label_27
-                          << ui.lineEdit_7 << ui.label_28 << ui.spinBox_5 << ui.label_32
-                          << ui.checkBox_15 << ui.label_29 << ui.pushButton_more;
+    static QList<QWidget*> list = QList<QWidget*>()
+                                  << ui.label_30 << ui.checkBox_16 << ui.labelLineMode
+                                  << ui.checkBoxLineMode << ui.labelWidth << ui.lineEditWidth
+                                  << ui.label_31 << ui.checkBox_14 << ui.label_26
+                                  << ui.pushButton_12 << ui.label_27 << ui.lineEditGeneralSecsLimit
+                                  << ui.label_28 << ui.spinBoxGeneralPointsLimit << ui.label_32
+                                  << ui.checkBox_15 << ui.label_29 << ui.pushButton_more;
     /*
      * visibleList存储九行界面的visible属性，如果只有一个数据
      * 表示所有行都是该属性
@@ -261,6 +269,16 @@ void General::setLineMode(bool lineMode)
 void General::setLineWidth(int32_t width)
 {
     ui.lineEditWidth->setText(QString::number(width));
+}
+
+void General::setSecsLimit(double limit)
+{
+    ui.lineEditGeneralSecsLimit->setText(QString::number(limit));
+}
+
+void General::setPointsLimit(double limit)
+{
+    ui.spinBoxGeneralPointsLimit->setValue(limit);
 }
 
 void General::onPushbuttonMoreClicked()

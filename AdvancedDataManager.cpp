@@ -156,6 +156,22 @@ void AdvancedDataManager::onLineWidthChanged(int32_t width)
     }
 }
 
+void AdvancedDataManager::onSecsLimitChanged(double secsLimit)
+{
+    if(m_curSelectDatapair)
+    {
+        m_curSelectDatapair->setSecondsLimit(secsLimit);
+    }
+}
+
+void AdvancedDataManager::onPointsLimitChanged(int32_t pointsLimit)
+{
+    if(m_curSelectDatapair)
+    {
+        m_curSelectDatapair->setPointsLimit(pointsLimit);
+    }
+}
+
 void AdvancedDataManager::onLabelSettings_draw(bool on)
 {
     if(m_curSelectDatapair == nullptr)
@@ -426,6 +442,8 @@ void AdvancedDataManager::refreshGeneral()
     general->setCheckBox_14CheckState(m_curSelectDatapair->matchColor());
     general->setLineMode(m_curSelectDatapair->isLineMode());
     general->setLineWidth(m_curSelectDatapair->width());
+    general->setSecsLimit(m_curSelectDatapair->getSecondsLimit());
+    general->setPointsLimit(m_curSelectDatapair->getPointsLimit());
 }
 
 void AdvancedDataManager::refreshIcon()
@@ -682,6 +700,9 @@ void AdvancedDataManager::initGeneralConnections()
 
     connect(general, &General::lineModeChanged, this, &AdvancedDataManager::onLineModeChanged);
     connect(general, &General::lineWidthChanged, this, &AdvancedDataManager::onLineWidthChanged);
+    connect(general, &General::secsLimitChanged, this, &AdvancedDataManager::onSecsLimitChanged);
+    connect(
+        general, &General::pointsLimitChanged, this, &AdvancedDataManager::onPointsLimitChanged);
 }
 
 void AdvancedDataManager::initIconConnections()

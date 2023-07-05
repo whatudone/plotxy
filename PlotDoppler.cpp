@@ -122,7 +122,8 @@ void PlotDoppler::getXToValueVecByY(double y, QVector<double>& xVec, QVector<dou
 
 void PlotDoppler::updateDataForDataPairsByTime(double secs)
 {
-    if(getDataPairs().isEmpty()){
+    if(getDataPairs().isEmpty())
+    {
         return;
     }
     auto data = getDataPairs().last();
@@ -140,11 +141,11 @@ void PlotDoppler::updateDataForDataPairsByTime(double secs)
 
     m_slicePoint.setX(m_timeList.at(timeIndex));
     m_slicePoint.setY(m_rangeList.at(rangeIndex));
-    updateGraphByDataPair(data);
+    updateGraphByDataPair(data, secs);
     m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
-void PlotDoppler::updateGraphByDataPair(DataPair* data)
+void PlotDoppler::updateGraphByDataPair(DataPair* data, double curSecs)
 {
 
     if(data->isDraw())

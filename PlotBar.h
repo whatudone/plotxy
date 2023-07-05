@@ -55,7 +55,7 @@ protected:
                               const QHash<QString, QVariant>& extraParams,
                               bool isFromJson = false) override;
     void delPlotPairData(const QString& uuid) override;
-    void updateGraphByDataPair(DataPair* dataPair) override;
+    void updateGraphByDataPair(DataPair* dataPair, double curSecs) override;
 
     void setIsHorizonBar(bool isHorizonBar) override;
 

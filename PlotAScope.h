@@ -25,7 +25,7 @@ public:
 private:
     void updateDataForDataPairsByTime(double secs) override;
 
-    void updateGraphByDataPair(DataPair* data);
+    void updateGraphByDataPair(DataPair* data, double curSecs) override;
 
 public:
     static int m_instanceCount; //实体个数

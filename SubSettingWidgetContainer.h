@@ -60,6 +60,8 @@ signals:
 	void sigPushButton_12Clicked(QColor);
     void lineModeChanged(bool lineMode);
     void lineWidthChanged(int32_t lineWidth);
+    void secsLimitChanged(double secsLimit);
+    void pointsLimitChanged(int32_t pointsLimit);
 public slots:
 	void onPushbuttonMoreClicked();
 	void onCheckBox_14StateChanged();
@@ -74,6 +76,8 @@ public:
 	void setPushButton_12Color(QColor);
     void setLineMode(bool lineMode);
     void setLineWidth(int32_t width);
+    void setSecsLimit(double limit);
+    void setPointsLimit(double limit);
 
 private:
 	Ui::General ui;

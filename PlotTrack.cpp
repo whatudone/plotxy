@@ -83,13 +83,13 @@ void PlotTrack::updateDataForDataPairsByTime(double secs)
 
     for(int i = 0; i < itemCnt; i++)
     {
-        updateGraphByDataPair(getDataPairs().at(i));
+        updateGraphByDataPair(getDataPairs().at(i), secs);
     }
 
     m_customPlot->replot();
 }
 
-void PlotTrack::updateGraphByDataPair(DataPair* dataPair)
+void PlotTrack::updateGraphByDataPair(DataPair* dataPair, double curSecs)
 {
     if(!dataPair)
         return;

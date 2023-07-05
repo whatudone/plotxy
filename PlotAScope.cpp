@@ -86,12 +86,12 @@ void PlotAScope::updateDataForDataPairsByTime(double secs)
     }
     for(int i = 0; i < itemCnt; ++i)
     {
-        updateGraphByDataPair(m_dataPairs.at(i));
+        updateGraphByDataPair(m_dataPairs.at(i), secs);
     }
     m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
-void PlotAScope::updateGraphByDataPair(DataPair* data)
+void PlotAScope::updateGraphByDataPair(DataPair* data, double curSecs)
 {
     if(!data)
     {

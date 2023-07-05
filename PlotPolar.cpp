@@ -404,12 +404,12 @@ void PlotPolar::updateDataForDataPairsByTime(double secs)
     }
     for(int i = 0; i < isize; ++i)
     {
-        updateGraphByDataPair(m_dataPairs.at(i));
+        updateGraphByDataPair(m_dataPairs.at(i), secs);
     }
     m_customPlot->replot();
 }
 
-void PlotPolar::updateGraphByDataPair(DataPair* data)
+void PlotPolar::updateGraphByDataPair(DataPair* data, double curSecs)
 {
     auto uuid = data->getUuid();
     QCPPolarGraph* graph = nullptr;

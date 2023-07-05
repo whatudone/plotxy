@@ -97,7 +97,7 @@ public:
 private:
     void initPlot();
     void updateDataForDataPairsByTime(double secs) override;
-    void updateGraphByDataPair(DataPair* data) override;
+    void updateGraphByDataPair(DataPair* data, double curSecs);
     // 删除历史事件标签
     void clearEventText();
     void clearHistoryLines();

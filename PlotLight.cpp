@@ -51,7 +51,7 @@ void PlotLight::onLightConstraintUpdate(
     for(int i = 0; i < isize; i++)
     {
         auto dataPair = getDataPairs().at(i);
-        updateGraphByDataPair(dataPair);
+        updateGraphByDataPair(dataPair, PlotXYDemo::getSeconds());
     }
 }
 
@@ -81,13 +81,13 @@ void PlotLight::updateDataForDataPairsByTime(double secs)
     for(int i = 0; i < isize; i++)
     {
         auto dataPair = getDataPairs().at(i);
-        updateGraphByDataPair(dataPair);
+        updateGraphByDataPair(dataPair, secs);
     }
 
     m_customPlot->replot();
 }
 
-void PlotLight::updateGraphByDataPair(DataPair* data)
+void PlotLight::updateGraphByDataPair(DataPair* data, double curSecs)
 {
     clearLineList();
     QRect drawRect(0, 0, m_customPlot->width(), m_customPlot->height());

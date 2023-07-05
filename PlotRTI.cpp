@@ -122,18 +122,19 @@ void PlotRTI::setAxisTickLabelShow(bool on, AxisType type)
 
 void PlotRTI::updateDataForDataPairsByTime(double secs)
 {
-    if(getDataPairs().isEmpty()){
+    if(getDataPairs().isEmpty())
+    {
         return;
     }
     auto data = getDataPairs().last();
     int32_t eid = data->getEntityIDX();
     DataManagerInstance->getRTIDataByTime(eid, secs, m_rangeList, m_timeList, m_dataHash);
 
-    updateGraphByDataPair(data);
+    updateGraphByDataPair(data, secs);
     m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
-void PlotRTI::updateGraphByDataPair(DataPair* data)
+void PlotRTI::updateGraphByDataPair(DataPair* data, double curSecs)
 {
     if(data->isDraw())
     {

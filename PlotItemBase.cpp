@@ -1143,7 +1143,7 @@ void PlotItemBase::onDataPairUpdateData()
     auto dataPair = qobject_cast<DataPair*>(sender());
     if(dataPair)
     {
-        updateGraphByDataPair(dataPair);
+        updateGraphByDataPair(dataPair, PlotXYDemo::getSeconds());
         replot();
     }
 }
@@ -1162,9 +1162,10 @@ void PlotItemBase::onPlotMouseEventEnable(bool on)
 
 void PlotItemBase::updateDataForDataPairsByTime(double) {}
 
-void PlotItemBase::updateGraphByDataPair(DataPair* dataPair)
+void PlotItemBase::updateGraphByDataPair(DataPair* dataPair, double curSecs)
 {
     Q_UNUSED(dataPair)
+    Q_UNUSED(curSecs)
 }
 
 void PlotItemBase::customPainting(QPainter& /*painter*/) {}

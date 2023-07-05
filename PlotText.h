@@ -51,7 +51,7 @@ public:
 
 private:
     void updateDataForDataPairsByTime(double secs) override;
-    void updateGraphByDataPair(DataPair* data) override;
+    void updateGraphByDataPair(DataPair* data, double curSecs) override;
     void customPainting(QPainter& painter) override;
     // 绘制网格 坐标轴Label 数据
     void drawCellData(QPainter& painter);

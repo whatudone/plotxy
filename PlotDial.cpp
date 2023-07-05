@@ -450,7 +450,7 @@ void PlotDial::customPainting(QPainter& painter)
     }
 }
 
-void PlotDial::updateGraphByDataPair(DataPair* data)
+void PlotDial::updateGraphByDataPair(DataPair* data, double curSecs)
 {
     Q_UNUSED(data)
     // 暂时无法单独更新每个DataPair数据，只能全局刷新

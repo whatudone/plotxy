@@ -50,6 +50,8 @@ public slots:
 	void onGeneral_matchColor(bool);
     void onLineModeChanged(bool lineMode);
     void onLineWidthChanged(int32_t width);
+    void onSecsLimitChanged(double secsLimit);
+    void onPointsLimitChanged(int32_t pointsLimit);
 	//Label Settings
 	void onLabelSettings_draw(bool);
 	void onLabelSettings_color(QColor);
@@ -117,7 +119,6 @@ private:
     void refreshConnections();
 
     void initConnections();
-
     void initGeneralConnections();
     void initIconConnections();
     void initLabelSettingsConnections();

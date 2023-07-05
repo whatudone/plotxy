@@ -337,12 +337,21 @@ public:
     ColorRangeMode getColorRangeMode() const;
     void setColorRangeMode(const ColorRangeMode& colorRangeMode);
 
+    double getSecondsLimit() const;
+    void setSecondsLimit(double secondsLimit);
+
+    int32_t getPointsLimit() const;
+    void setPointsLimit(const int32_t& pointsLimit);
+
 private:
     bool m_isDraw; //是否绘制
     QColor m_color; //数据颜色
     bool m_isLineMode; //是否为线模式
     int m_dataWidth; //线宽或者点宽度
     bool m_matchColor; //颜色匹配
+    //秒数约束，用于控制显示时间，当处于这个时间时，才会显示数据，其他时间不显示数据，为0表示没有限制
+    double m_secondsLimit = 0;
+    int32_t m_pointsLimit = 0; //点数量约束，用于控制最大显示点数量，为0表示没有限制
 
     bool m_iconDraw; //是否显示图标
     QString m_iconName; //图标所在完整路径

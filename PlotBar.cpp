@@ -53,7 +53,7 @@ void PlotBar::updateDataForDataPairsByTime(double secs)
 
     for(int i = 0; i < itemCnt; ++i)
     {
-        updateGraphByDataPair(m_dataPairs.at(i));
+        updateGraphByDataPair(m_dataPairs.at(i), secs);
     }
 
     m_customPlot->replot();
@@ -95,7 +95,7 @@ void PlotBar::initPlot()
     m_customPlot->yAxis->setLabelFont(m_yAxisLabelFont);
 }
 
-void PlotBar::updateGraphByDataPair(DataPair* data)
+void PlotBar::updateGraphByDataPair(DataPair* data, double curSecs)
 {
     if(!data)
     {

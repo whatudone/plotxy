@@ -172,7 +172,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
     {
         for(int i = 0; i < itemCnt; ++i)
         {
-            updateGraphByDataPair(m_dataPairs.at(i));
+            updateGraphByDataPair(m_dataPairs.at(i), secs);
         }
     }
     updateMarkers(secs);
@@ -180,14 +180,14 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
 	m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
-void PlotScatter::updateGraphByDataPair(DataPair* data)
+void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
 {
     if(!data)
-    {
+	{
         return;
     }
     if(m_isTimeLine)
-    {
+	{
         updateTimelineGraph();
         return;
     }
@@ -195,12 +195,12 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
     auto x = m_dataHash.value(uuid).first;
     auto y = m_dataHash.value(uuid).second;
     if(x.isEmpty() || y.isEmpty())
-	{
+    {
         return;
     }
     DrawComponents info;
     if(!m_mapScatter.contains(uuid))
-	{
+    {
         info.graph = m_customPlot->addGraph();
         // 默认采样值是true，在某些情况下采样会导致把原始数据处理错误，导致连线时路径错误
         info.graph->setAdaptiveSampling(false);
@@ -222,6 +222,20 @@ void PlotScatter::updateGraphByDataPair(DataPair* data)
     auto pixmap = m_mapScatter[uuid].pixmap;
     if(data->isDraw())
     {
+        double secsLimit = data->getSecondsLimit();
+        if(!math::doubleEqual(secsLimit, 0.0) && !math::doubleEqual(secsLimit, curSecs))
+        {
+            graph->setVisible(false);
+            tracerText->setVisible(false);
+            pixmap->setVisible(false);
+            return;
+        }
+        int32_t pointsLimit = data->getPointsLimit();
+        if(pointsLimit > 0)
+        {
+            x = x.mid(x.size() - pointsLimit);
+            y = y.mid(y.size() - pointsLimit);
+        }
         graph->setVisible(true);
         // 第三个参数设置为true，禁止内部对数据根据x轴的数值大小进行排序，导致数据插入顺序不对，出现line模式连线不对
         graph->setData(x, y, true);
