@@ -48,6 +48,19 @@ public:
     void rescaleAxis() override;
 
     void drawGOGData() override;
+    struct DrawComponents
+    {
+        QPointer<QCPPolarGraph> graph;
+        QPointer<QCPItemText> tracerText;
+        QPointer<QCPItemPixmap> pixmap;
+
+        DrawComponents()
+        {
+            graph = nullptr;
+            tracerText = nullptr;
+            pixmap = nullptr;
+        }
+    };
 
 private:
     void updateDataForDataPairsByTime(double secs) override;
@@ -64,7 +77,7 @@ private:
 	double m_radialRange_lower;
 	double m_radialRange_upper;
     // <uuid,polar>
-    QHash<QString, QCPPolarGraph*> m_graphHash;
+    QHash<QString, DrawComponents> m_graphHash;
     // <uuid,data>
     QHash<QString, QPair<QVector<double>, QVector<double>>> m_dataHash;
 

@@ -86,7 +86,6 @@ void PlotScatter::delPlotPairData(const QString& uuid)
         }
         if(!draw.pixmap.isNull())
         {
-
             m_customPlot->removeItem(draw.pixmap);
         }
         if(!draw.tracerText.isNull())
@@ -198,9 +197,9 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
     {
         return;
     }
-    DrawComponents info;
     if(!m_mapScatter.contains(uuid))
     {
+        DrawComponents info;
         info.graph = m_customPlot->addGraph();
         // 默认采样值是true，在某些情况下采样会导致把原始数据处理错误，导致连线时路径错误
         info.graph->setAdaptiveSampling(false);

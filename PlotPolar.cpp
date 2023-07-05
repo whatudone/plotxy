@@ -1,6 +1,6 @@
 ﻿#include "PlotPolar.h"
 #include "DataManager.h"
-#include <qlabel.h>
+#include "Utils.h"
 
 int PlotPolar::m_instanceCount = 1;
 PlotPolar::PlotPolar(QWidget* parent)
@@ -272,16 +272,19 @@ void PlotPolar::getCoordRangeY(double& lower, double& upper)
 void PlotPolar::rescaleXAxis()
 {
     m_angularAxis->rescale();
+    m_customPlot->replot();
 }
 
 void PlotPolar::rescaleYAxis()
 {
     m_angularAxis->radialAxis()->rescale();
+    m_customPlot->replot();
 }
 
 void PlotPolar::rescaleAxis()
 {
     m_customPlot->rescaleAxes();
+    m_customPlot->replot();
 }
 
 void PlotPolar::drawGOGData()
@@ -389,7 +392,7 @@ void PlotPolar::updateDataForDataPairsByTime(double secs)
 
     for(int i = 0; i < isize; ++i)
     {
-        auto dataPair = getDataPairs().last();
+        auto dataPair = getDataPairs().at(i);
         auto xEntityID = dataPair->getEntityIDX();
         auto yEntityID = dataPair->getEntityIDY();
         auto xAttr = dataPair->getAttr_x();
@@ -412,24 +415,52 @@ void PlotPolar::updateDataForDataPairsByTime(double secs)
 void PlotPolar::updateGraphByDataPair(DataPair* data, double curSecs)
 {
     auto uuid = data->getUuid();
-    QCPPolarGraph* graph = nullptr;
     if(!m_graphHash.contains(uuid))
     {
-        graph = new QCPPolarGraph(m_angularAxis, m_angularAxis->radialAxis());
-        graph->setBrush(Qt::NoBrush);
-        graph->setPen(QPen(data->dataColor(), data->width()));
-        m_graphHash.insert(uuid, graph);
+        DrawComponents info;
+        info.graph = new QCPPolarGraph(m_angularAxis, m_angularAxis->radialAxis());
+        info.graph->setBrush(Qt::NoBrush);
+        info.tracerText = new QCPItemText(m_customPlot);
+        info.tracerText->position->setType(QCPItemPosition::ptAbsolute);
+        // 默认position的坐标是center,为了方便计算，将position的坐标改为左上角
+        info.tracerText->setPositionAlignment(Qt::AlignTop | Qt::AlignLeft);
+
+        info.pixmap = new QCPItemPixmap(m_customPlot); // 创建 QCPItemPixmap 对象
+        info.pixmap->setClipToAxisRect(false); // 允许图标超出坐标轴范围
+        info.pixmap->setClipAxisRect(m_customPlot->axisRect()); // 设置图标显示范围
+        info.pixmap->topLeft->setType(QCPItemPosition::ptAbsolute);
+        info.pixmap->setPen(Qt::NoPen); // 不显示边框
+
+        m_graphHash.insert(uuid, info);
     }
-    else
-    {
-        graph = m_graphHash.value(uuid);
-    }
+    auto graph = m_graphHash.value(uuid).graph;
+    auto tracerText = m_graphHash.value(uuid).tracerText;
+    auto pixmap = m_graphHash.value(uuid).pixmap;
     if(data->isDraw())
     {
-        graph->setVisible(true);
         auto x = m_dataHash.value(uuid).first;
         auto y = m_dataHash.value(uuid).second;
+        if(x.isEmpty() || y.isEmpty())
+        {
+            graph->setVisible(false);
+            return;
+        }
+        double secsLimit = data->getSecondsLimit();
+        if(!math::doubleEqual(secsLimit, 0.0) && !math::doubleEqual(secsLimit, curSecs))
+        {
+            graph->setVisible(false);
+            return;
+        }
+        int32_t pointsLimit = data->getPointsLimit();
+        if(pointsLimit > 0)
+        {
+            x = x.mid(x.size() - pointsLimit);
+            y = y.mid(y.size() - pointsLimit);
+        }
+
+        graph->setVisible(true);
         graph->setData(x, y, true);
+        QPen pen(data->dataColor(), data->width());
         if(data->isLineMode())
         {
             Qt::PenStyle style = Qt::SolidLine;
@@ -438,22 +469,65 @@ void PlotPolar::updateGraphByDataPair(DataPair* data, double curSecs)
             {
                 style = data->getStipplePattern();
             }
-            QPen pen = graph->pen();
             pen.setStyle(style);
-            graph->setPen(pen);
 
             graph->setScatterStyle(QCPScatterStyle::ssNone);
             graph->setLineStyle(QCPPolarGraph::lsLine);
         }
         else
         {
-            graph->setScatterStyle(QCPScatterStyle::ssDisc);
+            graph->setScatterStyle(
+                QCPScatterStyle(QCPScatterStyle::ssDisc, data->dataColor(), data->width()));
             graph->setLineStyle(QCPPolarGraph::lsNone);
+        }
+        graph->setPen(pen);
+
+        double lastX = x.last();
+        double lastY = y.last();
+        QPointF lastPoint = m_angularAxis->coordToPixel(lastX, lastY);
+        double lastPosX = lastPoint.x();
+        double lastPosY = lastPoint.y();
+        //icon
+        if(data->isIconDraw())
+        {
+            auto pix = data->processIcon();
+            if(!pix.isNull())
+            {
+                pixmap->setVisible(true);
+                pixmap->setPixmap(pix);
+                // 以最后一个数据点的坐标作为图片的中心点,这里不能直接使用data中原始的图片宽高作为基准，因为旋转之后，图片宽高会发生变化
+                double topX = lastPosX - pix.width() / 2;
+                double topY = lastPosY - pix.height() / 2;
+                pixmap->topLeft->setCoords(topX, topY);
+            }
+        }
+        else
+        {
+            pixmap->setVisible(false);
+        }
+
+        //Label Text
+        if(data->isLabelTextShow())
+        {
+            tracerText->setVisible(true);
+            QString text = data->processLabelText(lastX, lastY);
+            tracerText->setText(text);
+            QPointF labelPoint = data->processLabelPosition(QPointF(lastPosX, lastPosY), text);
+            tracerText->position->setCoords(labelPoint.x(), labelPoint.y());
+            tracerText->setFont(data->getLabelFont());
+            tracerText->setColor(data->getLabelColor());
+            tracerText->setBrush(data->getLabelBackground());
+        }
+        else
+        {
+            tracerText->setVisible(false);
         }
     }
     else
     {
         graph->setVisible(false);
+        pixmap->setVisible(false);
+        tracerText->setVisible(false);
     }
 }
 
@@ -461,7 +535,20 @@ void PlotPolar::delPlotPairData(const QString& uuid)
 {
     if(m_graphHash.contains(uuid))
     {
-        m_graphHash.remove(uuid);
+        auto draw = m_graphHash.take(uuid);
+        if(!draw.graph.isNull())
+        {
+            m_angularAxis->removeGraph(draw.graph);
+        }
+        if(!draw.pixmap.isNull())
+        {
+            m_customPlot->removeItem(draw.pixmap);
+        }
+        if(!draw.tracerText.isNull())
+        {
+            m_customPlot->removeItem(draw.tracerText);
+        }
+        m_customPlot->replot();
     }
     PlotItemBase::delPlotPairData(uuid);
 }
