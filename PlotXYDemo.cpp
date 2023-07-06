@@ -1478,6 +1478,8 @@ void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object, Plo
     object.insert("YAttrName", dataPair->getAttr_y());
     object.insert("XAttrUnitName", dataPair->getUnit_x());
     object.insert("YAttrUnitName", dataPair->getUnit_y());
+    object.insert("SecondsLimit", dataPair->getSecondsLimit());
+    object.insert("PointsLimit", dataPair->getPointsLimit());
     // 图表特殊信息,先保存已经支持的信息
     if(type == PlotType::Type_PlotAScope)
     {
@@ -1654,6 +1656,8 @@ void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBas
         xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName, params, true);
     dataPair->blockSignals(true);
     dataPair->setDraw(visible);
+    dataPair->setSecondsLimit(dataPairObject.value("SecondsLimit").toDouble());
+    dataPair->setPointsLimit(dataPairObject.value("PointsLimit").toInt());
     PlotType type = plot->plotType();
     if(type == PlotType::Type_PlotAScope)
     {
