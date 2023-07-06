@@ -34,6 +34,7 @@ private:
     void initScatterLimitUI();
     void initScatterMarkersUI();
     void initEditableMap();
+    void initUnitData();
 
     void showScatterEditableItem(PlotType type);
 
@@ -108,6 +109,8 @@ public slots:
     void onComboBox_3CurrentIndexChanged(int index);
     void onLineEdit_PrecisionXEditingFinished();
     void onLineEdit_PrecisionYEditingFinished();
+    void onComboBox_XUnitChanged(const QString& newUnit);
+    void onComboBox_YUnitChanged(const QString& newUnit);
 
     //GOG
     void onPushButton_24Clicked();
@@ -244,6 +247,9 @@ private:
     PlotItemBase* m_curSelectPlot = nullptr;
     // 不同图表的Text可编辑属性不同
     QMap<PlotType, QList<QString>> m_itemTextEditableMap;
+    QHash<QString, QStringList> m_unitsMap;
+    QMap<QString, QHash<QString, double>>
+        m_rateMap; // QString：文件中的原始单位  QString：当前选中的单位  double：原始单位转换成当前单位需要除以的比例。例如 <m<mm,0.001>>
 };
 
 #endif // !

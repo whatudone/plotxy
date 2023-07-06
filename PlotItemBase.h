@@ -369,6 +369,10 @@ public:
     int getOutlineWidth() const;
     void setOutlineWidth(int outlineWidth);
 
+    void setYRate(double yRate);
+
+    void setXRate(double xRate);
+
 private:
     void updateResizeFocusPos();
     QRect getRectByDirection(ResizeDirection direction);
@@ -376,6 +380,8 @@ private:
 
     void drawBorderAndControls();
     void loadGOGFile(const QString& fileName);
+    void updateXLabelDescrption();
+    void updateYLabelDescrption();
 
 private slots:
     // 响应整体数据变化
@@ -463,6 +469,8 @@ protected:
 
     int m_xPrecision; //X轴数据精度
     int m_yPrecision; //Y轴数据精度
+    double m_xRate; //x轴数据倍率（用于坐标转换）
+    double m_yRate; //y轴数据倍率（用于坐标转换）
 
     // gog数据
     QMap<QString, QList<GOGDataInfo>> m_gogDataMap;

@@ -486,8 +486,10 @@ void PlotAttitude::updateDataForDataPairsByTime(double secs)
     auto yEntityID = dataPair->getEntityIDY();
     auto xAttr = dataPair->getAttr_x();
     auto yAttr = dataPair->getAttr_y();
-    m_rollValue = DataManager::getInstance()->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs);
-    m_pitchValue = DataManager::getInstance()->getEntityAttrValueByMaxTime(yEntityID, yAttr, secs);
+    m_rollValue =
+        DataManager::getInstance()->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs, m_xRate);
+    m_pitchValue =
+        DataManager::getInstance()->getEntityAttrValueByMaxTime(yEntityID, yAttr, secs, m_yRate);
     update();
 }
 

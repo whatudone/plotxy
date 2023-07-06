@@ -398,10 +398,10 @@ void PlotPolar::updateDataForDataPairsByTime(double secs)
         auto xAttr = dataPair->getAttr_x();
         auto yAttr = dataPair->getAttr_y();
 
-        QVector<double> x =
-            DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, xAttr, secs);
-        QVector<double> y =
-            DataManager::getInstance()->getEntityAttrValueListByMaxTime(yEntityID, yAttr, secs);
+        QVector<double> x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+            xEntityID, xAttr, secs, m_xRate);
+        QVector<double> y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+            yEntityID, yAttr, secs, m_yRate);
 
         m_dataHash.insert(dataPair->getUuid(), qMakePair(x, y));
     }

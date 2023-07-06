@@ -32,6 +32,8 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     m_coordEnd_y = 100;
     m_xPrecision = 0;
     m_yPrecision = 0;
+    m_xRate = 1.0;
+    m_yRate = 1.0;
 
     m_outerFillColor = Qt::transparent;
     m_outlineColor = Qt::transparent;
@@ -455,48 +457,25 @@ void PlotItemBase::setUnitsShowX(bool on)
 {
     // 单位是初始在各个派生类中初始化，添加数据对之后，会重新设置单位
     m_showUnits_x = on;
-    if(m_xAxisLabelVisible && m_customPlot && m_customPlot->xAxis)
-    {
-        if(on)
-        {
-            // NOTE:不要调用基类的setxAxisLabel，会导致单位叠加拼接
-            m_customPlot->xAxis->setLabel(m_xAxisLabel + "(" + m_units_x + ")");
-        }
-        else
-        {
-            m_customPlot->xAxis->setLabel(m_xAxisLabel);
-        }
-    }
-    replot();
+    updateXLabelDescrption();
 }
 
 void PlotItemBase::setUnitsShowY(bool on)
 {
     m_showUnits_y = on;
-    if(m_yAxisLabelVisible && m_customPlot && m_customPlot->yAxis)
-    {
-        if(on)
-        {
-            m_customPlot->yAxis->setLabel(m_yAxisLabel + "(" + m_units_y + ")");
-        }
-        else
-        {
-            m_customPlot->yAxis->setLabel(m_yAxisLabel);
-        }
-    }
-    replot();
+    updateYLabelDescrption();
 }
 
 void PlotItemBase::setUnitsX(const QString& units)
 {
     m_units_x = units;
-    replot();
+    updateXLabelDescrption();
 }
 
 void PlotItemBase::setUnitsY(const QString& units)
 {
     m_units_y = units;
-    replot();
+    updateYLabelDescrption();
 }
 
 void PlotItemBase::setTitleVisible(bool on)
@@ -546,73 +525,25 @@ void PlotItemBase::setTitleOffset(int offsetX, int offsetY)
 void PlotItemBase::setxAxisLabelVisible(bool on)
 {
     m_xAxisLabelVisible = on;
-    if(m_customPlot)
-    {
-        if(m_customPlot->xAxis)
-        {
-            if(on)
-            {
-                QString finalLabel =
-                    (m_showUnits_x) ? m_xAxisLabel + "(" + m_units_x + ")" : m_xAxisLabel;
-                m_customPlot->xAxis->setLabel(finalLabel);
-            }
-            else
-            {
-                m_customPlot->xAxis->setLabel("");
-            }
-        }
-    }
-    replot();
+    updateXLabelDescrption();
 }
 
 void PlotItemBase::setyAxisLabelVisible(bool on)
 {
     m_yAxisLabelVisible = on;
-    if(m_customPlot)
-    {
-        if(m_customPlot->yAxis)
-        {
-            if(on)
-            {
-                QString finalLabel =
-                    (m_showUnits_y) ? m_yAxisLabel + "(" + m_units_y + ")" : m_yAxisLabel;
-                m_customPlot->yAxis->setLabel(finalLabel);
-            }
-            else
-            {
-                m_customPlot->yAxis->setLabel("");
-            }
-        }
-    }
-    replot();
+    updateYLabelDescrption();
 }
 
 void PlotItemBase::setxAxisLabel(const QString& label)
 {
     m_xAxisLabel = label;
-    if(m_xAxisLabelVisible && m_customPlot && m_customPlot->xAxis)
-    {
-        QString finalLabel = (m_showUnits_x) ? m_xAxisLabel + "(" + m_units_x + ")" : m_xAxisLabel;
-        m_customPlot->xAxis->setLabel(finalLabel);
-    }
-    replot();
+    updateXLabelDescrption();
 }
 
 void PlotItemBase::setyAxisLabel(const QString& label)
 {
     m_yAxisLabel = label;
-    if(m_yAxisLabelVisible && m_customPlot && m_customPlot->yAxis)
-    {
-        if(m_showUnits_y)
-        {
-            m_customPlot->yAxis->setLabel(m_yAxisLabel + "(" + m_units_y + ")");
-        }
-        else
-        {
-            m_customPlot->yAxis->setLabel(m_yAxisLabel);
-        }
-        replot();
-    }
+    updateYLabelDescrption();
 }
 
 void PlotItemBase::setxAxisLabelColor(const QColor& color)
@@ -741,8 +672,11 @@ DataPair* PlotItemBase::addPlotDataPair(int32_t xEntityID,
     DataPair* data =
         new DataPair(xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
     m_dataPairs.append(data);
-    m_units_x = xAttrUnitName;
-    m_units_y = yAttrUnitName;
+    if(!isFromJson)
+    {
+        m_units_x = xAttrUnitName;
+        m_units_y = yAttrUnitName;
+    }
     // 设置额外参数
     if(plotType() == PlotType::Type_PlotLight)
     {
@@ -1106,6 +1040,32 @@ void PlotItemBase::loadGOGFile(const QString& fileName)
     m_gogDataMap.insert(fileName, gogFileList);
 }
 
+void PlotItemBase::updateXLabelDescrption()
+{
+    if(m_customPlot && m_customPlot->xAxis)
+    {
+        QString label;
+        QString unitLabel = m_showUnits_x ? QString("(" + m_units_x + ")") : QString();
+        if(m_xAxisLabelVisible)
+            label = QString("%1%2").arg(m_xAxisLabel).arg(unitLabel);
+        m_customPlot->xAxis->setLabel(label);
+    }
+    replot();
+}
+
+void PlotItemBase::updateYLabelDescrption()
+{
+    if(m_customPlot && m_customPlot->yAxis)
+    {
+        QString label;
+        QString unitLabel = m_showUnits_y ? QString("(" + m_units_y + ")") : QString();
+        if(m_yAxisLabelVisible)
+            label = QString("%1%2").arg(m_xAxisLabel).arg(unitLabel);
+        m_customPlot->yAxis->setLabel(label);
+    }
+    replot();
+}
+
 void PlotItemBase::onDataPairsChanged()
 {
     // 使用时间轴的当前时间
@@ -1289,6 +1249,18 @@ bool PlotItemBase::eventFilter(QObject* obj, QEvent* event)
         }
     }
     return QWidget::eventFilter(obj, event);
+}
+
+void PlotItemBase::setYRate(double yRate)
+{
+    m_yRate = yRate;
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
+}
+
+void PlotItemBase::setXRate(double xRate)
+{
+    m_xRate = xRate;
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
 }
 
 int PlotItemBase::getOutlineWidth() const

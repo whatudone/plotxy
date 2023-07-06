@@ -138,23 +138,23 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
             {
 
                 x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
-                    yEntityID, xAttr, secs);
+                    yEntityID, xAttr, secs, m_xRate);
                 y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
-                    yEntityID, yAttr, secs);
+                    yEntityID, yAttr, secs, m_yRate);
             }
             else if(xAttr != "Time" && yAttr == "Time")
             {
                 x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
-                    xEntityID, xAttr, secs);
+                    xEntityID, xAttr, secs, m_xRate);
                 y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
-                    xEntityID, yAttr, secs);
+                    xEntityID, yAttr, secs, m_yRate);
             }
             else
             {
                 x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
-                    xEntityID, xAttr, secs);
+                    xEntityID, xAttr, secs, m_xRate);
                 y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
-                    yEntityID, yAttr, secs);
+                    yEntityID, yAttr, secs, m_yRate);
             }
             m_dataHash.insert(uuid, qMakePair(x, y));
             if(!x.isEmpty() && !y.isEmpty())
@@ -485,11 +485,13 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
         QPair<double, double> xlimit;
         if(xAttrName == "Time")
         {
-            xlimit = DataManager::getInstance()->getMaxAndMinEntityAttrValue(yEntityID, xAttrName);
+            xlimit = DataManager::getInstance()->getMaxAndMinEntityAttrValue(
+                yEntityID, xAttrName, m_xRate);
         }
         else
         {
-            xlimit = DataManager::getInstance()->getMaxAndMinEntityAttrValue(xEntityID, xAttrName);
+            xlimit = DataManager::getInstance()->getMaxAndMinEntityAttrValue(
+                xEntityID, xAttrName, m_xRate);
         }
 
         // x轴
@@ -515,7 +517,7 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
 
         // y轴
         QPair<double, double> ylimit =
-            DataManager::getInstance()->getMaxAndMinEntityAttrValue(yEntityID, yAttrName);
+            DataManager::getInstance()->getMaxAndMinEntityAttrValue(yEntityID, yAttrName, m_yRate);
         if(!m_isInitCoorRange)
         {
             // 表示m_min数值无意义，先赋值
@@ -545,8 +547,14 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
         setTitle(QString("%1 VS. %2").arg(xAttrName).arg(yAttrName));
     }
     m_isInitCoorRange = true;
-    return PlotItemBase::addPlotDataPair(
-        xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName, extraParams);
+    return PlotItemBase::addPlotDataPair(xEntityID,
+                                         xAttrName,
+                                         xAttrUnitName,
+                                         yEntityID,
+                                         yAttrName,
+                                         yAttrUnitName,
+                                         extraParams,
+                                         isFromJson);
 }
 
 void PlotScatter::clearEventText()

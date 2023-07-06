@@ -554,55 +554,67 @@ int DataManager::getRefYear()
     return m_refYear;
 }
 
-QVector<double> DataManager::getEntityAttrValueList(int32_t entityID, const QString& attr)
+QVector<double>
+DataManager::getEntityAttrValueList(int32_t entityID, const QString& attr, double rate)
 {
     QVector<double> valueList;
     if(m_isRealTime)
     {
         if(m_realDataMap.contains(entityID) && m_realDataMap.value(entityID).contains(attr))
         {
-            return m_realDataMap.value(entityID).value(attr);
+            foreach(auto value, m_realDataMap.value(entityID).value(attr))
+            {
+                valueList.append(value * rate);
+            }
         }
     }
     else if(m_newEntityDataMap.contains(entityID) &&
             m_newEntityDataMap.value(entityID).contains(attr))
     {
-        return m_newEntityDataMap.value(entityID).value(attr);
+        foreach(auto value, m_newEntityDataMap.value(entityID).value(attr))
+        {
+            valueList.append(value * rate);
+        }
     }
 	return valueList;
 }
 
-QVector<double>
-DataManager::getEntityAttrValueListByMaxTime(int32_t entityID, const QString& attr, double secs)
+QVector<double> DataManager::getEntityAttrValueListByMaxTime(int32_t entityID,
+                                                             const QString& attr,
+                                                             double secs,
+                                                             double rate)
 {
     int index = getEntityAttrMaxIndexByTime(entityID, secs);
     QVector<double> valueList;
     if(index >= 0)
 	{
-        valueList = getEntityAttrValueList(entityID, attr);
+        valueList = getEntityAttrValueList(entityID, attr, rate);
         // length = index +1
         valueList = valueList.mid(0, index + 1);
-	}
+    }
     return valueList;
 }
 
-double DataManager::getEntityAttrValueByMaxTime(int32_t entityID, const QString& attr, double secs)
+double DataManager::getEntityAttrValueByMaxTime(int32_t entityID,
+                                                const QString& attr,
+                                                double secs,
+                                                double rate)
 {
     int index = getEntityAttrMaxIndexByTime(entityID, secs);
     QVector<double> valueList;
     if(index >= 0)
     {
-        valueList = getEntityAttrValueList(entityID, attr);
+        valueList = getEntityAttrValueList(entityID, attr, rate);
         // length = index +1
         valueList = valueList.mid(0, index + 1);
     }
     return (valueList.size() == 0) ? std::numeric_limits<double>::max() : valueList.last();
 }
 
-QPair<double, double> DataManager::getMaxAndMinEntityAttrValue(int32_t entityID,
-                                                               const QString& attr)
+QPair<double, double>
+DataManager::getMaxAndMinEntityAttrValue(int32_t entityID, const QString& attr, double rate)
 {
-    QVector<double> valueList = getEntityAttrValueList(entityID, attr);
+    QVector<double> valueList = getEntityAttrValueList(entityID, attr, rate);
     if(valueList.isEmpty())
     {
         return QPair<double, double>(std::numeric_limits<double>::min(),
@@ -948,6 +960,18 @@ QString DataManager::getGroupNameByID(int32_t id)
         {
             return type;
         }
+    }
+    return QString();
+}
+
+QString DataManager::getUnitByAttr(int32_t id, const QString& attr)
+{
+    auto unitlist = m_attrUnitHash.value(id);
+    for(auto pair : unitlist)
+    {
+        QString first = pair.first;
+        if(first == attr)
+            return pair.second;
     }
     return QString();
 }

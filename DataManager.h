@@ -129,12 +129,16 @@ public:
     int getRefYear();
 
     // 获取最小时间到secs时间内的实体-属性数据list
-    QVector<double>
-    getEntityAttrValueListByMaxTime(int32_t entityID, const QString& attr, double secs);
+    QVector<double> getEntityAttrValueListByMaxTime(int32_t entityID,
+                                                    const QString& attr,
+                                                    double secs,
+                                                    double rate);
     // 获取当前时间内最后一个值，用于Text-Bar这种一维数据展示
-    double getEntityAttrValueByMaxTime(int32_t entityID, const QString& attr, double secs);
+    double
+    getEntityAttrValueByMaxTime(int32_t entityID, const QString& attr, double secs, double rate);
 
-    QPair<double, double> getMaxAndMinEntityAttrValue(int32_t entityID, const QString& attr);
+    QPair<double, double>
+    getMaxAndMinEntityAttrValue(int32_t entityID, const QString& attr, double rate);
     // 获取时间轴上所有的时间节点
     QVector<double> getTimeDataSet();
     // 获取某个时间节点的切片数据list<range,voltage>，针对于ASCope
@@ -186,10 +190,12 @@ public:
     bool saveDataToASI(const QString& file);
 
     QString getGroupNameByID(int32_t id);
+    QString getUnitByAttr(int32_t id, const QString& attr);
 
 private:
     //获取实体-属性的全数据，属性默认为Time
-    QVector<double> getEntityAttrValueList(int32_t entityID, const QString& attr = "Time");
+    QVector<double>
+    getEntityAttrValueList(int32_t entityID, const QString& attr = "Time", double rate = 1.0);
     //获取secs时间内的实体-属性的最大index
     int getEntityAttrMaxIndexByTime(int32_t entityID, double secs);
 
