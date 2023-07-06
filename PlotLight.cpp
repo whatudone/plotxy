@@ -65,8 +65,8 @@ void PlotLight::updateDataForDataPairsByTime(double secs)
         auto xEntityID = dataPair->getEntityIDX();
         auto xEntityName = dataPair->getEntity_x();
         auto xAttr = dataPair->getAttr_x();
-        double value =
-            DataManager::getInstance()->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs);
+        double value = DataManager::getInstance()->getEntityAttrValueByMaxTime(
+            xEntityID, xAttr, secs, m_xRate);
 
         auto desc = dataPair->getDesc();
         m_dataHash.insert(dataPair->getUuid(),

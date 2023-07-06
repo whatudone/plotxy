@@ -41,8 +41,8 @@ void PlotText::updateDataForDataPairsByTime(double secs)
         auto xEntityID = dataPair->getEntityIDX();
         auto xAttr = dataPair->getAttr_x();
 
-        double value =
-            DataManager::getInstance()->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs);
+        double value = DataManager::getInstance()->getEntityAttrValueByMaxTime(
+            xEntityID, xAttr, secs, m_xRate);
         m_dataList.append(value);
     }
     update();

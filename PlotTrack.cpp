@@ -215,8 +215,8 @@ DataPair* PlotTrack::addPlotDataPair(int32_t xEntityID,
     double minTime;
     double maxTime;
     DataManager::getInstance()->getMinMaxTime(m_minTime, m_maxTime);
-    QVector<double> timeList =
-        DataManager::getInstance()->getEntityAttrValueListByMaxTime(xEntityID, "Time", m_maxTime);
+    QVector<double> timeList = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+        xEntityID, "Time", m_maxTime, 1.0);
     if(!timeList.isEmpty())
     {
         // minTime和maxTime即为绘制的Available部分的下限和上限

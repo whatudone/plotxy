@@ -38,8 +38,8 @@ void PlotBar::updateDataForDataPairsByTime(double secs)
         auto xEntityID = data->getEntityIDX();
         auto xAttr = data->getAttr_x();
 
-        double value =
-            DataManager::getInstance()->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs);
+        double value = DataManager::getInstance()->getEntityAttrValueByMaxTime(
+            xEntityID, xAttr, secs, m_xRate);
 
         if(math::doubleEqual(value, std::numeric_limits<double>::max())) // 表示value无效
         {
@@ -406,8 +406,11 @@ DataPair* PlotBar::addPlotDataPair(int32_t xEntityID,
     DataPair* data =
         new DataPair(xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
     m_dataPairs.append(data);
-    m_units_x = xAttrUnitName;
-    m_units_y = yAttrUnitName;
+    if(!isFromJson)
+    {
+        m_units_x = xAttrUnitName;
+        m_units_y = yAttrUnitName;
+    }
 
     // 目前界面上都是直接修改DataPair内部的数据，这里提供一个集中的入口虚函数处理。
     connect(data,
@@ -433,7 +436,7 @@ DataPair* PlotBar::addPlotDataPair(int32_t xEntityID,
     m_tickLabelMap.insert(uuid, data->getEntity_x() + '_' + xAttrName);
 
     QPair<double, double> limit =
-        DataManager::getInstance()->getMaxAndMinEntityAttrValue(xEntityID, xAttrName);
+        DataManager::getInstance()->getMaxAndMinEntityAttrValue(xEntityID, xAttrName, m_xRate);
 
     m_itemData.insert(uuid, limit.first);
 

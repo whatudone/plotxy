@@ -278,6 +278,16 @@ void PlotManager::initAxisGridUI()
     {
         ui.comboBox_AxisGrid_FontSize->addItem(QString::number(size));
     }
+    connect(ui.comboBox_XUnits,
+            &QComboBox::currentTextChanged,
+            this,
+            &PlotManager::onComboBox_XUnitChanged);
+    connect(ui.comboBox_YUnits,
+            &QComboBox::currentTextChanged,
+            this,
+            &PlotManager::onComboBox_YUnitChanged);
+
+    initUnitData();
 }
 
 void PlotManager::initTextLightUI()
@@ -436,6 +446,128 @@ void PlotManager::initEditableMap()
                                                   << "Y-Axis Data");
     m_itemTextEditableMap.insert(PlotType::Type_PlotTrack, QList<QString>() << "Title");
     m_itemTextEditableMap.insert(PlotType::Type_PlotDoppler, QList<QString>() << "Title");
+}
+
+void PlotManager::initUnitData()
+{
+    // 用原始数据除以这个倍率，得到单位转换之后的数值
+    m_unitsMap.insert("distance", {"mm", "cm", "dm", "ft", "m", "km"});
+    m_unitsMap.insert("angle", {"mrad", "mil", "rad", "deg"});
+    m_unitsMap.insert("velocity", {"m/sec", "km/sec", "dm/hr", "km/hr", "mph"});
+
+    QHash<QString, double> tmpMap;
+    // distance
+    tmpMap.insert("mm", 1.0);
+    tmpMap.insert("cm", 0.1);
+    tmpMap.insert("dm", 0.01);
+    tmpMap.insert("ft", 1.0 / 304.8);
+    tmpMap.insert("m", 0.001);
+    tmpMap.insert("km", 0.000001);
+    m_rateMap.insert("mm", tmpMap);
+    tmpMap.clear();
+    tmpMap.insert("mm", 10);
+    tmpMap.insert("cm", 1);
+    tmpMap.insert("dm", 0.1);
+    tmpMap.insert("ft", 1.0 / 30.48);
+    tmpMap.insert("m", 0.01);
+    tmpMap.insert("km", 0.00001);
+    m_rateMap.insert("cm", tmpMap);
+    tmpMap.clear();
+    tmpMap.insert("mm", 100);
+    tmpMap.insert("cm", 0.1);
+    tmpMap.insert("dm", 1);
+    tmpMap.insert("ft", 1.0 / 3.048);
+    tmpMap.insert("m", 0.1);
+    tmpMap.insert("km", 0.0001);
+    m_rateMap.insert("dm", tmpMap);
+    tmpMap.clear();
+    tmpMap.insert("mm", 304.8);
+    tmpMap.insert("cm", 30.48);
+    tmpMap.insert("dm", 3.048);
+    tmpMap.insert("ft", 1);
+    tmpMap.insert("m", 0.3048);
+    tmpMap.insert("km", 0.0003048);
+    m_rateMap.insert("ft", tmpMap);
+    tmpMap.clear();
+    tmpMap.insert("mm", 1000);
+    tmpMap.insert("cm", 100);
+    tmpMap.insert("dm", 10);
+    tmpMap.insert("ft", 1 / 0.3048);
+    tmpMap.insert("m", 1);
+    tmpMap.insert("km", 0.001);
+    m_rateMap.insert("m", tmpMap);
+    tmpMap.clear();
+    tmpMap.insert("mm", 1000000);
+    tmpMap.insert("cm", 100000);
+    tmpMap.insert("dm", 10000);
+    tmpMap.insert("ft", 1000.0 / 0.3048);
+    tmpMap.insert("m", 1000);
+    tmpMap.insert("km", 1);
+    m_rateMap.insert("km", tmpMap);
+    tmpMap.clear();
+
+    // angle
+    tmpMap.insert("mrad", 1);
+    tmpMap.insert("mil", 573 / 6);
+    tmpMap.insert("rad", 0.001);
+    tmpMap.insert("deg", 0.0573);
+    m_rateMap.insert("mrad", tmpMap);
+    tmpMap.clear();
+    tmpMap.insert("mrad", 6 / 573);
+    tmpMap.insert("mil", 1);
+    tmpMap.insert("rad", 1.0 / 955);
+    tmpMap.insert("deg", 0.06);
+    m_rateMap.insert("mil", tmpMap);
+    tmpMap.clear();
+    tmpMap.insert("mrad", 1000);
+    tmpMap.insert("mil", 955);
+    tmpMap.insert("rad", 1);
+    tmpMap.insert("deg", 57.3);
+    m_rateMap.insert("rad", tmpMap);
+    tmpMap.clear();
+    tmpMap.insert("mrad", 1 / 0.0573);
+    tmpMap.insert("mil", 1 / 0.06);
+    tmpMap.insert("rad", 1 / 57.3);
+    tmpMap.insert("deg", 1);
+    m_rateMap.insert("deg", tmpMap);
+    tmpMap.clear();
+
+    // velocity
+    tmpMap.insert("m/sec", 1);
+    tmpMap.insert("km/sec", 0.001);
+    tmpMap.insert("dm/hr", 1.0 / 36000);
+    tmpMap.insert("km/hr", 1 / 3.6);
+    tmpMap.insert("mph", 3600 / 1609.344);
+    m_rateMap.insert("m/sec", tmpMap);
+    tmpMap.clear();
+    tmpMap.insert("m/sec", 1000);
+    tmpMap.insert("km/sec", 1);
+    tmpMap.insert("dm/hr", 3.6);
+    tmpMap.insert("km/hr", 3600);
+    tmpMap.insert("mph", 1 / 0.00044704);
+    m_rateMap.insert("km/sec", tmpMap);
+    tmpMap.clear();
+    tmpMap.insert("m/sec", 36000);
+    tmpMap.insert("km/sec", 1 / 3.6);
+    tmpMap.insert("dm/hr", 1);
+    tmpMap.insert("km/hr", 0.0001);
+    tmpMap.insert("mph", 1 / 16093.44);
+    m_rateMap.insert("dm/hr", tmpMap);
+    tmpMap.clear();
+    tmpMap.insert("m/sec", 1 / 3.6);
+    tmpMap.insert("km/sec", 1.0 / 3600);
+    tmpMap.insert("dm/hr", 10000);
+    tmpMap.insert("km/hr", 1);
+    tmpMap.insert("mph", 1 / 1.609344);
+    m_rateMap.insert("km/hr", tmpMap);
+    tmpMap.clear();
+    tmpMap.insert("m/sec", 0.44704);
+    tmpMap.insert("km/sec", 0.00044704);
+    tmpMap.insert("dm/hr", 16093.44);
+    tmpMap.insert("km/hr", 1 / 1.609344);
+    tmpMap.insert("mph", 1);
+    m_rateMap.insert("mph", tmpMap);
+    tmpMap.clear();
 }
 
 void PlotManager::showScatterEditableItem(PlotType type)
@@ -713,6 +845,42 @@ void PlotManager::refreshAxisGridUI(PlotItemBase* plot)
         ui.comboBox_3->setCurrentIndex(2);
         break;
     }
+
+    ui.comboBox_XUnits->blockSignals(true);
+    ui.comboBox_YUnits->blockSignals(true);
+    QString unitX = plot->getUnitsX();
+    ui.comboBox_XUnits->clear();
+    if(m_unitsMap.value("distance").contains(unitX, Qt::CaseInsensitive))
+    {
+        ui.comboBox_XUnits->addItems(m_unitsMap.value("distance"));
+    }
+    else if(m_unitsMap.value("angle").contains(unitX, Qt::CaseInsensitive))
+    {
+        ui.comboBox_XUnits->addItems(m_unitsMap.value("angle"));
+    }
+    else if(m_unitsMap.value("velocity").contains(unitX, Qt::CaseInsensitive))
+    {
+        ui.comboBox_XUnits->addItems(m_unitsMap.value("velocity"));
+    }
+
+    QString unitY = plot->getUnitsY();
+    ui.comboBox_YUnits->clear();
+    if(m_unitsMap.value("distance").contains(unitY, Qt::CaseInsensitive))
+    {
+        ui.comboBox_YUnits->addItems(m_unitsMap.value("distance"));
+    }
+    else if(m_unitsMap.value("angle").contains(unitY, Qt::CaseInsensitive))
+    {
+        ui.comboBox_YUnits->addItems(m_unitsMap.value("angle"));
+    }
+    else if(m_unitsMap.value("velocity").contains(unitY, Qt::CaseInsensitive))
+    {
+        ui.comboBox_YUnits->addItems(m_unitsMap.value("velocity"));
+    }
+    ui.comboBox_XUnits->blockSignals(false);
+    ui.comboBox_YUnits->blockSignals(false);
+    ui.comboBox_XUnits->setCurrentText(unitX);
+    ui.comboBox_YUnits->setCurrentText(unitY);
 }
 
 void PlotManager::refreshPlotDataUI(PlotItemBase* plot)
@@ -1757,6 +1925,38 @@ void PlotManager::onLineEdit_PrecisionYEditingFinished()
     m_curSelectPlot->setYPrecision(ui.lineEdit_PrecisionY->text().toInt());
 }
 
+void PlotManager::onComboBox_XUnitChanged(const QString& newUnit)
+{
+    if(!m_curSelectPlot)
+        return;
+    QString oriUnit;
+    if(!m_curSelectPlot->getDataPairs().isEmpty())
+    {
+        int32_t id = m_curSelectPlot->getDataPairs().at(0)->getEntityIDX();
+        QString attr = m_curSelectPlot->getDataPairs().at(0)->getAttr_x();
+        oriUnit = DataManagerInstance->getUnitByAttr(id, attr);
+    }
+    double rate = m_rateMap.value(oriUnit).value(newUnit);
+    m_curSelectPlot->setXRate(rate);
+    m_curSelectPlot->setUnitsX(newUnit);
+}
+
+void PlotManager::onComboBox_YUnitChanged(const QString& newUnit)
+{
+    if(!m_curSelectPlot)
+        return;
+    QString oriUnit;
+    if(!m_curSelectPlot->getDataPairs().isEmpty())
+    {
+        int32_t id = m_curSelectPlot->getDataPairs().at(0)->getEntityIDY();
+        QString attr = m_curSelectPlot->getDataPairs().at(0)->getAttr_y();
+        oriUnit = DataManagerInstance->getUnitByAttr(id, attr);
+    }
+    double rate = m_rateMap.value(oriUnit).value(newUnit);
+    m_curSelectPlot->setYRate(rate);
+    m_curSelectPlot->setUnitsY(newUnit);
+}
+
 void PlotManager::onPushButton_24Clicked()
 {
     // 去掉reload时加载asi中gog文件的逻辑
@@ -2400,7 +2600,7 @@ void PlotManager::onCheckBox_14StateChanged()
 {
     if(m_curSelectPlot == nullptr)
 	{
-		return;
+        return;
 	}
     textSettingChanged();
 }
@@ -2409,7 +2609,7 @@ void PlotManager::onLineEdit_26EditingFinished()
 {
     if(m_curSelectPlot == nullptr)
 	{
-		return;
+        return;
     }
     textSettingChanged();
 }
@@ -2438,8 +2638,8 @@ void PlotManager::onfontComboBox_2CurrentFontChanged(const QFont& font)
 {
     if(m_curSelectPlot == nullptr)
 	{
-		return;
-	}
+        return;
+    }
     //	float fontSize = ui.comboBox_Text_fontSize->currentText().toFloat();
     //	QFont newFont;
     //	newFont.setFamily(font.family());
@@ -2458,7 +2658,7 @@ void PlotManager::onSpinBox_FontSizeChanged(int value)
 
     // 	QFont font = ui.fontComboBox_2->currentFont();
     // 	font.setPixelSize(text.toFloat());
-	// 	m_curSelectPlot->setTitleFont(font);
+    // 	m_curSelectPlot->setTitleFont(font);
     //    m_curSelectPlot->setTitleFontSize(text.toInt());
 
     textSettingChanged();

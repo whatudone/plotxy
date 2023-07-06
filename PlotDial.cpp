@@ -205,8 +205,8 @@ void PlotDial::updateDataForDataPairsByTime(double secs)
         auto xEntityID = dataPair->getEntityIDX();
         auto xAttr = dataPair->getAttr_x();
         auto uuid = dataPair->getUuid();
-        double currValue =
-            DataManager::getInstance()->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs);
+        double currValue = DataManager::getInstance()->getEntityAttrValueByMaxTime(
+            xEntityID, xAttr, secs, m_xRate);
         m_valueMap.insert(uuid, currValue);
     }
 

@@ -349,19 +349,19 @@ QPixmap DataPair::processIcon()
         break;
     case DataPair::FollowYaw: {
         double yaw = DataManagerInstance->getEntityAttrValueByMaxTime(
-            m_entityIDX, "Yaw", PlotXYDemo::getSeconds());
+            m_entityIDX, "Yaw", PlotXYDemo::getSeconds(), 1.0);
         trans.rotate(yaw);
     }
     break;
     case DataPair::FollowPitch: {
         double pitch = DataManagerInstance->getEntityAttrValueByMaxTime(
-            m_entityIDX, "Pitch", PlotXYDemo::getSeconds());
+            m_entityIDX, "Pitch", PlotXYDemo::getSeconds(), 1.0);
         trans.rotate(pitch);
     }
     break;
     case DataPair::FollowRoll: {
         double roll = DataManagerInstance->getEntityAttrValueByMaxTime(
-            m_entityIDX, "Roll", PlotXYDemo::getSeconds());
+            m_entityIDX, "Roll", PlotXYDemo::getSeconds(), 1.0);
         trans.rotate(roll);
     }
     break;
