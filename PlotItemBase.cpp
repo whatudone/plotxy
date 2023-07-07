@@ -1251,6 +1251,16 @@ bool PlotItemBase::eventFilter(QObject* obj, QEvent* event)
     return QWidget::eventFilter(obj, event);
 }
 
+double PlotItemBase::getXRate() const
+{
+    return m_xRate;
+}
+
+double PlotItemBase::getYRate() const
+{
+    return m_yRate;
+}
+
 void PlotItemBase::setYRate(double yRate)
 {
     m_yRate = yRate;

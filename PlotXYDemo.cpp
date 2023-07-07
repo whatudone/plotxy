@@ -920,7 +920,7 @@ void PlotXYDemo::loadPXYData(const QString& pxyFileName)
             // 全部数据对加载完之后再统一刷新
             if(dataPairSize > 0)
             {
-                emit plot->dataPairsChanged(plot);
+                plot->updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
             }
         }
     }
@@ -978,6 +978,8 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
     plotObject.insert("GridFillColor", color_transfer::QColorToRGBAStr(plot->getGridFillColor()));
     plotObject.insert("ShowUnitX", plot->unitsShowX());
     plotObject.insert("ShowUnitY", plot->unitsShowY());
+    plotObject.insert("XRate", plot->getXRate());
+    plotObject.insert("YRate", plot->getYRate());
 
     // 图表特殊设置
     if(type == PlotType::Type_PlotBar)
@@ -1225,6 +1227,8 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
     // show属性需要放在前面设置，后续label会根据show进行组合
     plot->setUnitsShowX(plotObject.value("ShowUnitX").toBool());
     plot->setUnitsShowY(plotObject.value("ShowUnitY").toBool());
+    plot->setXRate(plotObject.value("XRate").toDouble());
+    plot->setYRate(plotObject.value("YRate").toDouble());
 
     plot->setUnitsX(plotObject.value("LabelXUnit").toString());
     plot->setxAxisLabel(plotObject.value("LabelX").toString());
