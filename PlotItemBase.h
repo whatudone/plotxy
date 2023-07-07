@@ -96,6 +96,9 @@ public:
     virtual void setXPrecision(int value);
     virtual void setYPrecision(int value);
 
+    // 滑块时间变化时,数据整体发生变化，需要全部更新
+    virtual void updateDataForDataPairsByTime(double);
+
     void setPaddings(double top, double bottom, double left, double right);
     void updateTitle();
 
@@ -369,9 +372,10 @@ public:
     int getOutlineWidth() const;
     void setOutlineWidth(int outlineWidth);
 
-    void setYRate(double yRate);
-
+    double getXRate() const;
     void setXRate(double xRate);
+    double getYRate() const;
+    void setYRate(double yRate);
 
 private:
     void updateResizeFocusPos();
@@ -489,8 +493,6 @@ public slots:
     virtual void onPlotMouseEventEnable(bool on);
 
 private:
-    // 滑块时间变化时,数据整体发生变化，需要全部更新
-    virtual void updateDataForDataPairsByTime(double);
     // 数据对属性发生变化时，数据没有发生变化，但是需要重新绘图，此时不需要重新拉取数据
     virtual void updateGraphByDataPair(DataPair* dataPair, double curSecs);
     // 自绘图表需要填充此虚函数实现自己的绘制逻辑
