@@ -332,12 +332,12 @@ void AddPlotPair::setPlotBaseInfo(PlotItemBase* pBaseItem)
     }
 }
 
-void AddPlotPair::updatePlotTrees(const QMap<QString, QList<PlotItemBase*>>& plotData)
+void AddPlotPair::updatePlotTrees()
 {
+    m_treePlot->clear();
+    auto plotData = PlotManagerData::getInstance()->getPlotManagerData();
     if(plotData.isEmpty())
         return;
-
-    m_treePlot->clear();
 
     for(int i = 0; i < plotData.size(); ++i)
     {

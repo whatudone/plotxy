@@ -10,7 +10,7 @@ void PlotManagerData::addPlotByTab(const QString& tabName, PlotItemBase* plotIte
 {
     // QMap 内部保证[]不存在会插入新的元素，所以不会访问越界
     m_plotMgrDataMap[tabName].append(plotItem);
-    emit plotDataChanged(m_plotMgrDataMap);
+    emit plotDataChanged();
 }
 
 void PlotManagerData::deletePlotByTab(const QString& tabName, PlotItemBase* plot)
@@ -18,7 +18,7 @@ void PlotManagerData::deletePlotByTab(const QString& tabName, PlotItemBase* plot
     if(m_plotMgrDataMap.contains(tabName) && m_plotMgrDataMap[tabName].contains(plot))
     {
         m_plotMgrDataMap[tabName].removeOne(plot);
-        emit plotDataChanged(m_plotMgrDataMap);
+        emit plotDataChanged();
     }
 }
 
@@ -47,7 +47,7 @@ PlotItemBase* PlotManagerData::getPlotByTabAndName(const QString& tabName, const
 void PlotManagerData::clearPlotData()
 {
     m_plotMgrDataMap.clear();
-    emit plotDataChanged(m_plotMgrDataMap);
+    emit plotDataChanged();
 }
 
 void PlotManagerData::slotChangeTabName(QString oldName, QString newName)
@@ -59,11 +59,11 @@ void PlotManagerData::slotChangeTabName(QString oldName, QString newName)
         m_plotMgrDataMap.remove(oldName);
 	}
 
-    emit plotDataChanged(m_plotMgrDataMap);
+    emit plotDataChanged();
 }
 
 void PlotManagerData::slotChangePlotName()
 {
     // TODO
-    emit plotDataChanged(m_plotMgrDataMap);
+    emit plotDataChanged();
 }

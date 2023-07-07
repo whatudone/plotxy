@@ -895,6 +895,7 @@ void PlotXYDemo::loadPXYData(const QString& pxyFileName)
     }
     QJsonArray allTabJsonArray = rootObj.value("Tabs").toArray();
     int32_t tabSize = allTabJsonArray.size();
+    PlotManagerData::getInstance()->blockSignals(true);
     // 先清理创建好的tab页
     clearAllTab();
     for(int i = 0; i < tabSize; ++i)
@@ -917,13 +918,16 @@ void PlotXYDemo::loadPXYData(const QString& pxyFileName)
                 QJsonObject dataPairObject = dataPairArray.at(m).toObject();
                 loadDataPairJson(dataPairObject, plot);
             }
-            // 全部数据对加载完之后再统一刷新
+            // 全部数据对加载完之后再统一刷新图表
             if(dataPairSize > 0)
             {
                 plot->updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
             }
         }
     }
+    PlotManagerData::getInstance()->blockSignals(false);
+    // 屏蔽掉PlotManagerData中的信号，等全部加载完了之后，在触发信号，统一刷新一次三个界面
+    emit PlotManagerData::getInstance()->plotDataChanged();
 }
 
 void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)

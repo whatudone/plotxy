@@ -35,5 +35,5 @@ public slots:
 	void slotChangePlotName();
 	void slotChangeTabName(QString oldName, QString newName);
 signals:
-    void plotDataChanged(const QMap<QString, QList<PlotItemBase*>>& plotData);
+    void plotDataChanged();
 };

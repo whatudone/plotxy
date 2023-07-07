@@ -1197,7 +1197,7 @@ void AdvancedDataManager::onUpdatePlotPair()
                 ui.tableWidget_plotpair->setItem(row, 1, data2);
                 ui.tableWidget_plotpair->setItem(row, 2, data3);
                 ui.tableWidget_plotpair->setItem(row, 3, data4);
-                if(ui.tableWidget_plotpair->currentItem() == NULL)
+                if(!ui.tableWidget_plotpair->currentIndex().isValid())
 				{
                     ui.tableWidget_plotpair->setCurrentItem(data1);
 				}

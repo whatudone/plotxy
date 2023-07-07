@@ -1340,14 +1340,13 @@ void PlotManager::onSelectedPlot(PlotItemBase* pBasePlot)
     }
 }
 
-void PlotManager::onUpdatePlotManager(const QMap<QString, QList<PlotItemBase*>>& plotDataMap)
+void PlotManager::onUpdatePlotManager()
 {
-    if(plotDataMap.isEmpty())
-    {
-        return;
-    }
     ui.comboBox_tabName->clear();
     ui.treeWidget_selectedPlots->clear();
+    auto plotDataMap = PlotManagerData::getInstance()->getPlotManagerData();
+    if(plotDataMap.isEmpty())
+        return;
 
     for(int i = 0; i < plotDataMap.size(); ++i)
     {

@@ -70,7 +70,7 @@ public slots:
     void onTWSPclicked(QTreeWidgetItem* item, int i);
     void onSelectedPlot(PlotItemBase* pBasePlot); //用于默认点击的Item
 
-    void onUpdatePlotManager(const QMap<QString, QList<PlotItemBase*>>& plotDataMap);
+    void onUpdatePlotManager();
 	void onBtnCloseClicked();
 
     void onBarHorizonChanged(int state);

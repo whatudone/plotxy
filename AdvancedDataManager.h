@@ -23,6 +23,7 @@ signals:
 	void sgnFilterSort(QString);
 
 public slots:
+    void onUpdatePlotPair();
     // ColorRange
     void onBtnMore();
     void onBtnColorMore();
@@ -34,7 +35,6 @@ public slots:
     void onBtnUpdateColorRange();
     void onBtnRemoveColorRange();
 
-    void onUpdatePlotPair();
     // 选中不同数据对
 	void onTableWidget_plotpairItemSelectionChanged();
 	void onLineEditChanged();
