@@ -1263,12 +1263,20 @@ double PlotItemBase::getYRate() const
 
 void PlotItemBase::setYRate(double yRate)
 {
+    if(math::doubleEqual(yRate, 0.0))
+    {
+        return;
+    }
     m_yRate = yRate;
     updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
 }
 
 void PlotItemBase::setXRate(double xRate)
 {
+    if(math::doubleEqual(xRate, 0.0))
+    {
+        return;
+    }
     m_xRate = xRate;
     updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
 }
