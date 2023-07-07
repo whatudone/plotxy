@@ -806,12 +806,15 @@ Qt::Alignment DataPair::getLabelTextAlign()
     return flag;
 }
 
-QPointF DataPair::processLabelPosition(const QPointF& lastPointPosition, const QString& labelText)
+QPointF DataPair::processLabelPosition(const QPointF& lastPointPosition,
+                                       const QString& labelText,
+                                       Qt::Alignment textAlign)
 {
     QFont labelFont = getLabelFont();
     QFontMetricsF fm(labelFont);
-    auto labelSize = fm.size(Qt::TextWordWrap, labelText);
-    double defaultSpace = 50.0;
+    // 与QCpTextItem计算文字绘制矩形边界保持一致
+    auto labelSize = fm.size(Qt::TextDontClip | textAlign, labelText);
+    double defaultSpace = 20.0;
     QPointF labelPos;
     switch(getLabelPosition())
     {

@@ -208,6 +208,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
         info.tracerText->position->setType(QCPItemPosition::ptAbsolute);
         // 默认position的坐标是center,为了方便计算，将position的坐标改为左上角
         info.tracerText->setPositionAlignment(Qt::AlignTop | Qt::AlignLeft);
+        info.tracerText->setTextAlignment(Qt::AlignCenter);
 
         info.pixmap = new QCPItemPixmap(m_customPlot); // 创建 QCPItemPixmap 对象
         info.pixmap->setClipToAxisRect(false); // 允许图标超出坐标轴范围
@@ -288,7 +289,8 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
             tracerText->setVisible(true);
             QString text = data->processLabelText(lastX, lastY);
             tracerText->setText(text);
-            QPointF labelPoint = data->processLabelPosition(QPointF(lastPosX, lastPosY), text);
+            QPointF labelPoint = data->processLabelPosition(
+                QPointF(lastPosX, lastPosY), text, tracerText->textAlignment());
             tracerText->position->setCoords(labelPoint.x(), labelPoint.y());
             tracerText->setFont(data->getLabelFont());
             tracerText->setColor(data->getLabelColor());

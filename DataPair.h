@@ -313,7 +313,9 @@ public:
     // 文本对齐
     Qt::Alignment getLabelTextAlign();
     // 根据文本对齐方式，处理文本的像素坐标位置
-    QPointF processLabelPosition(const QPointF& lastPointPosition, const QString& labelText);
+    QPointF processLabelPosition(const QPointF& lastPointPosition,
+                                 const QString& labelText,
+                                 Qt::Alignment textAlign);
     // 特殊处理Bar label坐标
     QPointF processBarLabelPosition(const QPointF& lastPointPosition,
                                     const QString& labelText,
