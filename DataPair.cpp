@@ -323,6 +323,69 @@ QString DataPair::processLabelText(double xData, double yData)
     return labelText;
 }
 
+QString DataPair::processLabelText(double xData)
+{
+    QString labelText;
+    if(DataPair::format_default == getTextFormat())
+    { //default
+        QString prefix_x;
+        QString object_x, attr_x;
+        QString data_x, unit_x, Left_bracket, right_bracket;
+
+        //考虑仅显示实体名时的操作
+        if(this->isObjectShow() && !this->isPrefixShow() && !this->isAttrShow() &&
+           !this->isDataShow() && !this->isUnitShow())
+
+        {
+            labelText = this->getEntity_x();
+        }
+        else
+        {
+            if(this->isPrefixShow())
+            {
+                prefix_x = "X:";
+            }
+
+            if(this->isObjectShow())
+
+            {
+                object_x = this->getEntity_x();
+            }
+
+            if(this->isAttrShow())
+            {
+                attr_x = this->getAttr_x();
+            }
+
+            if(this->isDataShow())
+            {
+                data_x = QString::number(xData, 10, this->getLabelPrecision_x());
+                Left_bracket = "(";
+                right_bracket = ")";
+            }
+
+            if(this->isUnitShow())
+            {
+                unit_x = this->getUnit_x();
+                Left_bracket = "(";
+                right_bracket = ")";
+            }
+            labelText = QString("%1%2 %3 %4 %5")
+                            .arg(prefix_x)
+                            .arg(object_x)
+                            .arg(attr_x)
+                            .arg(data_x)
+                            .arg(unit_x);
+        }
+    }
+    else if(DataPair::format_custom == this->getTextFormat())
+    {
+        labelText = this->getCustomText();
+    }
+
+    return labelText;
+}
+
 QPixmap DataPair::processIcon()
 {
     if(!QFileInfo(m_iconName).exists())
@@ -746,7 +809,6 @@ Qt::Alignment DataPair::getLabelTextAlign()
 QPointF DataPair::processLabelPosition(const QPointF& lastPointPosition, const QString& labelText)
 {
     QFont labelFont = getLabelFont();
-
     QFontMetricsF fm(labelFont);
     auto labelSize = fm.size(Qt::TextWordWrap, labelText);
     double defaultSpace = 50.0;
@@ -794,6 +856,65 @@ QPointF DataPair::processLabelPosition(const QPointF& lastPointPosition, const Q
         labelPos.setY(lastPointPosition.y() - labelSize.height() / 2);
         break;
     }
+    return labelPos;
+}
+
+QPointF DataPair::processBarLabelPosition(const QPointF& lastPointPosition,
+                                          const QString& labelText,
+                                          bool isHorizon)
+{
+    // Bar上的label按照label的中心作为position参考点
+    QFont labelFont = getLabelFont();
+    QFontMetricsF fm(labelFont);
+    auto labelSize = fm.size(Qt::TextSingleLine, labelText);
+    double defaultSpace = 20.0;
+    QPointF labelPos;
+    if(isHorizon)
+    {
+        switch(getLabelPosition())
+        {
+
+        case DataPair::left: //left
+            labelPos.setX(lastPointPosition.x() - defaultSpace - labelSize.width() / 2);
+            labelPos.setY(lastPointPosition.y());
+            break;
+        case DataPair::center: //center
+            labelPos = lastPointPosition;
+            break;
+        case DataPair::right: //right
+            labelPos.setX(lastPointPosition.x() + defaultSpace + labelSize.width() / 2);
+            labelPos.setY(lastPointPosition.y());
+            break;
+        default: //right
+            labelPos.setX(lastPointPosition.x() + defaultSpace + labelSize.width() / 2);
+            labelPos.setY(lastPointPosition.y());
+            break;
+        }
+    }
+    else
+    {
+        switch(getLabelPosition())
+        {
+        case DataPair::top: //top
+            labelPos.setX(lastPointPosition.x());
+            labelPos.setY(lastPointPosition.y() - defaultSpace - labelSize.height() / 2);
+            break;
+
+        case DataPair::center: //center
+            labelPos = lastPointPosition;
+            break;
+
+        case DataPair::bottom: //bottom
+            labelPos.setX(lastPointPosition.x());
+            labelPos.setY(lastPointPosition.y() + defaultSpace + labelSize.height() / 2);
+            break;
+        default: //top
+            labelPos.setX(lastPointPosition.x());
+            labelPos.setY(lastPointPosition.y() - defaultSpace - labelSize.height() / 2);
+            break;
+        }
+    }
+
     return labelPos;
 }
 

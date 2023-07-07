@@ -197,6 +197,19 @@ void PlotBar::updateGraphByDataPair(DataPair* data, double curSecs)
         return;
     auto value = m_curValue[uuid];
     QMap<double, QColor> colorMap = m_barColorInfoMap[uuid];
+
+    QCPItemText* valueLabel = nullptr;
+    if(m_barValueLabelHash.contains(uuid))
+    {
+        valueLabel = m_barValueLabelHash.value(uuid);
+    }
+    else
+    {
+        valueLabel = new QCPItemText(m_customPlot);
+        valueLabel->position->setType(QCPItemPosition::ptAbsolute);
+        valueLabel->setPositionAlignment(Qt::AlignCenter);
+        m_barValueLabelHash.insert(uuid, valueLabel);
+    }
     if(data->isDraw())
     {
         for(auto bar : barList)
@@ -208,8 +221,7 @@ void PlotBar::updateGraphByDataPair(DataPair* data, double curSecs)
 
         if(barList.size() == 1)
         {
-            barList.at(0)->setData(QVector<double>() << index,
-                                   QVector<double>() << m_curValue[uuid]);
+            barList.at(0)->setData(QVector<double>() << index, QVector<double>() << value);
         }
         else
         {
@@ -247,6 +259,28 @@ void PlotBar::updateGraphByDataPair(DataPair* data, double curSecs)
                 }
             }
         }
+
+        if(data->isLabelTextShow())
+        {
+            valueLabel->setVisible(true);
+            QString text = data->processLabelText(value);
+            valueLabel->setText(text);
+            double lastPosX = keyAxis()->coordToPixel(index);
+            double lastPosY = valueAxis()->coordToPixel(value);
+            QPointF lastPoint =
+                getIsHorizonBar() ? QPointF(lastPosY, lastPosX) : QPointF(lastPosX, lastPosY);
+            QPointF labelPoint = data->processBarLabelPosition(lastPoint, text, getIsHorizonBar());
+            valueLabel->position->setCoords(labelPoint);
+            valueLabel->setFont(data->getLabelFont());
+            valueLabel->setColor(data->getLabelColor());
+            valueLabel->setBrush(data->getLabelBackground());
+            // 保证这个label不会被Bar覆盖，让他处于绘制的较上层
+            valueLabel->setLayer("axes");
+        }
+        else
+        {
+            valueLabel->setVisible(false);
+        }
     }
     else
     {
@@ -254,6 +288,7 @@ void PlotBar::updateGraphByDataPair(DataPair* data, double curSecs)
         {
             bar->setVisible(false);
         }
+        valueLabel->setVisible(false);
     }
 }
 
@@ -472,6 +507,11 @@ void PlotBar::delPlotPairData(const QString& uuid)
             m_customPlot->removePlottable(m_allBar[uuid].at(i));
         }
         m_allBar.remove(uuid);
+    }
+    if(m_barValueLabelHash.contains(uuid))
+    {
+        m_customPlot->removeItem(m_barValueLabelHash.value(uuid));
+        m_barValueLabelHash.remove(uuid);
     }
     updateKeyAxisTickLabel();
     PlotItemBase::delPlotPairData(uuid);

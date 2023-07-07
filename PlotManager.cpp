@@ -2638,14 +2638,8 @@ void PlotManager::onfontComboBox_2CurrentFontChanged(const QFont& font)
 {
     if(m_curSelectPlot == nullptr)
 	{
-        return;
-    }
-    //	float fontSize = ui.comboBox_Text_fontSize->currentText().toFloat();
-    //	QFont newFont;
-    //	newFont.setFamily(font.family());
-    //    newFont.setPixelSize(fontSize);
-    //	m_curSelectPlot->setTitleFont(newFont);
-
+		return;
+	}
     textSettingChanged();
 }
 
@@ -2655,12 +2649,6 @@ void PlotManager::onSpinBox_FontSizeChanged(int value)
     {
         return;
     }
-
-    // 	QFont font = ui.fontComboBox_2->currentFont();
-    // 	font.setPixelSize(text.toFloat());
-    // 	m_curSelectPlot->setTitleFont(font);
-    //    m_curSelectPlot->setTitleFontSize(text.toInt());
-
     textSettingChanged();
 }
 

@@ -303,8 +303,10 @@ public:
      * 下面一系列接口
      * 根据高级管理界面的设置，处理原始绘图数据，输出直接显示的数据
      */
-    // 文本标签
+    // 文本标签,针对存在X和Y两个维度信息的label处理
     QString processLabelText(double xData, double yData);
+    // 文本标签,针对仅存在X维度信息的label处理
+    QString processLabelText(double xData);
 
     // 图标icon
     QPixmap processIcon();
@@ -312,6 +314,10 @@ public:
     Qt::Alignment getLabelTextAlign();
     // 根据文本对齐方式，处理文本的像素坐标位置
     QPointF processLabelPosition(const QPointF& lastPointPosition, const QString& labelText);
+    // 特殊处理Bar label坐标
+    QPointF processBarLabelPosition(const QPointF& lastPointPosition,
+                                    const QString& labelText,
+                                    bool isHorizon);
 
     QColor getLabelSecColor() const;
     void setLabelSecColor(const QColor& labelSecColor);

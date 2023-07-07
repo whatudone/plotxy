@@ -28,9 +28,6 @@ public:
 public:
     static int m_instanceCount; //实体个数
 
-protected:
-    void updateDataForDataPairsByTime(double secs) override;
-
 private:
     void initPlot();
     void updateKeyAxisTickLabel();
@@ -54,7 +51,11 @@ protected:
                               const QString& yAttrUnitName,
                               const QHash<QString, QVariant>& extraParams,
                               bool isFromJson = false) override;
+
     void delPlotPairData(const QString& uuid) override;
+
+    void updateDataForDataPairsByTime(double secs) override;
+
     void updateGraphByDataPair(DataPair* dataPair, double curSecs) override;
 
     void setIsHorizonBar(bool isHorizonBar) override;
@@ -71,6 +72,8 @@ private:
         m_tickLabelMap; // 用来存放每个item对应的描述，显示在y轴左边 QString:uuid  QString:target_attr
     QMap<QString, double> m_itemData; //用来存放每个target对应的最小值
     QMap<QString, double> m_curValue; //用来存放当前secs对应的数据
+    // 每个uuid数据对对应一个label显示当前Bar的数值
+    QHash<QString, QCPItemText*> m_barValueLabelHash;
 };
 
 #endif // _PLOT_BAR_H_
