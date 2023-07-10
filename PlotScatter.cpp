@@ -561,11 +561,12 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
 
 void PlotScatter::clearEventText()
 {
-    for(auto text : m_eventList)
+    for(const auto& draw : m_eventDrawList)
     {
-        m_customPlot->removeItem(text);
+        m_customPlot->removeItem(draw.line);
+        m_customPlot->removeItem(draw.text);
     }
-    m_eventList.clear();
+    m_eventDrawList.clear();
 }
 
 void PlotScatter::clearHistoryLines()
@@ -648,16 +649,43 @@ void PlotScatter::updateTimelineGraph()
         //如果x轴是time，那么需要绘制事件标签，整个用一个Text显示
         for(const auto& data : dataList)
         {
-
             QCPItemText* textItem = new QCPItemText(m_customPlot);
+
+            textItem->setPositionAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+            // x轴需要设置到对应的时间坐标上，y轴需要按照像素坐标从低到高排列
+            textItem->position->setTypeX(QCPItemPosition::ptPlotCoords);
+            textItem->position->setTypeY(QCPItemPosition::ptAxisRectRatio);
+
+            QFont font;
+            font.setFamily(event.m_eventFontFamily);
+            font.setPixelSize(event.m_eventFontSize);
+            textItem->setFont(font);
+            textItem->setColor(event.m_eventColor);
+
+            QCPItemLine* lineItem = new QCPItemLine(m_customPlot);
             QString text;
             if(event.m_eventStyle == "Small X")
             {
                 text = "× ";
+                lineItem->setVisible(false);
+                textItem->position->setCoords(data.m_relativeTime, 0.1 + index * heightDelta);
             }
             else
             {
-                text = "| ";
+                lineItem->setVisible(true);
+                QPen pen(event.m_eventColor, 2);
+                lineItem->setPen(pen);
+                lineItem->start->setTypeX(QCPItemPosition::ptPlotCoords);
+                lineItem->start->setTypeY(QCPItemPosition::ptAxisRectRatio);
+                lineItem->start->setCoords(data.m_relativeTime, 0.0);
+
+                lineItem->end->setTypeX(QCPItemPosition::ptPlotCoords);
+                lineItem->end->setTypeY(QCPItemPosition::ptAxisRectRatio);
+                lineItem->end->setCoords(data.m_relativeTime, 1.0);
+
+                double textXPixel = m_customPlot->xAxis->coordToPixel(data.m_relativeTime) + 10;
+                double textXCoord = m_customPlot->xAxis->pixelToCoord(textXPixel);
+                textItem->position->setCoords(textXCoord, 0.1 + index * heightDelta);
             }
             if(event.m_isIncludeTag)
             {
@@ -673,16 +701,12 @@ void PlotScatter::updateTimelineGraph()
             }
             text.append(QString("(%1s)").arg(data.m_relativeTime));
             textItem->setText(text);
-            QFont font;
-            font.setFamily(event.m_eventFontFamily);
-            font.setPixelSize(event.m_eventFontSize);
-            textItem->setFont(font);
-            textItem->setColor(event.m_eventColor);
-            // x轴需要设置到对应的时间坐标上，y轴需要按照像素坐标从低到高排列,目前暂时设置到0.5垂直居中
-            textItem->position->setTypeX(QCPItemPosition::ptPlotCoords);
-            textItem->position->setTypeY(QCPItemPosition::ptAxisRectRatio);
-            textItem->position->setCoords(data.m_relativeTime, 0.1 + index * heightDelta);
-            m_eventList.append(textItem);
+
+            EventComponents eventDraw;
+            eventDraw.line = lineItem;
+            eventDraw.text = textItem;
+
+            m_eventDrawList.append(eventDraw);
         }
         ++index;
     }
@@ -765,9 +789,10 @@ void PlotScatter::updateBackgroundColorSeg()
 
 void PlotScatter::updateMarkers(double currentSeconds)
 {
-    for(auto textItem : m_plotMarkerItems)
+    for(const auto& draw : m_plotMarkerItems)
     {
-        m_customPlot->removeItem(textItem);
+        m_customPlot->removeItem(draw.line);
+        m_customPlot->removeItem(draw.text);
     }
     m_plotMarkerItems.clear();
     if(m_plotMarkers.isEmpty())
@@ -782,17 +807,95 @@ void PlotScatter::updateMarkers(double currentSeconds)
             continue;
         }
         QCPItemText* textItem = new QCPItemText(m_customPlot);
-        textItem->setText("× " + marker.text);
+        QCPItemLine* lineItem = new QCPItemLine(m_customPlot);
+        if(marker.iconType == "None")
+        {
+            textItem->setText(marker.text);
+            lineItem->setVisible(false);
+        }
+        else if(marker.iconType == "O Circle")
+        {
+            textItem->setText("O " + marker.text);
+            lineItem->setVisible(false);
+        }
+        else if(marker.iconType == "X Cross")
+        {
+            textItem->setText("× " + marker.text);
+            lineItem->setVisible(false);
+        }
+        else if(marker.iconType == "+ Plus")
+        {
+            textItem->setText("+ " + marker.text);
+            lineItem->setVisible(false);
+        }
+        else if(marker.iconType == "[]  Square")
+        {
+            textItem->setText("[] " + marker.text);
+            lineItem->setVisible(false);
+        }
+        else if(marker.iconType == "<> Diamond")
+        {
+            textItem->setText("<> " + marker.text);
+            lineItem->setVisible(false);
+        }
+        else if(marker.iconType == "- Horizontal Line")
+        {
+            textItem->setText("× " + marker.text);
+            lineItem->setVisible(true);
+        }
+        else
+        {
+            // 垂直线
+            textItem->setText(marker.text);
+            lineItem->setVisible(true);
+        }
         QFont font;
         font.setFamily(marker.fontFamily);
         font.setPixelSize(marker.fontSize);
         textItem->setFont(font);
         textItem->setColor(marker.color);
-        textItem->setPositionAlignment(Qt::AlignTop | Qt::AlignLeft);
-        // x轴需要设置到对应的时间坐标上，y轴需要按照像素坐标从低到高排列,目前暂时设置到0.5垂直居中
-        textItem->position->setType(QCPItemPosition::ptPlotCoords);
-        textItem->position->setCoords(marker.x, marker.y);
-        m_plotMarkerItems.insert(marker.uuid, textItem);
+        if(lineItem->visible())
+        {
+            QPen pen(marker.color, 2);
+            lineItem->setPen(pen);
+            if(marker.iconType == "- Horizontal Line")
+            {
+                lineItem->start->setTypeX(QCPItemPosition::ptAxisRectRatio);
+                lineItem->start->setTypeY(QCPItemPosition::ptPlotCoords);
+                lineItem->start->setCoords(0.0, marker.y);
+
+                lineItem->end->setTypeX(QCPItemPosition::ptAxisRectRatio);
+                lineItem->end->setTypeY(QCPItemPosition::ptPlotCoords);
+                lineItem->end->setCoords(1.0, marker.y);
+            }
+            else
+            {
+                lineItem->start->setTypeX(QCPItemPosition::ptPlotCoords);
+                lineItem->start->setTypeY(QCPItemPosition::ptAxisRectRatio);
+                lineItem->start->setCoords(marker.x, 0.0);
+
+                lineItem->end->setTypeX(QCPItemPosition::ptPlotCoords);
+                lineItem->end->setTypeY(QCPItemPosition::ptAxisRectRatio);
+                lineItem->end->setCoords(marker.x, 1.0);
+            }
+            textItem->setPositionAlignment(Qt::AlignTop | Qt::AlignLeft);
+            textItem->position->setType(QCPItemPosition::ptPlotCoords);
+            double textXPixel = m_customPlot->xAxis->coordToPixel(marker.x) + 10;
+            double textXCoord = m_customPlot->xAxis->pixelToCoord(textXPixel);
+            textItem->position->setCoords(textXCoord, marker.y);
+        }
+        else
+        {
+            textItem->setPositionAlignment(Qt::AlignTop | Qt::AlignLeft);
+            textItem->position->setType(QCPItemPosition::ptPlotCoords);
+            textItem->position->setCoords(marker.x, marker.y);
+        }
+
+        EventComponents markDraw;
+        markDraw.line = lineItem;
+        markDraw.text = textItem;
+
+        m_plotMarkerItems.insert(marker.uuid, markDraw);
     }
     m_customPlot->replot();
 }

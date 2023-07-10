@@ -105,7 +105,7 @@
         <number>1</number>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>7</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QVBoxLayout" name="verticalLayout_64" stretch="0,1,0,0,0,1">
@@ -3388,7 +3388,7 @@ background-color: rgb(127, 127, 127);</string>
                </item>
                <item>
                 <property name="text">
-                 <string>&lt;&gt;  Diamond</string>
+                 <string>&lt;&gt; Diamond</string>
                 </property>
                </item>
                <item>

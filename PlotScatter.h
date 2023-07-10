@@ -42,6 +42,13 @@ public:
             return seg.m_limitName == this->m_limitName;
         }
     };
+
+    // event or marker绘制组合
+    struct EventComponents
+    {
+        QPointer<QCPItemText> text = nullptr;
+        QPointer<QCPItemLine> line = nullptr;
+    };
     PlotScatter(QWidget* parent = nullptr);
     ~PlotScatter() override;
 
@@ -115,7 +122,7 @@ private:
     // <uuid,graph>
     QMap<QString, DrawComponents> m_mapScatter;
     // 事件标签
-    QList<QCPItemText*> m_eventList;
+    QList<EventComponents> m_eventDrawList;
     // 是否为时间线模式
     bool m_isTimeLine = false;
     QCPItemRect* m_timelineNowRect = nullptr;
@@ -130,7 +137,7 @@ private:
     QList<QCPAbstractItem*> m_backSegRectList;
     // markers
     QHash<QString, PlotMarker> m_plotMarkers;
-    QHash<QString, QCPItemText*> m_plotMarkerItems;
+    QHash<QString, EventComponents> m_plotMarkerItems;
     // 是否初始化过上下限
     bool m_isInitCoorRange = false;
     // 最后更新时间
