@@ -1188,6 +1188,19 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
                               color_transfer::QColorToRGBAStr(lightPlot->getLightOutlineColor()));
         }
     }
+    else if(type == PlotType::Type_PlotAScope)
+    {
+        PlotAScope* ascopePlot = dynamic_cast<PlotAScope*>(plot);
+        if(ascopePlot)
+        {
+            plotObject.insert("AScopeIsDrawGate", ascopePlot->isDrawGate());
+            plotObject.insert("AScopeGateHeight", ascopePlot->gateHeight());
+            plotObject.insert("AScopeGateColor",
+                              color_transfer::QColorToRGBAStr(ascopePlot->gateColor()));
+            plotObject.insert("AScopeIsAutofitX", ascopePlot->isAutofitX());
+            plotObject.insert("AScopeIsAutofitY", ascopePlot->isAutofitY());
+        }
+    }
 
     // 图表存在多个数据对
     QJsonArray dataPairArray;
@@ -1461,6 +1474,19 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
             lightPlot->setLightOutlineWidth(plotObject.value("LightIndOutlineWidth").toInt());
             lightPlot->setLightOutlineColor(color_transfer::QColorFromRGBAStr(
                 plotObject.value("LightIndOutlineColor").toString()));
+        }
+    }
+    else if(type == PlotType::Type_PlotAScope)
+    {
+        PlotAScope* ascopePlot = dynamic_cast<PlotAScope*>(plot);
+        if(ascopePlot)
+        {
+            ascopePlot->setIsDrawGate(plotObject.value("AScopeIsDrawGate").toBool());
+            ascopePlot->setGateHeight(plotObject.value("AScopeGateHeight").toInt());
+            ascopePlot->setGateColor(
+                color_transfer::QColorFromRGBAStr(plotObject.value("AScopeGateColor").toString()));
+            ascopePlot->setIsAutofitX(plotObject.value("AScopeIsAutofitX").toBool());
+            ascopePlot->setIsAutofitY(plotObject.value("AScopeIsAutofitY").toBool());
         }
     }
     // 坐标变换的部分需要放到最后，前面有些设置还原时会影响坐标轴的效果，比如Bar切换横竖

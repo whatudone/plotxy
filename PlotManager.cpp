@@ -67,6 +67,7 @@ void PlotManager::init()
     initTextLightUI();
     initDialUI();
     initBarUI();
+    initAScopeUI();
     initEditableMap();
 }
 
@@ -425,6 +426,30 @@ void PlotManager::initScatterMarkersUI()
         ui.treeWidgetMarker, &QTreeWidget::itemClicked, this, &PlotManager::onCurrentMarkerChanged);
 }
 
+void PlotManager::initAScopeUI()
+{
+    connect(ui.checkBox_DrawGates,
+            &QCheckBox::stateChanged,
+            this,
+            &PlotManager::onCheckBox_DrawGateStateChanged);
+    connect(ui.spinBox_GateHeight,
+            SIGNAL(valueChanged(int)),
+            this,
+            SLOT(onSpinBox_GateHeightValueChanged(int)));
+    connect(ui.pushButton_GateColor,
+            &QPushButton::clicked,
+            this,
+            &PlotManager::onPushButton_GateColorClicked);
+    connect(ui.checkBox_AutofitX,
+            &QCheckBox::stateChanged,
+            this,
+            &PlotManager::onCheckBox_AutofitXStateChanged);
+    connect(ui.checkBox_AutofitY,
+            &QCheckBox::stateChanged,
+            this,
+            &PlotManager::onCheckBox_AutofitYStateChanged);
+}
+
 void PlotManager::initEditableMap()
 {
     m_itemTextEditableMap.insert(PlotType::Type_PlotScatter,
@@ -676,7 +701,7 @@ void PlotManager::initGOGUI()
     connect(ui.checkBox_15, &QCheckBox::stateChanged, this, &PlotManager::onUpdateGOGCustomSetting);
     connect(ui.checkBox_16, &QCheckBox::stateChanged, this, &PlotManager::onUpdateGOGCustomSetting);
     connect(ui.checkBox_17, &QCheckBox::stateChanged, this, &PlotManager::onUpdateGOGCustomSetting);
-    connect(ui.checkBox_25, &QCheckBox::stateChanged, this, &PlotManager::onUpdateGOGCustomSetting);
+    connect(ui.checkBox_18, &QCheckBox::stateChanged, this, &PlotManager::onUpdateGOGCustomSetting);
     connect(
         ui.lineEdit_31, &QLineEdit::editingFinished, this, &PlotManager::onUpdateGOGCustomSetting);
     connect(
@@ -751,6 +776,7 @@ void PlotManager::refreshTreeWidgetSettingEnabled(PlotItemBase* plot)
     else if(type == PlotType::Type_PlotAScope)
     {
         enableItem_AScope();
+        refreshAScopeUI(m_curSelectPlot);
     }
     else if(type == PlotType::Type_PlotRTI)
     {
@@ -1073,6 +1099,19 @@ void PlotManager::refreshGOGUI(PlotItemBase* plot)
     {
         ui.listWidget_2->addItem(fileName);
     }
+}
+
+void PlotManager::refreshAScopeUI(PlotItemBase* plot)
+{
+    auto item = dynamic_cast<PlotAScope*>(plot);
+    if(item == nullptr)
+        return;
+
+    ui.checkBox_DrawGates->setChecked(item->isDrawGate());
+    ui.spinBox_GateHeight->setValue(item->gateHeight());
+    ui.pushButton_GateColor->setColor(item->gateColor());
+    ui.checkBox_AutofitX->setChecked(item->isAutofitX());
+    ui.checkBox_AutofitY->setChecked(item->isAutofitY());
 }
 
 void PlotManager::refreshTextEditUI(PlotItemBase* plot)
@@ -3306,5 +3345,55 @@ void PlotManager::onCurrentMarkerChanged()
         ui.spinBoxMarkerHours->setValue(hour);
         ui.spinBoxMarkerMins->setValue(minute);
         ui.lineEditSecs->setText(QString::number(seconds));
+    }
+}
+
+void PlotManager::onCheckBox_DrawGateStateChanged(int state)
+{
+    if(!m_curSelectPlot)
+        return;
+    if(auto plot = dynamic_cast<PlotAScope*>(m_curSelectPlot))
+    {
+        plot->setIsDrawGate(state == 2);
+    }
+}
+
+void PlotManager::onSpinBox_GateHeightValueChanged(int value)
+{
+    if(!m_curSelectPlot)
+        return;
+    if(auto plot = dynamic_cast<PlotAScope*>(m_curSelectPlot))
+    {
+        plot->setGateHeight(value);
+    }
+}
+
+void PlotManager::onPushButton_GateColorClicked()
+{
+    if(!m_curSelectPlot)
+        return;
+    if(auto plot = dynamic_cast<PlotAScope*>(m_curSelectPlot))
+    {
+        plot->setGateColor(ui.pushButton_GateColor->color());
+    }
+}
+
+void PlotManager::onCheckBox_AutofitXStateChanged(int state)
+{
+    if(!m_curSelectPlot)
+        return;
+    if(auto plot = dynamic_cast<PlotAScope*>(m_curSelectPlot))
+    {
+        plot->setIsAutofitX(state == 2);
+    }
+}
+
+void PlotManager::onCheckBox_AutofitYStateChanged(int state)
+{
+    if(!m_curSelectPlot)
+        return;
+    if(auto plot = dynamic_cast<PlotAScope*>(m_curSelectPlot))
+    {
+        plot->setIsAutofitY(state == 2);
     }
 }
