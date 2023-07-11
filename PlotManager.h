@@ -24,6 +24,7 @@ private:
 	void initTreeWidgetSettings();
 	void initGeneralUI();
 	void initAxisGridUI();
+    void initAxisGridScrollUI();
 	void initPlotDataUI();
 	void initTextEditUI();
 	void initAttitudeUI();
@@ -41,6 +42,7 @@ private:
 	void refreshTreeWidgetSettingEnabled(PlotItemBase* plot);
 	void refreshGeneralUI(PlotItemBase* plot);
 	void refreshAxisGridUI(PlotItemBase* plot);
+    void refreshAxisGridScrollUI(PlotItemBase* plot);
 	void refreshPlotDataUI(PlotItemBase* plot);
 	void refreshLightTextUI(PlotItemBase* plot);
     void refreshGOGUI(PlotItemBase* plot);
@@ -90,8 +92,14 @@ public slots:
 	void onMouseEventDone();
 
 	//Axis and Grid
-	void onCheckBox_4StateChanged();
-	void onCheckBox_5StateChanged();
+    void oncheckBoxScrollXStateChanged();
+    void oncheckBoxScrollYStateChanged();
+    void onFollowXChanged();
+    void onFollowYChanged();
+    void onLeadXChanged();
+    void onLeadYChanged();
+    void onEnableDataPairChanged(QTableWidgetItem* item);
+
 	void onLineEdit_limitXEditingFinished();
 	void onLineEdit_limitYEditingFinished();
 	void onPushButton_flipXValuesClicked();

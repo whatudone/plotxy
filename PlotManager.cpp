@@ -194,17 +194,18 @@ void PlotManager::initAxisGridUI()
     ui.pushButton_flipYValues->setVisible(false);
 
     ui.lineEdit_23->setText("1");
-    /*ui.pushButton_gridColor->setColor(Qt::gray);*/
-    ui.lineEdit_10->setEnabled(false);
-    ui.lineEdit_11->setEnabled(false);
-    ui.lineEdit_12->setEnabled(false);
-    ui.lineEdit_13->setEnabled(false);
-    ui.tableWidget->setEnabled(false);
-    ui.tableWidget_2->setEnabled(false);
-    ui.comboBox_2->setCurrentIndex(0);
 
-    connect(ui.checkBox_4, &QCheckBox::stateChanged, this, &PlotManager::onCheckBox_4StateChanged);
-    connect(ui.checkBox_5, &QCheckBox::stateChanged, this, &PlotManager::onCheckBox_5StateChanged);
+    ui.checkBoxScrollX->setEnabled(false);
+    ui.checkBoxScrollY->setEnabled(false);
+    ui.lineEditLeadX->setEnabled(false);
+    ui.lineEditFollowX->setEnabled(false);
+    ui.lineEditLeadY->setEnabled(false);
+    ui.lineEditFollowY->setEnabled(false);
+    ui.tableWidgetX->setEnabled(false);
+    ui.tableWidgetY->setEnabled(false);
+    ui.comboBox_2->setCurrentIndex(0);
+    initAxisGridScrollUI();
+
     connect(ui.lineEdit_limitBgnX,
             &QLineEdit::editingFinished,
             this,
@@ -288,6 +289,22 @@ void PlotManager::initAxisGridUI()
             &PlotManager::onComboBox_YUnitChanged);
 
     initUnitData();
+}
+
+void PlotManager::initAxisGridScrollUI()
+{
+    connect(ui.checkBoxScrollX,
+            &QCheckBox::stateChanged,
+            this,
+            &PlotManager::oncheckBoxScrollXStateChanged);
+    connect(ui.checkBoxScrollY,
+            &QCheckBox::stateChanged,
+            this,
+            &PlotManager::oncheckBoxScrollYStateChanged);
+    connect(ui.lineEditFollowX, &QLineEdit::editingFinished, this, &PlotManager::onFollowXChanged);
+    connect(ui.lineEditFollowY, &QLineEdit::editingFinished, this, &PlotManager::onFollowYChanged);
+    connect(ui.lineEditLeadX, &QLineEdit::editingFinished, this, &PlotManager::onLeadXChanged);
+    connect(ui.lineEditLeadY, &QLineEdit::editingFinished, this, &PlotManager::onLeadYChanged);
 }
 
 void PlotManager::initTextLightUI()
@@ -846,6 +863,9 @@ void PlotManager::refreshAxisGridUI(PlotItemBase* plot)
         break;
     }
 
+    // scroll
+    refreshAxisGridScrollUI(plot);
+    // formats
     ui.comboBox_XUnits->blockSignals(true);
     ui.comboBox_YUnits->blockSignals(true);
     QString unitX = plot->getUnitsX();
@@ -881,6 +901,74 @@ void PlotManager::refreshAxisGridUI(PlotItemBase* plot)
     ui.comboBox_YUnits->blockSignals(false);
     ui.comboBox_XUnits->setCurrentText(unitX);
     ui.comboBox_YUnits->setCurrentText(unitY);
+}
+
+void PlotManager::refreshAxisGridScrollUI(PlotItemBase* plot)
+{
+    if(plot->plotType() != PlotType::Type_PlotScatter)
+    {
+        ui.checkBoxScrollX->setEnabled(false);
+        ui.checkBoxScrollY->setEnabled(false);
+        ui.lineEditLeadX->setEnabled(false);
+        ui.lineEditFollowX->setEnabled(false);
+        ui.lineEditLeadY->setEnabled(false);
+        ui.lineEditFollowY->setEnabled(false);
+        ui.tableWidgetX->setEnabled(false);
+        ui.tableWidgetY->setEnabled(false);
+        return;
+    }
+    if(PlotScatter* scatter = static_cast<PlotScatter*>(plot))
+    {
+        ui.checkBoxScrollX->setEnabled(true);
+        ui.checkBoxScrollY->setEnabled(true);
+        ui.checkBoxScrollX->setChecked(scatter->getXScrollOn());
+        ui.checkBoxScrollY->setChecked(scatter->getXScrollOn());
+        ui.lineEditLeadX->setText(QString::number(scatter->getXLead()));
+        ui.lineEditLeadY->setText(QString::number(scatter->getYLead()));
+        ui.lineEditFollowX->setText(QString::number(scatter->getXFollow()));
+        ui.lineEditFollowY->setText(QString::number(scatter->getYFollow()));
+        auto dataPiarVector = scatter->getDataPairs();
+        int32_t size = dataPiarVector.size();
+        ui.tableWidgetX->clearContents();
+        ui.tableWidgetX->setRowCount(size);
+        ui.tableWidgetX->setEditTriggers(QTableWidget::NoEditTriggers);
+        ui.tableWidgetY->clearContents();
+        ui.tableWidgetY->setRowCount(size);
+        ui.tableWidgetY->setEditTriggers(QTableWidget::NoEditTriggers);
+        connect(ui.tableWidgetX,
+                &QTableWidget::itemChanged,
+                this,
+                &PlotManager::onEnableDataPairChanged);
+        connect(ui.tableWidgetY,
+                &QTableWidget::itemChanged,
+                this,
+                &PlotManager::onEnableDataPairChanged);
+        for(int var = 0; var < size; ++var)
+        {
+            auto dataPair = dataPiarVector.at(var);
+            QString uuid = dataPair->getUuid();
+            QTableWidgetItem* xEnableItem = new QTableWidgetItem("");
+            Qt::CheckState state =
+                scatter->getXScrollEnableByUUID(uuid) ? Qt::Checked : Qt::Unchecked;
+            xEnableItem->setCheckState(state);
+            xEnableItem->setData(Qt::UserRole + 1, uuid);
+            QTableWidgetItem* xItemX = new QTableWidgetItem(dataPair->getXEntityAttrPair());
+            QTableWidgetItem* xItemY = new QTableWidgetItem(dataPair->getYEntityAttrPair());
+            ui.tableWidgetX->setItem(var, 0, xEnableItem);
+            ui.tableWidgetX->setItem(var, 1, xItemX);
+            ui.tableWidgetX->setItem(var, 2, xItemY);
+
+            QTableWidgetItem* yEnableItem = new QTableWidgetItem("");
+            state = scatter->getYScrollEnableByUUID(uuid) ? Qt::Checked : Qt::Unchecked;
+            yEnableItem->setCheckState(state);
+            yEnableItem->setData(Qt::UserRole + 1, uuid);
+            QTableWidgetItem* yItemY = new QTableWidgetItem(dataPair->getYEntityAttrPair());
+            QTableWidgetItem* yItemX = new QTableWidgetItem(dataPair->getXEntityAttrPair());
+            ui.tableWidgetY->setItem(var, 0, yEnableItem);
+            ui.tableWidgetY->setItem(var, 1, yItemY);
+            ui.tableWidgetY->setItem(var, 2, yItemX);
+        }
+    }
 }
 
 void PlotManager::refreshPlotDataUI(PlotItemBase* plot)
@@ -1709,18 +1797,80 @@ void PlotManager::onMouseEventDone()
     }
 }
 
-void PlotManager::onCheckBox_4StateChanged()
+void PlotManager::oncheckBoxScrollXStateChanged()
 {
-    ui.lineEdit_10->setEnabled(ui.checkBox_4->isChecked());
-    ui.lineEdit_11->setEnabled(ui.checkBox_4->isChecked());
-    ui.tableWidget->setEnabled(ui.checkBox_4->isChecked());
+    bool checked = ui.checkBoxScrollX->isChecked();
+    ui.lineEditLeadX->setEnabled(checked);
+    ui.lineEditFollowX->setEnabled(checked);
+    ui.tableWidgetX->setEnabled(checked);
+    if(auto scatter = dynamic_cast<PlotScatter*>(m_curSelectPlot))
+    {
+        scatter->setXScrollOn(checked);
+    }
 }
 
-void PlotManager::onCheckBox_5StateChanged()
+void PlotManager::oncheckBoxScrollYStateChanged()
 {
-    ui.lineEdit_12->setEnabled(ui.checkBox_5->isChecked());
-    ui.lineEdit_13->setEnabled(ui.checkBox_5->isChecked());
-    ui.tableWidget_2->setEnabled(ui.checkBox_5->isChecked());
+    bool checked = ui.checkBoxScrollY->isChecked();
+    ui.lineEditLeadY->setEnabled(checked);
+    ui.lineEditFollowY->setEnabled(checked);
+    ui.tableWidgetY->setEnabled(checked);
+    if(auto scatter = dynamic_cast<PlotScatter*>(m_curSelectPlot))
+    {
+        scatter->setYScrollOn(checked);
+    }
+}
+
+void PlotManager::onFollowXChanged()
+{
+    if(auto scatter = dynamic_cast<PlotScatter*>(m_curSelectPlot))
+    {
+        scatter->setXFollow(ui.lineEditFollowX->text().toDouble());
+    }
+}
+
+void PlotManager::onFollowYChanged()
+{
+    if(auto scatter = dynamic_cast<PlotScatter*>(m_curSelectPlot))
+    {
+        scatter->setYFollow(ui.lineEditFollowY->text().toDouble());
+    }
+}
+
+void PlotManager::onLeadXChanged()
+{
+    if(auto scatter = dynamic_cast<PlotScatter*>(m_curSelectPlot))
+    {
+        scatter->setXLead(ui.lineEditLeadX->text().toDouble());
+    }
+}
+
+void PlotManager::onLeadYChanged()
+{
+    if(auto scatter = dynamic_cast<PlotScatter*>(m_curSelectPlot))
+    {
+        scatter->setYLead(ui.lineEditLeadY->text().toDouble());
+    }
+}
+
+void PlotManager::onEnableDataPairChanged(QTableWidgetItem* item)
+{
+    if(auto scatter = dynamic_cast<PlotScatter*>(m_curSelectPlot))
+    {
+        QTableWidget* table = qobject_cast<QTableWidget*>(sender());
+        if(table == ui.tableWidgetX)
+        {
+            bool checked = item->data(Qt::CheckStateRole).toBool();
+            QString uuid = item->data(Qt::UserRole + 1).toString();
+            scatter->setXScrollEnableByUUID(uuid, checked);
+        }
+        if(table == ui.tableWidgetY)
+        {
+            bool checked = item->data(Qt::CheckStateRole).toBool();
+            QString uuid = item->data(Qt::UserRole + 1).toString();
+            scatter->setYScrollEnableByUUID(uuid, checked);
+        }
+    }
 }
 
 void PlotManager::onLineEdit_limitXEditingFinished()

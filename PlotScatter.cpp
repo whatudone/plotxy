@@ -102,6 +102,8 @@ void PlotScatter::delPlotPairData(const QString& uuid)
         m_coordBgn_y = std::numeric_limits<double>::min();
         m_coordEnd_y = std::numeric_limits<double>::max();
     }
+    m_xScrollHash.remove(uuid);
+    m_yScrollHash.remove(uuid);
 }
 
 void PlotScatter::updateDataForDataPairsByTime(double secs)
@@ -176,6 +178,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
     }
     updateMarkers(secs);
     updateConnectionLines();
+    updateScrollAxis();
 	m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
@@ -549,14 +552,17 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
         setTitle(QString("%1 VS. %2").arg(xAttrName).arg(yAttrName));
     }
     m_isInitCoorRange = true;
-    return PlotItemBase::addPlotDataPair(xEntityID,
-                                         xAttrName,
-                                         xAttrUnitName,
-                                         yEntityID,
-                                         yAttrName,
-                                         yAttrUnitName,
-                                         extraParams,
-                                         isFromJson);
+    auto dataPair = PlotItemBase::addPlotDataPair(xEntityID,
+                                                  xAttrName,
+                                                  xAttrUnitName,
+                                                  yEntityID,
+                                                  yAttrName,
+                                                  yAttrUnitName,
+                                                  extraParams,
+                                                  isFromJson);
+    m_xScrollHash.insert(dataPair->getUuid(), false);
+    m_yScrollHash.insert(dataPair->getUuid(), false);
+    return dataPair;
 }
 
 void PlotScatter::clearEventText()
@@ -928,6 +934,183 @@ void PlotScatter::updateConnectionLines()
         }
     }
     m_customPlot->replot();
+}
+
+void PlotScatter::updateScrollAxis()
+{
+    bool xNeedScroll = false;
+    bool yNeedScroll = false;
+    QPointF currentPoint = getCurrentAverageXYValue(xNeedScroll, yNeedScroll);
+
+    if(m_xScrollOn && xNeedScroll)
+    {
+        setCoordRangeX(currentPoint.x() - m_xFollow, currentPoint.x() + m_xLead);
+    }
+    if(m_yScrollOn && yNeedScroll)
+    {
+        setCoordRangeY(currentPoint.y() - m_yFollow, currentPoint.y() + m_yLead);
+    }
+}
+
+QPointF PlotScatter::getCurrentAverageXYValue(bool& xNeedScroll, bool& yNeedScroll)
+{
+    // 存在
+    QStringList uuidList = m_lastDataHash.keys();
+    double sumX = 0.0;
+    double sumY = 0.0;
+    int32_t xEnableSize = 0;
+    int32_t yEnableSize = 0;
+    for(const QString& uuid : uuidList)
+    {
+        if(m_xScrollHash.value(uuid, false))
+        {
+            QPointF currentPoint = m_lastDataHash.value(uuid);
+            sumX += currentPoint.x();
+            ++xEnableSize;
+        }
+        if(m_yScrollHash.value(uuid, false))
+        {
+            QPointF currentPoint = m_lastDataHash.value(uuid);
+            sumY += currentPoint.y();
+            ++yEnableSize;
+        }
+    }
+    QPointF point;
+    if(xEnableSize > 0)
+    {
+        double averageX = sumX / xEnableSize;
+        point.setX(averageX);
+        xNeedScroll = true;
+    }
+    else
+    {
+        xNeedScroll = false;
+    }
+    if(yEnableSize > 0)
+    {
+        double averageY = sumY / yEnableSize;
+        point.setY(averageY);
+        yNeedScroll = true;
+    }
+    else
+    {
+        yNeedScroll = false;
+    }
+    return point;
+}
+
+QHash<QString, bool> PlotScatter::getYScrollHash() const
+{
+    return m_yScrollHash;
+}
+
+void PlotScatter::setYScrollHash(const QHash<QString, bool>& yScrollHash)
+{
+    m_yScrollHash = yScrollHash;
+}
+
+void PlotScatter::setXScrollEnableByUUID(const QString& uuid, bool enable)
+{
+    if(m_xScrollHash.contains(uuid))
+    {
+        m_xScrollHash.insert(uuid, enable);
+        updateScrollAxis();
+    }
+}
+
+bool PlotScatter::getXScrollEnableByUUID(const QString& uuid)
+{
+    return m_xScrollHash.value(uuid, false);
+}
+
+void PlotScatter::setYScrollEnableByUUID(const QString& uuid, bool enable)
+{
+    if(m_yScrollHash.contains(uuid))
+    {
+        m_yScrollHash.insert(uuid, enable);
+        updateScrollAxis();
+    }
+}
+
+bool PlotScatter::getYScrollEnableByUUID(const QString& uuid)
+{
+    return m_yScrollHash.value(uuid, false);
+}
+
+double PlotScatter::getYFollow() const
+{
+    return m_yFollow;
+}
+
+void PlotScatter::setYFollow(double yFollow)
+{
+    m_yFollow = yFollow;
+    updateScrollAxis();
+}
+
+double PlotScatter::getYLead() const
+{
+    return m_yLead;
+}
+
+void PlotScatter::setYLead(double yLead)
+{
+    m_yLead = yLead;
+    updateScrollAxis();
+}
+
+bool PlotScatter::getYScrollOn() const
+{
+    return m_yScrollOn;
+}
+
+void PlotScatter::setYScrollOn(bool yScrollOn)
+{
+    m_yScrollOn = yScrollOn;
+    updateScrollAxis();
+}
+
+QHash<QString, bool> PlotScatter::getXScrollHash() const
+{
+    return m_xScrollHash;
+}
+
+void PlotScatter::setXScrollHash(const QHash<QString, bool>& xScrollHash)
+{
+    m_xScrollHash = xScrollHash;
+}
+
+double PlotScatter::getXFollow() const
+{
+    return m_xFollow;
+}
+
+void PlotScatter::setXFollow(double xFollow)
+{
+    m_xFollow = xFollow;
+    updateScrollAxis();
+}
+
+double PlotScatter::getXLead() const
+{
+    return m_xLead;
+}
+
+void PlotScatter::setXLead(double xLead)
+{
+    m_xLead = xLead;
+    updateScrollAxis();
+}
+
+bool PlotScatter::getXScrollOn() const
+{
+    return m_xScrollOn;
+}
+
+void PlotScatter::setXScrollOn(bool xScrollOn)
+{
+    m_xScrollOn = xScrollOn;
+    updateScrollAxis();
 }
 
 QHash<QString, ConnectionSetting> PlotScatter::getConHash() const

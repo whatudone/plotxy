@@ -1060,7 +1060,7 @@ void PlotItemBase::updateYLabelDescrption()
         QString label;
         QString unitLabel = m_showUnits_y ? QString("(" + m_units_y + ")") : QString();
         if(m_yAxisLabelVisible)
-            label = QString("%1%2").arg(m_xAxisLabel).arg(unitLabel);
+            label = QString("%1%2").arg(m_yAxisLabel).arg(unitLabel);
         m_customPlot->yAxis->setLabel(label);
     }
     replot();

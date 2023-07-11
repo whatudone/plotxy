@@ -101,10 +101,43 @@ public:
     QHash<QString, ConnectionSetting> getConHash() const;
     void setConHash(const QHash<QString, ConnectionSetting>& conHash);
 
+    bool getXScrollOn() const;
+    void setXScrollOn(bool xScrollOn);
+
+    double getXLead() const;
+    void setXLead(double xLead);
+
+    double getXFollow() const;
+    void setXFollow(double xFollow);
+
+    QHash<QString, bool> getXScrollHash() const;
+    void setXScrollHash(const QHash<QString, bool>& xScrollHash);
+
+    bool getYScrollOn() const;
+    void setYScrollOn(bool yScrollOn);
+
+    double getYLead() const;
+    void setYLead(double yLead);
+
+    double getYFollow() const;
+    void setYFollow(double yFollow);
+
+    QHash<QString, bool> getYScrollHash() const;
+    void setYScrollHash(const QHash<QString, bool>& yScrollHash);
+
+    void setXScrollEnableByUUID(const QString& uuid, bool enable);
+    bool getXScrollEnableByUUID(const QString& uuid);
+
+    void setYScrollEnableByUUID(const QString& uuid, bool enable);
+    bool getYScrollEnableByUUID(const QString& uuid);
+
+protected:
+    void updateDataForDataPairsByTime(double secs) override;
+
+    void updateGraphByDataPair(DataPair* data, double curSecs);
+
 private:
     void initPlot();
-    void updateDataForDataPairsByTime(double secs) override;
-    void updateGraphByDataPair(DataPair* data, double curSecs);
     // 删除历史事件标签
     void clearEventText();
     void clearHistoryLines();
@@ -116,6 +149,10 @@ private:
     void updateMarkers(double currentSeconds);
     // 刷新连线
     void updateConnectionLines();
+    // 刷新滚动范围
+    void updateScrollAxis();
+    // 获取所有启用的数据对的X当前值的平均值和Y的平均值
+    QPointF getCurrentAverageXYValue(bool& xNeedScroll, bool& yNeedScroll);
 
 private:
     QHash<QString, QPair<QVector<double>, QVector<double>>> m_dataHash;
@@ -148,6 +185,20 @@ private:
     QList<QCPItemLine*> m_connectionLines;
     //<data pari uuid,last value point>
     QHash<QString, QPointF> m_lastDataHash;
+
+    /*
+     * 开启某个轴的滚动设置之后，需要继续设置对应轴的Follow和Lead,
+     * 然后选择开启启用具体的数据对，假如启用一对数据，那么基准值(value)就是当前数据对的值，
+     * 如果选择多对，那么采取他们的平均值作为基准值，然后滚动轴的范围就是[value-follow,value+lead]
+    */
+    bool m_xScrollOn = false;
+    double m_xLead = 0.0;
+    double m_xFollow = 0.0;
+    QHash<QString, bool> m_xScrollHash;
+    bool m_yScrollOn = false;
+    double m_yLead = 0.0;
+    double m_yFollow = 0.0;
+    QHash<QString, bool> m_yScrollHash;
 };
 
 #endif // PLOTSCATTER_H
