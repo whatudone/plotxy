@@ -34,6 +34,7 @@ private:
 	void initTextLightUI();
     void initScatterLimitUI();
     void initScatterMarkersUI();
+    void initAScopeUI();
     void initEditableMap();
     void initUnitData();
 
@@ -46,6 +47,7 @@ private:
 	void refreshPlotDataUI(PlotItemBase* plot);
 	void refreshLightTextUI(PlotItemBase* plot);
     void refreshGOGUI(PlotItemBase* plot);
+    void refreshAScopeUI(PlotItemBase* plot);
 
 	void refreshTextEditUI(PlotItemBase* plot);
 	void refreshAttitudeUI(PlotItemBase* plot);
@@ -219,6 +221,13 @@ public slots:
     void onModifyScatterMarkers();
     void onDeleteScatterMarkers();
     void onCurrentMarkerChanged();
+
+    // AScope
+    void onCheckBox_DrawGateStateChanged(int state);
+    void onSpinBox_GateHeightValueChanged(int value);
+    void onPushButton_GateColorClicked();
+    void onCheckBox_AutofitXStateChanged(int state);
+    void onCheckBox_AutofitYStateChanged(int state);
 
 signals:
     void sigAddPlotPair();

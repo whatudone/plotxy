@@ -1,5 +1,6 @@
 ﻿#include "PlotAScope.h"
 #include "DataManager.h"
+#include "Utils.h"
 
 int PlotAScope::m_instanceCount = 1;
 PlotAScope::PlotAScope(QWidget* parent)
@@ -16,6 +17,12 @@ PlotAScope::PlotAScope(QWidget* parent)
 
     m_showUnits_x = false;
     m_showUnits_y = false;
+
+    m_isDrawGate = false;
+    m_gateHeight = 50;
+    m_gateColor = Qt::red;
+    m_isAutofitX = false;
+    m_isAutofitY = false;
 
     initPlot();
     setupLayout();
@@ -54,6 +61,10 @@ void PlotAScope::initPlot()
     m_customPlot->yAxis->setLabelColor(m_yAxisLabelColor);
     m_customPlot->xAxis->setLabelFont(m_xAxisLabelFont);
     m_customPlot->yAxis->setLabelFont(m_yAxisLabelFont);
+
+    m_gateRectItem = new QCPItemRect(m_customPlot);
+    m_gateText = new QCPItemText(m_customPlot);
+    drawGate();
 }
 
 void PlotAScope::delPlotPairData(const QString& uuid)
@@ -73,6 +84,10 @@ void PlotAScope::updateDataForDataPairsByTime(double secs)
 {
     m_dataHash.clear();
     int itemCnt = m_dataPairs.size();
+    m_minX = std::numeric_limits<double>::min();
+    m_maxX = std::numeric_limits<double>::max();
+    m_minY = std::numeric_limits<double>::min();
+    m_maxY = std::numeric_limits<double>::max();
     for(int i = 0; i < itemCnt; ++i)
     {
         auto data = getDataPairs().at(i);
@@ -83,7 +98,34 @@ void PlotAScope::updateDataForDataPairsByTime(double secs)
         x = pair.first;
         y = pair.second;
         m_dataHash.insert(uuid, qMakePair(x, y));
+        if(!x.isEmpty() && !y.isEmpty())
+        {
+            if(math::doubleEqual(m_minX, std::numeric_limits<double>::min()))
+                m_minX = x.at(0);
+            if(math::doubleEqual(m_minY, std::numeric_limits<double>::min()))
+                m_minY = y.at(0);
+            if(math::doubleEqual(m_maxX, std::numeric_limits<double>::max()))
+                m_maxX = x.at(0);
+            if(math::doubleEqual(m_maxY, std::numeric_limits<double>::max()))
+                m_maxY = y.at(0);
+        }
+
+        for(int index = 0; index < x.size(); index++)
+        {
+            m_minX = m_minX < x.at(index) ? m_minX : x.at(index);
+            m_maxX = m_maxX > x.at(index) ? m_maxX : x.at(index);
+            m_minY = m_minY < y.at(index) ? m_minY : y.at(index);
+            m_maxY = m_maxY > y.at(index) ? m_maxY : y.at(index);
+        }
     }
+    if(!m_isAutofitX || math::doubleEqual(m_minX, std::numeric_limits<double>::min()))
+        m_customPlot->xAxis->setRange(m_coordBgn_x, m_coordEnd_x);
+    else
+        m_customPlot->xAxis->setRange(m_minX, m_maxX);
+    if(!m_isAutofitY || math::doubleEqual(m_minY, std::numeric_limits<double>::min()))
+        m_customPlot->yAxis->setRange(m_coordBgn_y, m_coordEnd_y);
+    else
+        m_customPlot->yAxis->setRange(m_minY, m_maxY);
     for(int i = 0; i < itemCnt; ++i)
     {
         updateGraphByDataPair(m_dataPairs.at(i), secs);
@@ -147,6 +189,89 @@ void PlotAScope::updateGraphByDataPair(DataPair* data, double curSecs)
     {
         graph->setVisible(false);
     }
+}
+
+void PlotAScope::drawGate()
+{
+    if(m_isDrawGate)
+    {
+        m_gateRectItem->setVisible(true);
+        m_gateRectItem->setBrush(QBrush(m_gateColor));
+        m_gateRectItem->topLeft->setType(QCPItemPosition::ptAxisRectRatio);
+        m_gateRectItem->bottomRight->setType(QCPItemPosition::ptAxisRectRatio);
+        m_gateRectItem->topLeft->setCoords(0.45, 1);
+        m_gateRectItem->bottomRight->setCoords(0.55, 0);
+
+        m_gateText->setVisible(true);
+        m_gateText->position->setType(QCPItemPosition::ptAxisRectRatio);
+        m_gateText->setText("Gate");
+        m_gateText->setColor(Qt::white);
+        m_gateText->setPositionAlignment(Qt::AlignHCenter);
+        m_gateText->position->setCoords(0.5, (100 - m_gateHeight) / 100.0);
+    }
+    else
+    {
+        m_gateRectItem->setVisible(false);
+        m_gateText->setVisible(false);
+    }
+}
+
+bool PlotAScope::isDrawGate() const
+{
+    return m_isDrawGate;
+}
+
+void PlotAScope::setIsDrawGate(bool isDrawGate)
+{
+    m_isDrawGate = isDrawGate;
+    drawGate();
+    m_customPlot->replot();
+}
+
+int PlotAScope::gateHeight() const
+{
+    return m_gateHeight;
+}
+
+void PlotAScope::setGateHeight(int gateHeight)
+{
+    m_gateHeight = gateHeight;
+    drawGate();
+    m_customPlot->replot();
+}
+
+QColor PlotAScope::gateColor() const
+{
+    return m_gateColor;
+}
+
+void PlotAScope::setGateColor(const QColor& gateColor)
+{
+    m_gateColor = gateColor;
+    drawGate();
+    m_customPlot->replot();
+}
+
+bool PlotAScope::isAutofitX() const
+{
+    return m_isAutofitX;
+}
+
+void PlotAScope::setIsAutofitX(bool isAutofitX)
+{
+    m_isAutofitX = isAutofitX;
+    m_customPlot->replot();
+}
+
+bool PlotAScope::isAutofitY() const
+{
+    return m_isAutofitY;
+}
+
+void PlotAScope::setIsAutofitY(bool isAutofitY)
+{
+    m_isAutofitY = isAutofitY;
+    m_customPlot->replot();
 }
 
 void PlotAScope::setAxisVisible(bool on, AxisType type)

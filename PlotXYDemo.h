@@ -21,7 +21,7 @@ class PlotXYDemo : public QMainWindow
 
 public:
     PlotXYDemo(QWidget* parent = Q_NULLPTR);
-    ~PlotXYDemo();
+    ~PlotXYDemo() override;
 
     void init(); //初始化函数，连接信号槽
 	void initMenuFile();

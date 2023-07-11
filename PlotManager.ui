@@ -4172,14 +4172,14 @@ background-color: rgb(127, 127, 127);</string>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_36">
                 <item>
-                 <widget class="QCheckBox" name="checkBox_25">
+                 <widget class="QCheckBox" name="checkBox_AutofitX">
                   <property name="text">
                    <string>Autofit X-Axis</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QCheckBox" name="checkBox_26">
+                 <widget class="QCheckBox" name="checkBox_AutofitY">
                   <property name="text">
                    <string>Autofit Y-Axis</string>
                   </property>
@@ -4195,7 +4195,7 @@ background-color: rgb(127, 127, 127);</string>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_37">
                 <item>
-                 <widget class="QCheckBox" name="checkBox_27">
+                 <widget class="QCheckBox" name="checkBox_DrawGates">
                   <property name="text">
                    <string>Draw Gates</string>
                   </property>
@@ -4211,7 +4211,7 @@ background-color: rgb(127, 127, 127);</string>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QSpinBox" name="spinBox_6"/>
+                   <widget class="QSpinBox" name="spinBox_GateHeight"/>
                   </item>
                  </layout>
                 </item>
@@ -4225,7 +4225,7 @@ background-color: rgb(127, 127, 127);</string>
                    </widget>
                   </item>
                   <item>
-                   <widget class="ColorButton" name="pushButton_59">
+                   <widget class="ColorButton" name="pushButton_GateColor">
                     <property name="maximumSize">
                      <size>
                       <width>20</width>
