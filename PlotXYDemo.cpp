@@ -1135,6 +1135,30 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
             {
                 plotObject.insert("ScatterCons", conArray);
             }
+            // scroll
+            plotObject.insert("XScrollOn", scatter->getXScrollOn());
+            plotObject.insert("XFollow", scatter->getXFollow());
+            plotObject.insert("XLead", scatter->getXLead());
+            auto xScrollHash = scatter->getXScrollHash();
+            auto xUuids = xScrollHash.keys();
+            QJsonObject xDataPairEnableObj;
+            for(const auto& xUuid : xUuids)
+            {
+                xDataPairEnableObj.insert(xUuid, xScrollHash.value(xUuid, false));
+            }
+            plotObject.insert("XDataPairEnableMap", xDataPairEnableObj);
+
+            plotObject.insert("YScrollOn", scatter->getYScrollOn());
+            plotObject.insert("YFollow", scatter->getYFollow());
+            plotObject.insert("YLead", scatter->getYLead());
+            auto yScrollHash = scatter->getYScrollHash();
+            auto yUuids = yScrollHash.keys();
+            QJsonObject yDataPairEnableObj;
+            for(const auto& yUuid : yUuids)
+            {
+                yDataPairEnableObj.insert(yUuid, yScrollHash.value(yUuid, false));
+            }
+            plotObject.insert("YDataPairEnableMap", yDataPairEnableObj);
         }
     }
     else if(type == PlotType::Type_PlotText)
@@ -1423,6 +1447,28 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
                 set.endYEntityAttr = conObject.value("ScatterConYEntityAttr").toString();
                 scatter->addConnection(set);
             }
+            // scroll
+            scatter->setXScrollOn(plotObject.value("XScrollOn").toBool());
+            scatter->setXFollow(plotObject.value("XFollow").toDouble());
+            scatter->setXLead(plotObject.value("XLead").toDouble());
+            QHash<QString, bool> xScrollHash;
+            QJsonObject xDataPairEnableObj = plotObject.value("XDataPairEnableMap").toObject();
+            for(auto it = xDataPairEnableObj.begin(); it != xDataPairEnableObj.end(); ++it)
+            {
+                xScrollHash.insert(it.key(), it.value().toBool());
+            }
+            scatter->setXScrollHash(xScrollHash);
+
+            scatter->setYScrollOn(plotObject.value("YScrollOn").toBool());
+            scatter->setYFollow(plotObject.value("YFollow").toDouble());
+            scatter->setYLead(plotObject.value("YLead").toDouble());
+            QHash<QString, bool> yScrollHash;
+            QJsonObject yDataPairEnableObj = plotObject.value("YDataPairEnableMap").toObject();
+            for(auto it = yDataPairEnableObj.begin(); it != yDataPairEnableObj.end(); ++it)
+            {
+                yScrollHash.insert(it.key(), it.value().toBool());
+            }
+            scatter->setYScrollHash(yScrollHash);
         }
     }
     else if(type == PlotType::Type_PlotText)

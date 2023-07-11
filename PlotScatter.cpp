@@ -128,6 +128,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
         {
             //当为Now的时候y轴没有数据，只需要在X轴上显示一个Now的矩形
             m_isTimeLine = true;
+            m_lastDataHash.insert(uuid, QPointF(PlotXYDemo::getSeconds(), 0));
         }
         else
         {
@@ -185,11 +186,11 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
 void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
 {
     if(!data)
-	{
+    {
         return;
     }
     if(m_isTimeLine)
-	{
+    {
         updateTimelineGraph();
         return;
     }
@@ -197,11 +198,11 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
     auto x = m_dataHash.value(uuid).first;
     auto y = m_dataHash.value(uuid).second;
     if(x.isEmpty() || y.isEmpty())
-    {
+	{
         return;
     }
     if(!m_mapScatter.contains(uuid))
-    {
+	{
         DrawComponents info;
         info.graph = m_customPlot->addGraph();
         // 默认采样值是true，在某些情况下采样会导致把原始数据处理错误，导致连线时路径错误
@@ -560,8 +561,12 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
                                                   yAttrUnitName,
                                                   extraParams,
                                                   isFromJson);
-    m_xScrollHash.insert(dataPair->getUuid(), false);
-    m_yScrollHash.insert(dataPair->getUuid(), false);
+    //scroll
+    if(!isFromJson)
+    {
+        m_xScrollHash.insert(dataPair->getUuid(), false);
+        m_yScrollHash.insert(dataPair->getUuid(), false);
+    }
     return dataPair;
 }
 
@@ -588,11 +593,6 @@ void PlotScatter::clearHistoryLines()
 
 void PlotScatter::updateTimelineGraph()
 {
-    if(math::doubleEqual(m_lastTime, std::numeric_limits<double>::max()))
-    {
-        m_lastTime = PlotXYDemo::getSeconds();
-    }
-    //Timeline模式 Now和event标签都是不移动，只是会移动坐标轴范围
     if(!m_timelineGraph)
     {
         m_timelineGraph = m_customPlot->addGraph();
@@ -716,12 +716,6 @@ void PlotScatter::updateTimelineGraph()
         }
         ++index;
     }
-    // 在线模式试试刷新最新时间轴范围，起点和终点同步更新
-    double delta = now - m_lastTime;
-    double timeBegin = m_customPlot->xAxis->range().lower + delta;
-    double timeEnd = m_customPlot->xAxis->range().upper + delta;
-    m_lastTime = now;
-    setCoordRangeX(timeBegin, timeEnd);
     m_customPlot->replot();
 }
 

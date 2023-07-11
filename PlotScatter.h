@@ -177,8 +177,6 @@ private:
     QHash<QString, EventComponents> m_plotMarkerItems;
     // 是否初始化过上下限
     bool m_isInitCoorRange = false;
-    // 最后更新时间
-    double m_lastTime = std::numeric_limits<double>::max();
     // 连接
     // <setting uuid,setting>
     QHash<QString, ConnectionSetting> m_conHash;

@@ -306,6 +306,13 @@ void PlotManager::initAxisGridScrollUI()
     connect(ui.lineEditFollowY, &QLineEdit::editingFinished, this, &PlotManager::onFollowYChanged);
     connect(ui.lineEditLeadX, &QLineEdit::editingFinished, this, &PlotManager::onLeadXChanged);
     connect(ui.lineEditLeadY, &QLineEdit::editingFinished, this, &PlotManager::onLeadYChanged);
+
+    ui.tableWidgetX->setEditTriggers(QTableWidget::NoEditTriggers);
+    ui.tableWidgetY->setEditTriggers(QTableWidget::NoEditTriggers);
+    connect(
+        ui.tableWidgetX, &QTableWidget::itemChanged, this, &PlotManager::onEnableDataPairChanged);
+    connect(
+        ui.tableWidgetY, &QTableWidget::itemChanged, this, &PlotManager::onEnableDataPairChanged);
 }
 
 void PlotManager::initTextLightUI()
@@ -957,18 +964,9 @@ void PlotManager::refreshAxisGridScrollUI(PlotItemBase* plot)
         int32_t size = dataPiarVector.size();
         ui.tableWidgetX->clearContents();
         ui.tableWidgetX->setRowCount(size);
-        ui.tableWidgetX->setEditTriggers(QTableWidget::NoEditTriggers);
         ui.tableWidgetY->clearContents();
         ui.tableWidgetY->setRowCount(size);
-        ui.tableWidgetY->setEditTriggers(QTableWidget::NoEditTriggers);
-        connect(ui.tableWidgetX,
-                &QTableWidget::itemChanged,
-                this,
-                &PlotManager::onEnableDataPairChanged);
-        connect(ui.tableWidgetY,
-                &QTableWidget::itemChanged,
-                this,
-                &PlotManager::onEnableDataPairChanged);
+
         for(int var = 0; var < size; ++var)
         {
             auto dataPair = dataPiarVector.at(var);
