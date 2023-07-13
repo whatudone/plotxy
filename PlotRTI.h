@@ -20,7 +20,7 @@ class PlotRTI : public PlotItemBase
 
 public:
 	PlotRTI(QWidget* parent = Q_NULLPTR);
-	~PlotRTI();
+    ~PlotRTI() override;
 
 	void initPlot();
 
@@ -32,10 +32,19 @@ public:
         return Type_PlotRTI;
     }
 
+    void setColorRangeMap(const QMap<double, QColor>& colorMap);
+    QMap<double, QColor> getColorRangeMap();
+    QString getLabelDensity();
+    void setLabelDensity(const QString& type);
+    double getTimeSpan() const;
+    void setTimeSpan(double timeSpan);
+
 private:
     void updateDataForDataPairsByTime(double secs) override;
 
     void updateGraphByDataPair(DataPair* data, double curSecs) override;
+
+    void initColorRangeMap();
 
 public:
     static int m_instanceCount; //实体个数
@@ -51,4 +60,7 @@ private:
     QVector<double> m_rangeList;
     // time
     QVector<double> m_timeList;
+    QMap<double, QColor> m_colorRangeMap;
+    QString m_densityType;
+    double m_timeSpan;
 };

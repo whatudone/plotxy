@@ -1,5 +1,6 @@
 ﻿#include "PlotRTI.h"
 #include "DataManager.h"
+#include "PlotXYDemo.h"
 
 int PlotRTI::m_instanceCount = 1;
 PlotRTI::PlotRTI(QWidget* parent)
@@ -17,9 +18,12 @@ PlotRTI::PlotRTI(QWidget* parent)
     m_coordEnd_x = 5;
     m_coordBgn_y = 0;
     m_coordEnd_y = 5;
+    m_timeSpan = 10.0;
 
     m_showUnits_x = false;
     m_showUnits_y = false;
+
+    initColorRangeMap();
 
     initPlot();
     setupLayout();
@@ -119,6 +123,50 @@ void PlotRTI::setAxisTickLabelShow(bool on, AxisType type)
     m_customPlot->replot();
 }
 
+QMap<double, QColor> PlotRTI::getColorRangeMap()
+{
+    return m_colorRangeMap;
+}
+
+QString PlotRTI::getLabelDensity()
+{
+    return m_densityType;
+}
+
+void PlotRTI::setLabelDensity(const QString& type)
+{
+    if(type == "Less Labels")
+    {
+        m_vertGrids = 3;
+        m_customPlot->yAxis->ticker()->setTickCount(m_vertGrids);
+    }
+    else if(type == "Normal")
+    {
+        m_vertGrids = 7;
+        m_customPlot->yAxis->ticker()->setTickCount(m_vertGrids);
+    }
+    else if(type == "More Labels")
+    {
+        m_vertGrids = 11;
+        m_customPlot->yAxis->ticker()->setTickCount(m_vertGrids);
+    }
+    m_densityType = type;
+    m_customPlot->replot();
+}
+
+void PlotRTI::setColorRangeMap(const QMap<double, QColor>& colorMap)
+{
+    QCPColorGradient m_colorGradient;
+    m_colorRangeMap = colorMap;
+    auto colorKeys = colorMap.keys();
+    for(auto value : colorKeys)
+    {
+        m_colorGradient.setColorStopAt(value, colorMap.value(value));
+    }
+    m_colorScale->setGradient(m_colorGradient);
+    m_customPlot->replot();
+}
+
 void PlotRTI::updateDataForDataPairsByTime(double secs)
 {
     if(getDataPairs().isEmpty())
@@ -145,13 +193,19 @@ void PlotRTI::updateGraphByDataPair(DataPair* data, double curSecs)
         }
         int nx = m_rangeList.size();
         int ny = m_timeList.size();
-        m_colorMap->data()->setSize(nx, ny);
+        //        m_colorMap->data()->setSize(nx, ny);
+        //        m_colorMap->data()->setRange(QCPRange(m_rangeList.first(), m_rangeList.last()),
+        //                                     QCPRange(m_timeList.first(), m_timeList.last()));
+
+        // 实际显示的时间跨度数据
+        int showTimeData = int(m_timeSpan / (m_timeList.last() - m_timeList.first()) * ny);
+        m_colorMap->data()->setSize(nx, showTimeData);
         m_colorMap->data()->setRange(QCPRange(m_rangeList.first(), m_rangeList.last()),
-                                     QCPRange(m_timeList.first(), m_timeList.last()));
+                                     QCPRange(m_timeList.first(), m_timeList.first() + m_timeSpan));
 
         for(int xIndex = 0; xIndex < nx; ++xIndex)
         {
-            for(int yIndex = 0; yIndex < ny; ++yIndex)
+            for(int yIndex = 0; yIndex < showTimeData; ++yIndex)
             {
                 auto coord = qMakePair(xIndex, yIndex);
                 double voltage = m_dataHash.value(coord);
@@ -166,4 +220,31 @@ void PlotRTI::updateGraphByDataPair(DataPair* data, double curSecs)
         m_colorMap->setVisible(false);
         m_colorScale->setVisible(false);
     }
+}
+
+void PlotRTI::initColorRangeMap()
+{
+    m_colorRangeMap.clear();
+    m_colorRangeMap.insert(0.0, QColor(0, 0, 100));
+    m_colorRangeMap.insert(0.1, QColor(0, 35, 200));
+    m_colorRangeMap.insert(0.2, QColor(0, 100, 255));
+    m_colorRangeMap.insert(0.3, QColor(0, 200, 255));
+    m_colorRangeMap.insert(0.4, QColor(45, 255, 200));
+    m_colorRangeMap.insert(0.5, QColor(127, 255, 127));
+    m_colorRangeMap.insert(0.6, QColor(200, 255, 45));
+    m_colorRangeMap.insert(0.7, QColor(255, 200, 0));
+    m_colorRangeMap.insert(0.8, QColor(255, 200, 0));
+    m_colorRangeMap.insert(0.9, QColor(200, 20, 0));
+    m_colorRangeMap.insert(1.0, QColor(100, 0, 0));
+}
+
+double PlotRTI::getTimeSpan() const
+{
+    return m_timeSpan;
+}
+
+void PlotRTI::setTimeSpan(double timeSpan)
+{
+    m_timeSpan = timeSpan;
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
 }

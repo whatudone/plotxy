@@ -10,6 +10,7 @@
 #include "PlotDial.h"
 #include "PlotLight.h"
 #include "PlotManagerData.h"
+#include "PlotRTI.h"
 #include "PlotScatter.h"
 #include "PlotText.h"
 
@@ -21,6 +22,7 @@
 #include <QString>
 #include <QStyleFactory>
 #include <QTableWidgetItem>
+#include <QTimer>
 #include <QTreeWidget>
 
 PlotManager::PlotManager(QWidget* parent)
@@ -66,6 +68,7 @@ void PlotManager::init()
     initDialUI();
     initBarUI();
     initAScopeUI();
+    initRTIUI();
     initEditableMap();
 }
 
@@ -474,6 +477,34 @@ void PlotManager::initAScopeUI()
             &PlotManager::onCheckBox_AutofitYStateChanged);
 }
 
+void PlotManager::initRTIUI()
+{
+    connect(ui.lineEdit_TimeSpan,
+            &QLineEdit::editingFinished,
+            this,
+            &PlotManager::onLineEdit_TimeSpanEditFinished);
+    connect(ui.comboBox_LabelDensity,
+            &QComboBox::currentTextChanged,
+            this,
+            &PlotManager::onComboBox_LabelDesityTextChanged);
+    connect(ui.comboBox_ColorIndex,
+            SIGNAL(currentIndexChanged(int)),
+            this,
+            SLOT(onComboBox_ColorIndexChanged(int)));
+    connect(ui.pushButton_NewColor,
+            &QPushButton::clicked,
+            this,
+            &PlotManager::onPushButton_NewColorClicked);
+    connect(ui.pushButton_DeleteColor,
+            &QPushButton::clicked,
+            this,
+            &PlotManager::onPushButton_DeleteColorClicked);
+    connect(ui.horizontalSlider_ColorSlider,
+            &QSlider::valueChanged,
+            this,
+            &PlotManager::onSlider_colorValueChanged);
+}
+
 void PlotManager::initEditableMap()
 {
     m_itemTextEditableMap.insert(PlotType::Type_PlotScatter,
@@ -805,6 +836,7 @@ void PlotManager::refreshTreeWidgetSettingEnabled(PlotItemBase* plot)
     else if(type == PlotType::Type_PlotRTI)
     {
         enableItem_RTI();
+        refreshRTIUI(m_curSelectPlot);
     }
     else if(type == PlotType::Type_PlotText)
     {
@@ -1141,6 +1173,26 @@ void PlotManager::refreshAScopeUI(PlotItemBase* plot)
     ui.checkBox_AutofitY->setChecked(item->isAutofitY());
 }
 
+void PlotManager::refreshRTIUI(PlotItemBase* plot)
+{
+    auto item = dynamic_cast<PlotRTI*>(plot);
+    if(item == nullptr)
+        return;
+
+    ui.lineEdit_TimeSpan->setText(QString::number(item->getTimeSpan()));
+    ui.comboBox_LabelDensity->setCurrentText(item->getLabelDensity());
+
+    refreshRTIColorRange();
+
+    ui.comboBox_ColorIndex->blockSignals(true);
+    ui.comboBox_ColorIndex->clear();
+    for(int i = 0; i < item->getColorRangeMap().size(); i++)
+    {
+        ui.comboBox_ColorIndex->addItem(QString::number(i));
+    }
+    ui.comboBox_ColorIndex->blockSignals(false);
+}
+
 void PlotManager::refreshTextEditUI(PlotItemBase* plot)
 {
 	ui.checkBox_12->setChecked(plot->unitsShowX());
@@ -1433,6 +1485,37 @@ void PlotManager::exchangeItem(QTableWidget* tableWidget, int selectedRow, int t
     refreshLightTextUI(m_curSelectPlot);
     tableWidget->setCurrentItem(tableWidget->item(targetRow, 0),
                                 QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
+}
+
+void PlotManager::refreshRTIColorRange()
+{
+    if(!m_curSelectPlot)
+        return;
+    auto item = dynamic_cast<PlotRTI*>(m_curSelectPlot);
+    if(!item)
+        return;
+
+    QTimer* timer = new QTimer;
+    connect(timer, &QTimer::timeout, [=]() {
+        QMap<double, QColor> colorMap = item->getColorRangeMap();
+        QString scaleStr;
+        QList<double> keys = colorMap.keys();
+        for(auto stop : keys)
+        {
+            scaleStr += QString(", stop:%1 %2").arg(stop).arg(colorMap.value(stop).name());
+        }
+        QString gradientStr =
+            QString("background:qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0%1);border:none;")
+                .arg(scaleStr);
+        ui.label_RTIColorRangeBar->setStyleSheet(gradientStr);
+
+        QPixmap pixmap(ui.label_RTIColorRangeBar->size());
+        qDebug() << "pixmap size = " << ui.label_RTIColorRangeBar->size();
+        ui.label_RTIColorRangeBar->render(&pixmap);
+        m_RTIColorSliderImage = pixmap.toImage();
+        timer->deleteLater();
+    });
+    timer->start(2000);
 }
 
 void PlotManager::onTWSPclicked(QTreeWidgetItem* item, int column)
@@ -3557,4 +3640,123 @@ void PlotManager::onCheckBox_AutofitYStateChanged(int state)
     {
         plot->setIsAutofitY(state == 2);
     }
+}
+
+void PlotManager::onLineEdit_TimeSpanEditFinished()
+{
+    if(!m_curSelectPlot)
+        return;
+    if(auto plot = dynamic_cast<PlotRTI*>(m_curSelectPlot))
+    {
+        plot->setTimeSpan(ui.lineEdit_TimeSpan->text().toDouble());
+    }
+}
+
+void PlotManager::onComboBox_LabelDesityTextChanged(const QString& text)
+{
+    if(!m_curSelectPlot)
+        return;
+    if(auto plot = dynamic_cast<PlotRTI*>(m_curSelectPlot))
+    {
+        plot->setLabelDensity(text);
+    }
+}
+
+void PlotManager::onComboBox_ColorIndexChanged(int index)
+{
+    if(!m_curSelectPlot)
+        return;
+    auto rtiPlot = dynamic_cast<PlotRTI*>(m_curSelectPlot);
+    if(!rtiPlot)
+        return;
+    QMap<double, QColor> colorMap = rtiPlot->getColorRangeMap();
+    QList<double> keyList = colorMap.keys();
+    if(keyList.isEmpty() || keyList.size() < index + 1)
+        return;
+    double value = keyList.at(index);
+    QColor color = colorMap.value(value);
+    ui.spinBox_ColorPosition->setValue(int(value * 100));
+    ui.pushButton_RTIColor->setColor(color);
+    if(index == 0 || index == ui.comboBox_ColorIndex->count() - 1)
+    {
+        ui.pushButton_DeleteColor->setEnabled(false);
+    }
+    else
+    {
+        ui.pushButton_DeleteColor->setEnabled(true);
+    }
+}
+
+void PlotManager::onSlider_colorValueChanged(int value)
+{
+    if(!m_curSelectPlot)
+        return;
+    auto rtiPlot = dynamic_cast<PlotRTI*>(m_curSelectPlot);
+    if(!rtiPlot)
+        return;
+    if(value == 0 || value == 100)
+    {
+        ui.pushButton_DeleteColor->setEnabled(false);
+    }
+    else
+    {
+        ui.pushButton_DeleteColor->setEnabled(true);
+    }
+    ui.spinBox_ColorPosition->setValue(value);
+
+    // 最右边要往左偏1个像素，否则会超出范围，取到的颜色是黑色
+    int offset = value == 100 ? 1 : 0;
+    QPoint point(m_RTIColorSliderImage.width() * value / 100 - offset, 1);
+    QColor color = QColor(m_RTIColorSliderImage.pixelColor(point));
+
+    ui.pushButton_RTIColor->setColor(color);
+}
+
+void PlotManager::onPushButton_NewColorClicked()
+{
+    if(!m_curSelectPlot)
+        return;
+    auto rtiPlot = dynamic_cast<PlotRTI*>(m_curSelectPlot);
+    if(!rtiPlot)
+        return;
+    QMap<double, QColor> colorMap = rtiPlot->getColorRangeMap();
+    double value = ui.spinBox_ColorPosition->value() / 100.0;
+    QColor posColor = ui.pushButton_RTIColor->color();
+    colorMap.insert(value, posColor);
+    rtiPlot->setColorRangeMap(colorMap);
+    ui.comboBox_ColorIndex->blockSignals(true);
+    ui.comboBox_ColorIndex->clear();
+    for(int i = 0; i < colorMap.size(); i++)
+    {
+        ui.comboBox_ColorIndex->addItem(QString::number(i));
+    }
+    ui.comboBox_ColorIndex->blockSignals(false);
+
+    refreshRTIColorRange();
+}
+
+void PlotManager::onPushButton_DeleteColorClicked()
+{
+    if(!m_curSelectPlot)
+        return;
+    auto rtiPlot = dynamic_cast<PlotRTI*>(m_curSelectPlot);
+    if(!rtiPlot)
+        return;
+    QMap<double, QColor> colorMap = rtiPlot->getColorRangeMap();
+    double value = ui.spinBox_ColorPosition->value() / 100.0;
+    if(!colorMap.contains(value))
+    {
+        return;
+    }
+    colorMap.remove(value);
+    rtiPlot->setColorRangeMap(colorMap);
+    ui.comboBox_ColorIndex->blockSignals(true);
+    ui.comboBox_ColorIndex->clear();
+    for(int i = 0; i < colorMap.size(); i++)
+    {
+        ui.comboBox_ColorIndex->addItem(QString::number(i));
+    }
+    ui.comboBox_ColorIndex->blockSignals(false);
+
+    refreshRTIColorRange();
 }

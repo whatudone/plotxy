@@ -138,7 +138,6 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
             }
             else if(xAttr == "Time" && yAttr != "Time")
             {
-
                 x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
                     yEntityID, xAttr, secs, m_xRate);
                 y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(

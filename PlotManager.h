@@ -36,6 +36,7 @@ private:
     void initScatterLimitUI();
     void initScatterMarkersUI();
     void initAScopeUI();
+    void initRTIUI();
     void initEditableMap();
     void initUnitData();
 
@@ -50,6 +51,7 @@ private:
 	void refreshLightTextUI(PlotItemBase* plot);
     void refreshGOGUI(PlotItemBase* plot);
     void refreshAScopeUI(PlotItemBase* plot);
+    void refreshRTIUI(PlotItemBase* plot);
 
 	void refreshTextEditUI(PlotItemBase* plot);
 	void refreshAttitudeUI(PlotItemBase* plot);
@@ -70,6 +72,7 @@ private:
 	void enableItem_Doppler();
 
     void exchangeItem(QTableWidget* tableWidget, int selectedRow, int targetRow);
+    void refreshRTIColorRange();
 
 public slots:
     void onTWSclicked(QTreeWidgetItem* item, int i);
@@ -239,6 +242,14 @@ public slots:
     void onCheckBox_AutofitXStateChanged(int state);
     void onCheckBox_AutofitYStateChanged(int state);
 
+    // RTI
+    void onLineEdit_TimeSpanEditFinished();
+    void onComboBox_LabelDesityTextChanged(const QString& text);
+    void onComboBox_ColorIndexChanged(int index);
+    void onSlider_colorValueChanged(int value);
+    void onPushButton_NewColorClicked();
+    void onPushButton_DeleteColorClicked();
+
 signals:
     void sigAddPlotPair();
 	void sigAdvancedDataManager();
@@ -276,6 +287,7 @@ private:
     QHash<QString, QStringList> m_unitsMap;
     QMap<QString, QHash<QString, double>>
         m_rateMap; // QString：文件中的原始单位  QString：当前选中的单位  double：原始单位转换成当前单位需要除以的比例。例如 <m<mm,0.001>>
+    QImage m_RTIColorSliderImage;
 };
 
 #endif // !
