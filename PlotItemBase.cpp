@@ -205,6 +205,7 @@ void PlotItemBase::setCoordRangeX(double lower, double upper)
     {
         m_customPlot->xAxis->setRange(lower, upper);
     }
+    emit coordRangeChanged(true, lower, upper);
     replot();
 }
 
@@ -216,6 +217,7 @@ void PlotItemBase::setCoordRangeY(double lower, double upper)
     {
         m_customPlot->yAxis->setRange(lower, upper);
     }
+    emit coordRangeChanged(false, lower, upper);
     replot();
 }
 

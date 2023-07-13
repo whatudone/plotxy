@@ -57,6 +57,7 @@ void PlotManager::init()
     initTreeWidgetSettings();
     initGeneralUI();
     initAxisGridUI();
+    initLinkAxesUI();
     initGOGUI();
 
     initScatterLimitUI();
@@ -313,6 +314,26 @@ void PlotManager::initAxisGridScrollUI()
         ui.tableWidgetX, &QTableWidget::itemChanged, this, &PlotManager::onEnableDataPairChanged);
     connect(
         ui.tableWidgetY, &QTableWidget::itemChanged, this, &PlotManager::onEnableDataPairChanged);
+}
+
+void PlotManager::initLinkAxesUI()
+{
+    // X和Y共用一个槽函数，处理器时再区分
+    connect(ui.checkBoxLinkX, &QCheckBox::clicked, this, &PlotManager::onLinkAxesCheckedChanged);
+    connect(ui.checkBoxLinkY, &QCheckBox::clicked, this, &PlotManager::onLinkAxesCheckedChanged);
+
+    connect(ui.pushButtonRemoveLinkSet, &QPushButton::clicked, this, &PlotManager::onRemoveLinkSet);
+    connect(ui.pushButtonResetLinkSet, &QPushButton::clicked, this, &PlotManager::onResetLinkSet);
+
+    connect(ui.pushButtonAddLinkedSet, &QPushButton::clicked, this, &PlotManager::onAddLinkedSet);
+    connect(
+        ui.pushButtonRemoveLinkedSet, &QPushButton::clicked, this, &PlotManager::onRemoveLinkedSet);
+    connect(
+        ui.pushButtonUpdateLinkedSet, &QPushButton::clicked, this, &PlotManager::onUpdateLinkedSet);
+    connect(ui.pushButtonRemoveAllLinkedSet,
+            &QPushButton::clicked,
+            this,
+            &PlotManager::onRemoveAllLinkedSet);
 }
 
 void PlotManager::initTextLightUI()
@@ -2142,6 +2163,20 @@ void PlotManager::onComboBox_YUnitChanged(const QString& newUnit)
     m_curSelectPlot->setYRate(rate);
     m_curSelectPlot->setUnitsY(newUnit);
 }
+
+void PlotManager::onLinkAxesCheckedChanged(bool checked) {}
+
+void PlotManager::onRemoveLinkSet() {}
+
+void PlotManager::onResetLinkSet() {}
+
+void PlotManager::onAddLinkedSet() {}
+
+void PlotManager::onRemoveLinkedSet() {}
+
+void PlotManager::onUpdateLinkedSet() {}
+
+void PlotManager::onRemoveAllLinkedSet() {}
 
 void PlotManager::onPushButton_24Clicked()
 {

@@ -171,7 +171,6 @@ signals:
     // 通知图表时间轴当前时间发送变化
     void currentSecsChanged(double secs);
     void sgn_enableActionStop(bool);
-	void sgn_renameTabPage(QString, QString);
     // 状态栏鼠标模式切换
     void mouseModeChanged(MouseMode mode);
 

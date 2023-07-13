@@ -31,9 +31,10 @@ public:
     PlotItemBase* getPlotByTabAndName(const QString& tabName, const QString& plotName);
     void clearPlotData();
 
-public slots:
-	void slotChangePlotName();
-	void slotChangeTabName(QString oldName, QString newName);
+    void changeTabName(const QString& oldName, const QString& newName);
 signals:
     void plotDataChanged();
+
+public slots:
+    void onPlotCoordRangeChanged(bool isX, double min, double max);
 };

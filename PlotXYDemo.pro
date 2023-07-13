@@ -8,7 +8,6 @@ QT += core gui widgets printsupport network
 CONFIG += c++11
 LIBS += -luser32
 win32-msvc {
-    QMAKE_CXXFLAGS += /std:c++11
     QMAKE_CFLAGS += /utf-8
     QMAKE_CXXFLAGS += /utf-8
     DEFINES += NOMINMAX

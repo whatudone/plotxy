@@ -499,6 +499,7 @@ private:
     virtual void customPainting(QPainter&);
 signals:
     void dataPairsChanged(PlotItemBase* pBaseItem); //整体数据发生变化
+    void coordRangeChanged(bool isX, double min, double max);
 
 protected:
     // 部分为自绘,不需要这个控件就不需要创建，需要的子类自己初始化

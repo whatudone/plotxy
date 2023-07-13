@@ -105,7 +105,7 @@
         <number>1</number>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>5</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QVBoxLayout" name="verticalLayout_64" stretch="0,1,0,0,0,1">
@@ -2425,7 +2425,7 @@ color: rgb(255, 255, 255);</string>
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="lineEdit_37">
+                <widget class="QLineEdit" name="lineEditLinkGroupName">
                  <property name="text">
                   <string>Linked Axes Group</string>
                  </property>
@@ -2438,27 +2438,20 @@ color: rgb(255, 255, 255);</string>
                <item>
                 <layout class="QVBoxLayout" name="verticalLayout_22">
                  <item>
-                  <widget class="QCheckBox" name="checkBox_19">
+                  <widget class="QCheckBox" name="checkBoxLinkX">
                    <property name="text">
-                    <string>Link X Axis(Time)</string>
+                    <string>Link X Axis</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QCheckBox" name="checkBox_20">
+                  <widget class="QCheckBox" name="checkBoxLinkY">
                    <property name="text">
-                    <string>Link Y Axis(Mach)</string>
+                    <string>Link Y Axis</string>
                    </property>
                   </widget>
                  </item>
                 </layout>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_56">
-                 <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;左侧单位会随图&lt;/p&gt;&lt;p&gt;的变化而变化&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                </widget>
                </item>
                <item>
                 <spacer name="horizontalSpacer_23">
@@ -2530,19 +2523,19 @@ color: rgb(255, 255, 255);</string>
               </layout>
              </item>
              <item>
-              <widget class="QListWidget" name="listWidget_3"/>
+              <widget class="QListWidget" name="listWidgetLinkSet"/>
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_40">
                <item>
-                <widget class="QPushButton" name="pushButton_34">
+                <widget class="QPushButton" name="pushButtonRemoveLinkSet">
                  <property name="text">
                   <string>Remove</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButton_35">
+                <widget class="QPushButton" name="pushButtonResetLinkSet">
                  <property name="text">
                   <string>Reset</string>
                  </property>
@@ -2583,28 +2576,28 @@ color: rgb(255, 255, 255);</string>
                </spacer>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_30">
+               <widget class="QPushButton" name="pushButtonAddLinkedSet">
                 <property name="text">
                  <string>Add</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_31">
+               <widget class="QPushButton" name="pushButtonUpdateLinkedSet">
                 <property name="text">
                  <string>Update</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_32">
+               <widget class="QPushButton" name="pushButtonRemoveLinkedSet">
                 <property name="text">
                  <string>Remove</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_33">
+               <widget class="QPushButton" name="pushButtonRemoveAllLinkedSet">
                 <property name="text">
                  <string>Remove All</string>
                 </property>
@@ -2613,7 +2606,7 @@ color: rgb(255, 255, 255);</string>
              </layout>
             </item>
             <item>
-             <widget class="QTreeWidget" name="treeWidget_5">
+             <widget class="QTreeWidget" name="treeWidgetLinkedAxes">
               <column>
                <property name="text">
                 <string>Group Name</string>

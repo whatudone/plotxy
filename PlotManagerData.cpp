@@ -50,20 +50,16 @@ void PlotManagerData::clearPlotData()
     emit plotDataChanged();
 }
 
-void PlotManagerData::slotChangeTabName(QString oldName, QString newName)
+void PlotManagerData::changeTabName(const QString& oldName, const QString& newName)
 {
     if(m_plotMgrDataMap.contains(oldName))
-	{
+    {
         QList<PlotItemBase*> plots = m_plotMgrDataMap.value(oldName);
         m_plotMgrDataMap[newName].append(plots);
         m_plotMgrDataMap.remove(oldName);
-	}
+    }
 
     emit plotDataChanged();
 }
 
-void PlotManagerData::slotChangePlotName()
-{
-    // TODO
-    emit plotDataChanged();
-}
+void PlotManagerData::onPlotCoordRangeChanged(bool isX, double min, double max) {}

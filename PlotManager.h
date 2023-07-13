@@ -25,6 +25,7 @@ private:
 	void initGeneralUI();
 	void initAxisGridUI();
     void initAxisGridScrollUI();
+    void initLinkAxesUI();
 	void initPlotDataUI();
 	void initTextEditUI();
 	void initAttitudeUI();
@@ -122,6 +123,14 @@ public slots:
     void onComboBox_XUnitChanged(const QString& newUnit);
     void onComboBox_YUnitChanged(const QString& newUnit);
 
+    // Link Axis
+    void onLinkAxesCheckedChanged(bool checked);
+    void onRemoveLinkSet();
+    void onResetLinkSet();
+    void onAddLinkedSet();
+    void onRemoveLinkedSet();
+    void onUpdateLinkedSet();
+    void onRemoveAllLinkedSet();
     //GOG
     void onPushButton_24Clicked();
     void onPushButton_25Clicked();

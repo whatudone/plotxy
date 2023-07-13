@@ -64,11 +64,6 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
             m_timeCtrl,
             &TimeControls::onUpdateRealData);
 
-    connect(this,
-            SIGNAL(sgn_renameTabPage(QString, QString)),
-            PlotManagerData::getInstance(),
-            SLOT(slotChangeTabName(QString, QString)));
-
     connect(m_plotManager,
             &PlotManager::sigAddPlotPair,
             this,
@@ -459,8 +454,7 @@ void PlotXYDemo::onRenameTab()
         QString oldName = ui.tabWidget->tabText(currTabIndex);
         QString newName = dialog.getNewTabName();
         ui.tabWidget->setTabText(currTabIndex, newName);
-
-        emit sgn_renameTabPage(oldName, newName);
+        PlotManagerData::getInstance()->changeTabName(oldName, newName);
     }
 }
 
@@ -781,7 +775,9 @@ PlotItemBase* PlotXYDemo::addPlotWidget(PlotType type, const QRect& geo, const Q
     int currTabIndex = ui.tabWidget->currentIndex();
     QString currTabText = ui.tabWidget->tabText(currTabIndex);
     plotItem->setTabName(currTabText);
+    // 时间轴刷新处理
     connect(this, &PlotXYDemo::currentSecsChanged, plotItem, &PlotItemBase::onGetCurrentSeconds);
+    // 数据对数量修改后刷新三个界面
     connect(
         plotItem, &PlotItemBase::dataPairsChanged, m_addPlotPair, &AddPlotPair::onUpdatePlotPair);
     connect(plotItem, &PlotItemBase::dataPairsChanged, m_plotManager, &PlotManager::onSelectedPlot);
@@ -789,6 +785,12 @@ PlotItemBase* PlotXYDemo::addPlotWidget(PlotType type, const QRect& geo, const Q
             &PlotItemBase::dataPairsChanged,
             m_AdvancedDataManager,
             &AdvancedDataManager::onUpdatePlotPair);
+    // 链接轴，一个图形刷新了x或y的范围，同步刷新其他绑定的图形
+    connect(plotItem,
+            &PlotItemBase::coordRangeChanged,
+            PlotManagerData::getInstance(),
+            &PlotManagerData::onPlotCoordRangeChanged,
+            Qt::UniqueConnection);
 
     plotItem->show();
     plotItem->setCustomPlotMouseTransparent(true);
@@ -989,13 +991,13 @@ void PlotXYDemo::writeHDF5(const QString& outputFileName,
 {
 
     H5::H5File file(outputFileName.toLocal8Bit().data(), H5F_ACC_TRUNC);
-    hsize_t pxyDim[1] = {pxyData.size()};
+    hsize_t pxyDim[1] = {static_cast<uint64_t>(pxyData.size())};
     H5::DataSpace pxyDataspace(1, pxyDim);
     H5::DataSet pxyDataset =
         file.createDataSet("PXY_DATASET", H5::PredType::NATIVE_CHAR, pxyDataspace);
     pxyDataset.write(pxyData.data(), H5::PredType::NATIVE_CHAR);
 
-    hsize_t asiDim[1] = {asiData.size()};
+    hsize_t asiDim[1] = {static_cast<uint64_t>(asiData.size())};
     H5::DataSpace asiDataspace(1, asiDim);
     H5::DataSet asiDataset =
         file.createDataSet("ASI_DATASET", H5::PredType::NATIVE_CHAR, asiDataspace);
