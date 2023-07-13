@@ -199,6 +199,10 @@ private:
     void loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBase* plot);
     // 清理历史创建的tab页和其中的图表
     void clearAllTab();
+    // HDF5读写
+    void
+    writeHDF5(const QString& outputFileName, const QByteArray& pxyData, const QByteArray& asiData);
+    void readHDF5(const QString& inputFileName, QByteArray& pxyData, QByteArray& asiData);
 
 protected:
     void closeEvent(QCloseEvent* e) override;
@@ -238,6 +242,9 @@ private:
     QLabel* m_statusBar_null;
     // 当前时间
     static double m_seconds;
+
+    // 从h5文件中加载出来的asi数据
+    QByteArray m_asiData;
 };
 
 #endif // !

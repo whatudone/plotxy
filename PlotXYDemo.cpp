@@ -2,14 +2,15 @@
 
 #include <QApplication>
 #include <QButtonGroup>
+#include <QCheckBox>
 #include <QCloseEvent>
 #include <QFileDialog>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMetaType>
-#include <QtWidgets/QCheckBox>
-#include <QtWidgets/QPushButton>
+#include <QPushButton>
+#include <QTemporaryDir>
 
 #include "AddPlotPair.h"
 #include "AdvancedDataManager.h"
@@ -33,6 +34,8 @@
 #include "rename_tab_dialog.h"
 #include "tabdrawwidget.h"
 
+#include "H5Cpp.h"
+using namespace H5;
 double PlotXYDemo::m_seconds = 0.0;
 
 PlotXYDemo::PlotXYDemo(QWidget* parent)
@@ -816,11 +819,6 @@ TabDrawWidget* PlotXYDemo::getCurDrawWidget()
 
 void PlotXYDemo::savePXYData(const QString& pxyFileName)
 {
-    QFile file(pxyFileName);
-    if(!file.open(QIODevice::WriteOnly))
-    {
-        return;
-    }
     QJsonObject allObject;
     // 通用信息
     allObject.insert("Date", QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
@@ -870,28 +868,83 @@ void PlotXYDemo::savePXYData(const QString& pxyFileName)
 
     QJsonDocument jsonDoc;
     jsonDoc.setObject(allObject);
-    file.write(jsonDoc.toJson());
-    file.close();
+    if(m_asiData.isEmpty())
+    {
+        QByteArray asiData;
+        if(!dataFileName.isEmpty())
+        {
+            QFile asiFile(dataFileName);
+            asiFile.open(QFile::ReadOnly);
+            asiData = asiFile.readAll();
+            asiFile.close();
+        }
+        writeHDF5(pxyFileName, jsonDoc.toJson(), asiData);
+    }
+    else
+    {
+        writeHDF5(pxyFileName, jsonDoc.toJson(), m_asiData);
+    }
 }
 
 void PlotXYDemo::loadPXYData(const QString& pxyFileName)
 {
+    m_asiData.clear();
     QFile inFile(pxyFileName);
-    inFile.open(QIODevice::ReadOnly | QIODevice::Text);
-    QByteArray data = inFile.readAll();
-    inFile.close();
+    bool isJsonFormat = false;
+    QByteArray pxyData;
+    if(inFile.open(QIODevice::ReadOnly))
+    {
+        pxyData = inFile.readAll();
+        inFile.close();
+    }
+    else
+    {
+        return;
+    }
 
+    // 兼容旧版本的json格式，先尝试用json格式解析，如果失败就表示需要使用新的格式解析
     QJsonParseError error;
-    QJsonDocument doc = QJsonDocument::fromJson(data, &error);
+    QJsonDocument doc = QJsonDocument::fromJson(pxyData, &error);
     if(error.error != QJsonParseError::NoError)
     {
-        qDebug() << "Parse failed";
+        isJsonFormat = false;
+        readHDF5(pxyFileName, pxyData, m_asiData);
+        doc = QJsonDocument::fromJson(pxyData, &error);
+    }
+    else
+    {
+        isJsonFormat = true;
     }
     QJsonObject rootObj = doc.object();
-    QString dataFileName = rootObj.value("DataPath").toString();
-    if(!dataFileName.isEmpty())
+    if(isJsonFormat)
     {
-        DataManagerInstance->loadFileData(dataFileName);
+        QString dataFileName = rootObj.value("DataPath").toString();
+        if(!dataFileName.isEmpty())
+        {
+            DataManagerInstance->loadFileData(dataFileName);
+        }
+    }
+    else
+    {
+        // 兼容原来的接口，将数据先写进一个临时文件，然后加载之后删除临时文件
+        if(!m_asiData.isEmpty())
+        {
+            QTemporaryDir dir;
+            if(dir.isValid())
+            {
+                QString tmpPath = dir.path() + "/tmp.asi";
+                qDebug() << tmpPath;
+                QFile file(tmpPath);
+                if(file.open(QFile::WriteOnly))
+                {
+                    file.write(m_asiData);
+                    file.close();
+                    DataManagerInstance->loadFileData(tmpPath);
+                    DataManagerInstance->setDataFileName("");
+                }
+                file.remove();
+            }
+        }
     }
     QJsonArray allTabJsonArray = rootObj.value("Tabs").toArray();
     int32_t tabSize = allTabJsonArray.size();
@@ -928,6 +981,50 @@ void PlotXYDemo::loadPXYData(const QString& pxyFileName)
     PlotManagerData::getInstance()->blockSignals(false);
     // 屏蔽掉PlotManagerData中的信号，等全部加载完了之后，在触发信号，统一刷新一次三个界面
     emit PlotManagerData::getInstance()->plotDataChanged();
+}
+
+void PlotXYDemo::writeHDF5(const QString& outputFileName,
+                           const QByteArray& pxyData,
+                           const QByteArray& asiData)
+{
+
+    H5::H5File file(outputFileName.toLocal8Bit().data(), H5F_ACC_TRUNC);
+    hsize_t pxyDim[1] = {pxyData.size()};
+    H5::DataSpace pxyDataspace(1, pxyDim);
+    H5::DataSet pxyDataset =
+        file.createDataSet("PXY_DATASET", H5::PredType::NATIVE_CHAR, pxyDataspace);
+    pxyDataset.write(pxyData.data(), H5::PredType::NATIVE_CHAR);
+
+    hsize_t asiDim[1] = {asiData.size()};
+    H5::DataSpace asiDataspace(1, asiDim);
+    H5::DataSet asiDataset =
+        file.createDataSet("ASI_DATASET", H5::PredType::NATIVE_CHAR, asiDataspace);
+    asiDataset.write(asiData.data(), H5::PredType::NATIVE_CHAR);
+
+    file.close();
+}
+void PlotXYDemo::readHDF5(const QString& inputFileName, QByteArray& pxyData, QByteArray& asiData)
+{
+    H5::H5File file(inputFileName.toLocal8Bit().data(), H5F_ACC_RDONLY);
+
+    H5::DataSet pxyDataset = file.openDataSet("PXY_DATASET");
+    DataSpace pxyDataSpace = pxyDataset.getSpace();
+    hsize_t pxyDim = 0;
+    pxyDataSpace.getSimpleExtentDims(&pxyDim);
+    char* pxyBuffer = new char[pxyDim];
+    memset(pxyBuffer, 0, pxyDim);
+    pxyDataset.read(pxyBuffer, H5::PredType::NATIVE_CHAR);
+    pxyData = QByteArray(pxyBuffer, pxyDim);
+
+    H5::DataSet asiDataset = file.openDataSet("ASI_DATASET");
+    DataSpace asiDataSpace = asiDataset.getSpace();
+    hsize_t asiDim = 0;
+    asiDataSpace.getSimpleExtentDims(&asiDim);
+    char* asiBuffer = new char[asiDim];
+    memset(asiBuffer, 0, asiDim);
+    asiDataset.read(asiBuffer, H5::PredType::NATIVE_CHAR);
+    asiData = QByteArray(asiBuffer, asiDim);
+    file.close();
 }
 
 void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
