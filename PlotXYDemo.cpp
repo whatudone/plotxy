@@ -1324,6 +1324,28 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
             plotObject.insert("AScopeIsAutofitY", ascopePlot->isAutofitY());
         }
     }
+    else if(type == PlotType::Type_PlotRTI)
+    {
+        PlotRTI* rtiPlot = dynamic_cast<PlotRTI*>(plot);
+        if(rtiPlot)
+        {
+            plotObject.insert("RTITimeSpan", rtiPlot->getTimeSpan());
+            plotObject.insert("RTILabelDensity", rtiPlot->getLabelDensity());
+
+            QJsonArray colorInfo;
+            QMap<double, QColor> colorMap = rtiPlot->getColorRangeMap();
+            QList<double> valueList = colorMap.keys();
+            for(auto value : valueList)
+            {
+                QJsonObject object;
+                object.insert("RTIColorRangeValue", value);
+                object.insert("RTIColorRangeColor",
+                              color_transfer::QColorToRGBAStr(colorMap.value(value)));
+                colorInfo.append(object);
+            }
+            plotObject.insert("RTIColorRangeInfo", colorInfo);
+        }
+    }
 
     // 图表存在多个数据对
     QJsonArray dataPairArray;
@@ -1635,6 +1657,29 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
             ascopePlot->setIsAutofitY(plotObject.value("AScopeIsAutofitY").toBool());
         }
     }
+    else if(type == PlotType::Type_PlotRTI)
+    {
+        PlotRTI* rtiPlot = dynamic_cast<PlotRTI*>(plot);
+        if(rtiPlot)
+        {
+            rtiPlot->setTimeSpan(plotObject.value("RTITimeSpan").toInt());
+            rtiPlot->setLabelDensity(plotObject.value("RTILabelDensity").toString());
+
+            QJsonArray colorInfo = plotObject.value("RTIColorRangeInfo").toArray();
+            int size = colorInfo.size();
+            QMap<double, QColor> colorMap;
+            for(int i = 0; i < size; i++)
+            {
+                QJsonObject obj = colorInfo.at(i).toObject();
+                double value = obj.value("RTIColorRangeValue").toDouble();
+                QColor color =
+                    color_transfer::QColorFromRGBAStr(obj.value("RTIColorRangeColor").toString());
+                colorMap.insert(value, color);
+            }
+            rtiPlot->setColorRangeMap(colorMap);
+        }
+    }
+
     // 坐标变换的部分需要放到最后，前面有些设置还原时会影响坐标轴的效果，比如Bar切换横竖
     double lower, upper;
     lower = plotObject.value("PlotOriginX").toDouble();

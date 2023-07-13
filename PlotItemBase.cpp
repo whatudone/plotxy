@@ -91,7 +91,6 @@ PlotItemBase::PlotItemBase(QWidget* parent)
     QPalette palette = this->palette();
     palette.setColor(QPalette::Window, m_outerFillColor);
     this->setPalette(palette);
-
     updateResizeFocusPos();
     // 数据对整体发生变化时，更新界面
     connect(this,
