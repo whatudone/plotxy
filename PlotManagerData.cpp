@@ -1,4 +1,5 @@
 ﻿#include "PlotManagerData.h"
+#include "PlotItemBase.h"
 
 PlotManagerData::PlotManagerData(QObject* parent)
 	: QObject(parent)
@@ -62,4 +63,83 @@ void PlotManagerData::changeTabName(const QString& oldName, const QString& newNa
     emit plotDataChanged();
 }
 
-void PlotManagerData::onPlotCoordRangeChanged(bool isX, double min, double max) {}
+void PlotManagerData::onPlotCoordRangeChanged(bool isX, double min, double max)
+{
+    // 收到链接轴组内一个图表发送的range变化，控制组内其他
+    if(PlotItemBase* plot = qobject_cast<PlotItemBase*>(sender()))
+    {
+        for(const LinkedAxesGroupSet& set : m_linkedAxesSets)
+        {
+            QList<PlotItemBase*> plotList = set.plotList;
+            if(plotList.contains(plot) && set.isX == isX)
+            {
+                plotList.removeOne(plot);
+                for(PlotItemBase* plot : plotList)
+                {
+                    // 给其他图表同步范围时，避免引入死循环，重复触发信号，所以需要先将对象信号屏蔽
+                    plot->blockSignals(true);
+                    if(isX)
+                    {
+                        plot->setCoordRangeX(min, max);
+                    }
+                    else
+                    {
+                        plot->setCoordRangeY(min, max);
+                    }
+                    plot->blockSignals(false);
+                }
+                return;
+            }
+        }
+    }
+}
+
+QVector<PlotManagerData::LinkedAxesGroupSet> PlotManagerData::getLinkedAxesSets() const
+{
+    return m_linkedAxesSets;
+}
+
+void PlotManagerData::setLinkedAxesSets(const QVector<LinkedAxesGroupSet>& linkedAxesSets)
+{
+    m_linkedAxesSets = linkedAxesSets;
+}
+
+void PlotManagerData::addLinkedAxesSet(const QString& groupName,
+                                       bool isX,
+                                       const QList<PlotItemBase*>& plots)
+{
+    LinkedAxesGroupSet set;
+    set.groupName = groupName;
+    set.isX = isX;
+    set.plotList = plots;
+    m_linkedAxesSets.append(set);
+}
+
+void PlotManagerData::removeLinkedAxesSet(const QString& groupName)
+{
+    for(const auto& set : m_linkedAxesSets)
+    {
+        if(set.groupName == groupName)
+        {
+            m_linkedAxesSets.removeOne(set);
+            return;
+        }
+    }
+}
+
+void PlotManagerData::clearLinkedAxesSet()
+{
+    m_linkedAxesSets.clear();
+}
+
+bool PlotManagerData::groupNameExists(const QString& groupName)
+{
+    for(const auto& set : m_linkedAxesSets)
+    {
+        if(set.groupName == groupName)
+        {
+            return true;
+        }
+    }
+    return false;
+}

@@ -538,5 +538,5 @@ private:
     // Event
     QList<EventSettings> m_eventList;
 };
-
+Q_DECLARE_OPAQUE_POINTER(PlotItemBase)
 #endif // !

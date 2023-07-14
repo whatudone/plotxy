@@ -36,10 +36,7 @@ PlotManager::PlotManager(QWidget* parent)
             &PlotManagerData::plotDataChanged,
             this,
             &PlotManager::onUpdatePlotManager);
-    connect(this,
-            SIGNAL(sigChangePlotName()),
-            PlotManagerData::getInstance(),
-            SLOT(slotChangePlotName()));
+
     ui.treeWidget_selectedPlots->setStyle(QStyleFactory::create("windows"));
     ui.treeWidget_selectedPlots->setHeaderHidden(true);
     ui.treeWidget_selectedPlots->expandAll();
@@ -1016,6 +1013,18 @@ void PlotManager::refreshAxisGridScrollUI(PlotItemBase* plot)
     }
 }
 
+void PlotManager::refreshLinkAxesUI(PlotItemBase* plot)
+{
+    ui.checkBoxLinkX->blockSignals(true);
+    ui.checkBoxLinkY->blockSignals(true);
+    ui.checkBoxLinkX->setChecked(false);
+    ui.checkBoxLinkY->setChecked(false);
+    ui.checkBoxLinkX->setText(QString("Link X Axis(%1)").arg(plot->getUnitsX()));
+    ui.checkBoxLinkY->setText(QString("Link Y Axis(%1)").arg(plot->getUnitsY()));
+    ui.checkBoxLinkX->blockSignals(false);
+    ui.checkBoxLinkY->blockSignals(false);
+}
+
 void PlotManager::refreshPlotDataUI(PlotItemBase* plot)
 {
     QVector<DataPair*> dataPairs = plot->getDataPairs();
@@ -1444,6 +1453,8 @@ void PlotManager::onTWSPclicked(QTreeWidgetItem* item, int column)
         refreshGeneralUI(m_curSelectPlot);
         //Axis&Grid界面
         refreshAxisGridUI(m_curSelectPlot);
+        //link axes
+        refreshLinkAxesUI(m_curSelectPlot);
         //Text Edit
         refreshTextEditUI(m_curSelectPlot);
         //gog界面
@@ -1789,7 +1800,7 @@ void PlotManager::onLineEditPlotNameEditingFinished()
         if(newName.compare(oldName) != 0)
         {
             m_curSelectPlot->setName(newName);
-            emit sigChangePlotName();
+            emit PlotManagerData::getInstance()->plotDataChanged();
         }
     }
 }
@@ -2164,19 +2175,99 @@ void PlotManager::onComboBox_YUnitChanged(const QString& newUnit)
     m_curSelectPlot->setUnitsY(newUnit);
 }
 
-void PlotManager::onLinkAxesCheckedChanged(bool checked) {}
+void PlotManager::onLinkAxesCheckedChanged(bool checked)
+{
+    if(!m_curSelectPlot || !checked)
+    {
+        return;
+    }
+    bool isX = (sender() == ui.checkBoxLinkX);
+    QString axisStr = isX ? "X" : "Y";
+    QString unitStr = isX ? m_curSelectPlot->getUnitsX() : m_curSelectPlot->getUnitsY();
+    QListWidgetItem* item = new QListWidgetItem();
+    item->setText(QString("%1 %2 (%3)").arg(m_curSelectPlot->getName()).arg(axisStr).arg(unitStr));
+    item->setData(Qt::UserRole + 1, QVariant::fromValue<PlotItemBase*>(m_curSelectPlot));
+    ui.listWidgetLinkSet->addItem(item);
+}
 
-void PlotManager::onRemoveLinkSet() {}
+void PlotManager::onRemoveLinkSet()
+{
+    if(!ui.listWidgetLinkSet->currentIndex().isValid())
+    {
+        return;
+    }
+    delete ui.listWidgetLinkSet->currentItem();
+}
 
-void PlotManager::onResetLinkSet() {}
+void PlotManager::onResetLinkSet()
+{
+    ui.listWidgetLinkSet->clear();
+}
 
-void PlotManager::onAddLinkedSet() {}
+void PlotManager::onAddLinkedSet()
+{
+    QString groupName = ui.lineEditLinkGroupName->text();
+    if(groupName.isEmpty() || (ui.listWidgetLinkSet->count() <= 0))
+    {
+        return;
+    }
+    if(PlotManagerData::getInstance()->groupNameExists(groupName))
+    {
+        return;
+    }
+    bool isX = true;
+    QList<PlotItemBase*> plotList;
+    QString allLinkedSet;
+    int32_t linkSetSize = ui.listWidgetLinkSet->count();
+    for(int var = 0; var < linkSetSize; ++var)
+    {
+        QStringList list =
+            ui.listWidgetLinkSet->item(var)->text().split(" ", QString::SkipEmptyParts);
+        if(list.size() == 3)
+        {
+            auto plot =
+                ui.listWidgetLinkSet->item(var)->data(Qt::UserRole + 1).value<PlotItemBase*>();
+            plotList.append(plot);
+            isX = (list.at(1) == "X");
+            allLinkedSet.append(list.at(0) + " " + list.at(1));
+            if(var != linkSetSize - 1)
+            {
+                allLinkedSet.append(",");
+            }
+        }
+        else
+        {
+            continue;
+        }
+    }
+    QTreeWidgetItem* item = new QTreeWidgetItem();
+    item->setText(0, groupName);
+    item->setText(1, allLinkedSet);
+    ui.treeWidgetLinkedAxes->addTopLevelItem(item);
 
-void PlotManager::onRemoveLinkedSet() {}
+    PlotManagerData::getInstance()->addLinkedAxesSet(groupName, isX, plotList);
+}
+
+void PlotManager::onRemoveLinkedSet()
+{
+    if(!ui.treeWidgetLinkedAxes->currentIndex().isValid())
+    {
+        return;
+    }
+    auto item =
+        ui.treeWidgetLinkedAxes->takeTopLevelItem(ui.treeWidgetLinkedAxes->currentIndex().row());
+
+    PlotManagerData::getInstance()->removeLinkedAxesSet(item->text(0));
+    delete item;
+}
 
 void PlotManager::onUpdateLinkedSet() {}
 
-void PlotManager::onRemoveAllLinkedSet() {}
+void PlotManager::onRemoveAllLinkedSet()
+{
+    ui.treeWidgetLinkedAxes->clear();
+    PlotManagerData::getInstance()->clearLinkedAxesSet();
+}
 
 void PlotManager::onPushButton_24Clicked()
 {

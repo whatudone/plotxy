@@ -45,6 +45,7 @@ private:
 	void refreshGeneralUI(PlotItemBase* plot);
 	void refreshAxisGridUI(PlotItemBase* plot);
     void refreshAxisGridScrollUI(PlotItemBase* plot);
+    void refreshLinkAxesUI(PlotItemBase* plot);
 	void refreshPlotDataUI(PlotItemBase* plot);
 	void refreshLightTextUI(PlotItemBase* plot);
     void refreshGOGUI(PlotItemBase* plot);
@@ -243,7 +244,6 @@ signals:
 	void sigAdvancedDataManager();
 	void sigGetTabRect();
 	void sigSetPlotVisible(bool);
-	void sigChangePlotName();
 
 private:
     Ui::PlotManager ui;
