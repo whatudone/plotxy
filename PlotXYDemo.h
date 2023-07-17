@@ -196,6 +196,10 @@ private:
     void saveDataPairToJson(DataPair* dataPair, QJsonObject& object, PlotType type);
     // 加载数据对信息
     void loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBase* plot);
+    // 保存图表管理数据
+    void savePlotManagerData(QJsonObject& plotManagerObject);
+    // 加载图表管理数据
+    void loadPlotManagerData(const QJsonObject& plotManagerObject);
     // 清理历史创建的tab页和其中的图表
     void clearAllTab();
     // HDF5读写

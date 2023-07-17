@@ -867,6 +867,9 @@ void PlotXYDemo::savePXYData(const QString& pxyFileName)
         allTabJsonArray.append(tabObjct);
     }
     allObject.insert("Tabs", allTabJsonArray);
+    QJsonObject plotManagerObj;
+    savePlotManagerData(plotManagerObj);
+    allObject.insert("PlotManagerData", plotManagerObj);
 
     QJsonDocument jsonDoc;
     jsonDoc.setObject(allObject);
@@ -980,6 +983,9 @@ void PlotXYDemo::loadPXYData(const QString& pxyFileName)
             }
         }
     }
+    QJsonObject plotManagerObj = rootObj.value("PlotManagerData").toObject();
+    loadPlotManagerData(plotManagerObj);
+
     PlotManagerData::getInstance()->blockSignals(false);
     // 屏蔽掉PlotManagerData中的信号，等全部加载完了之后，在触发信号，统一刷新一次三个界面
     emit PlotManagerData::getInstance()->plotDataChanged();
@@ -1347,6 +1353,7 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
     QString plotName = plotObject.value("PlotName").toString();
 
     auto plot = addPlotWidget(type, QRect(x, y, width, height), plotName);
+    plot->blockSignals(true);
     plot->setBVisible(plotObject.value("IsDraw").toBool());
     plot->setOuterFillColor(
         color_transfer::QColorFromRGBAStr(plotObject.value("PlotOuterFillColor").toString()));
@@ -1642,6 +1649,7 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
     lower = plotObject.value("PlotOriginY").toDouble();
     upper = plotObject.value("PlotEndY").toDouble();
     plot->setCoordRangeY(lower, upper);
+    plot->blockSignals(false);
 
     return plot;
 }
@@ -2022,6 +2030,57 @@ void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBas
     dataPair->blockSignals(false);
     // 每次set接口会调用一次刷新，为了提高性能，这里等到全部参数设置完成才进行通知刷新
     emit dataPair->dataUpdate();
+}
+
+void PlotXYDemo::savePlotManagerData(QJsonObject& plotManagerObject)
+{
+    auto linkedAxesSets = PlotManagerData::getInstance()->getLinkedAxesSets();
+    QJsonArray linkedAxesArray;
+    for(const auto& set : linkedAxesSets)
+    {
+        QJsonObject setObj;
+        setObj.insert("GroupName", set.groupName);
+        setObj.insert("IsXAxes", set.isX);
+        QString plotNameList;
+        auto plotList = set.plotList;
+        for(auto plot : plotList)
+        {
+            plotNameList.append(plot->getTabName() + "," + plot->getName() + ";");
+        }
+        setObj.insert("PlotNameList", plotNameList);
+
+        linkedAxesArray.append(setObj);
+    }
+
+    plotManagerObject.insert("LinkedAxesSets", linkedAxesArray);
+}
+
+void PlotXYDemo::loadPlotManagerData(const QJsonObject& plotManagerObject)
+{
+    QJsonArray linkedAxesArray = plotManagerObject.value("LinkedAxesSets").toArray();
+    QVector<PlotManagerData::LinkedAxesGroupSet> sets;
+    for(const auto& setValue : linkedAxesArray)
+    {
+        QJsonObject setObj = setValue.toObject();
+        PlotManagerData::LinkedAxesGroupSet set;
+        set.groupName = setObj.value("GroupName").toString();
+        set.isX = setObj.value("IsXAxes").toBool();
+        QString plotListStr = setObj.value("PlotNameList").toString();
+        QStringList plotInfoList = plotListStr.split(";", QString::SkipEmptyParts);
+        for(const QString& tmpPlotInfo : plotInfoList)
+        {
+            QStringList plotInfo = tmpPlotInfo.split(",", QString::SkipEmptyParts);
+            if(plotInfo.size() == 2)
+            {
+                QString tabName = plotInfo.at(0);
+                QString plotName = plotInfo.at(1);
+                auto plot = PlotManagerData::getInstance()->getPlotByTabAndName(tabName, plotName);
+                set.plotList.append(plot);
+            }
+        }
+        sets.append(set);
+    }
+    PlotManagerData::getInstance()->setLinkedAxesSets(sets);
 }
 
 void PlotXYDemo::clearAllTab()
