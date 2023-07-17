@@ -255,7 +255,7 @@ void AddPlotPair::initStackedWidget_pageAScope()
 
 void AddPlotPair::initTreePlot()
 {
-    m_treePlot = new QTreeWidget();
+    m_treePlot = new QTreeWidget(this);
     m_menuPlot = new QMenu(this);
     m_widgetActionPlot = new QWidgetAction(m_treePlot);
     m_treePlot->setFrameShape(QFrame::NoFrame);
@@ -740,6 +740,8 @@ void AddPlotPair::onDoubleClickedTreeWidgetItem(QTreeWidgetItem* item, int colum
             ui.tableWidget_union->setItem(row, 1, addplot2);
         }
     }
+    // 双击之后隐藏树形菜单
+    m_menuPlot->close();
 }
 // 更新已经添加的DataPair里面的数据
 void AddPlotPair::onBtnUpdateClicked()

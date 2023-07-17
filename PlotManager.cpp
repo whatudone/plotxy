@@ -1504,6 +1504,36 @@ void PlotManager::onUpdatePlotManager()
     auto plotDataMap = PlotManagerData::getInstance()->getPlotManagerData();
     if(plotDataMap.isEmpty())
         return;
+    // 刷新链接轴
+    ui.treeWidgetLinkedAxes->clear();
+
+    auto linkedSets = PlotManagerData::getInstance()->getLinkedAxesSets();
+    for(const PlotManagerData::LinkedAxesGroupSet& set : linkedSets)
+    {
+        QTreeWidgetItem* item = new QTreeWidgetItem();
+        item->setText(0, set.groupName);
+
+        QString allLinkedSet;
+        int32_t plotSize = set.plotList.size();
+        for(int var = 0; var < plotSize; ++var)
+        {
+            auto plot = set.plotList.at(var);
+            if(set.isX)
+            {
+                allLinkedSet.append(plot->getName() + " X");
+            }
+            else
+            {
+                allLinkedSet.append(plot->getName() + " Y");
+            }
+            if(var != plotSize - 1)
+            {
+                allLinkedSet.append(",");
+            }
+        }
+        item->setText(1, allLinkedSet);
+        ui.treeWidgetLinkedAxes->addTopLevelItem(item);
+    }
 
     for(int i = 0; i < plotDataMap.size(); ++i)
     {
