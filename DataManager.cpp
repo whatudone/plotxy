@@ -65,6 +65,7 @@ bool DataManager::saveDataToASI(const QString& asiFileName)
         return false;
     }
     QTextStream stream(&file);
+    stream.setCodec(QTextCodec::codecForName("utf-8"));
     stream << "# Scenario Initialization Keywords"
            << "\r\n";
     stream << "RefLLA"

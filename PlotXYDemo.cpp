@@ -889,6 +889,8 @@ void PlotXYDemo::savePXYData(const QString& pxyFileName)
     {
         writeHDF5(pxyFileName, jsonDoc.toJson(), m_asiData);
     }
+    if(DataManagerInstance->getIsRealTime())
+        QFile::remove(dataFileName);
 }
 
 void PlotXYDemo::loadPXYData(const QString& pxyFileName)
