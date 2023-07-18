@@ -66,7 +66,8 @@ void PlotScatter::initPlot()
     m_customPlot->xAxis->setLabel(m_xAxisLabel);
     m_customPlot->yAxis->setLabel(m_yAxisLabel);
 
-    m_customPlot->setBackground(m_gridFillColor);
+    QBrush backBrush(m_gridFillColor, Qt::SolidPattern);
+    m_customPlot->setBackground(backBrush);
     m_customPlot->axisRect()->setBackground(m_gridFillColor);
     m_customPlot->xAxis->setLabelColor(m_xAxisLabelColor);
     m_customPlot->yAxis->setLabelColor(m_yAxisLabelColor);
@@ -186,11 +187,11 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
 void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
 {
     if(!data)
-    {
+	{
         return;
     }
     if(m_isTimeLine)
-    {
+	{
         updateTimelineGraph();
         return;
     }
@@ -198,11 +199,11 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
     auto x = m_dataHash.value(uuid).first;
     auto y = m_dataHash.value(uuid).second;
     if(x.isEmpty() || y.isEmpty())
-	{
+    {
         return;
     }
     if(!m_mapScatter.contains(uuid))
-	{
+    {
         DrawComponents info;
         info.graph = m_customPlot->addGraph();
         // 默认采样值是true，在某些情况下采样会导致把原始数据处理错误，导致连线时路径错误

@@ -5,6 +5,7 @@
 #include "constdef.h"
 #include <string>
 
+#include <QColor>
 #include <QPainterPath>
 class TimeStamp;
 

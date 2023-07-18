@@ -4,9 +4,11 @@
 
 TEMPLATE = app
 TARGET = SimDataAnalyzer
-QT += core gui widgets printsupport network
+QT += core gui widgets printsupport network opengl
+
+DEFINES += QCUSTOMPLOT_USE_OPENGL
 CONFIG += c++11
-LIBS += -luser32
+LIBS += -luser32 -lopengl32
 win32-msvc {
     QMAKE_CFLAGS += /utf-8
     QMAKE_CXXFLAGS += /utf-8

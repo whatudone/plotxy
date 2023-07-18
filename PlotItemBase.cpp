@@ -1558,6 +1558,8 @@ void PlotItemBase::setupLayout()
     if(m_customPlot)
     {
         mainLayout->addWidget(m_customPlot, 9);
+
+        m_customPlot->setOpenGl(true);
     }
     else if(m_widget)
     {
