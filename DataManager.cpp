@@ -91,7 +91,7 @@ bool DataManager::saveDataToASI(const QString& asiFileName)
         stream << "\r\n";
 
         //开始写入属性与数据
-        auto attrUnitList = m_attrUnitHash.value(id);
+        auto attrUnitList = m_isRealTime ? m_realUnitHash.value(id) : m_attrUnitHash.value(id);
         stream << "#Keyword"
                << ", "
                << "PlatformID";
