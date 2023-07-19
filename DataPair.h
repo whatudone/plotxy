@@ -42,7 +42,8 @@ public:
         FollowPitch,
         FollowRoll,
         FollowCourse,
-        FollwFPAngle
+        FollowFPAngle,
+        FollowBearing
     };
 
     enum ColorRangeMode
