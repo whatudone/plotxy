@@ -47,6 +47,8 @@ public:
     void rescaleYAxis() override;
     void rescaleAxis() override;
 
+    void setGridFillColor(const QColor& color);
+
     void drawGOGData() override;
     struct DrawComponents
     {

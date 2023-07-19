@@ -35,7 +35,6 @@ void PlotPolar::initPlot()
     m_angularAxis = new QCPPolarAxisAngular(m_customPlot);
     m_angularAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
     m_customPlot->plotLayout()->addElement(0, 0, m_angularAxis);
-    m_customPlot->setBackground(m_gridFillColor);
 
     m_angularAxis->setRangeDrag(false);
     m_angularAxis->setTickLabelMode(QCPPolarAxisAngular::lmUpright);
@@ -287,6 +286,16 @@ void PlotPolar::rescaleAxis()
 {
     m_customPlot->rescaleAxes();
     m_customPlot->replot();
+}
+
+void PlotPolar::setGridFillColor(const QColor& color)
+{
+    m_gridFillColor = color;
+    if(m_customPlot && m_angularAxis)
+    {
+        m_angularAxis->setBackground(color);
+        m_customPlot->replot();
+    }
 }
 
 void PlotPolar::drawGOGData()

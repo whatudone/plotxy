@@ -1558,8 +1558,10 @@ void PlotItemBase::setupLayout()
     if(m_customPlot)
     {
         mainLayout->addWidget(m_customPlot, 9);
-
         m_customPlot->setOpenGl(true);
+        // 图表部分透明，其他区域在图表管理中进行手动设置
+        m_customPlot->setStyleSheet("background:hsva(255,255,255,0%);");
+        m_customPlot->setBackground(Qt::transparent);
     }
     else if(m_widget)
     {

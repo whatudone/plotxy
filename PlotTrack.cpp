@@ -49,7 +49,6 @@ void PlotTrack::initPlot()
     m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
     m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
 
-    m_customPlot->setBackground(m_gridFillColor);
     m_customPlot->axisRect()->setBackground(m_gridFillColor);
 
     m_customPlot->yAxis->setTickLabelRotation(45); // 轴刻度文字旋转45度

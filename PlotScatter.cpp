@@ -66,8 +66,6 @@ void PlotScatter::initPlot()
     m_customPlot->xAxis->setLabel(m_xAxisLabel);
     m_customPlot->yAxis->setLabel(m_yAxisLabel);
 
-    QBrush backBrush(m_gridFillColor, Qt::SolidPattern);
-    m_customPlot->setBackground(backBrush);
     m_customPlot->axisRect()->setBackground(m_gridFillColor);
     m_customPlot->xAxis->setLabelColor(m_xAxisLabelColor);
     m_customPlot->yAxis->setLabelColor(m_yAxisLabelColor);
