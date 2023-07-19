@@ -1009,7 +1009,7 @@ void DataManager::onRecvPlatinfoData(const MARS_PlatInfoDataExcect& plat)
         attrUnitList.append(QPair<QString, QString>("Fuel", "sec"));
         attrUnitList.append(QPair<QString, QString>("Dammager", "na"));
         attrUnitList.append(QPair<QString, QString>("Speed", "m/sec"));
-        attrUnitList.append(QPair<QString, QString>("Bearing", "na"));
+        attrUnitList.append(QPair<QString, QString>("Bearing", "deg"));
         attrUnitList.append(QPair<QString, QString>("Lat", "deg"));
         attrUnitList.append(QPair<QString, QString>("Lon", "deg"));
         attrUnitList.append(QPair<QString, QString>("Alt", "m"));

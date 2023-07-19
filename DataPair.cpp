@@ -428,6 +428,11 @@ QPixmap DataPair::processIcon()
         trans.rotate(roll);
     }
     break;
+    case DataPair::FollowBearing: {
+        double bearing = DataManagerInstance->getEntityAttrValueByMaxTime(
+            m_entityIDX, "Bearing", PlotXYDemo::getSeconds(), 1.0);
+        trans.rotate(bearing);
+    }
     default:
         trans.rotate(0);
         break;
