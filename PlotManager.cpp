@@ -137,7 +137,6 @@ void PlotManager::initTreeWidgetSettings()
     m_itemTimeLine = new QTreeWidgetItem(m_itemScatterPlot, QStringList("Time Line"));
     m_itemHandsOff = new QTreeWidgetItem(m_itemScatterPlot, QStringList("Hands-Off"));
 
-    //	ui.treeWidget_settings->setCurrentItem(m_itemGeneral);
     m_itemScatterPlot->setExpanded(true);
 
     ui.treeWidget_settings->setEnabled(true);
@@ -1459,6 +1458,15 @@ void PlotManager::onTWSPclicked(QTreeWidgetItem* item, int column)
         refreshTextEditUI(m_curSelectPlot);
         //gog界面
         refreshGOGUI(m_curSelectPlot);
+
+        //如果上个图表支持某项设置，此时切换到不支持的图标上，当前设置项仍会处于这个不支持的属性设置界面，导致逻辑错误，此时需要切换到第一个通用的属性界面上
+        if(ui.treeWidget_settings->currentIndex().isValid() &&
+           ui.treeWidget_settings->currentItem()->isDisabled())
+        {
+            ui.treeWidget_settings->setCurrentItem(m_itemGeneral, 0);
+            // 手动触发一下切换tab设置页之后的槽函数
+            onTWSclicked(m_itemGeneral, 0);
+        }
     }
 }
 
