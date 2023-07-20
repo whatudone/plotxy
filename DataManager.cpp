@@ -1181,3 +1181,24 @@ void DataManager::clearData()
     m_gogFileList.clear();
     m_dataFileName.clear();
 }
+
+void DataManager::clearOffLineData()
+{
+    m_newEntityDataMap.clear();
+    m_platformMap.clear();
+    m_genericMap.clear();
+    m_timeDataSet.clear();
+    m_gogFileList.clear();
+    m_dataFileName.clear();
+}
+
+void DataManager::clearLiveData()
+{
+    m_realDataMap.clear();
+    m_realPlatformMap.clear();
+    m_protobufPlatformMap.clear();
+    m_realGenericMap.clear();
+    m_timeDataSet.clear();
+    m_gogFileList.clear();
+    m_dataFileName.clear();
+}

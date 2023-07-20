@@ -1241,7 +1241,7 @@ void PlotManager::enableItem_Scatter()
 {
     m_itemAxis->setDisabled(false);
     m_itemLinkedAxis->setDisabled(false);
-    m_itemPlotData->setDisabled(false);
+    m_itemPlotData->setDisabled(true);
     m_itemGOG->setDisabled(false);
     m_itemScatterPlot->setDisabled(false);
     m_itemAScope->setDisabled(true);
@@ -1258,7 +1258,7 @@ void PlotManager::enableItem_AScope()
 {
     m_itemAxis->setDisabled(false);
     m_itemLinkedAxis->setDisabled(false);
-    m_itemPlotData->setDisabled(false);
+    m_itemPlotData->setDisabled(true);
     m_itemGOG->setDisabled(true);
     m_itemScatterPlot->setDisabled(true);
     m_itemAScope->setDisabled(false);
@@ -1293,7 +1293,7 @@ void PlotManager::enableItem_Text_Light()
     m_itemLinkedAxis->setDisabled(true);
     m_itemAxis->setDisabled(true);
     m_itemGOG->setDisabled(true);
-    m_itemPlotData->setDisabled(false);
+    m_itemPlotData->setDisabled(true);
     m_itemScatterPlot->setDisabled(true);
     m_itemAScope->setDisabled(true);
     m_itemRTI->setDisabled(true);
@@ -1309,7 +1309,7 @@ void PlotManager::enableItem_Bar()
 {
     m_itemAxis->setDisabled(false);
     m_itemLinkedAxis->setDisabled(false);
-    m_itemPlotData->setDisabled(false);
+    m_itemPlotData->setDisabled(true);
     m_itemGOG->setDisabled(true);
     m_itemScatterPlot->setDisabled(true);
     m_itemAScope->setDisabled(true);
@@ -1326,7 +1326,7 @@ void PlotManager::enableItem_Dial()
 {
     m_itemAxis->setDisabled(false);
     m_itemLinkedAxis->setDisabled(true);
-    m_itemPlotData->setDisabled(false);
+    m_itemPlotData->setDisabled(true);
     m_itemGOG->setDisabled(true);
     m_itemScatterPlot->setDisabled(true);
     m_itemAScope->setDisabled(true);
@@ -1360,7 +1360,7 @@ void PlotManager::enableItem_Polar()
 {
     m_itemAxis->setDisabled(false);
     m_itemLinkedAxis->setDisabled(true);
-    m_itemPlotData->setDisabled(false);
+    m_itemPlotData->setDisabled(true);
     m_itemGOG->setDisabled(false);
     m_itemScatterPlot->setDisabled(true);
     m_itemAScope->setDisabled(true);
@@ -1377,7 +1377,7 @@ void PlotManager::enableItem_Track()
 {
     m_itemAxis->setDisabled(false);
     m_itemLinkedAxis->setDisabled(true);
-    m_itemPlotData->setDisabled(false);
+    m_itemPlotData->setDisabled(true);
     m_itemGOG->setDisabled(true);
     m_itemScatterPlot->setDisabled(true);
     m_itemAScope->setDisabled(true);

@@ -250,7 +250,7 @@ private:
 
 	QTreeWidgetItem* m_itemGeneral;
 	QTreeWidgetItem* m_itemAxis;
-	QTreeWidgetItem* m_itemPlotData;
+    QTreeWidgetItem* m_itemPlotData;
 	QTreeWidgetItem* m_itemText;
 	QTreeWidgetItem* m_itemGOG;
 	QTreeWidgetItem* m_itemLinkedAxis;

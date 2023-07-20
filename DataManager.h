@@ -180,6 +180,8 @@ public:
     void setDataFileName(const QString& dataFileName);
 
     void clearData();
+    void clearOffLineData();
+    void clearLiveData();
 
     recvThread* getRecvThread() const;
 
