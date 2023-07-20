@@ -85,17 +85,18 @@ private:
     QVector<double> m_timeDataVector;
     // 新的数据存储结构 <EntityID,<<Attr>,DataList>> qhash是随机排序，性能比qmap强
     QMap<int32_t, QHash<QString, QVector<double>>> m_newEntityDataMap;
-    QMap<int32_t, QHash<QString, QVector<double>>> m_realDataMap;
-    QHash<int32_t, QList<QPair<QString, QString>>> m_realUnitHash;
-    QMap<int32_t, RealPlatform> m_realPlatformMap;
-    QMap<int32_t, ProtobufPlatForm> m_protobufPlatformMap;
+    //    QMap<int32_t, QHash<QString, QVector<double>>> m_realDataMap;
+
+    //    QMap<int32_t, RealPlatform> m_realPlatformMap;
+    //    QMap<int32_t, ProtobufPlatForm> m_protobufPlatformMap;
     // <EntityID, <attr,unit>>
+    //    QHash<int32_t, QList<QPair<QString, QString>>> m_realUnitHash;
     QHash<int32_t, QList<QPair<QString, QString>>> m_attrUnitHash;
     // 平台map数据
     QMap<int32_t, Platform> m_platformMap;
     // 事件map数据
     QMap<int32_t, QMap<QString, QList<GenericData>>> m_genericMap;
-    QMap<int32_t, QMap<QString, QList<GenericData>>> m_realGenericMap;
+    //    QMap<int32_t, QMap<QString, QList<GenericData>>> m_realGenericMap;
     // 时间以s为计算单位，小数位表示ms
     double m_minTime = 0.0;
     double m_maxTime = 0.0;
@@ -111,7 +112,6 @@ private:
     QList<QString> m_gogFileList;
     // 导入数据文件路径
     QString m_dataFileName;
-    bool m_isRealTime;
 
     QMap<QString, QList<GOGDataInfo>> m_gogDataMap;
 
@@ -180,16 +180,15 @@ public:
     void setDataFileName(const QString& dataFileName);
 
     void clearData();
-    void clearOffLineData();
-    void clearLiveData();
 
     recvThread* getRecvThread() const;
 
     void setIsRealTime(bool isRealTime);
 
-    bool getIsRealTime() const;
+    void loadLiveEventType();
+
     // 保存ASI数据，主要是用于在线模式回放数据
-    bool saveDataToASI(const QString& file);
+    bool saveDataToASI(QString& file);
 
     QString getGroupNameByID(int32_t id);
     QString getUnitByAttr(int32_t id, const QString& attr);

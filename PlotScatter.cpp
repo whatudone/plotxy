@@ -185,11 +185,11 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
 void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
 {
     if(!data)
-	{
+    {
         return;
     }
     if(m_isTimeLine)
-	{
+    {
         updateTimelineGraph();
         return;
     }
@@ -197,11 +197,11 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
     auto x = m_dataHash.value(uuid).first;
     auto y = m_dataHash.value(uuid).second;
     if(x.isEmpty() || y.isEmpty())
-    {
+	{
         return;
     }
     if(!m_mapScatter.contains(uuid))
-    {
+	{
         DrawComponents info;
         info.graph = m_customPlot->addGraph();
         // 默认采样值是true，在某些情况下采样会导致把原始数据处理错误，导致连线时路径错误
@@ -694,15 +694,7 @@ void PlotScatter::updateTimelineGraph()
             }
             if(event.m_isIncludeTag)
             {
-                // 离线数据中eventname包含了平台信息，在线数据中需要自己拼接
-                if(DataManagerInstance->getIsRealTime())
-                {
-                    text.append(data.m_platName + data.m_eventName);
-                }
-                else
-                {
-                    text.append(data.m_eventName);
-                }
+                text.append(data.m_platName + data.m_eventName);
             }
             text.append(QString("(%1s)").arg(data.m_relativeTime));
             textItem->setText(text);

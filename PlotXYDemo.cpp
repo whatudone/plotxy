@@ -824,21 +824,12 @@ void PlotXYDemo::savePXYData(const QString& pxyFileName)
     QJsonObject allObject;
     // 通用信息
     allObject.insert("Date", QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
-    // 在线模式先存储数据
+    // 不区分离线还是在线，保存时统一先在一个临时文件中存储数据
     QString dataFileName;
-    if(DataManagerInstance->getIsRealTime())
+    if(!DataManagerInstance->saveDataToASI(dataFileName))
     {
-        dataFileName = QFileInfo(pxyFileName).absolutePath() + "/" +
-                       QFileInfo(pxyFileName).baseName() + ".asi";
-        if(!DataManagerInstance->saveDataToASI(dataFileName))
-        {
-            qDebug() << "保存在线数据失败";
-            dataFileName = "";
-        }
-    }
-    else
-    {
-        dataFileName = DataManagerInstance->getDataFileName();
+        qDebug() << "保存数据失败";
+        dataFileName = "";
     }
 
     // 图表空间信息,多个tab，每个tab包含多个plot
@@ -888,8 +879,11 @@ void PlotXYDemo::savePXYData(const QString& pxyFileName)
     {
         writeHDF5(pxyFileName, jsonDoc.toJson(), m_asiData);
     }
-    if(DataManagerInstance->getIsRealTime())
+    // 删除临时文件
+    if(QFileInfo::exists(dataFileName))
+    {
         QFile::remove(dataFileName);
+    }
 }
 
 void PlotXYDemo::loadPXYData(const QString& pxyFileName)
@@ -2203,9 +2197,11 @@ void PlotXYDemo::onTimeClient() {}
 void PlotXYDemo::onRealTime()
 {
     bool isChecked = ui.actionReal_Time->isChecked();
-    DataManager::getInstance()->setIsRealTime(isChecked);
+    DataManager::getInstance()->loadLiveEventType();
     if(isChecked)
     {
+        // 清理离线数据
+        DataManager::getInstance()->clearData();
         DataManager::getInstance()->getRecvThread()->start();
     }
     else
