@@ -14,6 +14,7 @@
 #include <QMessageBox>
 #include <QRegularExpression>
 #include <QSettings>
+#include <QTemporaryDir>
 #include <QTextCodec>
 
 #include <iostream>
@@ -23,7 +24,6 @@
 #include "Utils.h"
 
 DataManager::DataManager()
-    : m_isRealTime(false)
 {
     m_recvThread = new recvThread;
     connect(m_recvThread, &recvThread::genericReceived, this, &DataManager::onRecvGenericData);
@@ -35,11 +35,6 @@ DataManager::DataManager()
 
 DataManager::~DataManager() {}
 
-bool DataManager::getIsRealTime() const
-{
-    return m_isRealTime;
-}
-
 bool DataManager::saveDataToASI(const QString& asiFileName)
 {
     QFile file(asiFileName);
@@ -48,20 +43,11 @@ bool DataManager::saveDataToASI(const QString& asiFileName)
         qDebug() << "DataManager::saveDataToASI read file failure.";
         return false;
     }
-    QMap<int32_t, QHash<QString, QVector<double>>> dataMap;
-    if(m_isRealTime)
-    {
-        dataMap = m_realDataMap;
-    }
-    else
-    {
-        dataMap = m_newEntityDataMap;
-    }
-    auto idList = dataMap.keys();
+
+    auto idList = m_newEntityDataMap.keys();
     if(idList.isEmpty())
     {
         file.close();
-        file.remove();
         return false;
     }
     QTextStream stream(&file);
@@ -77,7 +63,7 @@ bool DataManager::saveDataToASI(const QString& asiFileName)
     // 循环输出平台数据
     for(int32_t id : idList)
     {
-        auto platDataHash = dataMap.value(id);
+        auto platDataHash = m_newEntityDataMap.value(id);
         auto platName = getEntityNameByID(id);
         auto platIcon = getEntityIconByID(id);
         stream << "# Platform Keywords"
@@ -91,7 +77,7 @@ bool DataManager::saveDataToASI(const QString& asiFileName)
         stream << "\r\n";
 
         //开始写入属性与数据
-        auto attrUnitList = m_isRealTime ? m_realUnitHash.value(id) : m_attrUnitHash.value(id);
+        auto attrUnitList = m_attrUnitHash.value(id);
         stream << "#Keyword"
                << ", "
                << "PlatformID";
@@ -121,20 +107,10 @@ bool DataManager::saveDataToASI(const QString& asiFileName)
         }
         stream << "\r\n";
         // 循环写入本平台的事件
-
-        QMap<int32_t, QMap<QString, QList<GenericData>>> genericMap;
-        if(m_isRealTime)
+        if(m_genericMap.contains(id))
         {
-            genericMap = m_realGenericMap;
-        }
-        else
-        {
-            genericMap = m_genericMap;
-        }
-        if(genericMap.contains(id))
-        {
-            auto tags = genericMap.value(id).keys();
-            auto genericDataMap = genericMap.value(id);
+            auto tags = m_genericMap.value(id).keys();
+            auto genericDataMap = m_genericMap.value(id);
             for(const auto& tag : tags)
             {
                 auto genericList = genericDataMap.value(tag);
@@ -324,12 +300,8 @@ void DataManager::loadASIData(const QString& asiFileName)
         qDebug() << "DataManager::loadASIData read file failure.";
         return;
     }
-    m_newEntityDataMap.clear();
-    m_attrUnitHash.clear();
-    m_timeDataSet.clear();
-    m_platformMap.clear();
-    m_genericMap.clear();
-    m_gogFileList.clear();
+    // 清理数据
+    clearData();
 
     // 循环读取每一行，避免一次性读取内存占用过大
     while(!file.atEnd())
@@ -532,10 +504,8 @@ void DataManager::loadASIData(const QString& asiFileName)
 
 const QMap<int32_t, QHash<QString, QVector<double>>>& DataManager::getDataMap()
 {
-    if(m_isRealTime)
-        return m_realDataMap;
-    else
-        return m_newEntityDataMap;
+
+    return m_newEntityDataMap;
 }
 
 void DataManager::getMinMaxTime(double& minTime, double& maxTime)
@@ -559,18 +529,7 @@ QVector<double>
 DataManager::getEntityAttrValueList(int32_t entityID, const QString& attr, double rate)
 {
     QVector<double> valueList;
-    if(m_isRealTime)
-    {
-        if(m_realDataMap.contains(entityID) && m_realDataMap.value(entityID).contains(attr))
-        {
-            foreach(auto value, m_realDataMap.value(entityID).value(attr))
-            {
-                valueList.append(value * rate);
-            }
-        }
-    }
-    else if(m_newEntityDataMap.contains(entityID) &&
-            m_newEntityDataMap.value(entityID).contains(attr))
+    if(m_newEntityDataMap.contains(entityID) && m_newEntityDataMap.value(entityID).contains(attr))
     {
         foreach(auto value, m_newEntityDataMap.value(entityID).value(attr))
         {
@@ -778,14 +737,7 @@ void DataManager::getDopplerDataByTime(int32_t entityID,
 
 QString DataManager::getEntityNameByID(int32_t id)
 {
-    if(m_isRealTime)
-    {
-        if(m_protobufPlatformMap.contains(id))
-        {
-            return m_protobufPlatformMap.value(id).name;
-        }
-    }
-    else if(m_platformMap.contains(id))
+    if(m_platformMap.contains(id))
     {
         return m_platformMap.value(id).m_platformName;
     }
@@ -794,11 +746,7 @@ QString DataManager::getEntityNameByID(int32_t id)
 
 QString DataManager::getEntityIconByID(int32_t id)
 {
-    if(m_isRealTime)
-    {
-        return "";
-    }
-    else if(m_platformMap.contains(id))
+    if(m_platformMap.contains(id))
     {
         return m_platformMap.value(id).m_platformIcon;
     }
@@ -808,34 +756,18 @@ QString DataManager::getEntityIconByID(int32_t id)
 QStringList DataManager::getEntityNameList()
 {
     QStringList list;
-    if(m_isRealTime)
+    for(const auto& p : m_platformMap)
     {
-        for(const auto& p : m_protobufPlatformMap)
-        {
-            list.append(p.name);
-        }
+        list.append(p.m_platformName);
     }
-    else
-    {
-        for(const auto& p : m_platformMap)
-        {
-            list.append(p.m_platformName);
-        }
-    }
+
     return list;
 }
 
 QList<QPair<QString, QString>> DataManager::getAttrAndUnitPairList(int32_t id)
 {
     QList<QPair<QString, QString>> list;
-    if(m_isRealTime)
-    {
-        list = m_realUnitHash.value(id);
-    }
-    else
-    {
-        list = m_attrUnitHash.value(id);
-    }
+    list = m_attrUnitHash.value(id);
     list.removeOne(qMakePair(QString("Time"), QString("sec")));
     return list;
 }
@@ -843,19 +775,9 @@ QList<QPair<QString, QString>> DataManager::getAttrAndUnitPairList(int32_t id)
 QMap<int32_t, QString> DataManager::getEntityIDAndNameMap()
 {
     QMap<int32_t, QString> map;
-    if(m_isRealTime)
+    for(const auto& p : m_platformMap)
     {
-        for(const auto& p : m_protobufPlatformMap)
-        {
-            map.insert(p.platformID, p.name);
-        }
-    }
-    else
-    {
-        for(const auto& p : m_platformMap)
-        {
-            map.insert(p.m_platformDataID, p.m_platformName);
-        }
+        map.insert(p.m_platformDataID, p.m_platformName);
     }
     return map;
 }
@@ -863,44 +785,23 @@ QMap<int32_t, QString> DataManager::getEntityIDAndNameMap()
 QList<GenericData> DataManager::getGenericDataListByID(int32_t entityID, const QString& tag)
 {
     QList<GenericData> tags;
-    if(m_isRealTime)
-    {
-        if(m_realGenericMap.contains(entityID))
-            tags = m_realGenericMap.value(entityID).value(tag);
-    }
-    else
-    {
-        if(m_genericMap.contains(entityID))
-            tags = m_genericMap.value(entityID).value(tag);
-    }
+    if(m_genericMap.contains(entityID))
+        tags = m_genericMap.value(entityID).value(tag);
+
     return tags;
 }
 
 QStringList DataManager::getGenericDataTagsByID(int32_t entityID)
 {
-    if(m_isRealTime)
-    {
-        if(m_realGenericMap.contains(entityID))
-            return m_realGenericMap.value(entityID).keys();
-    }
-    else
-    {
-        if(m_genericMap.contains(entityID))
-            return m_genericMap.value(entityID).keys();
-    }
+    if(m_genericMap.contains(entityID))
+        return m_genericMap.value(entityID).keys();
+
     return QStringList();
 }
 
 bool DataManager::isEntityContainsGenericTags(int32_t id)
 {
-    if(m_isRealTime)
-    {
-        return m_realGenericMap.contains(id);
-    }
-    else
-    {
-        return m_genericMap.contains(id);
-    }
+    return m_genericMap.contains(id);
 }
 
 int DataManager::getEntityAttrMaxIndexByTime(int32_t entityID, double secs)
@@ -939,10 +840,10 @@ QStringList DataManager::parsePlatformData(const QString& data)
 
 int32_t DataManager::findIDByName(const QString& name)
 {
-    QList<int32_t> lst = m_protobufPlatformMap.keys();
+    QList<int32_t> lst = m_platformMap.keys();
     for(int i = 0; i < lst.size(); i++)
     {
-        if(name == m_protobufPlatformMap[lst.at(i)].name)
+        if(name == m_platformMap[lst.at(i)].m_platformName)
         {
             return lst.at(i);
         }
@@ -992,19 +893,21 @@ void DataManager::onRecvGenericData(const GenericData& generic)
     {
         return;
     }
-    if(!m_realGenericMap.contains(uID))
+
+    if(!m_genericMap.contains(uID))
     {
-        m_realGenericMap.insert(uID, QMap<QString, QList<GenericData>>());
+        m_genericMap.insert(uID, QMap<QString, QList<GenericData>>());
     }
 
-    m_realGenericMap[uID][generic.m_eventType].append(generic);
+    m_genericMap[uID][generic.m_eventType].append(generic);
     emit updateRealTime();
 }
 
 void DataManager::onRecvProtobufPlatinfoData(const USIM_PlatInfoMessage_Proto& plat)
 {
     int32_t uID = int32_t(plat.uid());
-    if(!m_realDataMap.contains(uID))
+
+    if(!m_newEntityDataMap.contains(uID))
     {
         QList<QPair<QString, QString>> attrUnitList;
         attrUnitList.append(QPair<QString, QString>("Time", "sec"));
@@ -1023,21 +926,16 @@ void DataManager::onRecvProtobufPlatinfoData(const USIM_PlatInfoMessage_Proto& p
         attrUnitList.append(QPair<QString, QString>("Swaying", "m"));
         attrUnitList.append(QPair<QString, QString>("Surging", "m"));
         attrUnitList.append(QPair<QString, QString>("Heaving", "m"));
-        m_realUnitHash.insert(uID, attrUnitList);
+        m_attrUnitHash.insert(uID, attrUnitList);
 
-        ProtobufPlatForm protoPlatform;
-        protoPlatform.platformID = plat.uid();
-        protoPlatform.name = QString::fromLocal8Bit(plat.splatname().data());
-        protoPlatform.cmdNodeName = QString::fromLocal8Bit(plat.scommandnodename().data());
-        protoPlatform.alliance = static_cast<USIM_Alliance>(plat.ualliance());
-        protoPlatform.color = plat.ucolor();
-        protoPlatform.kind = plat.ukind();
-        protoPlatform.classType = plat.uclass();
-        protoPlatform.typeName = QString::fromLocal8Bit(plat.stype().data());
-        m_protobufPlatformMap.insert(uID, protoPlatform);
+        // 在线数据中多余的信息基本没用，可以跟离线数据使用同一个平台结构
+        Platform p;
+        p.m_platformDataID = plat.uid();
+        p.m_platformName = QString::fromLocal8Bit(plat.splatname().data());
+        m_platformMap.insert(plat.uid(), p);
     }
 
-    QHash<QString, QVector<double>> dataMap = m_realDataMap[uID];
+    QHash<QString, QVector<double>> dataMap = m_newEntityDataMap[uID];
     dataMap["Time"].append(plat.dfsimtime() * 3600);
     dataMap["Fuel"].append(plat.dffuel());
     dataMap["Life"].append(plat.dflife());
@@ -1054,7 +952,7 @@ void DataManager::onRecvProtobufPlatinfoData(const USIM_PlatInfoMessage_Proto& p
     dataMap["Swaying"].append(plat.dfswaying());
     dataMap["Surging"].append(plat.surging());
     dataMap["Heaving"].append(plat.heaving());
-    m_realDataMap.insert(uID, dataMap);
+    m_newEntityDataMap.insert(uID, dataMap);
     m_minRealTime = dataMap["Time"].at(0);
     m_maxRealTime = plat.dfsimtime() * 3600;
     // 暂时默认参考时间为当前年份，在线数据没有提供
@@ -1068,35 +966,31 @@ recvThread* DataManager::getRecvThread() const
     return m_recvThread;
 }
 
-void DataManager::setIsRealTime(bool isRealTime)
+void DataManager::loadLiveEventType()
 {
-    m_isRealTime = isRealTime;
-
-    if(m_isRealTime)
+    // 只有在每次开始获取在线数据时更新配置文件信息
+    QString iniFileName = QCoreApplication::applicationDirPath() + "/PlotXY.ini";
+    if(!QFile::exists(iniFileName))
     {
-        // 只有在每次开始获取在线数据时更新配置文件信息
-        QString iniFileName = QCoreApplication::applicationDirPath() + "/PlotXY.ini";
-        if(!QFile::exists(iniFileName))
-        {
-            qCritical() << "File not exist";
-            return;
-        }
-        QSettings settings(iniFileName, QSettings::IniFormat);
-        settings.setIniCodec(QTextCodec::codecForName("utf-8"));
+        qCritical() << "File not exist";
+        return;
+    }
+    m_realEventTypeInfo.clear();
+    QSettings settings(iniFileName, QSettings::IniFormat);
+    settings.setIniCodec(QTextCodec::codecForName("utf-8"));
 
-        QStringList groupNames = settings.childGroups();
-        foreach(const QString& groupName, groupNames)
+    QStringList groupNames = settings.childGroups();
+    foreach(const QString& groupName, groupNames)
+    {
+        if(!groupName.contains("Event"))
         {
-            if(!groupName.contains("Event"))
-            {
-                continue;
-            }
-            settings.beginGroup(groupName);
-            QString type = settings.value("TypeName").toString();
-            QStringList list = settings.value("EventList").toStringList();
-            m_realEventTypeInfo.insert(type, list);
-            settings.endGroup();
+            continue;
         }
+        settings.beginGroup(groupName);
+        QString type = settings.value("TypeName").toString();
+        QStringList list = settings.value("EventList").toStringList();
+        m_realEventTypeInfo.insert(type, list);
+        settings.endGroup();
     }
 }
 
@@ -1113,33 +1007,8 @@ void DataManager::setDataFileName(const QString& dataFileName)
 void DataManager::clearData()
 {
     m_newEntityDataMap.clear();
-    m_realDataMap.clear();
-    m_platformMap.clear();
-    m_realPlatformMap.clear();
-    m_protobufPlatformMap.clear();
-    m_genericMap.clear();
-    m_realGenericMap.clear();
-    m_timeDataSet.clear();
-    m_gogFileList.clear();
-    m_dataFileName.clear();
-}
-
-void DataManager::clearOffLineData()
-{
-    m_newEntityDataMap.clear();
     m_platformMap.clear();
     m_genericMap.clear();
-    m_timeDataSet.clear();
-    m_gogFileList.clear();
-    m_dataFileName.clear();
-}
-
-void DataManager::clearLiveData()
-{
-    m_realDataMap.clear();
-    m_realPlatformMap.clear();
-    m_protobufPlatformMap.clear();
-    m_realGenericMap.clear();
     m_timeDataSet.clear();
     m_gogFileList.clear();
     m_dataFileName.clear();

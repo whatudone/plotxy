@@ -824,21 +824,22 @@ void PlotXYDemo::savePXYData(const QString& pxyFileName)
     QJsonObject allObject;
     // 通用信息
     allObject.insert("Date", QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
-    // 在线模式先存储数据
+    // 不区分离线还是在线，保存时统一先在一个临时文件中存储数据
     QString dataFileName;
-    if(DataManagerInstance->getIsRealTime())
+    // 临时文件夹会自动析构时会自动删除整个文件夹，不需要手动释放里面的文件
+    QTemporaryDir dir;
+    if(dir.isValid())
     {
-        dataFileName = QFileInfo(pxyFileName).absolutePath() + "/" +
-                       QFileInfo(pxyFileName).baseName() + ".asi";
+        dataFileName = dir.path() + "/tmp.asi";
         if(!DataManagerInstance->saveDataToASI(dataFileName))
         {
-            qDebug() << "保存在线数据失败";
+            qDebug() << "保存数据失败";
             dataFileName = "";
         }
     }
     else
     {
-        dataFileName = DataManagerInstance->getDataFileName();
+        qDebug() << "创建临时文件夹失败";
     }
 
     // 图表空间信息,多个tab，每个tab包含多个plot
@@ -872,29 +873,21 @@ void PlotXYDemo::savePXYData(const QString& pxyFileName)
 
     QJsonDocument jsonDoc;
     jsonDoc.setObject(allObject);
-    if(m_asiData.isEmpty())
+
+    QByteArray asiData;
+    if(!dataFileName.isEmpty())
     {
-        QByteArray asiData;
-        if(!dataFileName.isEmpty())
-        {
-            QFile asiFile(dataFileName);
-            asiFile.open(QFile::ReadOnly);
-            asiData = asiFile.readAll();
-            asiFile.close();
-        }
-        writeHDF5(pxyFileName, jsonDoc.toJson(), asiData);
+        QFile asiFile(dataFileName);
+        asiFile.open(QFile::ReadOnly);
+        asiData = asiFile.readAll();
+        asiFile.close();
     }
-    else
-    {
-        writeHDF5(pxyFileName, jsonDoc.toJson(), m_asiData);
-    }
-    if(DataManagerInstance->getIsRealTime())
-        QFile::remove(dataFileName);
+    writeHDF5(pxyFileName, jsonDoc.toJson(), asiData);
 }
 
 void PlotXYDemo::loadPXYData(const QString& pxyFileName)
 {
-    m_asiData.clear();
+    QByteArray asiData;
     QFile inFile(pxyFileName);
     bool isJsonFormat = false;
     QByteArray pxyData;
@@ -914,7 +907,7 @@ void PlotXYDemo::loadPXYData(const QString& pxyFileName)
     if(error.error != QJsonParseError::NoError)
     {
         isJsonFormat = false;
-        readHDF5(pxyFileName, pxyData, m_asiData);
+        readHDF5(pxyFileName, pxyData, asiData);
         doc = QJsonDocument::fromJson(pxyData, &error);
     }
     else
@@ -933,7 +926,7 @@ void PlotXYDemo::loadPXYData(const QString& pxyFileName)
     else
     {
         // 兼容原来的接口，将数据先写进一个临时文件，然后加载之后删除临时文件
-        if(!m_asiData.isEmpty())
+        if(!asiData.isEmpty())
         {
             QTemporaryDir dir;
             if(dir.isValid())
@@ -943,7 +936,7 @@ void PlotXYDemo::loadPXYData(const QString& pxyFileName)
                 QFile file(tmpPath);
                 if(file.open(QFile::WriteOnly))
                 {
-                    file.write(m_asiData);
+                    file.write(asiData);
                     file.close();
                     DataManagerInstance->loadFileData(tmpPath);
                     DataManagerInstance->setDataFileName("");
@@ -2203,9 +2196,11 @@ void PlotXYDemo::onTimeClient() {}
 void PlotXYDemo::onRealTime()
 {
     bool isChecked = ui.actionReal_Time->isChecked();
-    DataManager::getInstance()->setIsRealTime(isChecked);
+    DataManager::getInstance()->loadLiveEventType();
     if(isChecked)
     {
+        // 清理离线数据
+        DataManager::getInstance()->clearData();
         DataManager::getInstance()->getRecvThread()->start();
     }
     else

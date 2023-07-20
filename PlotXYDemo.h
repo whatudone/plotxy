@@ -245,9 +245,6 @@ private:
     QLabel* m_statusBar_null;
     // 当前时间
     static double m_seconds;
-
-    // 从h5文件中加载出来的asi数据
-    QByteArray m_asiData;
 };
 
 #endif // !
