@@ -87,7 +87,6 @@ void recvThread::onReadyRead()
             if(plat)
             {
                 emit platInfoReceived(*plat);
-                //                DataManagerInstance->onRecvPlatinfoData(*plat);
             }
         }
         else

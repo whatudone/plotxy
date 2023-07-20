@@ -840,7 +840,6 @@ void PlotXYDemo::savePXYData(const QString& pxyFileName)
     {
         dataFileName = DataManagerInstance->getDataFileName();
     }
-    allObject.insert("DataPath", dataFileName);
 
     // 图表空间信息,多个tab，每个tab包含多个plot
     int32_t tabSize = ui.tabWidget->count();

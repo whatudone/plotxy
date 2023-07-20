@@ -1799,9 +1799,8 @@ void PlotManager::onPushButtonTextOutlineColorClicked()
 
 void PlotManager::onPlotRectEditFinished()
 {
-    if(ui.lineEdit_plotPositionX->text() == nullptr ||
-       ui.lineEdit_plotPositionY->text() == nullptr || ui.lineEdit_plotWidth->text() == nullptr ||
-       ui.lineEdit_plotHeight->text() == nullptr)
+    if(ui.lineEdit_plotPositionX->text().isEmpty() || ui.lineEdit_plotPositionY->text().isEmpty() ||
+       ui.lineEdit_plotWidth->text().isEmpty() || ui.lineEdit_plotHeight->text().isEmpty())
     {
         return;
     }

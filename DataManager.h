@@ -219,7 +219,6 @@ signals:
     void updateRealTime();
 
 public Q_SLOTS:
-    void onRecvPlatinfoData(const MARS_PlatInfoDataExcect& plat);
     void onRecvGenericData(const GenericData& generic);
 
     void onRecvProtobufPlatinfoData(const USIM_PlatInfoMessage_Proto& plat);

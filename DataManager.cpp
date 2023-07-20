@@ -977,64 +977,6 @@ QString DataManager::getUnitByAttr(int32_t id, const QString& attr)
     return QString();
 }
 
-void DataManager::onRecvPlatinfoData(const MARS_PlatInfoDataExcect& plat)
-{
-    int32_t uID = int32_t(plat.uID);
-    if(!m_realDataMap.contains(uID))
-    {
-        QHash<QString, QVector<double>> dataMap = m_realDataMap[uID];
-        dataMap["Time"].append(plat.time * 3600);
-        dataMap["Fuel"].append(plat.fuel);
-        dataMap["Dammager"].append(plat.damageper);
-        dataMap["Speed"].append(double(plat.Speed));
-        dataMap["Bearing"].append(double(plat.Bearing));
-        dataMap["Lat"].append(plat.Lat);
-        dataMap["Lon"].append(plat.Lng);
-        dataMap["Alt"].append(plat.Alt);
-        dataMap["CW"].append(plat.Cw);
-        dataMap["Pitch"].append(plat.pitch);
-        dataMap["Roll"].append(plat.roll);
-        dataMap["MaxSpeed"].append(plat.maxSpeed);
-        dataMap["ConNUm"].append(plat.iIconNum);
-        dataMap["Visible"].append(plat.iVisible);
-        m_realDataMap.insert(uID, dataMap);
-        m_minRealTime = dataMap["Time"].at(0);
-        m_maxRealTime = plat.time * 3600;
-    }
-
-    if(!m_realUnitHash.contains(uID))
-    {
-        QList<QPair<QString, QString>> attrUnitList;
-        attrUnitList.append(QPair<QString, QString>("Time", "sec"));
-        attrUnitList.append(QPair<QString, QString>("Fuel", "sec"));
-        attrUnitList.append(QPair<QString, QString>("Dammager", "na"));
-        attrUnitList.append(QPair<QString, QString>("Speed", "m/sec"));
-        attrUnitList.append(QPair<QString, QString>("Bearing", "deg"));
-        attrUnitList.append(QPair<QString, QString>("Lat", "deg"));
-        attrUnitList.append(QPair<QString, QString>("Lon", "deg"));
-        attrUnitList.append(QPair<QString, QString>("Alt", "m"));
-        attrUnitList.append(QPair<QString, QString>("CW", "na"));
-        attrUnitList.append(QPair<QString, QString>("Pitch", "deg"));
-        attrUnitList.append(QPair<QString, QString>("Roll", "deg"));
-        attrUnitList.append(QPair<QString, QString>("MaxSpeed", "m/sec"));
-        attrUnitList.append(QPair<QString, QString>("ConNUm", "na"));
-        attrUnitList.append(QPair<QString, QString>("Visible", "na"));
-        m_realUnitHash.insert(uID, attrUnitList);
-    }
-
-    RealPlatform realPlatform;
-    realPlatform.platformDataID = plat.uID;
-    realPlatform.platformName = QString::fromLocal8Bit(plat.PlatName);
-    realPlatform.OpsStatus = plat.OpsStatus;
-    realPlatform.Alliance = plat.Alliance;
-    realPlatform.Operation_medium = plat.Operating_medium;
-    realPlatform.Icon_Type = plat.Icon_type;
-    realPlatform.basePlatName = plat.BasePlatName;
-    realPlatform.hullName = plat.HullName;
-    realPlatform.cStandBy = plat.cStandBy;
-    emit updateRealTime();
-}
-
 void DataManager::onRecvGenericData(const GenericData& generic)
 {
     int32_t uID = -1;
