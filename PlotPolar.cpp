@@ -64,6 +64,15 @@ void PlotPolar::initPlot()
 
     m_vertGrids = m_angularAxis->radialAxis()->ticker()->tickCount();
     m_customPlot->replot();
+
+    connect(m_angularAxis,
+            QOverload<const QCPRange&>::of(&QCPPolarAxisAngular::rangeChanged),
+            this,
+            &PlotPolar::onXAxisRangeChanged);
+    connect(m_angularAxis->radialAxis(),
+            QOverload<const QCPRange&>::of(&QCPPolarAxisRadial::rangeChanged),
+            this,
+            &PlotPolar::onYAxisRangeChanged);
 }
 
 void PlotPolar::setAxisColorWidth(const QColor& color, int32_t width)
@@ -566,4 +575,14 @@ void PlotPolar::delPlotPairData(const QString& uuid)
         m_customPlot->replot();
     }
     PlotItemBase::delPlotPairData(uuid);
+}
+
+void PlotPolar::onXAxisRangeChanged(const QCPRange& range)
+{
+    setCoordRangeX(range.lower, range.upper);
+}
+
+void PlotPolar::onYAxisRangeChanged(const QCPRange& range)
+{
+    setCoordRangeY(range.lower, range.upper);
 }
