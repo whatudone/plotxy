@@ -579,10 +579,14 @@ void PlotPolar::delPlotPairData(const QString& uuid)
 
 void PlotPolar::onXAxisRangeChanged(const QCPRange& range)
 {
+    m_angularAxis->blockSignals(true);
     setCoordRangeX(range.lower, range.upper);
+    m_angularAxis->blockSignals(false);
 }
 
 void PlotPolar::onYAxisRangeChanged(const QCPRange& range)
 {
+    m_angularAxis->radialAxis()->blockSignals(true);
     setCoordRangeY(range.lower, range.upper);
+    m_angularAxis->radialAxis()->blockSignals(false);
 }

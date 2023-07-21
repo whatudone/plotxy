@@ -1077,7 +1077,7 @@ void PlotItemBase::onDataPairsChanged()
 
 void PlotItemBase::onXAxisRangeChanged(const QCPRange& range)
 {
-    if(m_customPlot)
+    if(m_customPlot && m_customPlot->xAxis)
     {
         m_customPlot->xAxis->blockSignals(true);
         setCoordRangeX(range.lower, range.upper);
@@ -1087,7 +1087,7 @@ void PlotItemBase::onXAxisRangeChanged(const QCPRange& range)
 
 void PlotItemBase::onYAxisRangeChanged(const QCPRange& range)
 {
-    if(m_customPlot)
+    if(m_customPlot && m_customPlot->yAxis)
     {
         m_customPlot->yAxis->blockSignals(true);
         setCoordRangeY(range.lower, range.upper);
@@ -1583,14 +1583,20 @@ void PlotItemBase::setupLayout()
         m_customPlot->setStyleSheet("background:hsva(255,255,255,0%);");
         m_customPlot->setBackground(Qt::transparent);
 
-        connect(m_customPlot->xAxis,
-                QOverload<const QCPRange&>::of(&QCPAxis::rangeChanged),
-                this,
-                &PlotItemBase::onXAxisRangeChanged);
-        connect(m_customPlot->yAxis,
-                QOverload<const QCPRange&>::of(&QCPAxis::rangeChanged),
-                this,
-                &PlotItemBase::onYAxisRangeChanged);
+        if(m_customPlot->xAxis)
+        {
+            connect(m_customPlot->xAxis,
+                    QOverload<const QCPRange&>::of(&QCPAxis::rangeChanged),
+                    this,
+                    &PlotItemBase::onXAxisRangeChanged);
+        }
+        if(m_customPlot->yAxis)
+        {
+            connect(m_customPlot->yAxis,
+                    QOverload<const QCPRange&>::of(&QCPAxis::rangeChanged),
+                    this,
+                    &PlotItemBase::onYAxisRangeChanged);
+        }
     }
     else if(m_widget)
     {
