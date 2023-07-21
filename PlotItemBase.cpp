@@ -440,6 +440,8 @@ void PlotItemBase::setGridStyle(GridStyle style)
 void PlotItemBase::setGridDensity(GridDensity density)
 {
     m_gridDensity = density;
+    if(plotType() == PlotType::Type_PlotRTI)
+        m_customPlot->yAxis->ticker()->setTickCount(density);
     replot();
 }
 
