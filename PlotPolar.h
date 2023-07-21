@@ -71,6 +71,7 @@ private:
 
 public:
     static int m_instanceCount; //实体个数
+
 private:
     QCPPolarAxisAngular* m_angularAxis;
 
@@ -84,4 +85,8 @@ private:
     QHash<QString, QPair<QVector<double>, QVector<double>>> m_dataHash;
 
     QList<QCPPolarGraph*> m_gogGraphList;
+
+private Q_SLOTS:
+    void onXAxisRangeChanged(const QCPRange& range);
+    void onYAxisRangeChanged(const QCPRange& range);
 };

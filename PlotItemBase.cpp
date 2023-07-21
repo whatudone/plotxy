@@ -1075,6 +1075,26 @@ void PlotItemBase::onDataPairsChanged()
     updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
 }
 
+void PlotItemBase::onXAxisRangeChanged(const QCPRange& range)
+{
+    if(m_customPlot)
+    {
+        m_customPlot->xAxis->blockSignals(true);
+        setCoordRangeX(range.lower, range.upper);
+        m_customPlot->xAxis->blockSignals(false);
+    }
+}
+
+void PlotItemBase::onYAxisRangeChanged(const QCPRange& range)
+{
+    if(m_customPlot)
+    {
+        m_customPlot->yAxis->blockSignals(true);
+        setCoordRangeY(range.lower, range.upper);
+        m_customPlot->yAxis->blockSignals(false);
+    }
+}
+
 void PlotItemBase::paintEvent(QPaintEvent* event)
 {
 
@@ -1562,6 +1582,15 @@ void PlotItemBase::setupLayout()
         // 图表部分透明，其他区域在图表管理中进行手动设置
         m_customPlot->setStyleSheet("background:hsva(255,255,255,0%);");
         m_customPlot->setBackground(Qt::transparent);
+
+        connect(m_customPlot->xAxis,
+                QOverload<const QCPRange&>::of(&QCPAxis::rangeChanged),
+                this,
+                &PlotItemBase::onXAxisRangeChanged);
+        connect(m_customPlot->yAxis,
+                QOverload<const QCPRange&>::of(&QCPAxis::rangeChanged),
+                this,
+                &PlotItemBase::onYAxisRangeChanged);
     }
     else if(m_widget)
     {

@@ -390,6 +390,8 @@ private:
 private slots:
     // 响应整体数据变化
     void onDataPairsChanged();
+    void onXAxisRangeChanged(const QCPRange& range);
+    void onYAxisRangeChanged(const QCPRange& range);
 
 protected:
     void paintEvent(QPaintEvent* event) override;
