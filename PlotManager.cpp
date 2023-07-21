@@ -836,7 +836,6 @@ void PlotManager::refreshTreeWidgetSettingEnabled(PlotItemBase* plot)
     else if(type == PlotType::Type_PlotRTI)
     {
         enableItem_RTI();
-        refreshRTIUI(m_curSelectPlot);
     }
     else if(type == PlotType::Type_PlotText)
     {
@@ -1506,27 +1505,21 @@ void PlotManager::refreshRTIColorRange()
     if(!item)
         return;
 
-    QTimer* timer = new QTimer;
-    connect(timer, &QTimer::timeout, [=]() {
-        QMap<double, QColor> colorMap = item->getColorRangeMap();
-        QString scaleStr;
-        QList<double> keys = colorMap.keys();
-        for(auto stop : keys)
-        {
-            scaleStr += QString(", stop:%1 %2").arg(stop).arg(colorMap.value(stop).name());
-        }
-        QString gradientStr =
-            QString("background:qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0%1);border:none;")
-                .arg(scaleStr);
-        ui.label_RTIColorRangeBar->setStyleSheet(gradientStr);
+    QMap<double, QColor> colorMap = item->getColorRangeMap();
+    QString scaleStr;
+    QList<double> keys = colorMap.keys();
+    for(auto stop : keys)
+    {
+        scaleStr += QString(", stop:%1 %2").arg(stop).arg(colorMap.value(stop).name());
+    }
+    QString gradientStr =
+        QString("background:qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0%1);border:none;")
+            .arg(scaleStr);
+    ui.label_RTIColorRangeBar->setStyleSheet(gradientStr);
 
-        QPixmap pixmap(ui.label_RTIColorRangeBar->size());
-        qDebug() << "pixmap size = " << ui.label_RTIColorRangeBar->size();
-        ui.label_RTIColorRangeBar->render(&pixmap);
-        m_RTIColorSliderImage = pixmap.toImage();
-        timer->deleteLater();
-    });
-    timer->start(2000);
+    QPixmap pixmap(ui.label_RTIColorRangeBar->size());
+    ui.label_RTIColorRangeBar->render(&pixmap);
+    m_RTIColorSliderImage = pixmap.toImage();
 }
 
 void PlotManager::onTWSPclicked(QTreeWidgetItem* item, int column)
@@ -1714,6 +1707,7 @@ void PlotManager::onTWSclicked(QTreeWidgetItem* item, int column)
         else if(compare == QString("RTI设置"))
         {
             ui.stackedWidget->setCurrentIndex(11);
+            refreshRTIUI(m_curSelectPlot);
         }
         else if(compare == QString("Text/Light设置"))
         {
