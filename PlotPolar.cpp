@@ -455,6 +455,8 @@ void PlotPolar::updateGraphByDataPair(DataPair* data, double curSecs)
         if(x.isEmpty() || y.isEmpty())
         {
             graph->setVisible(false);
+            tracerText->setVisible(false);
+            pixmap->setVisible(false);
             return;
         }
         double secsLimit = data->getSecondsLimit();

@@ -180,8 +180,6 @@ public:
 
     recvThread* getRecvThread() const;
 
-    void setIsRealTime(bool isRealTime);
-
     void loadLiveEventType();
 
     // 保存ASI数据，主要是用于在线模式回放数据

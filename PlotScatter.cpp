@@ -197,6 +197,13 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
     auto y = m_dataHash.value(uuid).second;
     if(x.isEmpty() || y.isEmpty())
 	{
+        //无效数据自动隐藏Label和Icon
+        if(m_mapScatter.contains(uuid))
+        {
+            m_mapScatter[uuid].graph->setVisible(false);
+            m_mapScatter[uuid].tracerText->setVisible(false);
+            m_mapScatter[uuid].pixmap->setVisible(false);
+        }
         return;
     }
     if(!m_mapScatter.contains(uuid))

@@ -53,6 +53,11 @@ public:
         Gradient
     };
 
+    enum RangeCalculationType
+    {
+        DeltaAltitude = 0
+    };
+
     DataPair(QObject* parent = nullptr);
     DataPair(int32_t xEntityID,
              const QString& xAttrName,
