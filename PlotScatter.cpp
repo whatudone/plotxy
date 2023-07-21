@@ -113,7 +113,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
     int itemCnt = getDataPairs().size();
 
     for(int i = 0; i < itemCnt; ++i)
-    {
+	{
         QVector<double> x;
         QVector<double> y;
         auto data = getDataPairs().at(i);
@@ -165,7 +165,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
         }
     }
     if(m_isTimeLine)
-	{
+    {
         updateTimelineGraph();
     }
     else
@@ -184,11 +184,11 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
 void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
 {
     if(!data)
-    {
+	{
         return;
     }
     if(m_isTimeLine)
-    {
+	{
         updateTimelineGraph();
         return;
     }
@@ -196,7 +196,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
     auto x = m_dataHash.value(uuid).first;
     auto y = m_dataHash.value(uuid).second;
     if(x.isEmpty() || y.isEmpty())
-	{
+    {
         //无效数据自动隐藏Label和Icon
         if(m_mapScatter.contains(uuid))
         {
@@ -207,14 +207,14 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
         return;
     }
     if(!m_mapScatter.contains(uuid))
-	{
+    {
         DrawComponents info;
         info.graph = m_customPlot->addGraph();
         // 默认采样值是true，在某些情况下采样会导致把原始数据处理错误，导致连线时路径错误
         info.graph->setAdaptiveSampling(false);
         info.graph->setBrush(Qt::NoBrush);
         info.tracerText = new QCPItemText(m_customPlot);
-        info.tracerText->position->setType(QCPItemPosition::ptAbsolute);
+        info.tracerText->position->setType(QCPItemPosition::ptPlotCoords);
         // 默认position的坐标是center,为了方便计算，将position的坐标改为左上角
         info.tracerText->setPositionAlignment(Qt::AlignTop | Qt::AlignLeft);
         info.tracerText->setTextAlignment(Qt::AlignCenter);
@@ -222,7 +222,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
         info.pixmap = new QCPItemPixmap(m_customPlot); // 创建 QCPItemPixmap 对象
         info.pixmap->setClipToAxisRect(false); // 允许图标超出坐标轴范围
         info.pixmap->setClipAxisRect(m_customPlot->axisRect()); // 设置图标显示范围
-        info.pixmap->topLeft->setType(QCPItemPosition::ptAbsolute);
+        info.pixmap->topLeft->setType(QCPItemPosition::ptPlotCoords);
         info.pixmap->setPen(Qt::NoPen); // 不显示边框
         m_mapScatter.insert(uuid, info);
     }
@@ -284,7 +284,9 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
                 // 以最后一个数据点的坐标作为图片的中心点,这里不能直接使用data中原始的图片宽高作为基准，因为旋转之后，图片宽高会发生变化
                 double topX = lastPosX - pix.width() / 2;
                 double topY = lastPosY - pix.height() / 2;
-                pixmap->topLeft->setCoords(topX, topY);
+                double topXCoord = m_customPlot->xAxis->pixelToCoord(topX);
+                double topYCoord = m_customPlot->yAxis->pixelToCoord(topY);
+                pixmap->topLeft->setCoords(topXCoord, topYCoord);
             }
         }
         else
@@ -300,7 +302,10 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
             tracerText->setText(text);
             QPointF labelPoint = data->processLabelPosition(
                 QPointF(lastPosX, lastPosY), text, tracerText->textAlignment());
-            tracerText->position->setCoords(labelPoint.x(), labelPoint.y());
+            // 根据像素大小反过来计算坐标
+            double labelXCoord = m_customPlot->xAxis->pixelToCoord(labelPoint.x());
+            double labelYCoord = m_customPlot->yAxis->pixelToCoord(labelPoint.y());
+            tracerText->position->setCoords(labelXCoord, labelYCoord);
             tracerText->setFont(data->getLabelFont());
             tracerText->setColor(data->getLabelColor());
             tracerText->setBrush(data->getLabelBackground());
