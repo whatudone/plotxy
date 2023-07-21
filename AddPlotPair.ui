@@ -789,7 +789,7 @@
                  </property>
                  <item>
                   <property name="text">
-                   <string>Ground Rng</string>
+                   <string>Altitude Delta</string>
                   </property>
                  </item>
                 </widget>

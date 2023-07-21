@@ -134,7 +134,7 @@ public:
 protected:
     void updateDataForDataPairsByTime(double secs) override;
 
-    void updateGraphByDataPair(DataPair* data, double curSecs);
+    void updateGraphByDataPair(DataPair* data, double curSecs) override;
 
 private:
     void initPlot();

@@ -467,7 +467,7 @@ DataPair* PlotBar::addPlotDataPair(int32_t xEntityID,
     QList<QCPBars*> baseBar;
     baseBar.push_back(pBar);
     m_allBar.insert(uuid, baseBar);
-    m_tickLabelMap.insert(uuid, data->getEntity_x() + '_' + xAttrName);
+    m_tickLabelMap.insert(uuid, data->getEntity_x());
 
     QPair<double, double> limit =
         DataManager::getInstance()->getMaxAndMinEntityAttrValue(xEntityID, xAttrName, m_xRate);

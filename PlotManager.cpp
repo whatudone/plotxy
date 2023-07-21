@@ -1758,9 +1758,8 @@ void PlotManager::onRadioPixelClicked()
     ui.label_widthPos->setText("pixel");
     ui.label_heightPos->setText("pixel");
 
-    if(ui.lineEdit_plotPositionX->text() == nullptr ||
-       ui.lineEdit_plotPositionY->text() == nullptr || ui.lineEdit_plotWidth->text() == nullptr ||
-       ui.lineEdit_plotHeight->text() == nullptr)
+    if(ui.lineEdit_plotPositionX->text().isEmpty() || ui.lineEdit_plotPositionY->text().isEmpty() ||
+       ui.lineEdit_plotWidth->text().isEmpty() || ui.lineEdit_plotHeight->text().isEmpty())
     {
         return;
     }
@@ -1789,9 +1788,8 @@ void PlotManager::onRadioPercentClicked()
     ui.label_widthPos->setText("%");
     ui.label_heightPos->setText("%");
 
-    if(ui.lineEdit_plotPositionX->text() == nullptr ||
-       ui.lineEdit_plotPositionY->text() == nullptr || ui.lineEdit_plotWidth->text() == nullptr ||
-       ui.lineEdit_plotHeight->text() == nullptr)
+    if(ui.lineEdit_plotPositionX->text().isEmpty() || ui.lineEdit_plotPositionY->text().isEmpty() ||
+       ui.lineEdit_plotWidth->text().isEmpty() || ui.lineEdit_plotHeight->text().isEmpty())
     {
         return;
     }
@@ -2130,7 +2128,7 @@ void PlotManager::onLineEdit_horzGridsEditingFinished()
         return;
     }
     bool on;
-    uint count = ui.lineEdit_hrozGrids->text().toUInt(&on);
+    int32_t count = ui.lineEdit_hrozGrids->text().toInt(&on);
     if(!on)
     {
         return;
@@ -2146,7 +2144,7 @@ void PlotManager::onLineEdit_vertGridsEditingFinished()
         return;
     }
     bool on;
-    uint count = ui.lineEdit_vertGrids->text().toUInt(&on);
+    int32_t count = ui.lineEdit_vertGrids->text().toInt(&on);
     if(!on)
     {
         return;
@@ -2158,7 +2156,7 @@ void PlotManager::onLineEdit_vertGridsEditingFinished()
 void PlotManager::onSetAxisColorWidth()
 {
     bool on;
-    uint width = ui.lineEdit_21->text().toInt(&on);
+    int32_t width = ui.lineEdit_21->text().toInt(&on);
     QColor color = ui.pushButton_axisColor->color();
     if(on)
         m_curSelectPlot->setAxisColorWidth(color, width);
@@ -2167,7 +2165,7 @@ void PlotManager::onSetAxisColorWidth()
 void PlotManager::onSetGridColorWidth()
 {
     bool on;
-    uint width = ui.lineEdit_23->text().toInt(&on);
+    int32_t width = ui.lineEdit_23->text().toInt(&on);
     QColor color = ui.pushButton_gridColor->color();
     if(on)
         m_curSelectPlot->setGridColorWidth(color, width);
