@@ -1180,7 +1180,18 @@ void PlotManager::refreshRTIUI(PlotItemBase* plot)
         return;
 
     ui.lineEdit_TimeSpan->setText(QString::number(item->getTimeSpan()));
-    ui.comboBox_LabelDensity->setCurrentText(item->getLabelDensity());
+    switch(item->getGridDensity())
+    {
+    case GridDensity::LESS:
+        ui.comboBox_LabelDensity->setCurrentIndex(0);
+        break;
+    case GridDensity::NORMAL:
+        ui.comboBox_LabelDensity->setCurrentIndex(1);
+        break;
+    case GridDensity::MORE:
+        ui.comboBox_LabelDensity->setCurrentIndex(2);
+        break;
+    }
 
     refreshRTIColorRange();
 
@@ -3658,7 +3669,12 @@ void PlotManager::onComboBox_LabelDesityTextChanged(const QString& text)
         return;
     if(auto plot = dynamic_cast<PlotRTI*>(m_curSelectPlot))
     {
-        plot->setLabelDensity(text);
+        if(text == "Less Labels")
+            plot->setGridDensity(GridDensity::LESS);
+        else if(text == "Normal")
+            plot->setGridDensity(GridDensity::NORMAL);
+        else if(text == "More Labels")
+            plot->setGridDensity(GridDensity::MORE);
     }
 }
 

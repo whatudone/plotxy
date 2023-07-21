@@ -1330,7 +1330,7 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
         if(rtiPlot)
         {
             plotObject.insert("RTITimeSpan", rtiPlot->getTimeSpan());
-            plotObject.insert("RTILabelDensity", rtiPlot->getLabelDensity());
+            plotObject.insert("RTILabelDensity", rtiPlot->getGridDensity());
 
             QJsonArray colorInfo;
             QMap<double, QColor> colorMap = rtiPlot->getColorRangeMap();
@@ -1663,7 +1663,7 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
         if(rtiPlot)
         {
             rtiPlot->setTimeSpan(plotObject.value("RTITimeSpan").toInt());
-            rtiPlot->setLabelDensity(plotObject.value("RTILabelDensity").toString());
+            rtiPlot->setGridDensity(GridDensity(plotObject.value("RTILabelDensity").toInt()));
 
             QJsonArray colorInfo = plotObject.value("RTIColorRangeInfo").toArray();
             int size = colorInfo.size();

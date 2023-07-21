@@ -34,8 +34,6 @@ public:
 
     void setColorRangeMap(const QMap<double, QColor>& colorMap);
     QMap<double, QColor> getColorRangeMap();
-    QString getLabelDensity();
-    void setLabelDensity(const QString& type);
     double getTimeSpan() const;
     void setTimeSpan(double timeSpan);
 
@@ -61,6 +59,5 @@ private:
     // time
     QVector<double> m_timeList;
     QMap<double, QColor> m_colorRangeMap;
-    QString m_densityType;
     double m_timeSpan;
 };

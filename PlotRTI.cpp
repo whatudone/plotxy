@@ -128,32 +128,6 @@ QMap<double, QColor> PlotRTI::getColorRangeMap()
     return m_colorRangeMap;
 }
 
-QString PlotRTI::getLabelDensity()
-{
-    return m_densityType;
-}
-
-void PlotRTI::setLabelDensity(const QString& type)
-{
-    if(type == "Less Labels")
-    {
-        m_vertGrids = 3;
-        m_customPlot->yAxis->ticker()->setTickCount(m_vertGrids);
-    }
-    else if(type == "Normal")
-    {
-        m_vertGrids = 7;
-        m_customPlot->yAxis->ticker()->setTickCount(m_vertGrids);
-    }
-    else if(type == "More Labels")
-    {
-        m_vertGrids = 11;
-        m_customPlot->yAxis->ticker()->setTickCount(m_vertGrids);
-    }
-    m_densityType = type;
-    m_customPlot->replot();
-}
-
 void PlotRTI::setColorRangeMap(const QMap<double, QColor>& colorMap)
 {
     QCPColorGradient m_colorGradient;
