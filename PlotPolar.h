@@ -17,21 +17,21 @@ public:
     void setGridVisible(bool enable) override;
     void setGridStyle(GridStyle style) override;
 
-    void setxTickLabelVisible(bool show);
-    void setxTickLabelColor(const QColor& color);
-    void setxTickLabelFont(const QFont& font);
-    void setxTickLabelFontSize(int size);
+    void setxTickLabelVisible(bool show) override;
+    void setxTickLabelColor(const QColor& color) override;
+    void setxTickLabelFont(const QFont& font) override;
+    void setxTickLabelFontSize(int size) override;
 
-    void setyTickLabelVisible(bool show);
-    void setyTickLabelColor(const QColor& color);
-    void setyTickLabelFont(const QFont& font);
-    void setyTickLabelFontSize(int size);
+    void setyTickLabelVisible(bool show) override;
+    void setyTickLabelColor(const QColor& color) override;
+    void setyTickLabelFont(const QFont& font) override;
+    void setyTickLabelFontSize(int size) override;
 
 	//unit
-	void setUnitsShowX(bool on);
-	void setUnitsShowY(bool on);
-	void setUnitsX(const QString&);
-	void setUnitsY(const QString&);
+    void setUnitsShowX(bool on) override;
+    void setUnitsShowY(bool on) override;
+    void setUnitsX(const QString&) override;
+    void setUnitsY(const QString&) override;
 
     PlotType plotType() const override
     {
@@ -47,7 +47,7 @@ public:
     void rescaleYAxis() override;
     void rescaleAxis() override;
 
-    void setGridFillColor(const QColor& color);
+    void setGridFillColor(const QColor& color) override;
 
     void drawGOGData() override;
     struct DrawComponents

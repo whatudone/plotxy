@@ -819,7 +819,7 @@ TabDrawWidget* PlotXYDemo::getCurDrawWidget()
     return static_cast<TabDrawWidget*>(ui.tabWidget->currentWidget());
 }
 
-void PlotXYDemo::savePXYData(const QString& pxyFileName)
+void PlotXYDemo::savePXYData(const QString& pxyFileName, bool isSaveData)
 {
     QJsonObject allObject;
     // 通用信息
@@ -831,10 +831,13 @@ void PlotXYDemo::savePXYData(const QString& pxyFileName)
     if(dir.isValid())
     {
         dataFileName = dir.path() + "/tmp.asi";
-        if(!DataManagerInstance->saveDataToASI(dataFileName))
+        if(isSaveData)
         {
-            qDebug() << "保存数据失败";
-            dataFileName = "";
+            if(!DataManagerInstance->saveDataToASI(dataFileName))
+            {
+                qDebug() << "保存数据失败";
+                dataFileName = "";
+            }
         }
     }
     else
@@ -2316,7 +2319,8 @@ void PlotXYDemo::initMenuFile()
 {
     connect(ui.actionopen, &QAction::triggered, this, &PlotXYDemo::onOpenFile);
     connect(ui.actionopenNetwork, &QAction::triggered, this, &PlotXYDemo::onOpenNetwork);
-    connect(ui.actionexport, &QAction::triggered, this, &PlotXYDemo::onExportDataStore);
+    connect(ui.action_ExportDataAndFile, &QAction::triggered, this, &PlotXYDemo::onExportDataStore);
+    connect(ui.action_ExportOnlyFile, &QAction::triggered, this, &PlotXYDemo::onExportOnlyFile);
     connect(ui.actionclose, &QAction::triggered, this, &PlotXYDemo::onClose_Disconnect);
     connect(ui.actionRun_Python_Script_Ctrl_E,
             &QAction::triggered,
@@ -2632,7 +2636,17 @@ void PlotXYDemo::onExportDataStore()
         QFileDialog::getSaveFileName(nullptr, "保存", getDatasPath(), "PXY (*.pxy)");
     if(!pxyFileName.isEmpty())
     {
-        savePXYData(pxyFileName);
+        savePXYData(pxyFileName, true);
+    }
+}
+
+void PlotXYDemo::onExportOnlyFile()
+{
+    QString pxyFileName =
+        QFileDialog::getSaveFileName(nullptr, "保存", getDatasPath(), "PXY (*.pxy)");
+    if(!pxyFileName.isEmpty())
+    {
+        savePXYData(pxyFileName, false);
     }
 }
 

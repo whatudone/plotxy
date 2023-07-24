@@ -71,7 +71,7 @@ background-color: rgb(3, 57, 122);
      <x>0</x>
      <y>0</y>
      <width>1600</width>
-     <height>17</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menufile">
@@ -110,9 +110,16 @@ background-color: rgb(3, 57, 122);
      <addaction name="action10_2"/>
      <addaction name="actionClear_recent_files_2"/>
     </widget>
+    <widget class="QMenu" name="menu">
+     <property name="title">
+      <string>导出</string>
+     </property>
+     <addaction name="action_ExportDataAndFile"/>
+     <addaction name="action_ExportOnlyFile"/>
+    </widget>
     <addaction name="actionopen"/>
     <addaction name="actionopenNetwork"/>
-    <addaction name="actionexport"/>
+    <addaction name="menu"/>
     <addaction name="separator"/>
     <addaction name="actionclose"/>
     <addaction name="separator"/>
@@ -349,11 +356,6 @@ background-color: rgb(3, 57, 122);
    </property>
    <property name="text">
     <string>打开</string>
-   </property>
-  </action>
-  <action name="actionexport">
-   <property name="text">
-    <string>导出数据</string>
    </property>
   </action>
   <action name="actionclose">
@@ -1207,6 +1209,16 @@ background-color: rgb(3, 57, 122);
   <action name="action1_3">
    <property name="text">
     <string>1</string>
+   </property>
+  </action>
+  <action name="action_ExportDataAndFile">
+   <property name="text">
+    <string>导出数据</string>
+   </property>
+  </action>
+  <action name="action_ExportOnlyFile">
+   <property name="text">
+    <string>导出文件</string>
    </property>
   </action>
  </widget>
