@@ -1258,6 +1258,26 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
                 yDataPairEnableObj.insert(yUuid, yScrollHash.value(yUuid, false));
             }
             plotObject.insert("YDataPairEnableMap", yDataPairEnableObj);
+            // limits
+            auto bgMap = scatter->getBkgLimitSegMap();
+            QJsonArray bgArray;
+            for(const auto& seg : bgMap)
+            {
+                QJsonObject obj;
+                obj.insert("BGLimitName", seg.m_limitName);
+                obj.insert("BGLimitValue", seg.m_limitValue);
+                obj.insert("BGLimitLineColor", color_transfer::QColorToRGBAStr(seg.m_lineColor));
+                obj.insert("BGLimitLineWidth", seg.m_lineWidth);
+                obj.insert("BGLimitFillAColor",
+                           color_transfer::QColorToRGBAStr(seg.m_fillAboveColor));
+                obj.insert("BGLimitFillBColor",
+                           color_transfer::QColorToRGBAStr(seg.m_fillBelowColor));
+                bgArray.append(obj);
+            }
+            if(!bgArray.isEmpty())
+            {
+                plotObject.insert("BGLimits", bgArray);
+            }
         }
     }
     else if(type == PlotType::Type_PlotText)
@@ -1591,6 +1611,29 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
                 yScrollHash.insert(it.key(), it.value().toBool());
             }
             scatter->setYScrollHash(yScrollHash);
+
+            // limits
+            if(plotObject.contains("BGLimits"))
+            {
+                QMap<double, PlotScatter::BackgroundLimitSeg> bkgLimitSegMap;
+                QJsonArray bgArray = plotObject.value("BGLimits").toArray();
+                for(const auto value : bgArray)
+                {
+                    QJsonObject bgObj = value.toObject();
+                    PlotScatter::BackgroundLimitSeg seg;
+                    seg.m_limitName = bgObj.value("BGLimitName").toString();
+                    seg.m_limitValue = bgObj.value("BGLimitValue").toDouble();
+                    seg.m_lineColor = color_transfer::QColorFromRGBAStr(
+                        bgObj.value("BGLimitLineColor").toString());
+                    seg.m_lineWidth = bgObj.value("BGLimitLineWidth").toInt();
+                    seg.m_fillAboveColor = color_transfer::QColorFromRGBAStr(
+                        bgObj.value("BGLimitFillAColor").toString());
+                    seg.m_fillBelowColor = color_transfer::QColorFromRGBAStr(
+                        bgObj.value("BGLimitFillBColor").toString());
+                    bkgLimitSegMap.insert(seg.m_limitValue, seg);
+                }
+                scatter->setBkgLimitSegMap(bkgLimitSegMap);
+            }
         }
     }
     else if(type == PlotType::Type_PlotText)

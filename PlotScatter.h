@@ -34,7 +34,7 @@ public:
         QString m_limitName;
         double m_limitValue;
         QColor m_lineColor;
-        uint32_t m_lineWidth;
+        int32_t m_lineWidth;
         QColor m_fillAboveColor;
         QColor m_fillBelowColor;
         bool operator==(const BackgroundLimitSeg& seg)
@@ -75,7 +75,7 @@ public:
     void addBackgroundColorInfo(const QString& limitName,
                                 double limitValue,
                                 const QColor& lineColor,
-                                uint32_t lineWidth,
+                                int32_t lineWidth,
                                 const QColor& fillAboveColor,
                                 const QColor& fillBelowColor);
 
@@ -130,6 +130,8 @@ public:
 
     void setYScrollEnableByUUID(const QString& uuid, bool enable);
     bool getYScrollEnableByUUID(const QString& uuid);
+
+    void setBkgLimitSegMap(const QMap<double, BackgroundLimitSeg>& bkgLimitSegMap);
 
 protected:
     void updateDataForDataPairsByTime(double secs) override;

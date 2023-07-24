@@ -458,7 +458,7 @@ void PlotScatter::drawGOGData()
 void PlotScatter::addBackgroundColorInfo(const QString& limitName,
                                          double limitValue,
                                          const QColor& lineColor,
-                                         uint32_t lineWidth,
+                                         int32_t lineWidth,
                                          const QColor& fillAboveColor,
                                          const QColor& fillBelowColor)
 {
@@ -993,6 +993,11 @@ QPointF PlotScatter::getCurrentAverageXYValue(bool& xNeedScroll, bool& yNeedScro
         yNeedScroll = false;
     }
     return point;
+}
+
+void PlotScatter::setBkgLimitSegMap(const QMap<double, BackgroundLimitSeg>& bkgLimitSegMap)
+{
+    m_bkgLimitSegMap = bkgLimitSegMap;
 }
 
 QHash<QString, bool> PlotScatter::getYScrollHash() const
