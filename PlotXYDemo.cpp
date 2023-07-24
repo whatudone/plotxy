@@ -878,7 +878,7 @@ void PlotXYDemo::savePXYData(const QString& pxyFileName, bool isSaveData)
     jsonDoc.setObject(allObject);
 
     QByteArray asiData;
-    if(!dataFileName.isEmpty())
+    if(isSaveData && !dataFileName.isEmpty())
     {
         QFile asiFile(dataFileName);
         asiFile.open(QFile::ReadOnly);

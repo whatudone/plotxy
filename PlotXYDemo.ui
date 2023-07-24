@@ -71,7 +71,7 @@ background-color: rgb(3, 57, 122);
      <x>0</x>
      <y>0</y>
      <width>1600</width>
-     <height>18</height>
+     <height>17</height>
     </rect>
    </property>
    <widget class="QMenu" name="menufile">
@@ -1213,19 +1213,19 @@ background-color: rgb(3, 57, 122);
   </action>
   <action name="action_ExportDataAndFile">
    <property name="text">
-    <string>导出数据</string>
+    <string>导出方案</string>
    </property>
   </action>
   <action name="action_ExportOnlyFile">
    <property name="text">
-    <string>导出文件</string>
+    <string>导出方案(不包含数据)</string>
    </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="resources/statusbar.qrc"/>
   <include location="resources/toolbar.qrc"/>
+  <include location="resources/statusbar.qrc"/>
  </resources>
  <connections/>
 </ui>
