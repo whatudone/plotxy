@@ -43,6 +43,7 @@ public slots:
 	void onOpenNetwork();
     // 导出数据成pxy或者csv，目前先保存为pxy
 	void onExportDataStore();
+    void onExportOnlyFile();
 	void onClose_Disconnect();
 	void onRunPythonScript();
 	void onLoadPML();
@@ -176,7 +177,7 @@ signals:
 
 public:
     // 保存PXY格式工程信息
-    void savePXYData(const QString& pxyFileName);
+    void savePXYData(const QString& pxyFileName, bool isSaveData);
     // 加载PXY格式工程信息，里面带了图表空间信息和数据信息
     void loadPXYData(const QString& pxyFileName);
 
