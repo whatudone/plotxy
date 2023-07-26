@@ -1931,11 +1931,11 @@ void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBas
     QString yAttrUnitName = dataPairObject.value("YAttrUnitName").toString();
     QHash<QString, QVariant> params;
     params.insert("UUID", uuid);
+    params.insert("XEntityName", xEntityName);
+    params.insert("YEntityName", yEntityName);
     auto dataPair = plot->addPlotDataPair(
         xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName, params, true);
     dataPair->blockSignals(true);
-    dataPair->setEntity_x(xEntityName);
-    dataPair->setEntity_y(yEntityName);
     dataPair->setDraw(visible);
     dataPair->setSecondsLimit(dataPairObject.value("SecondsLimit").toDouble());
     dataPair->setPointsLimit(dataPairObject.value("PointsLimit").toInt());
