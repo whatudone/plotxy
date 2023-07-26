@@ -108,6 +108,7 @@ PlotXYDemo::~PlotXYDemo()
 
 void PlotXYDemo::onAdvancedData()
 {
+    m_AdvancedDataManager->onUpdatePlotPair();
     m_AdvancedDataManager->showNormal();
     m_AdvancedDataManager->activateWindow();
 }
@@ -147,6 +148,7 @@ void PlotXYDemo::onAddPlotPair()
     m_addPlotPair->onUpdateEntityTableByDataChanged();
     m_addPlotPair->onChangeStackIndex(m_lastSelectedType);
     m_addPlotPair->setPlotBaseInfo(m_pCurSelectedPlot);
+    m_addPlotPair->onUpdatePlotPair(m_pCurSelectedPlot);
     m_addPlotPair->show();
     m_addPlotPair->activateWindow();
 }
@@ -159,6 +161,7 @@ void PlotXYDemo::onAddPlotPair(const QString& tabName, const QString& plotName)
     {
         m_addPlotPair->onChangeStackIndex(m_lastSelectedType);
         m_addPlotPair->setPlotBaseInfo(m_pCurSelectedPlot);
+        m_addPlotPair->onUpdatePlotPair(m_pCurSelectedPlot);
         m_addPlotPair->show();
         m_addPlotPair->activateWindow();
     }
@@ -1746,6 +1749,8 @@ void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object, Plo
     object.insert("Visible", dataPair->isDraw());
     object.insert("XEntityID", dataPair->getEntityIDX());
     object.insert("YEntityID", dataPair->getEntityIDY());
+    object.insert("XEntityName", dataPair->getEntity_x());
+    object.insert("YEntityName", dataPair->getEntity_y());
     object.insert("XAttrName", dataPair->getAttr_x());
     object.insert("YAttrName", dataPair->getAttr_y());
     object.insert("XAttrUnitName", dataPair->getUnit_x());
@@ -1917,16 +1922,20 @@ void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBas
     bool visible = dataPairObject.value("Visible").toBool();
     int32_t xEntityID = dataPairObject.value("XEntityID").toInt();
     QString xAttrName = dataPairObject.value("XAttrName").toString();
+    QString xEntityName = dataPairObject.value("XEntityName").toString();
     QString xAttrUnitName = dataPairObject.value("XAttrUnitName").toString();
 
     int32_t yEntityID = dataPairObject.value("YEntityID").toInt();
     QString yAttrName = dataPairObject.value("YAttrName").toString();
+    QString yEntityName = dataPairObject.value("YEntityName").toString();
     QString yAttrUnitName = dataPairObject.value("YAttrUnitName").toString();
     QHash<QString, QVariant> params;
     params.insert("UUID", uuid);
     auto dataPair = plot->addPlotDataPair(
         xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName, params, true);
     dataPair->blockSignals(true);
+    dataPair->setEntity_x(xEntityName);
+    dataPair->setEntity_y(yEntityName);
     dataPair->setDraw(visible);
     dataPair->setSecondsLimit(dataPairObject.value("SecondsLimit").toDouble());
     dataPair->setPointsLimit(dataPairObject.value("PointsLimit").toInt());
