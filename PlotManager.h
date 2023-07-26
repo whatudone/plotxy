@@ -19,6 +19,7 @@ public:
     void init(); //初始化函数，连接信号槽
     void addPlot(const QString&, PlotItemBase*); //添加Plot
     void setTabWidgetRect(const QRect& rect);
+    void refreshPlotDataUI(PlotItemBase* plot);
 
 private:
 	void initTreeWidgetSettings();
@@ -47,7 +48,6 @@ private:
 	void refreshAxisGridUI(PlotItemBase* plot);
     void refreshAxisGridScrollUI(PlotItemBase* plot);
     void refreshLinkAxesUI(PlotItemBase* plot);
-	void refreshPlotDataUI(PlotItemBase* plot);
 	void refreshLightTextUI(PlotItemBase* plot);
     void refreshGOGUI(PlotItemBase* plot);
     void refreshAScopeUI(PlotItemBase* plot);

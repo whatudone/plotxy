@@ -108,6 +108,7 @@ PlotXYDemo::~PlotXYDemo()
 
 void PlotXYDemo::onAdvancedData()
 {
+    m_AdvancedDataManager->onUpdatePlotPair();
     m_AdvancedDataManager->showNormal();
     m_AdvancedDataManager->activateWindow();
 }
@@ -121,6 +122,7 @@ void PlotXYDemo::onPlotManager()
         return;
     }
     m_plotManager->onSelectedPlot(m_pCurSelectedPlot);
+    m_plotManager->refreshPlotDataUI(m_pCurSelectedPlot);
     m_plotManager->showNormal();
     m_plotManager->activateWindow();
 }
@@ -147,6 +149,7 @@ void PlotXYDemo::onAddPlotPair()
     m_addPlotPair->onUpdateEntityTableByDataChanged();
     m_addPlotPair->onChangeStackIndex(m_lastSelectedType);
     m_addPlotPair->setPlotBaseInfo(m_pCurSelectedPlot);
+    m_addPlotPair->onUpdatePlotPair(m_pCurSelectedPlot);
     m_addPlotPair->show();
     m_addPlotPair->activateWindow();
 }
@@ -159,6 +162,8 @@ void PlotXYDemo::onAddPlotPair(const QString& tabName, const QString& plotName)
     {
         m_addPlotPair->onChangeStackIndex(m_lastSelectedType);
         m_addPlotPair->setPlotBaseInfo(m_pCurSelectedPlot);
+        m_addPlotPair->onUpdateEntityTableByDataChanged();
+        m_addPlotPair->onUpdatePlotPair(m_pCurSelectedPlot);
         m_addPlotPair->show();
         m_addPlotPair->activateWindow();
     }

@@ -83,12 +83,18 @@ void DataPair::setUuid(const QString& uuid)
 
 QString DataPair::getXEntityAttrPair()
 {
-    return QString("%1 %2").arg(m_entity_x).arg(m_attr_x);
+    return QString("%1 %2")
+        .arg(m_entity_x.isEmpty() ? DataManagerInstance->getEntityNameByID(m_entityIDX)
+                                  : m_entity_x)
+        .arg(m_attr_x);
 }
 
 QString DataPair::getYEntityAttrPair()
 {
-    return QString("%1 %2").arg(m_entity_y).arg(m_attr_y);
+    return QString("%1 %2")
+        .arg(m_entity_y.isEmpty() ? DataManagerInstance->getEntityNameByID(m_entityIDY)
+                                  : m_entity_y)
+        .arg(m_attr_y);
 }
 
 int32_t DataPair::getEntityIDX() const
