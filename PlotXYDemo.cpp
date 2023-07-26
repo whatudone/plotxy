@@ -1755,6 +1755,8 @@ void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object, Plo
     object.insert("YAttrName", dataPair->getAttr_y());
     object.insert("XAttrUnitName", dataPair->getUnit_x());
     object.insert("YAttrUnitName", dataPair->getUnit_y());
+    object.insert("XDataType", static_cast<int32_t>(dataPair->getXDataType()));
+    object.insert("YDataType", static_cast<int32_t>(dataPair->getYDataType()));
     object.insert("SecondsLimit", dataPair->getSecondsLimit());
     object.insert("PointsLimit", dataPair->getPointsLimit());
     // 图表特殊信息,先保存已经支持的信息
@@ -1933,6 +1935,9 @@ void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBas
     params.insert("UUID", uuid);
     params.insert("XEntityName", xEntityName);
     params.insert("YEntityName", yEntityName);
+    params.insert("XDataType", dataPairObject.value("XDataType").toInt());
+    params.insert("YDataType", dataPairObject.value("YDataType").toInt());
+
     auto dataPair = plot->addPlotDataPair(
         xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName, params, true);
     dataPair->blockSignals(true);

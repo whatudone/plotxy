@@ -452,7 +452,18 @@ DataPair* PlotBar::addPlotDataPair(int32_t xEntityID,
             this,
             &PlotItemBase::onDataPairUpdateData,
             Qt::UniqueConnection);
-
+    if(extraParams.contains("UUID"))
+    {
+        data->setUuid(extraParams.value("UUID").toString());
+    }
+    if(extraParams.contains("XDataType"))
+    {
+        data->setXDataType(static_cast<DataPair::DataType>(extraParams.value("XDataType").toInt()));
+    }
+    if(extraParams.contains("YDataType"))
+    {
+        data->setYDataType(static_cast<DataPair::DataType>(extraParams.value("YDataType").toInt()));
+    }
     QString uuid = data->getUuid();
 
     QColor dataColor = data->dataColor();

@@ -1065,3 +1065,23 @@ void DataPair::setPointsLimit(const int32_t& pointsLimit)
         emit dataUpdate();
     }
 }
+
+DataPair::DataType DataPair::getXDataType() const
+{
+    return m_xDataType;
+}
+
+void DataPair::setXDataType(const DataType& xDataType)
+{
+    m_xDataType = xDataType;
+}
+
+DataPair::DataType DataPair::getYDataType() const
+{
+    return m_yDataType;
+}
+
+void DataPair::setYDataType(const DataType& yDataType)
+{
+    m_yDataType = yDataType;
+}

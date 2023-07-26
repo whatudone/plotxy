@@ -40,9 +40,11 @@ private:
     bool getCurrentSelectParam(int32_t& xEntityID,
                                QString& xAttrName,
                                QString& xAttrUnitName,
+                               DataPair::DataType& xType,
                                int32_t& yEntityID,
                                QString& yAttrName,
-                               QString& yAttrUnitName);
+                               QString& yAttrUnitName,
+                               DataPair::DataType& yType);
 
     // 根据点击的实体选项切换对应表格里面的属性列表
     void updateAttrTableWidgetOnEntityChanged(QTableWidgetItem* entityItem,

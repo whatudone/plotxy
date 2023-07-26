@@ -358,12 +358,14 @@ void AddPlotPair::updatePlotTrees()
 bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
                                         QString& xAttrName,
                                         QString& xAttrUnitName,
+                                        DataPair::DataType& xType,
                                         int32_t& yEntityID,
                                         QString& yAttrName,
-                                        QString& yAttrUnitName)
+                                        QString& yAttrUnitName,
+                                        DataPair::DataType& yType)
 {
     // 11种图表这里归纳为5种添加数据的界面
-    // TODO:AScope三种图表还没实现 ，范围计算还没实现
+    // TODO:范围计算还没实现
     int index = ui.stackedWidget->currentIndex();
 
     switch(index)
@@ -382,6 +384,7 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
                 ui.tableWidget_nameUnits->item(ui.tableWidget_nameUnits->currentRow(), 0)->text();
             xAttrUnitName =
                 ui.tableWidget_nameUnits->item(ui.tableWidget_nameUnits->currentRow(), 1)->text();
+            xType = DataPair::Parameter;
         }
         // 范围计算
         else if(ui.radioButton_2->isChecked())
@@ -390,8 +393,9 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
                ui.tableWidget_Entity_10->currentItem() == nullptr)
                 return false;
 
-            //            strEntity1 = ui.tableWidget_Entity_9->currentItem()->text();
-            //            strNameUnit1 = ui.tableWidget_Entity_10->currentItem()->text();
+            xType = DataPair::RangeCalculation;
+            xEntityID = ui.tableWidget_Entity_9->currentItem()->data(Qt::UserRole + 1).toInt();
+            yEntityID = ui.tableWidget_Entity_10->currentItem()->data(Qt::UserRole + 1).toInt();
         }
         // 固定y轴为时间
         yAttrName = "Time";
@@ -533,7 +537,7 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
         }
         break;
     }
-        // ASCope
+        // ASCope rti dopple
     case 5: {
 
         if(!ui.tableWidget_AScopeEntity->currentItem())
@@ -593,14 +597,16 @@ void AddPlotPair::onBtnAddClicked()
     int32_t yEntityID;
     QString yAttrName;
     QString yAttrUnitName;
+    // 默认采用参数类型
+    DataPair::DataType xType = DataPair::Parameter;
+    DataPair::DataType yType = DataPair::Parameter;
 
     if(!getCurrentSelectParam(
-           xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName))
+           xEntityID, xAttrName, xAttrUnitName, xType, yEntityID, yAttrName, yAttrUnitName, yType))
     {
         return;
     }
 
-    // TODO:m_pCurSelectedPlot初始化的没有值，需要完善
     if(m_pCurSelectedPlot)
     {
         QHash<QString, QVariant> dataHash;
@@ -608,6 +614,8 @@ void AddPlotPair::onBtnAddClicked()
         {
             dataHash.insert("Desc", ui.lineEdit_LightDesc->text());
         }
+        dataHash.insert("XDataType", static_cast<int32_t>(xType));
+        dataHash.insert("YDataType", static_cast<int32_t>(yType));
         // 数据对触发的DataPairsChanged信号会在后续触发数据对表格的刷新操作
         m_pCurSelectedPlot->addPlotDataPair(
             xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName, dataHash);
@@ -755,8 +763,16 @@ void AddPlotPair::onBtnUpdateClicked()
         int32_t yEntityID;
         QString yAttrName;
         QString yAttrUnitName;
-        if(!getCurrentSelectParam(
-               xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName))
+        DataPair::DataType xType = DataPair::Parameter;
+        DataPair::DataType yType = DataPair::Parameter;
+        if(!getCurrentSelectParam(xEntityID,
+                                  xAttrName,
+                                  xAttrUnitName,
+                                  xType,
+                                  yEntityID,
+                                  yAttrName,
+                                  yAttrUnitName,
+                                  yType))
         {
             return;
         }
@@ -764,8 +780,21 @@ void AddPlotPair::onBtnUpdateClicked()
         {
             // 从data中取出添加过的uuid数据
             QString uuid = ui.tableWidget_union->item(row, 0)->data(Qt::UserRole + 1).toString();
-            m_pCurSelectedPlot->updatePlotPairData(
-                uuid, xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
+            QHash<QString, QVariant> dataHash;
+            if(m_pCurSelectedPlot->plotType() == PlotType::Type_PlotLight)
+            {
+                dataHash.insert("Desc", ui.lineEdit_LightDesc->text());
+            }
+            dataHash.insert("XDataType", static_cast<int32_t>(xType));
+            dataHash.insert("YDataType", static_cast<int32_t>(yType));
+            m_pCurSelectedPlot->updatePlotPairData(uuid,
+                                                   xEntityID,
+                                                   xAttrName,
+                                                   xAttrUnitName,
+                                                   yEntityID,
+                                                   yAttrName,
+                                                   yAttrUnitName,
+                                                   dataHash);
         }
     }
 }

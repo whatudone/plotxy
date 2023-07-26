@@ -99,7 +99,7 @@ public:
     // 滑块时间变化时,数据整体发生变化，需要全部更新
     virtual void updateDataForDataPairsByTime(double);
 
-    void setPaddings(double top, double bottom, double left, double right);
+    void setPaddings(int32_t top, int32_t bottom, int32_t left, int32_t right);
     void updateTitle();
 
     //getters:
@@ -285,13 +285,15 @@ public:
                     const QHash<QString, QVariant>& extraParams = QHash<QString, QVariant>(),
                     bool isFromJson = false);
     virtual void delPlotPairData(const QString& uuid);
-    virtual void updatePlotPairData(const QString& uuid,
-                                    int32_t xEntityID,
-                                    const QString& xAttrName,
-                                    const QString& xAttrUnitName,
-                                    int32_t yEntityID,
-                                    const QString& yAttrName,
-                                    const QString& yAttrUnitName);
+    virtual void
+    updatePlotPairData(const QString& uuid,
+                       int32_t xEntityID,
+                       const QString& xAttrName,
+                       const QString& xAttrUnitName,
+                       int32_t yEntityID,
+                       const QString& yAttrName,
+                       const QString& yAttrUnitName,
+                       const QHash<QString, QVariant>& extraParams = QHash<QString, QVariant>());
     const QVector<DataPair*>& getDataPairs()
     {
         return m_dataPairs;

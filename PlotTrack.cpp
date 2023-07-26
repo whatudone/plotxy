@@ -182,12 +182,25 @@ DataPair* PlotTrack::addPlotDataPair(int32_t xEntityID,
     DataPair* data =
         new DataPair(xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
 
+    m_dataPairs.append(data);
+    // 从pxy恢复时需要用原始UUID覆盖自动生成的UUID
+    if(extraParams.contains("UUID"))
+    {
+        data->setUuid(extraParams.value("UUID").toString());
+    }
+    if(extraParams.contains("XDataType"))
+    {
+        data->setXDataType(static_cast<DataPair::DataType>(extraParams.value("XDataType").toInt()));
+    }
+    if(extraParams.contains("YDataType"))
+    {
+        data->setYDataType(static_cast<DataPair::DataType>(extraParams.value("YDataType").toInt()));
+    }
     connect(data,
             &DataPair::dataUpdate,
             this,
             &PlotItemBase::onDataPairUpdateData,
             Qt::UniqueConnection);
-    m_dataPairs.append(data);
     m_units_x = xAttrUnitName;
     m_units_y = yAttrUnitName;
 

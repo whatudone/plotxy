@@ -641,7 +641,7 @@ void PlotItemBase::setYPrecision(int value)
     replot();
 }
 
-void PlotItemBase::setPaddings(double top, double bottom, double left, double right)
+void PlotItemBase::setPaddings(int32_t top, int32_t bottom, int32_t left, int32_t right)
 {
     m_topPadding = top;
     m_bottomPadding = bottom;
@@ -671,7 +671,6 @@ DataPair* PlotItemBase::addPlotDataPair(int32_t xEntityID,
                                         const QHash<QString, QVariant>& extraParams,
                                         bool isFromJson)
 {
-    // TODO:需要完善重复添加逻辑
     DataPair* data =
         new DataPair(xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
     m_dataPairs.append(data);
@@ -686,6 +685,7 @@ DataPair* PlotItemBase::addPlotDataPair(int32_t xEntityID,
         auto desc = extraParams.value("Desc").toString();
         data->setDesc(desc);
     }
+    // 从pxy恢复时需要用原始UUID覆盖自动生成的UUID
     if(extraParams.contains("UUID"))
     {
         data->setUuid(extraParams.value("UUID").toString());
@@ -694,6 +694,14 @@ DataPair* PlotItemBase::addPlotDataPair(int32_t xEntityID,
         data->setEntity_x(extraParams.value("XEntityName").toString());
     if(extraParams.contains("YEntityName"))
         data->setEntity_y(extraParams.value("YEntityName").toString());
+    if(extraParams.contains("XDataType"))
+    {
+        data->setXDataType(static_cast<DataPair::DataType>(extraParams.value("XDataType").toInt()));
+    }
+    if(extraParams.contains("YDataType"))
+    {
+        data->setYDataType(static_cast<DataPair::DataType>(extraParams.value("YDataType").toInt()));
+    }
 
     // 目前界面上都是直接修改DataPair内部的数据，这里提供一个集中的入口虚函数处理。
     connect(data,
@@ -730,23 +738,34 @@ void PlotItemBase::updatePlotPairData(const QString& uuid,
                                       const QString& xAttrUnitName,
                                       int32_t yEntityID,
                                       const QString& yAttrName,
-                                      const QString& yAttrUnitName)
+                                      const QString& yAttrUnitName,
+                                      const QHash<QString, QVariant>& extraParams)
 {
     if(m_dataPairs.isEmpty())
         return;
 
     for(int i = 0; i < m_dataPairs.size(); ++i)
     {
-        if(m_dataPairs.at(i)->getUuid() == uuid)
+        auto data = m_dataPairs.at(i);
+        if(data->getUuid() == uuid)
         {
-            m_dataPairs.at(i)->setEntityIDX(xEntityID);
-            m_dataPairs.at(i)->setAttr_x(xAttrName);
-            m_dataPairs.at(i)->setUnit_x(xAttrUnitName);
+            data->setEntityIDX(xEntityID);
+            data->setAttr_x(xAttrName);
+            data->setUnit_x(xAttrUnitName);
+            if(extraParams.contains("XDataType"))
+            {
+                data->setXDataType(
+                    static_cast<DataPair::DataType>(extraParams.value("XDataType").toInt()));
+            }
 
-            m_dataPairs.at(i)->setEntityIDY(yEntityID);
-            m_dataPairs.at(i)->setAttr_y(yAttrName);
-            m_dataPairs.at(i)->setUnit_y(yAttrUnitName);
-
+            data->setEntityIDY(yEntityID);
+            data->setAttr_y(yAttrName);
+            data->setUnit_y(yAttrUnitName);
+            if(extraParams.contains("YDataType"))
+            {
+                data->setYDataType(
+                    static_cast<DataPair::DataType>(extraParams.value("YDataType").toInt()));
+            }
             emit dataPairsChanged(this);
             break;
         }

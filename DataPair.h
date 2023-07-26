@@ -55,7 +55,15 @@ public:
 
     enum RangeCalculationType
     {
-        DeltaAltitude = 0
+        RelativeAltitude = 0
+    };
+
+    enum DataType
+    {
+        Time = 0,
+        Parameter,
+        RangeCalculation,
+        UserDefine
     };
 
     DataPair(QObject* parent = nullptr);
@@ -357,6 +365,12 @@ public:
     int32_t getPointsLimit() const;
     void setPointsLimit(const int32_t& pointsLimit);
 
+    DataType getXDataType() const;
+    void setXDataType(const DataType& xDataType);
+
+    DataType getYDataType() const;
+    void setYDataType(const DataType& yDataType);
+
 private:
     bool m_isDraw; //是否绘制
     QColor m_color; //数据颜色
@@ -420,7 +434,9 @@ private:
     QString m_desc;
     // 自动生成的唯一标识符
     QString m_uuid;
-
+    //数据类型
+    DataType m_xDataType = Parameter;
+    DataType m_yDataType = Parameter;
 signals:
 	void dataUpdate();
 };
