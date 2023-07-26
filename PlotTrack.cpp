@@ -231,6 +231,10 @@ DataPair* PlotTrack::addPlotDataPair(int32_t xEntityID,
     pBarAva->moveAbove(pBarUna);
     pBarInv->moveAbove(pBarAva);
     m_allBar.insert(uuid, barList);
+    if(extraParams.contains("XEntityName"))
+        data->setEntity_x(extraParams.value("XEntityName").toString());
+    if(extraParams.contains("YEntityName"))
+        data->setEntity_y(extraParams.value("YEntityName").toString());
     m_tickLabelMap.insert(uuid, data->getEntity_x() + '_' + xAttrName);
 
     updateKeyAxisTickLabel();

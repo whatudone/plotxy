@@ -336,19 +336,18 @@ QCPAxis* PlotBar::valueAxis()
 
 void PlotBar::updateKeyAxisTickLabel()
 {
+    if(m_tickLabelMap.isEmpty())
+    {
+        return;
+    }
     QVector<double> barTicks;
     QVector<QString> labels;
     int itemCnt = getDataPairs().size();
-    if(itemCnt == 0)
-        return;
-    m_tickLabelMap.clear();
     for(int i = 0; i < itemCnt; i++)
     {
         auto data = getDataPairs().at(i);
         auto uuid = data->getUuid();
-        auto id = data->getEntityIDX();
-        auto label = DataManagerInstance->getEntityNameByID(id);
-        m_tickLabelMap.insert(uuid, label);
+        auto label = m_tickLabelMap.value(uuid);
         // 序号需要从1开始
         barTicks << i + 1;
         labels << label;
@@ -468,6 +467,11 @@ DataPair* PlotBar::addPlotDataPair(int32_t xEntityID,
     QList<QCPBars*> baseBar;
     baseBar.push_back(pBar);
     m_allBar.insert(uuid, baseBar);
+    if(extraParams.contains("XEntityName"))
+        data->setEntity_x(extraParams.value("XEntityName").toString());
+    if(extraParams.contains("YEntityName"))
+        data->setEntity_y(extraParams.value("YEntityName").toString());
+    m_tickLabelMap.insert(uuid, data->getEntity_x());
 
     QPair<double, double> limit =
         DataManager::getInstance()->getMaxAndMinEntityAttrValue(xEntityID, xAttrName, m_xRate);
