@@ -691,9 +691,14 @@ DataPair* PlotItemBase::addPlotDataPair(int32_t xEntityID,
         data->setUuid(extraParams.value("UUID").toString());
     }
     if(extraParams.contains("XEntityName"))
+    {
         data->setEntity_x(extraParams.value("XEntityName").toString());
+    }
     if(extraParams.contains("YEntityName"))
+    {
         data->setEntity_y(extraParams.value("YEntityName").toString());
+    }
+
     if(extraParams.contains("XDataType"))
     {
         data->setXDataType(static_cast<DataPair::DataType>(extraParams.value("XDataType").toInt()));
@@ -701,6 +706,16 @@ DataPair* PlotItemBase::addPlotDataPair(int32_t xEntityID,
     if(extraParams.contains("YDataType"))
     {
         data->setYDataType(static_cast<DataPair::DataType>(extraParams.value("YDataType").toInt()));
+    }
+    if(extraParams.contains("XCalType"))
+    {
+        data->setXCalType(
+            static_cast<DataPair::RangeCalculationType>(extraParams.value("XCalType").toInt()));
+    }
+    if(extraParams.contains("YCalType"))
+    {
+        data->setYCalType(
+            static_cast<DataPair::RangeCalculationType>(extraParams.value("YCalType").toInt()));
     }
 
     // 目前界面上都是直接修改DataPair内部的数据，这里提供一个集中的入口虚函数处理。
@@ -757,6 +772,11 @@ void PlotItemBase::updatePlotPairData(const QString& uuid,
                 data->setXDataType(
                     static_cast<DataPair::DataType>(extraParams.value("XDataType").toInt()));
             }
+            if(extraParams.contains("XCalType"))
+            {
+                data->setXCalType(static_cast<DataPair::RangeCalculationType>(
+                    extraParams.value("XCalType").toInt()));
+            }
 
             data->setEntityIDY(yEntityID);
             data->setAttr_y(yAttrName);
@@ -765,6 +785,11 @@ void PlotItemBase::updatePlotPairData(const QString& uuid,
             {
                 data->setYDataType(
                     static_cast<DataPair::DataType>(extraParams.value("YDataType").toInt()));
+            }
+            if(extraParams.contains("YCalType"))
+            {
+                data->setYCalType(static_cast<DataPair::RangeCalculationType>(
+                    extraParams.value("YCalType").toInt()));
             }
             emit dataPairsChanged(this);
             break;

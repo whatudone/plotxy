@@ -1757,6 +1757,8 @@ void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object, Plo
     object.insert("YAttrUnitName", dataPair->getUnit_y());
     object.insert("XDataType", static_cast<int32_t>(dataPair->getXDataType()));
     object.insert("YDataType", static_cast<int32_t>(dataPair->getYDataType()));
+    object.insert("XCalType", static_cast<int32_t>(dataPair->getXCalType()));
+    object.insert("YCalType", static_cast<int32_t>(dataPair->getYCalType()));
     object.insert("SecondsLimit", dataPair->getSecondsLimit());
     object.insert("PointsLimit", dataPair->getPointsLimit());
     // 图表特殊信息,先保存已经支持的信息
@@ -1924,19 +1926,40 @@ void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBas
     bool visible = dataPairObject.value("Visible").toBool();
     int32_t xEntityID = dataPairObject.value("XEntityID").toInt();
     QString xAttrName = dataPairObject.value("XAttrName").toString();
-    QString xEntityName = dataPairObject.value("XEntityName").toString();
     QString xAttrUnitName = dataPairObject.value("XAttrUnitName").toString();
 
     int32_t yEntityID = dataPairObject.value("YEntityID").toInt();
     QString yAttrName = dataPairObject.value("YAttrName").toString();
-    QString yEntityName = dataPairObject.value("YEntityName").toString();
     QString yAttrUnitName = dataPairObject.value("YAttrUnitName").toString();
     QHash<QString, QVariant> params;
     params.insert("UUID", uuid);
-    params.insert("XEntityName", xEntityName);
-    params.insert("YEntityName", yEntityName);
-    params.insert("XDataType", dataPairObject.value("XDataType").toInt());
-    params.insert("YDataType", dataPairObject.value("YDataType").toInt());
+    // 兼容以前不存在属性
+    if(dataPairObject.contains("XEntityName"))
+    {
+        QString xEntityName = dataPairObject.value("XEntityName").toString();
+        params.insert("XEntityName", xEntityName);
+    }
+    if(dataPairObject.contains("YEntityName"))
+    {
+        QString yEntityName = dataPairObject.value("YEntityName").toString();
+        params.insert("YEntityName", yEntityName);
+    }
+    if(dataPairObject.contains("XDataType"))
+    {
+        params.insert("XDataType", dataPairObject.value("XDataType").toInt());
+    }
+    if(dataPairObject.contains("YDataType"))
+    {
+        params.insert("YDataType", dataPairObject.value("YDataType").toInt());
+    }
+    if(dataPairObject.contains("XCalType"))
+    {
+        params.insert("XCalType", dataPairObject.value("XCalType").toInt());
+    }
+    if(dataPairObject.contains("YCalType"))
+    {
+        params.insert("YCalType", dataPairObject.value("YCalType").toInt());
+    }
 
     auto dataPair = plot->addPlotDataPair(
         xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName, params, true);

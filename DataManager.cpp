@@ -799,6 +799,22 @@ QStringList DataManager::getGenericDataTagsByID(int32_t entityID)
     return QStringList();
 }
 
+double DataManager::rangeCalculation(int32_t sourceID,
+                                     int32_t targetID,
+                                     DataPair::RangeCalculationType type,
+                                     double secs,
+                                     double rate)
+{
+    double value = std::numeric_limits<double>::max();
+    if(type == DataPair::RelativeAltitude)
+    {
+        double sourceAltitude = getEntityAttrValueByMaxTime(sourceID, "Alt", secs, rate);
+        double targetAltitude = getEntityAttrValueByMaxTime(targetID, "Alt", secs, rate);
+        value = sourceAltitude - targetAltitude;
+    }
+    return value;
+}
+
 bool DataManager::isEntityContainsGenericTags(int32_t id)
 {
     return m_genericMap.contains(id);

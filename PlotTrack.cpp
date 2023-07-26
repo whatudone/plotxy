@@ -196,6 +196,20 @@ DataPair* PlotTrack::addPlotDataPair(int32_t xEntityID,
     {
         data->setYDataType(static_cast<DataPair::DataType>(extraParams.value("YDataType").toInt()));
     }
+    if(extraParams.contains("XCalType"))
+    {
+        data->setXCalType(
+            static_cast<DataPair::RangeCalculationType>(extraParams.value("XCalType").toInt()));
+    }
+    if(extraParams.contains("YCalType"))
+    {
+        data->setYCalType(
+            static_cast<DataPair::RangeCalculationType>(extraParams.value("YCalType").toInt()));
+    }
+    if(extraParams.contains("XEntityName"))
+        data->setEntity_x(extraParams.value("XEntityName").toString());
+    if(extraParams.contains("YEntityName"))
+        data->setEntity_y(extraParams.value("YEntityName").toString());
     connect(data,
             &DataPair::dataUpdate,
             this,
@@ -244,10 +258,6 @@ DataPair* PlotTrack::addPlotDataPair(int32_t xEntityID,
     pBarAva->moveAbove(pBarUna);
     pBarInv->moveAbove(pBarAva);
     m_allBar.insert(uuid, barList);
-    if(extraParams.contains("XEntityName"))
-        data->setEntity_x(extraParams.value("XEntityName").toString());
-    if(extraParams.contains("YEntityName"))
-        data->setEntity_y(extraParams.value("YEntityName").toString());
     m_tickLabelMap.insert(uuid, data->getEntity_x() + '_' + xAttrName);
 
     updateKeyAxisTickLabel();

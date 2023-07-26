@@ -371,6 +371,12 @@ public:
     DataType getYDataType() const;
     void setYDataType(const DataType& yDataType);
 
+    RangeCalculationType getXCalType() const;
+    void setXCalType(const RangeCalculationType& xCalType);
+
+    RangeCalculationType getYCalType() const;
+    void setYCalType(const RangeCalculationType& yCalType);
+
 private:
     bool m_isDraw; //是否绘制
     QColor m_color; //数据颜色
@@ -434,9 +440,12 @@ private:
     QString m_desc;
     // 自动生成的唯一标识符
     QString m_uuid;
-    //数据类型
+    // 数据类型
     DataType m_xDataType = Parameter;
     DataType m_yDataType = Parameter;
+    // 计算类型
+    RangeCalculationType m_xCalType = RelativeAltitude;
+    RangeCalculationType m_yCalType = RelativeAltitude;
 signals:
 	void dataUpdate();
 };

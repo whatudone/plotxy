@@ -37,9 +37,20 @@ void PlotBar::updateDataForDataPairsByTime(double secs)
         auto uuid = data->getUuid();
         auto xEntityID = data->getEntityIDX();
         auto xAttr = data->getAttr_x();
-
-        double value = DataManager::getInstance()->getEntityAttrValueByMaxTime(
-            xEntityID, xAttr, secs, m_xRate);
+        auto xDataType = data->getXDataType();
+        double value = 0.0;
+        if(xDataType == DataPair::Parameter)
+        {
+            value =
+                DataManagerInstance->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs, m_xRate);
+        }
+        else
+        {
+            auto yEntityID = data->getEntityIDY();
+            auto xCalType = data->getXCalType();
+            value = DataManagerInstance->rangeCalculation(
+                xEntityID, yEntityID, xCalType, secs, m_xRate);
+        }
 
         if(math::doubleEqual(value, std::numeric_limits<double>::max())) // 表示value无效
         {
@@ -446,12 +457,6 @@ DataPair* PlotBar::addPlotDataPair(int32_t xEntityID,
         m_units_y = yAttrUnitName;
     }
 
-    // 目前界面上都是直接修改DataPair内部的数据，这里提供一个集中的入口虚函数处理。
-    connect(data,
-            &DataPair::dataUpdate,
-            this,
-            &PlotItemBase::onDataPairUpdateData,
-            Qt::UniqueConnection);
     if(extraParams.contains("UUID"))
     {
         data->setUuid(extraParams.value("UUID").toString());
@@ -464,6 +469,25 @@ DataPair* PlotBar::addPlotDataPair(int32_t xEntityID,
     {
         data->setYDataType(static_cast<DataPair::DataType>(extraParams.value("YDataType").toInt()));
     }
+    if(extraParams.contains("XCalType"))
+    {
+        data->setXCalType(
+            static_cast<DataPair::RangeCalculationType>(extraParams.value("XCalType").toInt()));
+    }
+    if(extraParams.contains("YCalType"))
+    {
+        data->setYCalType(
+            static_cast<DataPair::RangeCalculationType>(extraParams.value("YCalType").toInt()));
+    }
+    if(extraParams.contains("XEntityName"))
+        data->setEntity_x(extraParams.value("XEntityName").toString());
+    if(extraParams.contains("YEntityName"))
+        data->setEntity_y(extraParams.value("YEntityName").toString());
+    connect(data,
+            &DataPair::dataUpdate,
+            this,
+            &PlotItemBase::onDataPairUpdateData,
+            Qt::UniqueConnection);
     QString uuid = data->getUuid();
 
     QColor dataColor = data->dataColor();
@@ -478,11 +502,14 @@ DataPair* PlotBar::addPlotDataPair(int32_t xEntityID,
     QList<QCPBars*> baseBar;
     baseBar.push_back(pBar);
     m_allBar.insert(uuid, baseBar);
-    if(extraParams.contains("XEntityName"))
-        data->setEntity_x(extraParams.value("XEntityName").toString());
-    if(extraParams.contains("YEntityName"))
-        data->setEntity_y(extraParams.value("YEntityName").toString());
-    m_tickLabelMap.insert(uuid, data->getEntity_x());
+    if(data->getXDataType() == DataPair::Parameter)
+    {
+        m_tickLabelMap.insert(uuid, data->getEntity_x());
+    }
+    else
+    {
+        m_tickLabelMap.insert(uuid, data->getEntity_x() + " VS " + data->getEntity_y());
+    }
 
     QPair<double, double> limit =
         DataManager::getInstance()->getMaxAndMinEntityAttrValue(xEntityID, xAttrName, m_xRate);

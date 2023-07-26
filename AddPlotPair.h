@@ -41,10 +41,12 @@ private:
                                QString& xAttrName,
                                QString& xAttrUnitName,
                                DataPair::DataType& xType,
+                               DataPair::RangeCalculationType& xCalType,
                                int32_t& yEntityID,
                                QString& yAttrName,
                                QString& yAttrUnitName,
-                               DataPair::DataType& yType);
+                               DataPair::DataType& yType,
+                               DataPair::RangeCalculationType& yCalType);
 
     // 根据点击的实体选项切换对应表格里面的属性列表
     void updateAttrTableWidgetOnEntityChanged(QTableWidgetItem* entityItem,

@@ -83,12 +83,26 @@ void DataPair::setUuid(const QString& uuid)
 
 QString DataPair::getXEntityAttrPair()
 {
-    return QString("%1 %2").arg(m_entity_x).arg(m_attr_x);
+    if(m_xDataType == Parameter)
+    {
+        return QString("%1 %2").arg(m_entity_x).arg(m_attr_x);
+    }
+    else
+    {
+        return m_entity_x;
+    }
 }
 
 QString DataPair::getYEntityAttrPair()
 {
-    return QString("%1 %2").arg(m_entity_y).arg(m_attr_y);
+    if(m_yDataType == Parameter)
+    {
+        return QString("%1 %2").arg(m_entity_y).arg(m_attr_y);
+    }
+    else
+    {
+        return m_entity_y;
+    }
 }
 
 int32_t DataPair::getEntityIDX() const
@@ -1084,4 +1098,24 @@ DataPair::DataType DataPair::getYDataType() const
 void DataPair::setYDataType(const DataType& yDataType)
 {
     m_yDataType = yDataType;
+}
+
+DataPair::RangeCalculationType DataPair::getXCalType() const
+{
+    return m_xCalType;
+}
+
+void DataPair::setXCalType(const RangeCalculationType& xCalType)
+{
+    m_xCalType = xCalType;
+}
+
+DataPair::RangeCalculationType DataPair::getYCalType() const
+{
+    return m_yCalType;
+}
+
+void DataPair::setYCalType(const RangeCalculationType& yCalType)
+{
+    m_yCalType = yCalType;
 }

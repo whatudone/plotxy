@@ -359,10 +359,12 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
                                         QString& xAttrName,
                                         QString& xAttrUnitName,
                                         DataPair::DataType& xType,
+                                        DataPair::RangeCalculationType& xCalType,
                                         int32_t& yEntityID,
                                         QString& yAttrName,
                                         QString& yAttrUnitName,
-                                        DataPair::DataType& yType)
+                                        DataPair::DataType& yType,
+                                        DataPair::RangeCalculationType& yCalType)
 {
     // 11种图表这里归纳为5种添加数据的界面
     // TODO:范围计算还没实现
@@ -385,6 +387,7 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
             xAttrUnitName =
                 ui.tableWidget_nameUnits->item(ui.tableWidget_nameUnits->currentRow(), 1)->text();
             xType = DataPair::Parameter;
+            yType = DataPair::Parameter;
         }
         // 范围计算
         else if(ui.radioButton_2->isChecked())
@@ -394,8 +397,12 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
                 return false;
 
             xType = DataPair::RangeCalculation;
+            yType = DataPair::RangeCalculation;
             xEntityID = ui.tableWidget_Entity_9->currentItem()->data(Qt::UserRole + 1).toInt();
             yEntityID = ui.tableWidget_Entity_10->currentItem()->data(Qt::UserRole + 1).toInt();
+            // 这里默认使用下拉框的序号作为枚举值，所以下拉框中的选项顺序需要和枚举值保持一致
+            xCalType =
+                static_cast<DataPair::RangeCalculationType>(ui.comboBoxCalTypeBar->currentIndex());
         }
         // 固定y轴为时间
         yAttrName = "Time";
@@ -600,9 +607,19 @@ void AddPlotPair::onBtnAddClicked()
     // 默认采用参数类型
     DataPair::DataType xType = DataPair::Parameter;
     DataPair::DataType yType = DataPair::Parameter;
+    DataPair::RangeCalculationType xCalType = DataPair::RelativeAltitude;
+    DataPair::RangeCalculationType yCalType = DataPair::RelativeAltitude;
 
-    if(!getCurrentSelectParam(
-           xEntityID, xAttrName, xAttrUnitName, xType, yEntityID, yAttrName, yAttrUnitName, yType))
+    if(!getCurrentSelectParam(xEntityID,
+                              xAttrName,
+                              xAttrUnitName,
+                              xType,
+                              xCalType,
+                              yEntityID,
+                              yAttrName,
+                              yAttrUnitName,
+                              yType,
+                              yCalType))
     {
         return;
     }
@@ -616,6 +633,8 @@ void AddPlotPair::onBtnAddClicked()
         }
         dataHash.insert("XDataType", static_cast<int32_t>(xType));
         dataHash.insert("YDataType", static_cast<int32_t>(yType));
+        dataHash.insert("XCalType", static_cast<int32_t>(xCalType));
+        dataHash.insert("YCalType", static_cast<int32_t>(yCalType));
         // 数据对触发的DataPairsChanged信号会在后续触发数据对表格的刷新操作
         m_pCurSelectedPlot->addPlotDataPair(
             xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName, dataHash);
@@ -765,14 +784,19 @@ void AddPlotPair::onBtnUpdateClicked()
         QString yAttrUnitName;
         DataPair::DataType xType = DataPair::Parameter;
         DataPair::DataType yType = DataPair::Parameter;
+        DataPair::RangeCalculationType xCalType = DataPair::RelativeAltitude;
+        DataPair::RangeCalculationType yCalType = DataPair::RelativeAltitude;
+
         if(!getCurrentSelectParam(xEntityID,
                                   xAttrName,
                                   xAttrUnitName,
                                   xType,
+                                  xCalType,
                                   yEntityID,
                                   yAttrName,
                                   yAttrUnitName,
-                                  yType))
+                                  yType,
+                                  yCalType))
         {
             return;
         }
@@ -787,6 +811,8 @@ void AddPlotPair::onBtnUpdateClicked()
             }
             dataHash.insert("XDataType", static_cast<int32_t>(xType));
             dataHash.insert("YDataType", static_cast<int32_t>(yType));
+            dataHash.insert("XCalType", static_cast<int32_t>(xCalType));
+            dataHash.insert("YCalType", static_cast<int32_t>(yCalType));
             m_pCurSelectedPlot->updatePlotPairData(uuid,
                                                    xEntityID,
                                                    xAttrName,

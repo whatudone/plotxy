@@ -8,6 +8,7 @@
 #define DATA_MANAGER_H
 
 #include "BaseData.h"
+#include "DataPair.h"
 #include "RecvThread.h"
 #include "constdef.h"
 
@@ -169,6 +170,13 @@ public:
     QList<GenericData> getGenericDataListByID(int32_t entityID, const QString& tag = "Event");
     // 获取某个实体对应的所有generic data tags
     QStringList getGenericDataTagsByID(int32_t entityID);
+
+    // 范围计算，根据两个实体以及计算类型和地球模型处理数据
+    double rangeCalculation(int32_t sourceID,
+                            int32_t targetID,
+                            DataPair::RangeCalculationType type,
+                            double secs,
+                            double rate);
 
     // 判断是否某个实体存在事件
     bool isEntityContainsGenericTags(int32_t id);
