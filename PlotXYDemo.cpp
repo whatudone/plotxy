@@ -416,9 +416,15 @@ void PlotXYDemo::onShowStatusbar(bool checked)
     ui.statusBar->setVisible(checked);
 }
 
-void PlotXYDemo::onShowTimeSlider() {}
+void PlotXYDemo::onShowTimeSlider(bool checked)
+{
+    ui.timeSlider->setVisible(checked);
+}
 
-void PlotXYDemo::onShowTabbar() {}
+void PlotXYDemo::onShowTabbar(bool checked)
+{
+    ui.tabWidget->tabBar()->setVisible(checked);
+}
 
 void PlotXYDemo::onShowRTIControls() {}
 
@@ -432,7 +438,14 @@ void PlotXYDemo::onShowLogo() {}
 
 void PlotXYDemo::onShowFrameRate() {}
 
-void PlotXYDemo::onShowFullScreen() {}
+void PlotXYDemo::onShowFullScreen(bool checked)
+{
+    ui.actionShow_Menubar_Ctrl_Alt_M->setChecked(!checked);
+    ui.actionShow_Menubar_Ctrl_Alt_M->triggered(!checked);
+
+    ui.actionShow_Toolbar_Ctrl_Alt_C->setChecked(!checked);
+    ui.actionShow_Toolbar_Ctrl_Alt_C->triggered(!checked);
+}
 
 void PlotXYDemo::onSavePreferences() {}
 
@@ -704,7 +717,7 @@ void PlotXYDemo::addTabPage(const QString& tabName)
     if(name.isEmpty())
     {
         // 产生一个默认名称
-        name = QString("Tab ") + QString::number(currCount + 1);
+        name = QString("标签 ") + QString::number(currCount + 1);
     }
     ui.tabWidget->addTab(tabWidgetItem, name);
     ui.tabWidget->setCurrentIndex(currCount);
@@ -2350,6 +2363,18 @@ void PlotXYDemo::init()
     initMenuHelp();
 
     initStatusBar();
+    ui.actionShow_RTI_Controls->setVisible(false);
+    ui.actionShow_All_Bars_Ctrl_B->setVisible(false);
+    ui.actionShow_Plot_Time_Ctrl_Alt_P->setVisible(false);
+    ui.actionShow_System_Time_Ctrl_Alt_Y->setVisible(false);
+    ui.actionShow_Corner_Logo->setVisible(false);
+    ui.actionShow_Frame_Rate_Alt_F->setVisible(false);
+
+    ui.menuRecent_Files->menuAction()->setVisible(false);
+    ui.menuRecent_PMLs->menuAction()->setVisible(false);
+    ui.menuPlug_ins->menuAction()->setVisible(false);
+    ui.menuTools->menuAction()->setVisible(false);
+    ui.menuBookmarks->menuAction()->setVisible(false);
 }
 
 void PlotXYDemo::initMenuFile()
@@ -2541,8 +2566,8 @@ void PlotXYDemo::initStatusBar()
     m_statusBar_info = new QLabel(this);
     m_statusBar_EditLock = new QToolButton(this);
     m_statusBar_StackLock = new QToolButton(this);
-    m_statusBar_dataTime = new QLabel("<Data Time>", this);
-    m_statusBar_localTime = new QLabel("<Local Time>", this);
+    m_statusBar_dataTime = new QLabel("<数据时间>", this);
+    m_statusBar_localTime = new QLabel("<系统时间>", this);
     m_statusBar_selectPlot = new QToolButton(this);
     m_statusBar_pan = new QToolButton(this);
     m_statusBar_centerPlot = new QToolButton(this);
@@ -2553,16 +2578,16 @@ void PlotXYDemo::initStatusBar()
     m_statusBar_movePlot = new QToolButton(this);
     m_statusBar_null = new QLabel(this);
 
-    m_statusBar_EditLock->setToolTip("Editing Lock");
-    m_statusBar_StackLock->setToolTip("Stacking Lock");
-    m_statusBar_selectPlot->setToolTip("Select Plot");
-    m_statusBar_pan->setToolTip("Pan");
-    m_statusBar_centerPlot->setToolTip("Center Plot");
-    m_statusBar_zoom->setToolTip("Zoom");
-    m_statusBar_boxZoom->setToolTip("Box Zoom");
-    m_statusBar_measure->setToolTip("Measure");
-    m_statusBar_createPlot->setToolTip("Create Plot");
-    m_statusBar_movePlot->setToolTip("Move Plot");
+    m_statusBar_EditLock->setToolTip("锁定编辑");
+    m_statusBar_StackLock->setToolTip("锁定堆叠");
+    m_statusBar_selectPlot->setToolTip("选择图表");
+    m_statusBar_pan->setToolTip("平移");
+    m_statusBar_centerPlot->setToolTip("居中图表");
+    m_statusBar_zoom->setToolTip("缩放");
+    m_statusBar_boxZoom->setToolTip("框选缩放");
+    m_statusBar_measure->setToolTip("测距");
+    m_statusBar_createPlot->setToolTip("创建图表");
+    m_statusBar_movePlot->setToolTip("移动图表");
 
     m_statusBar_EditLock->setIcon(QIcon(":/statusbar/editingLock.bmp"));
     m_statusBar_StackLock->setIcon(QIcon(":/statusbar/stackingLock.bmp"));
@@ -2651,20 +2676,20 @@ void PlotXYDemo::updateStatusBarInfo()
 {
     if(m_pCurSelectedPlot)
     {
-        m_statusBar_info->setText(QString("当前选择的Plot：%1-%2")
+        m_statusBar_info->setText(QString("当前选择的图表：%1-%2")
                                       .arg(m_pCurSelectedPlot->getTabName())
                                       .arg(m_pCurSelectedPlot->getName()));
     }
     else
     {
-        m_statusBar_info->setText(QString("当前选择的Plot：- "));
+        m_statusBar_info->setText(QString("当前选择的图表：- "));
     }
 }
 
 void PlotXYDemo::onOpenNetwork()
 {
-    NetSettingDialog* dialog = new NetSettingDialog;
-    dialog->show();
+    NetSettingDialog dialog;
+    dialog.exec();
 }
 
 void PlotXYDemo::onExportDataStore()

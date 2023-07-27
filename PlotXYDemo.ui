@@ -82,32 +82,12 @@ background-color: rgb(3, 57, 122);
      <property name="title">
       <string>最近打开的文件</string>
      </property>
-     <addaction name="action1"/>
-     <addaction name="action2"/>
-     <addaction name="action3"/>
-     <addaction name="action4"/>
-     <addaction name="action5"/>
-     <addaction name="action6"/>
-     <addaction name="action7"/>
-     <addaction name="action8"/>
-     <addaction name="action9"/>
-     <addaction name="action10"/>
      <addaction name="actionClear_recent_files"/>
     </widget>
     <widget class="QMenu" name="menuRecent_PMLs">
      <property name="title">
       <string>最近打开的PML </string>
      </property>
-     <addaction name="action1_2"/>
-     <addaction name="action2_2"/>
-     <addaction name="action3_2"/>
-     <addaction name="action4_2"/>
-     <addaction name="action5_2"/>
-     <addaction name="action6_2"/>
-     <addaction name="action7_2"/>
-     <addaction name="action8_2"/>
-     <addaction name="action9_2"/>
-     <addaction name="action10_2"/>
      <addaction name="actionClear_recent_files_2"/>
     </widget>
     <widget class="QMenu" name="menu">
@@ -150,19 +130,12 @@ background-color: rgb(3, 57, 122);
      <addaction name="actionTile_Horizontally"/>
      <addaction name="actionTile_Vertically"/>
     </widget>
-    <widget class="QMenu" name="menuSelect_Plot">
-     <property name="title">
-      <string>Select Plot</string>
-     </property>
-     <addaction name="action1_3"/>
-    </widget>
     <addaction name="actionUndo_Ctrl_Z"/>
     <addaction name="actionRedo_Ctrl_Y"/>
     <addaction name="actionCut_Ctrl_X"/>
     <addaction name="actionCopy_Ctrl_C"/>
     <addaction name="actionPaste_Ctrl_V"/>
     <addaction name="actionDelete"/>
-    <addaction name="menuSelect_Plot"/>
     <addaction name="menuOrder"/>
    </widget>
    <widget class="QMenu" name="menuGraph">
@@ -372,6 +345,9 @@ background-color: rgb(3, 57, 122);
    <property name="text">
     <string>加载PML</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionSave_to_PML">
    <property name="icon">
@@ -382,6 +358,9 @@ background-color: rgb(3, 57, 122);
    <property name="text">
     <string>保存PML</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionUndo_Ctrl_Z">
    <property name="text">
@@ -389,6 +368,9 @@ background-color: rgb(3, 57, 122);
    </property>
    <property name="shortcut">
     <string>Ctrl+Z</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionRedo_Ctrl_Y">
@@ -398,6 +380,9 @@ background-color: rgb(3, 57, 122);
    <property name="shortcut">
     <string>Ctrl+Y</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionCut_Ctrl_X">
    <property name="text">
@@ -405,6 +390,9 @@ background-color: rgb(3, 57, 122);
    </property>
    <property name="shortcut">
     <string>Ctrl+X</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionCopy_Ctrl_C">
@@ -414,6 +402,9 @@ background-color: rgb(3, 57, 122);
    <property name="shortcut">
     <string>Ctrl+C</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionPaste_Ctrl_V">
    <property name="text">
@@ -421,6 +412,9 @@ background-color: rgb(3, 57, 122);
    </property>
    <property name="shortcut">
     <string>Ctrl+V</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionDelete">
@@ -453,10 +447,16 @@ background-color: rgb(3, 57, 122);
    <property name="shortcut">
     <string>+</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionSend_Backward">
    <property name="text">
     <string>Send Backward</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionTile_Horizontally">
@@ -603,6 +603,9 @@ background-color: rgb(3, 57, 122);
    <property name="text">
     <string>绘图向导</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionPlot_Manager_Ctrl_M">
    <property name="icon">
@@ -626,10 +629,16 @@ background-color: rgb(3, 57, 122);
    <property name="text">
     <string>控件编辑...</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionExport_to_GOG">
    <property name="text">
     <string>导出 GOG...</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionAutofit_Full">
@@ -645,10 +654,16 @@ background-color: rgb(3, 57, 122);
    <property name="text">
     <string>One-To-One</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionRound_Ranges">
    <property name="text">
     <string>Round Ranges</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionLock_Data_Display">
@@ -660,7 +675,7 @@ background-color: rgb(3, 57, 122);
      <normaloff>:/statusbar/editingLock.bmp</normaloff>:/statusbar/editingLock.bmp</iconset>
    </property>
    <property name="text">
-    <string>Lock Data Display</string>
+    <string>锁定数据显示</string>
    </property>
   </action>
   <action name="actionLock_Stacking_Order">
@@ -672,12 +687,15 @@ background-color: rgb(3, 57, 122);
      <normaloff>:/statusbar/stackingLock.bmp</normaloff>:/statusbar/stackingLock.bmp</iconset>
    </property>
    <property name="text">
-    <string>Lock Stacking Order</string>
+    <string>锁定堆叠顺序</string>
    </property>
   </action>
   <action name="actionInvert_Colores">
    <property name="text">
     <string>Invert Colors</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionAdvanced_Data_Manager">
@@ -705,6 +723,9 @@ background-color: rgb(3, 57, 122);
    <property name="text">
     <string>Discovery Rules...</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionShow_Object_Aliases_Ctrl_Alt_A">
    <property name="checkable">
@@ -716,6 +737,9 @@ background-color: rgb(3, 57, 122);
    <property name="shortcut">
     <string>Ctrl+Alt+A</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionReference_Points_Ctrl_R">
    <property name="text">
@@ -723,6 +747,9 @@ background-color: rgb(3, 57, 122);
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionEntity_Status_Ctrl_Alt_S">
@@ -732,10 +759,16 @@ background-color: rgb(3, 57, 122);
    <property name="shortcut">
     <string>Ctrl+Alt+S</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionClassification">
    <property name="text">
     <string>Classification...</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionPlay">
@@ -801,10 +834,13 @@ background-color: rgb(3, 57, 122);
      <normaloff>:/toolbar/TimeClient.png</normaloff>:/toolbar/TimeClient.png</iconset>
    </property>
    <property name="text">
-    <string>Time Client</string>
+    <string>时间客户端</string>
    </property>
    <property name="shortcut">
     <string>Alt+X</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionTime_Server">
@@ -813,10 +849,13 @@ background-color: rgb(3, 57, 122);
      <normaloff>:/toolbar/TimeServer.png</normaloff>:/toolbar/TimeServer.png</iconset>
    </property>
    <property name="text">
-    <string>Time Server</string>
+    <string>时间服务器</string>
    </property>
    <property name="shortcut">
     <string>Shift+X</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionNew_Tab_Ctrl_T">
@@ -1061,15 +1100,24 @@ background-color: rgb(3, 57, 122);
    <property name="shortcut">
     <string>F1</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionTraining">
    <property name="text">
     <string>Training...</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionSave_Snapshot">
@@ -1085,6 +1133,9 @@ background-color: rgb(3, 57, 122);
    <property name="text">
     <string>运行 Python Script</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionDecrease_Step">
    <property name="icon">
@@ -1092,7 +1143,7 @@ background-color: rgb(3, 57, 122);
      <normaloff>:/toolbar/DecTimeStep.png</normaloff>:/toolbar/DecTimeStep.png</iconset>
    </property>
    <property name="text">
-    <string>Decrease Step</string>
+    <string>快退</string>
    </property>
   </action>
   <action name="actionFrame_Rverse">
@@ -1101,7 +1152,7 @@ background-color: rgb(3, 57, 122);
      <normaloff>:/toolbar/BackOneStep.png</normaloff>:/toolbar/BackOneStep.png</iconset>
    </property>
    <property name="text">
-    <string>Frame Reverse</string>
+    <string>后退</string>
    </property>
   </action>
   <action name="actionStop">
@@ -1110,7 +1161,7 @@ background-color: rgb(3, 57, 122);
      <normaloff>:/toolbar/Stop.png</normaloff>:/toolbar/Stop.png</iconset>
    </property>
    <property name="text">
-    <string>Stop</string>
+    <string>停止</string>
    </property>
   </action>
   <action name="actionFrame_Forward">
@@ -1119,7 +1170,7 @@ background-color: rgb(3, 57, 122);
      <normaloff>:/toolbar/GoOneStep.png</normaloff>:/toolbar/GoOneStep.png</iconset>
    </property>
    <property name="text">
-    <string>Frame Forward</string>
+    <string>前进</string>
    </property>
   </action>
   <action name="actionIncrease_Step">
@@ -1128,7 +1179,7 @@ background-color: rgb(3, 57, 122);
      <normaloff>:/toolbar/AddTimeStep.png</normaloff>:/toolbar/AddTimeStep.png</iconset>
    </property>
    <property name="text">
-    <string>Increase Step</string>
+    <string>快进</string>
    </property>
   </action>
   <action name="actionselect_plot">

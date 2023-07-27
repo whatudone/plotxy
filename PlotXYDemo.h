@@ -117,15 +117,15 @@ public slots:
     void onShowMenubar(bool checked);
     void onShowToolbar(bool checked);
     void onShowStatusbar(bool checked);
-	void onShowTimeSlider();
-	void onShowTabbar();
+    void onShowTimeSlider(bool checked);
+    void onShowTabbar(bool checked);
 	void onShowRTIControls();
 	void onShowAllBars();
 	void onShowPlotTime();
 	void onShowSystemTime();
 	void onShowLogo();
 	void onShowFrameRate();
-	void onShowFullScreen();
+    void onShowFullScreen(bool checked);
 	//menu-tools
 	void onSavePreferences();
 	void onSavePreferencesAs();
