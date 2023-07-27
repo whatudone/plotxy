@@ -3,7 +3,6 @@
 #include <QDate>
 #include <QDebug>
 #include <QDoubleValidator>
-#include <windows.h>
 
 TimeControls::TimeControls(QWidget* parent)
 	: QWidget(parent)
@@ -56,46 +55,18 @@ TimeControls::TimeControls(QWidget* parent)
     connect(ui.toolButton_RealTime, &QToolButton::clicked, this, &TimeControls::onActionRealTime);
 
     connect(this, &TimeControls::sgn_setSliderRange, this, &TimeControls::onSetSliderRange);
+
+    ui.checkBox_T0->setVisible(false);
 }
 
 TimeControls::~TimeControls() {}
-
-void TimeControls::onAlwaysOnTop()
-{
-	HWND hwnd = (HWND)this->winId();
-	DWORD dwstyle = ::GetWindowLong(hwnd, GWL_EXSTYLE);
-    if(ui.checkBox->isChecked())
-	{
-		dwstyle &= ~WS_EX_TOPMOST;
-		::SetWindowLong(hwnd, GWL_EXSTYLE, dwstyle);
-        ::SetWindowPos(hwnd,
-                       HWND_TOPMOST,
-                       0,
-                       0,
-                       0,
-                       0,
-                       SWP_NOMOVE | SWP_NOREPOSITION | SWP_NOSIZE | SWP_SHOWWINDOW);
-	}
-	else
-	{
-		dwstyle |= WS_EX_TOPMOST;
-		::SetWindowLong(hwnd, GWL_EXSTYLE, dwstyle);
-        ::SetWindowPos(hwnd,
-                       HWND_NOTOPMOST,
-                       0,
-                       0,
-                       0,
-                       0,
-                       SWP_NOMOVE | SWP_NOREPOSITION | SWP_NOSIZE | SWP_SHOWWINDOW);
-	}
-}
 
 void TimeControls::setBeginTime(double seconds, int refYear)
 {
 	unsigned int day, hour, minute;
 	float second;
 
-    OrdinalTimeFormatter::secondsConvertToTime(seconds, (double)refYear, day, hour, minute, second);
+    OrdinalTimeFormatter::secondsConvertToTime(seconds, refYear, day, hour, minute, second);
 	ui.spinBox_beginTimeD->setValue(day);
     ui.spinBox_beginTimeY->setValue(seconds > 0 ? refYear : refYear - 1);
 	ui.spinBox_beginTimeH->setValue(hour);

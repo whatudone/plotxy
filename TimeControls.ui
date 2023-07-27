@@ -11,13 +11,13 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Local Time Controls</string>
+   <string>本地时间控制</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,0">
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Local Time Control</string>
+      <string>本地时间控制</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,1">
       <property name="spacing">
@@ -625,14 +625,14 @@
         <item row="1" column="10" colspan="2">
          <widget class="QPushButton" name="pushButton_beginNow">
           <property name="text">
-           <string>Now</string>
+           <string>当前</string>
           </property>
          </widget>
         </item>
         <item row="1" column="12" colspan="2">
          <widget class="QPushButton" name="pushButton_beginReset">
           <property name="text">
-           <string>Reset</string>
+           <string>重置</string>
           </property>
          </widget>
         </item>
@@ -745,14 +745,14 @@
         <item row="2" column="10" colspan="2">
          <widget class="QPushButton" name="pushButton_endNow">
           <property name="text">
-           <string>Now</string>
+           <string>当前</string>
           </property>
          </widget>
         </item>
         <item row="2" column="12" colspan="2">
          <widget class="QPushButton" name="pushButton_endReset">
           <property name="text">
-           <string>Reset</string>
+           <string>重置</string>
           </property>
          </widget>
         </item>
@@ -804,14 +804,14 @@
         <item row="5" column="1" colspan="3">
          <widget class="QCheckBox" name="checkBox_loopTime">
           <property name="text">
-           <string>Loop Time</string>
+           <string>循环时间</string>
           </property>
          </widget>
         </item>
         <item row="6" column="1" colspan="3">
          <widget class="QCheckBox" name="checkBox_T0">
           <property name="text">
-           <string>Enable T-0</string>
+           <string>启用 T-0</string>
           </property>
          </widget>
         </item>
@@ -966,7 +966,7 @@
            <bool>false</bool>
           </property>
           <property name="text">
-           <string>Now</string>
+           <string>当前</string>
           </property>
          </widget>
         </item>
@@ -987,13 +987,6 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QCheckBox" name="checkBox">
-       <property name="text">
-        <string>Always on Top</string>
-       </property>
-      </widget>
-     </item>
      <item>
       <spacer name="horizontalSpacer_3">
        <property name="orientation">

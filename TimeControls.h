@@ -47,7 +47,6 @@ private:
 	double getEndTime(int refYear);
 
 public slots:
-    void onAlwaysOnTop();
     void onUpdateData();
     void onUpdateRealData();
     void onClose();
