@@ -10,39 +10,39 @@ SubSettingWidgetContainer::SubSettingWidgetContainer(QWidget* parent)
 
 	//General
 	m_general = new General(this);
-	toolBox->addWidget("General", m_general);
+    toolBox->addWidget("通用", m_general);
 
 	//Extrapolation
-	m_extrapolation = new Extrapolation(this);
-	toolBox->addWidget("Extrapolation", m_extrapolation);
+    m_extrapolation = new Extrapolation(this);
+    toolBox->addWidget("推断", m_extrapolation);
 
 	//icon
 	m_iconSetting = new IconSetting(this);
-	toolBox->addWidget("Icon", m_iconSetting);
+    toolBox->addWidget("图标", m_iconSetting);
 
 	//Label Settings
 	m_labelSettings = new LabelSettings(this);
-    toolBox->addWidget("Label Settings", m_labelSettings);
+    toolBox->addWidget("标签设置", m_labelSettings);
 
 	//Label Text
 	m_labelText = new LabelText(this);
-    toolBox->addWidget("LabelText", m_labelText);
+    toolBox->addWidget("标签文本", m_labelText);
 
 	//Stipple
 	m_stippleSetting = new StippleSetting(this);
-	toolBox->addWidget("Stipple", m_stippleSetting);
+    toolBox->addWidget("纹理", m_stippleSetting);
 
 	//Event
 	m_eventSetting = new EventSetting(this);
-	toolBox->addWidget("Events", m_eventSetting);
+    toolBox->addWidget("事件", m_eventSetting);
 
 	//Color Ranges
 	m_colorRanges = new ColorRanges(this);
-    toolBox->addWidget("ColorRanges", m_colorRanges);
+    toolBox->addWidget("颜色范围", m_colorRanges);
 
     // Connections
     m_connections = new Connections(this);
-    toolBox->addWidget("Connections", m_connections);
+    toolBox->addWidget("连接", m_connections);
 	setCentralWidget(toolBox);
 
     connect(m_labelSettings,
@@ -60,35 +60,35 @@ SubSettingWidgetContainer::~SubSettingWidgetContainer() {}
 void SubSettingWidgetContainer::updateVisibleOnPlotTypeChanged(PlotType curType)
 {
     QList<QWidget*> list;
-    list << toolBox->pageWidget("General") << toolBox->pageWidget("Extrapolation")
-         << toolBox->pageWidget("Icon") << toolBox->pageWidget("Label Settings")
-         << toolBox->pageWidget("LabelText") << toolBox->pageWidget("Stipple")
-         << toolBox->pageWidget("Events") << toolBox->pageWidget("ColorRanges")
-         << toolBox->pageWidget("Connections");
+    list << toolBox->pageWidget("通用") << toolBox->pageWidget("推断")
+         << toolBox->pageWidget("图标") << toolBox->pageWidget("标签设置")
+         << toolBox->pageWidget("标签文本") << toolBox->pageWidget("纹理")
+         << toolBox->pageWidget("事件") << toolBox->pageWidget("颜色范围")
+         << toolBox->pageWidget("连接");
     QList<bool> visibleList;
     if(curType == PlotType::Type_PlotAScope)
     {
-        visibleList << true << true << false << false << false << true << false << false << false;
+        visibleList << true << false << false << false << false << true << false << false << false;
     }
     else if(curType == PlotType::Type_PlotAttitude)
     {
-        visibleList << true << true << false << false << false << false << false << false << false;
+        visibleList << true << false << false << false << false << false << false << false << false;
     }
     else if(curType == PlotType::Type_PlotBar)
     {
-        visibleList << true << true << false << true << true << false << false << true << false;
+        visibleList << true << false << false << true << true << false << false << true << false;
     }
     else if(curType == PlotType::Type_PlotDial)
     {
-        visibleList << true << true << false << false << false << false << false << false << false;
+        visibleList << true << false << false << false << false << false << false << false << false;
     }
     else if(curType == PlotType::Type_PlotLight)
     {
-        visibleList << true << true << false << true << true << false << false << false << false;
+        visibleList << true << false << false << true << true << false << false << false << false;
     }
     else if(curType == PlotType::Type_PlotPolar)
     {
-        visibleList << true << true << true << true << true << true << false << false << false;
+        visibleList << true << false << true << true << true << true << false << false << false;
     }
     else if(curType == PlotType::Type_PlotDoppler)
     {
@@ -96,15 +96,15 @@ void SubSettingWidgetContainer::updateVisibleOnPlotTypeChanged(PlotType curType)
     }
     else if(curType == PlotType::Type_PlotRTI)
     {
-        visibleList << true << true << false << false << false << false << false << false << false;
+        visibleList << true << false << false << false << false << false << false << false << false;
     }
     else if(curType == PlotType::Type_PlotScatter)
     {
-        visibleList << true << true << true << true << true << true << true << true << true;
+        visibleList << true << false << true << true << true << true << true << true << true;
     }
     else if(curType == PlotType::Type_PlotText)
     {
-        visibleList << true << true << true << true << true << false << false << false << false;
+        visibleList << true << false << true << true << true << false << false << false << false;
     }
     else if(curType == PlotType::Type_PlotTrack)
     {
@@ -164,13 +164,13 @@ void General::updateVisibleOnPlotTypeChanged(PlotType curType)
     if(curType == PlotType::Type_PlotAScope)
     {
         visibleList = QList<bool>()
-                      << true << true << true << true << true << true << true << true << true;
+                      << true << true << true << true << true << true << true << false << false;
     }
     else if(curType == PlotType::Type_PlotBar || curType == PlotType::Type_PlotDial ||
             curType == PlotType::Type_PlotLight)
     {
         visibleList = QList<bool>()
-                      << true << false << false << true << true << true << true << true << true;
+                      << true << false << false << true << true << true << true << false << false;
     }
     else if(curType == PlotType::Type_PlotAttitude)
     {
@@ -179,7 +179,8 @@ void General::updateVisibleOnPlotTypeChanged(PlotType curType)
     }
     else if(curType == PlotType::Type_PlotPolar || curType == PlotType::Type_PlotScatter)
     {
-        visibleList = QList<bool>() << true;
+        visibleList = QList<bool>()
+                      << true << true << true << true << true << true << true << false << false;
     }
     else if(curType == PlotType::Type_PlotDoppler)
     {
@@ -194,12 +195,12 @@ void General::updateVisibleOnPlotTypeChanged(PlotType curType)
     else if(curType == PlotType::Type_PlotText)
     {
         visibleList = QList<bool>()
-                      << true << false << false << true << true << true << true << true << true;
+                      << true << false << false << true << true << true << true << false << false;
     }
     else if(curType == PlotType::Type_PlotTrack)
     {
         visibleList = QList<bool>()
-                      << true << false << false << false << true << true << true << true << true;
+                      << true << false << false << false << true << true << true << false << false;
     }
     for(int var = 0; var < list.size(); ++var)
     {

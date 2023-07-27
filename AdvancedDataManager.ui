@@ -56,7 +56,7 @@
        </column>
        <column>
         <property name="text">
-         <string>所在Tab</string>
+         <string>所在标签</string>
         </property>
         <property name="textAlignment">
          <set>AlignCenter</set>
@@ -321,7 +321,7 @@
               <item>
                <widget class="QGroupBox" name="groupBox_2">
                 <property name="title">
-                 <string>code</string>
+                 <string>代码</string>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout">
                  <property name="spacing">
@@ -836,7 +836,7 @@ p, li { white-space: pre-wrap; }
               <item>
                <widget class="QGroupBox" name="groupBox_3">
                 <property name="title">
-                 <string>Line Connections Settings</string>
+                 <string>连线设置</string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_14">
                  <item>
@@ -867,21 +867,21 @@ p, li { white-space: pre-wrap; }
                    <item row="1" column="0">
                     <widget class="QLabel" name="label_12">
                      <property name="text">
-                      <string>Width</string>
+                      <string>宽度</string>
                      </property>
                     </widget>
                    </item>
                    <item row="0" column="0">
                     <widget class="QLabel" name="label_11">
                      <property name="text">
-                      <string>Color</string>
+                      <string>颜色</string>
                      </property>
                     </widget>
                    </item>
                    <item row="2" column="0">
                     <widget class="QLabel" name="label_13">
                      <property name="text">
-                      <string>Stipple</string>
+                      <string>纹理</string>
                      </property>
                     </widget>
                    </item>
@@ -895,7 +895,7 @@ p, li { white-space: pre-wrap; }
                    <item row="3" column="0">
                     <widget class="QLabel" name="label_14">
                      <property name="text">
-                      <string>Animate Speed</string>
+                      <string>动画速度</string>
                      </property>
                     </widget>
                    </item>
@@ -978,17 +978,17 @@ p, li { white-space: pre-wrap; }
                 </column>
                 <column>
                  <property name="text">
-                  <string>Width</string>
+                  <string>宽度</string>
                  </property>
                 </column>
                 <column>
                  <property name="text">
-                  <string>Stipple</string>
+                  <string>纹理</string>
                  </property>
                 </column>
                 <column>
                  <property name="text">
-                  <string>Speed</string>
+                  <string>速度</string>
                  </property>
                 </column>
                </widget>
