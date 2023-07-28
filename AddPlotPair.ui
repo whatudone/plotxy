@@ -1600,7 +1600,7 @@
               <enum>QFrame::Sunken</enum>
              </property>
              <property name="text">
-              <string>Time Data</string>
+              <string>时间数据</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -1786,14 +1786,14 @@
          <item>
           <widget class="QPushButton" name="pushButton">
            <property name="text">
-            <string>Test...</string>
+            <string>测试...</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="pushButton_2">
            <property name="text">
-            <string>Help...</string>
+            <string>帮助...</string>
            </property>
           </widget>
          </item>
@@ -2084,7 +2084,7 @@
          <item>
           <widget class="QGroupBox" name="groupBox_9">
            <property name="title">
-            <string>Graph Axis Labels</string>
+            <string>图表坐标轴标签</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_38">
             <item>
@@ -2109,11 +2109,11 @@
        <item>
         <widget class="QLabel" name="label_info">
          <property name="text">
-          <string>A-Scope graphs can plot two-dimensional array data over time.Typically,the X-Axis is a range,and the Y-Axis is an intensity.
+          <string>A-Scope图可以随时间绘制二维数组数据。通常，X轴表示范围，Y轴表示强度。
 
-Array data is graphed in time slices;each time slice includes a seperate graph.New time slices are displayed in sequence according to the time value of the slice.
+数组数据按时间切片绘制；每个时间切片包含一个独立的图形。新的时间切片根据切片的时间值按顺序显示。
 
-Each set of array data may have vertical gates associated with it.</string>
+每组数组数据可能与垂直的门相关联。</string>
          </property>
          <property name="scaledContents">
           <bool>true</bool>

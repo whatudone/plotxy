@@ -132,6 +132,7 @@ void PlotManager::initTreeWidgetSettings()
         new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("Attitude设置")));
     m_itemTrackStatus =
         new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("Track Status设置")));
+    m_itemTrackStatus->setHidden(true);
     m_itemRangeDoppler =
         new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("Range Doppler设置")));
 
@@ -139,6 +140,7 @@ void PlotManager::initTreeWidgetSettings()
     m_itemPlotMarkers = new QTreeWidgetItem(m_itemScatterPlot, QStringList(QString("标记")));
     m_itemTimeLine = new QTreeWidgetItem(m_itemScatterPlot, QStringList("Time Line"));
     m_itemHandsOff = new QTreeWidgetItem(m_itemScatterPlot, QStringList("Hands-Off"));
+    m_itemHandsOff->setHidden(true);
 
     m_itemScatterPlot->setExpanded(true);
 
@@ -424,6 +426,13 @@ void PlotManager::initTextLightUI()
             &QPushButton::clicked,
             this,
             &PlotManager::onPushButton_LightOutlineColorClicked);
+
+    ui.label_114->setVisible(false);
+    ui.spinBox_ColPad->setVisible(false);
+    ui.label_115->setVisible(false);
+    ui.spinBox_RowPad->setVisible(false);
+    ui.label_180->setVisible(false);
+    ui.checkBox_LightSameSizes->setVisible(false);
 }
 
 void PlotManager::initScatterLimitUI()
@@ -503,46 +512,54 @@ void PlotManager::initRTIUI()
             &QSlider::valueChanged,
             this,
             &PlotManager::onSlider_colorValueChanged);
+
+    ui.checkBox_28->setVisible(false);
+    ui.label_94->setVisible(false);
+    ui.spinBox_7->setVisible(false);
+    ui.label_95->setVisible(false);
+    ui.spinBox_8->setVisible(false);
+    ui.label_97->setVisible(false);
+    ui.comboBox_17->setVisible(false);
 }
 
 void PlotManager::initEditableMap()
 {
     m_itemTextEditableMap.insert(PlotType::Type_PlotScatter,
-                                 QList<QString>() << "Title"
-                                                  << "X-Axis Description"
-                                                  << "Y-Axis Description"
-                                                  << "X-Axis Data"
-                                                  << "Y-Axis Data");
+                                 QList<QString>() << "标题"
+                                                  << "X坐标轴描述信息"
+                                                  << "Y坐标轴描述信息"
+                                                  << "X坐标轴数据"
+                                                  << "Y坐标轴数据");
     m_itemTextEditableMap.insert(PlotType::Type_PlotAScope,
-                                 QList<QString>() << "Title"
-                                                  << "X-Axis Description"
-                                                  << "Y-Axis Description"
-                                                  << "X-Axis Data"
-                                                  << "Y-Axis Data");
-    m_itemTextEditableMap.insert(PlotType::Type_PlotRTI, QList<QString>() << "Title");
-    m_itemTextEditableMap.insert(PlotType::Type_PlotText, QList<QString>() << "Title"); //完成
-    m_itemTextEditableMap.insert(PlotType::Type_PlotLight, QList<QString>() << "Title"); //完成
+                                 QList<QString>() << "标题"
+                                                  << "X坐标轴描述信息"
+                                                  << "Y坐标轴描述信息"
+                                                  << "X坐标轴数据"
+                                                  << "Y坐标轴数据");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotRTI, QList<QString>() << "标题");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotText, QList<QString>() << "标题"); //完成
+    m_itemTextEditableMap.insert(PlotType::Type_PlotLight, QList<QString>() << "标题"); //完成
     m_itemTextEditableMap.insert(PlotType::Type_PlotBar,
-                                 QList<QString>() << "Title"
-                                                  << "X-Axis Description"
-                                                  << "Y-Axis Description"
-                                                  << "X-Axis Data"
-                                                  << "Y-Axis Data");
+                                 QList<QString>() << "标题"
+                                                  << "X坐标轴描述信息"
+                                                  << "Y坐标轴描述信息"
+                                                  << "X坐标轴数据"
+                                                  << "Y坐标轴数据");
     m_itemTextEditableMap.insert(PlotType::Type_PlotDial,
-                                 QList<QString>() << "Title"
-                                                  << "X-Axis Data");
+                                 QList<QString>() << "标题"
+                                                  << "X坐标轴数据");
     m_itemTextEditableMap.insert(PlotType::Type_PlotAttitude,
-                                 QList<QString>() << "Title"
-                                                  << "X-Axis Data"
-                                                  << "Y-Axis Data"
-                                                  << "Roll Data"
-                                                  << "Pitch Data");
+                                 QList<QString>() << "标题"
+                                                  << "X坐标轴数据"
+                                                  << "Y坐标轴数据"
+                                                  << "横滚数据"
+                                                  << "俯仰数据");
     m_itemTextEditableMap.insert(PlotType::Type_PlotPolar,
-                                 QList<QString>() << "Title"
-                                                  << "X-Axis Data"
-                                                  << "Y-Axis Data");
-    m_itemTextEditableMap.insert(PlotType::Type_PlotTrack, QList<QString>() << "Title");
-    m_itemTextEditableMap.insert(PlotType::Type_PlotDoppler, QList<QString>() << "Title");
+                                 QList<QString>() << "标题"
+                                                  << "X坐标轴数据"
+                                                  << "Y坐标轴数据");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotTrack, QList<QString>() << "标题");
+    m_itemTextEditableMap.insert(PlotType::Type_PlotDoppler, QList<QString>() << "标题");
 }
 
 void PlotManager::initUnitData()
@@ -784,6 +801,13 @@ void PlotManager::initBarUI()
             QOverload<int>::of(&QSpinBox::valueChanged),
             this,
             &PlotManager::spinboxRightChanged);
+
+    ui.label_116->setVisible(false);
+    ui.label_117->setVisible(false);
+    ui.label_118->setVisible(false);
+    ui.spinBox_between->setVisible(false);
+    ui.spinBox_left->setVisible(false);
+    ui.spinBox_right->setVisible(false);
 }
 
 void PlotManager::initDialUI()
@@ -812,6 +836,8 @@ void PlotManager::initDialUI()
         ui.checkBox_36, &QCheckBox::stateChanged, this, &PlotManager::onCheckBox_36StateChanged);
     connect(
         ui.checkBox_37, &QCheckBox::stateChanged, this, &PlotManager::onCheckBox_37StateChanged);
+
+    ui.checkBox_33->setVisible(false);
 }
 
 void PlotManager::refreshTreeWidgetSettingEnabled(PlotItemBase* plot)
@@ -3109,7 +3135,7 @@ void PlotManager::onListWidgetItemChanged()
 
     QString strItem = ui.listWidget->currentItem()->data(Qt::DisplayRole).toString();
 
-    if(strItem == "Title")
+    if(strItem == "标题")
     {
         ui.lineEdit_26->setEnabled(true);
         ui.checkBox_14->setChecked(m_curSelectPlot->getTitleVisible());
@@ -3119,7 +3145,7 @@ void PlotManager::onListWidgetItemChanged()
         ui.fontComboBox_2->setCurrentFont(m_curSelectPlot->getTitleFont());
         ui.spinBox_FontSize->setValue(m_curSelectPlot->getTitleFontSize());
     }
-    else if(strItem == "X-Axis Description" || strItem == "Roll Data")
+    else if(strItem == "X坐标轴描述信息" || strItem == "横滚数据")
     {
         ui.lineEdit_26->setEnabled(true);
         ui.checkBox_14->setChecked(m_curSelectPlot->getxAxisLabelVisible());
@@ -3129,7 +3155,7 @@ void PlotManager::onListWidgetItemChanged()
         ui.fontComboBox_2->setCurrentFont(m_curSelectPlot->getxAxisLabelFont());
         ui.spinBox_FontSize->setValue(m_curSelectPlot->getxAxisLabelFontSize());
     }
-    else if(strItem == "Y-Axis Description" || strItem == "Pitch Data")
+    else if(strItem == "Y坐标轴描述信息" || strItem == "俯仰数据")
     {
         ui.lineEdit_26->setEnabled(true);
         ui.checkBox_14->setChecked(m_curSelectPlot->getyAxisLabelVisible());
@@ -3139,7 +3165,7 @@ void PlotManager::onListWidgetItemChanged()
         ui.fontComboBox_2->setCurrentFont(m_curSelectPlot->getyAxisLabelFont());
         ui.spinBox_FontSize->setValue(m_curSelectPlot->getyAxisLabelFontSize());
     }
-    else if(strItem == "X-Axis Data")
+    else if(strItem == "X坐标轴数据")
     {
         ui.lineEdit_26->setEnabled(false);
         ui.checkBox_14->setChecked(m_curSelectPlot->getxAxisTickLabelVisible());
@@ -3149,7 +3175,7 @@ void PlotManager::onListWidgetItemChanged()
         ui.fontComboBox_2->setCurrentFont(m_curSelectPlot->getxTickLabelFont());
         ui.spinBox_FontSize->setValue(m_curSelectPlot->getxTickLabelFontSize());
     }
-    else if(strItem == "Y-Axis Data")
+    else if(strItem == "Y坐标轴数据")
     {
         ui.lineEdit_26->setEnabled(false);
         ui.checkBox_14->setChecked(m_curSelectPlot->getyAxisTickLabelVisible());
@@ -3169,7 +3195,7 @@ void PlotManager::textSettingChanged()
     if(!ui.listWidget->currentItem())
         return;
     QString strItem = ui.listWidget->currentItem()->data(Qt::DisplayRole).toString();
-    if(strItem == "Title")
+    if(strItem == "标题")
     {
         m_curSelectPlot->setTitleVisible(ui.checkBox_14->isChecked());
         m_curSelectPlot->setTitle(ui.lineEdit_26->text());
@@ -3178,7 +3204,7 @@ void PlotManager::textSettingChanged()
         m_curSelectPlot->setTitleFont(ui.fontComboBox_2->currentFont());
         m_curSelectPlot->setTitleFontSize(ui.spinBox_FontSize->value());
     }
-    else if(strItem == "X-Axis Description" || strItem == "Roll Data")
+    else if(strItem == "X坐标轴描述信息" || strItem == "横滚数据")
     {
         m_curSelectPlot->setxAxisLabel(ui.lineEdit_26->text());
         m_curSelectPlot->setxAxisLabelVisible(ui.checkBox_14->isChecked());
@@ -3186,7 +3212,7 @@ void PlotManager::textSettingChanged()
         m_curSelectPlot->setxAxisLabelFont(ui.fontComboBox_2->currentFont());
         m_curSelectPlot->setxAxisLabelFontSize(ui.spinBox_FontSize->value());
     }
-    else if(strItem == "Y-Axis Description" || strItem == "Pitch Data")
+    else if(strItem == "Y坐标轴描述信息" || strItem == "俯仰数据")
     {
         m_curSelectPlot->setyAxisLabel(ui.lineEdit_26->text());
         m_curSelectPlot->setyAxisLabelVisible(ui.checkBox_14->isChecked());
@@ -3194,14 +3220,14 @@ void PlotManager::textSettingChanged()
         m_curSelectPlot->setyAxisLabelFont(ui.fontComboBox_2->currentFont());
         m_curSelectPlot->setyAxisLabelFontSize(ui.spinBox_FontSize->value());
     }
-    else if(strItem == "X-Axis Data")
+    else if(strItem == "X坐标轴数据")
     {
         m_curSelectPlot->setxTickLabelVisible(ui.checkBox_14->isChecked());
         m_curSelectPlot->setxTickLabelFont(ui.fontComboBox_2->currentFont());
         m_curSelectPlot->setxTickLabelFontSize(ui.spinBox_FontSize->value());
         m_curSelectPlot->setxTickLabelColor(ui.pushButton_22->color());
     }
-    else if(strItem == "Y-Axis Data")
+    else if(strItem == "Y坐标轴数据")
     {
         m_curSelectPlot->setyTickLabelVisible(ui.checkBox_14->isChecked());
         m_curSelectPlot->setyTickLabelFont(ui.fontComboBox_2->currentFont());
@@ -3661,11 +3687,11 @@ void PlotManager::onComboBox_LabelDesityTextChanged(const QString& text)
         return;
     if(auto plot = dynamic_cast<PlotRTI*>(m_curSelectPlot))
     {
-        if(text == "Less Labels")
+        if(text == "少量")
             plot->setGridDensity(GridDensity::LESS);
-        else if(text == "Normal")
+        else if(text == "中等")
             plot->setGridDensity(GridDensity::NORMAL);
-        else if(text == "More Labels")
+        else if(text == "大量")
             plot->setGridDensity(GridDensity::MORE);
     }
 }
