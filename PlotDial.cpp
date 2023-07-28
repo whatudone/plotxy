@@ -26,7 +26,7 @@ PlotDial::PlotDial(QWidget* parent)
     m_textRate = 1000;
     m_dialRate = 50;
     m_dialCapRate = 950;
-    m_dialStyle = "Thin";
+    m_dialStyle = "窄";
 
     m_title = "Dial";
 
@@ -256,7 +256,7 @@ void PlotDial::customPainting(QPainter& painter)
                      QPointF(m_circleRadius * sin(m_endAngle * M_PI / 180),
                              m_circleRadius * (-cos(m_endAngle * M_PI / 180))));
 
-    if(m_dialStyle == "Thick")
+    if(m_dialStyle == "宽")
     {
         // 绘制表盘圆弧
         double arcHeight = m_circleRadius * m_colorRangeRate / 1000.0;
