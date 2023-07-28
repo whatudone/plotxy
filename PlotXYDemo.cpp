@@ -1768,10 +1768,23 @@ void PlotXYDemo::saveDataPairToJson(DataPair* dataPair, QJsonObject& object, Plo
     object.insert("YAttrName", dataPair->getAttr_y());
     object.insert("XAttrUnitName", dataPair->getUnit_x());
     object.insert("YAttrUnitName", dataPair->getUnit_y());
-    object.insert("XDataType", static_cast<int32_t>(dataPair->getXDataType()));
-    object.insert("YDataType", static_cast<int32_t>(dataPair->getYDataType()));
-    object.insert("XCalType", static_cast<int32_t>(dataPair->getXCalType()));
-    object.insert("YCalType", static_cast<int32_t>(dataPair->getYCalType()));
+    auto xDataType = dataPair->getXDataType();
+    object.insert("XDataType", static_cast<int32_t>(xDataType));
+    if(xDataType == DataPair::RangeCalculation)
+    {
+        object.insert("XCalType", static_cast<int32_t>(dataPair->getXCalType()));
+        object.insert("XTargetID", dataPair->getTargetEntityIDX());
+        object.insert("XTargetEntityName", dataPair->getTargetEntityX());
+    }
+    auto yDataType = dataPair->getYDataType();
+    object.insert("YDataType", static_cast<int32_t>(yDataType));
+    if(yDataType == DataPair::RangeCalculation)
+    {
+        object.insert("YCalType", static_cast<int32_t>(dataPair->getYCalType()));
+        object.insert("YTargetID", dataPair->getTargetEntityIDY());
+        object.insert("YTargetEntityName", dataPair->getTargetEntityY());
+    }
+
     object.insert("SecondsLimit", dataPair->getSecondsLimit());
     object.insert("PointsLimit", dataPair->getPointsLimit());
     // 图表特殊信息,先保存已经支持的信息
@@ -1972,6 +1985,22 @@ void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBas
     if(dataPairObject.contains("YCalType"))
     {
         params.insert("YCalType", dataPairObject.value("YCalType").toInt());
+    }
+    if(dataPairObject.contains("XTargetID"))
+    {
+        params.insert("XTargetID", dataPairObject.value("XTargetID").toInt());
+    }
+    if(dataPairObject.contains("YTargetID"))
+    {
+        params.insert("YTargetID", dataPairObject.value("YTargetID").toInt());
+    }
+    if(dataPairObject.contains("XTargetEntityName"))
+    {
+        params.insert("XTargetEntityName", dataPairObject.value("XTargetEntityName").toString());
+    }
+    if(dataPairObject.contains("YTargetEntityName"))
+    {
+        params.insert("YTargetEntityName", dataPairObject.value("YTargetEntityName").toString());
     }
 
     auto dataPair = plot->addPlotDataPair(

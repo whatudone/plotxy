@@ -160,7 +160,7 @@ public:
     }
     void setIconColor(const QColor&);
 
-    QPixmap rotateIcon(const QPixmap& pix, float angle);
+    QPixmap rotateIcon(const QPixmap& pix, double angle);
 
 	//Label Text
     QString getLabelText()
@@ -348,7 +348,7 @@ public:
     void setCustomPattern(const QString& customPattern);
 
     int getCustomPatternFactor() const;
-    void setCustomPatternFactor(double customPatternFactor);
+    void setCustomPatternFactor(int customPatternFactor);
 
     bool getColorRangeEnable() const;
     void setColorRangeEnable(bool colorRangeEnable);
@@ -376,6 +376,18 @@ public:
 
     RangeCalculationType getYCalType() const;
     void setYCalType(const RangeCalculationType& yCalType);
+
+    int32_t getTargetEntityIDX() const;
+    void setTargetEntityIDX(const int32_t& targetEntityIDX);
+
+    int32_t getTargetEntityIDY() const;
+    void setTargetEntityIDY(const int32_t& targetEntityIDY);
+
+    QString getTargetEntityX() const;
+    void setTargetEntityX(const QString& targetEntityX);
+
+    QString getTargetEntityY() const;
+    void setTargetEntityY(const QString& targetEntityY);
 
 private:
     bool m_isDraw; //是否绘制
@@ -413,9 +425,13 @@ private:
     QString m_customText; //自定义文本
     TEXT_FROMAT m_format; //文本格式
     int32_t m_entityIDX; //x轴实体ID
+    int32_t m_targetEntityIDX; //x轴目标实体ID,专用于范围计算
     int32_t m_entityIDY; //y轴实体ID
+    int32_t m_targetEntityIDY; //y轴目标实体ID,专用于范围计算
     QString m_entity_x; //x轴实体名
+    QString m_targetEntityX; //x轴目标实体名称
     QString m_entity_y; //y轴实体名
+    QString m_targetEntityY; //y轴目标实体名称
     QString m_attr_x; //x轴属性
     QString m_attr_y; //y轴属性
     bool m_prefix_show; //前缀是否显示

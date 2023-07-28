@@ -207,9 +207,30 @@ DataPair* PlotTrack::addPlotDataPair(int32_t xEntityID,
             static_cast<DataPair::RangeCalculationType>(extraParams.value("YCalType").toInt()));
     }
     if(extraParams.contains("XEntityName"))
+    {
         data->setEntity_x(extraParams.value("XEntityName").toString());
+    }
     if(extraParams.contains("YEntityName"))
+    {
         data->setEntity_y(extraParams.value("YEntityName").toString());
+    }
+    if(extraParams.contains("XTargetID"))
+    {
+        data->setTargetEntityIDX(extraParams.value("XTargetID").toInt());
+    }
+    if(extraParams.contains("YTargetID"))
+    {
+        data->setTargetEntityIDY(extraParams.value("YTargetID").toInt());
+    }
+    if(extraParams.contains("XTargetEntityName"))
+    {
+        data->setTargetEntityX(extraParams.value("XTargetEntityName").toString());
+    }
+    if(extraParams.contains("YTargetEntityName"))
+    {
+        data->setTargetEntityY(extraParams.value("YTargetEntityName").toString());
+    }
+
     connect(data,
             &DataPair::dataUpdate,
             this,

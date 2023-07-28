@@ -461,12 +461,18 @@ background-color: rgb(3, 57, 122);
   </action>
   <action name="actionTile_Horizontally">
    <property name="text">
-    <string>Tile Horizontally</string>
+    <string>水平平铺</string>
+   </property>
+   <property name="toolTip">
+    <string>水平平铺</string>
    </property>
   </action>
   <action name="actionTile_Vertically">
    <property name="text">
-    <string>Tile Vertically</string>
+    <string>垂直平铺</string>
+   </property>
+   <property name="toolTip">
+    <string>垂直平铺</string>
    </property>
   </action>
   <action name="actionSave_Screenshot">

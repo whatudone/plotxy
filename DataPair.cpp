@@ -83,25 +83,25 @@ void DataPair::setUuid(const QString& uuid)
 
 QString DataPair::getXEntityAttrPair()
 {
-    if(m_xDataType == Parameter)
+    if(m_xDataType == RangeCalculation)
     {
-        return QString("%1 %2").arg(m_entity_x).arg(m_attr_x);
+        return QString("%1 VS %2").arg(m_entity_x).arg(m_targetEntityX);
     }
     else
     {
-        return m_entity_x;
+        return QString("%1 %2").arg(m_entity_x).arg(m_attr_x);
     }
 }
 
 QString DataPair::getYEntityAttrPair()
 {
-    if(m_yDataType == Parameter)
+    if(m_yDataType == RangeCalculation)
     {
-        return QString("%1 %2").arg(m_entity_y).arg(m_attr_y);
+        return QString("%1 VS %2").arg(m_entity_y).arg(m_targetEntityY);
     }
     else
     {
-        return m_entity_y;
+        return QString("%1 %2").arg(m_entity_y).arg(m_attr_y);
     }
 }
 
@@ -625,7 +625,7 @@ void DataPair::setIconColor(const QColor& color)
     }
 }
 
-QPixmap DataPair::rotateIcon(const QPixmap& pix, float angle)
+QPixmap DataPair::rotateIcon(const QPixmap& pix, double angle)
 {
 	QTransform trans;
 	trans.rotate(angle);
@@ -1001,7 +1001,7 @@ int DataPair::getCustomPatternFactor() const
     return m_customPatternFactor;
 }
 
-void DataPair::setCustomPatternFactor(double customPatternFactor)
+void DataPair::setCustomPatternFactor(int customPatternFactor)
 {
     if(m_customPatternFactor != customPatternFactor)
     {
@@ -1118,4 +1118,46 @@ DataPair::RangeCalculationType DataPair::getYCalType() const
 void DataPair::setYCalType(const RangeCalculationType& yCalType)
 {
     m_yCalType = yCalType;
+}
+
+int32_t DataPair::getTargetEntityIDX() const
+{
+    return m_targetEntityIDX;
+}
+
+void DataPair::setTargetEntityIDX(const int32_t& targetEntityIDX)
+{
+    m_targetEntityIDX = targetEntityIDX;
+    m_targetEntityX = DataManagerInstance->getEntityNameByID(targetEntityIDX);
+}
+
+int32_t DataPair::getTargetEntityIDY() const
+{
+    return m_targetEntityIDY;
+}
+
+void DataPair::setTargetEntityIDY(const int32_t& targetEntityIDY)
+{
+    m_targetEntityIDY = targetEntityIDY;
+    m_targetEntityY = DataManagerInstance->getEntityNameByID(targetEntityIDY);
+}
+
+QString DataPair::getTargetEntityX() const
+{
+    return m_targetEntityX;
+}
+
+void DataPair::setTargetEntityX(const QString& targetEntityX)
+{
+    m_targetEntityX = targetEntityX;
+}
+
+QString DataPair::getTargetEntityY() const
+{
+    return m_targetEntityY;
+}
+
+void DataPair::setTargetEntityY(const QString& targetEntityY)
+{
+    m_targetEntityY = targetEntityY;
 }

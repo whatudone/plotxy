@@ -480,9 +480,30 @@ DataPair* PlotBar::addPlotDataPair(int32_t xEntityID,
             static_cast<DataPair::RangeCalculationType>(extraParams.value("YCalType").toInt()));
     }
     if(extraParams.contains("XEntityName"))
+    {
         data->setEntity_x(extraParams.value("XEntityName").toString());
+    }
     if(extraParams.contains("YEntityName"))
+    {
         data->setEntity_y(extraParams.value("YEntityName").toString());
+    }
+    if(extraParams.contains("XTargetID"))
+    {
+        data->setTargetEntityIDX(extraParams.value("XTargetID").toInt());
+    }
+    if(extraParams.contains("YTargetID"))
+    {
+        data->setTargetEntityIDY(extraParams.value("YTargetID").toInt());
+    }
+    if(extraParams.contains("XTargetEntityName"))
+    {
+        data->setTargetEntityX(extraParams.value("XTargetEntityName").toString());
+    }
+    if(extraParams.contains("YTargetEntityName"))
+    {
+        data->setTargetEntityY(extraParams.value("YTargetEntityName").toString());
+    }
+
     connect(data,
             &DataPair::dataUpdate,
             this,
@@ -502,13 +523,13 @@ DataPair* PlotBar::addPlotDataPair(int32_t xEntityID,
     QList<QCPBars*> baseBar;
     baseBar.push_back(pBar);
     m_allBar.insert(uuid, baseBar);
-    if(data->getXDataType() == DataPair::Parameter)
+    if(data->getXDataType() == DataPair::RangeCalculation)
     {
-        m_tickLabelMap.insert(uuid, data->getEntity_x());
+        m_tickLabelMap.insert(uuid, data->getEntity_x() + " VS " + data->getTargetEntityX());
     }
     else
     {
-        m_tickLabelMap.insert(uuid, data->getEntity_x() + " VS " + data->getEntity_y());
+        m_tickLabelMap.insert(uuid, data->getEntity_x());
     }
 
     QPair<double, double> limit =

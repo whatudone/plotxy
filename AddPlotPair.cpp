@@ -356,11 +356,13 @@ void AddPlotPair::updatePlotTrees()
 }
 
 bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
+                                        int32_t& xTargetEntityID,
                                         QString& xAttrName,
                                         QString& xAttrUnitName,
                                         DataPair::DataType& xType,
                                         DataPair::RangeCalculationType& xCalType,
                                         int32_t& yEntityID,
+                                        int32_t& yTargetEntityID,
                                         QString& yAttrName,
                                         QString& yAttrUnitName,
                                         DataPair::DataType& yType,
@@ -397,9 +399,10 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
                 return false;
 
             xType = DataPair::RangeCalculation;
-            yType = DataPair::RangeCalculation;
+            yType = DataPair::Parameter;
             xEntityID = ui.tableWidget_Entity_9->currentItem()->data(Qt::UserRole + 1).toInt();
-            yEntityID = ui.tableWidget_Entity_10->currentItem()->data(Qt::UserRole + 1).toInt();
+            xTargetEntityID =
+                ui.tableWidget_Entity_10->currentItem()->data(Qt::UserRole + 1).toInt();
             // 这里默认使用下拉框的序号作为枚举值，所以下拉框中的选项顺序需要和枚举值保持一致
             xCalType =
                 static_cast<DataPair::RangeCalculationType>(ui.comboBoxCalTypeBar->currentIndex());
@@ -599,9 +602,12 @@ void AddPlotPair::updateAttrTableWidgetOnEntityChanged(QTableWidgetItem* entityI
 void AddPlotPair::onBtnAddClicked()
 {
     int32_t xEntityID;
+    int32_t xTargetEntityID;
     QString xAttrName;
     QString xAttrUnitName;
+
     int32_t yEntityID;
+    int32_t yTargetEntityID;
     QString yAttrName;
     QString yAttrUnitName;
     // 默认采用参数类型
@@ -611,11 +617,13 @@ void AddPlotPair::onBtnAddClicked()
     DataPair::RangeCalculationType yCalType = DataPair::RelativeAltitude;
 
     if(!getCurrentSelectParam(xEntityID,
+                              xTargetEntityID,
                               xAttrName,
                               xAttrUnitName,
                               xType,
                               xCalType,
                               yEntityID,
+                              yTargetEntityID,
                               yAttrName,
                               yAttrUnitName,
                               yType,
@@ -632,9 +640,17 @@ void AddPlotPair::onBtnAddClicked()
             dataHash.insert("Desc", ui.lineEdit_LightDesc->text());
         }
         dataHash.insert("XDataType", static_cast<int32_t>(xType));
+        if(xType == DataPair::RangeCalculation)
+        {
+            dataHash.insert("XCalType", static_cast<int32_t>(xCalType));
+            dataHash.insert("XTargetID", xTargetEntityID);
+        }
         dataHash.insert("YDataType", static_cast<int32_t>(yType));
-        dataHash.insert("XCalType", static_cast<int32_t>(xCalType));
-        dataHash.insert("YCalType", static_cast<int32_t>(yCalType));
+        if(yType == DataPair::RangeCalculation)
+        {
+            dataHash.insert("YCalType", static_cast<int32_t>(yCalType));
+            dataHash.insert("YTargetID", yTargetEntityID);
+        }
         // 数据对触发的DataPairsChanged信号会在后续触发数据对表格的刷新操作
         m_pCurSelectedPlot->addPlotDataPair(
             xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName, dataHash);
@@ -777,9 +793,12 @@ void AddPlotPair::onBtnUpdateClicked()
     if(row != -1)
     {
         int32_t xEntityID;
+        int32_t xTargetEntityID;
         QString xAttrName;
         QString xAttrUnitName;
+
         int32_t yEntityID;
+        int32_t yTargetEntityID;
         QString yAttrName;
         QString yAttrUnitName;
         DataPair::DataType xType = DataPair::Parameter;
@@ -788,11 +807,13 @@ void AddPlotPair::onBtnUpdateClicked()
         DataPair::RangeCalculationType yCalType = DataPair::RelativeAltitude;
 
         if(!getCurrentSelectParam(xEntityID,
+                                  xTargetEntityID,
                                   xAttrName,
                                   xAttrUnitName,
                                   xType,
                                   xCalType,
                                   yEntityID,
+                                  yTargetEntityID,
                                   yAttrName,
                                   yAttrUnitName,
                                   yType,
@@ -810,9 +831,17 @@ void AddPlotPair::onBtnUpdateClicked()
                 dataHash.insert("Desc", ui.lineEdit_LightDesc->text());
             }
             dataHash.insert("XDataType", static_cast<int32_t>(xType));
+            if(xType == DataPair::RangeCalculation)
+            {
+                dataHash.insert("XCalType", static_cast<int32_t>(xCalType));
+                dataHash.insert("XTargetID", xTargetEntityID);
+            }
             dataHash.insert("YDataType", static_cast<int32_t>(yType));
-            dataHash.insert("XCalType", static_cast<int32_t>(xCalType));
-            dataHash.insert("YCalType", static_cast<int32_t>(yCalType));
+            if(yType == DataPair::RangeCalculation)
+            {
+                dataHash.insert("YCalType", static_cast<int32_t>(yCalType));
+                dataHash.insert("YTargetID", yTargetEntityID);
+            }
             m_pCurSelectedPlot->updatePlotPairData(uuid,
                                                    xEntityID,
                                                    xAttrName,

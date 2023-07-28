@@ -38,11 +38,13 @@ private:
     void initTreePlot();
 
     bool getCurrentSelectParam(int32_t& xEntityID,
+                               int32_t& xTargetEntityID,
                                QString& xAttrName,
                                QString& xAttrUnitName,
                                DataPair::DataType& xType,
                                DataPair::RangeCalculationType& xCalType,
                                int32_t& yEntityID,
+                               int32_t& yTargetEntityID,
                                QString& yAttrName,
                                QString& yAttrUnitName,
                                DataPair::DataType& yType,

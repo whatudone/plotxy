@@ -717,6 +717,22 @@ DataPair* PlotItemBase::addPlotDataPair(int32_t xEntityID,
         data->setYCalType(
             static_cast<DataPair::RangeCalculationType>(extraParams.value("YCalType").toInt()));
     }
+    if(extraParams.contains("XTargetID"))
+    {
+        data->setTargetEntityIDX(extraParams.value("XTargetID").toInt());
+    }
+    if(extraParams.contains("YTargetID"))
+    {
+        data->setTargetEntityIDY(extraParams.value("YTargetID").toInt());
+    }
+    if(extraParams.contains("XTargetEntityName"))
+    {
+        data->setTargetEntityX(extraParams.value("XTargetEntityName").toString());
+    }
+    if(extraParams.contains("YTargetEntityName"))
+    {
+        data->setTargetEntityY(extraParams.value("YTargetEntityName").toString());
+    }
 
     // 目前界面上都是直接修改DataPair内部的数据，这里提供一个集中的入口虚函数处理。
     connect(data,
