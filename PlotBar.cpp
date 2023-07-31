@@ -25,9 +25,7 @@ PlotBar::~PlotBar() {}
 
 void PlotBar::updateDataForDataPairsByTime(double secs)
 {
-    if(getDataPairs().isEmpty())
-        return;
-
+    m_curValue.clear();
     int itemCnt = getDataPairs().size();
 
     // 获取数据
@@ -46,10 +44,10 @@ void PlotBar::updateDataForDataPairsByTime(double secs)
         }
         else
         {
-            auto yEntityID = data->getEntityIDY();
+            auto xTargetEntityID = data->getTargetEntityIDX();
             auto xCalType = data->getXCalType();
             value = DataManagerInstance->rangeCalculation(
-                xEntityID, yEntityID, xCalType, secs, m_xRate);
+                xEntityID, xTargetEntityID, xCalType, secs, m_xRate);
         }
 
         if(math::doubleEqual(value, std::numeric_limits<double>::max())) // 表示value无效
@@ -347,10 +345,6 @@ QCPAxis* PlotBar::valueAxis()
 
 void PlotBar::updateKeyAxisTickLabel()
 {
-    if(m_tickLabelMap.isEmpty())
-    {
-        return;
-    }
     QVector<double> barTicks;
     QVector<QString> labels;
     int itemCnt = getDataPairs().size();

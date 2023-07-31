@@ -196,18 +196,28 @@ const QString PlotDial::getDialStyle()
 
 void PlotDial::updateDataForDataPairsByTime(double secs)
 {
-    if(getDataPairs().isEmpty())
-        return;
-
+    m_valueMap.clear();
     auto dataPairList = getDataPairs();
     for(auto dataPair : dataPairList)
     {
         auto xEntityID = dataPair->getEntityIDX();
         auto xAttr = dataPair->getAttr_x();
         auto uuid = dataPair->getUuid();
-        double currValue = DataManager::getInstance()->getEntityAttrValueByMaxTime(
-            xEntityID, xAttr, secs, m_xRate);
-        m_valueMap.insert(uuid, currValue);
+        auto xDataType = dataPair->getXDataType();
+        double value = 0.0;
+        if(xDataType == DataPair::Parameter)
+        {
+            value =
+                DataManagerInstance->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs, m_xRate);
+        }
+        else
+        {
+            auto xTargetEntityID = dataPair->getTargetEntityIDX();
+            auto xCalType = dataPair->getXCalType();
+            value = DataManagerInstance->rangeCalculation(
+                xEntityID, xTargetEntityID, xCalType, secs, m_xRate);
+        }
+        m_valueMap.insert(uuid, value);
     }
 
     update();
