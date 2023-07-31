@@ -122,8 +122,11 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
         auto yEntityID = data->getEntityIDY();
         auto xAttr = data->getAttr_x();
         auto yAttr = data->getAttr_y();
+        auto xType = data->getXDataType();
+        auto yType = data->getYDataType();
+
         // 散点图有几种模式，时间模式只有时间属性
-        if(xAttr == "Time" && yAttr == "Now")
+        if(xType == DataPair::Time && yAttr == "Now")
         {
             //当为Now的时候y轴没有数据，只需要在X轴上显示一个Now的矩形
             m_isTimeLine = true;
@@ -131,31 +134,83 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
         }
         else
         {
-            if(xAttr == "Time" && yAttr == "Time")
+            if(xType == DataPair::Time && yType == DataPair::Time)
             {
                 x = DataManager::getInstance()->getTimeDataSet();
                 y = DataManager::getInstance()->getTimeDataSet();
             }
-            else if(xAttr == "Time" && yAttr != "Time")
+            else if(xType == DataPair::Time && yType == DataPair::Parameter)
             {
                 x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
                     yEntityID, xAttr, secs, m_xRate);
                 y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
                     yEntityID, yAttr, secs, m_yRate);
             }
-            else if(xAttr != "Time" && yAttr == "Time")
+            else if(xType == DataPair::Time && yType == DataPair::RangeCalculation)
+            {
+                x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                    yEntityID, xAttr, secs, m_xRate);
+
+                auto yTargetEntityID = data->getTargetEntityIDY();
+                auto yCalType = data->getYCalType();
+                y = DataManagerInstance->rangeCalculationValueList(
+                    yEntityID, yTargetEntityID, yCalType, secs, m_xRate);
+            }
+            else if(xType == DataPair::Parameter && yType == DataPair::Time)
             {
                 x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
                     xEntityID, xAttr, secs, m_xRate);
                 y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
                     xEntityID, yAttr, secs, m_yRate);
             }
-            else
+            else if(xType == DataPair::Parameter && yType == DataPair::Parameter)
             {
                 x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
                     xEntityID, xAttr, secs, m_xRate);
                 y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
                     yEntityID, yAttr, secs, m_yRate);
+            }
+            else if(xType == DataPair::Parameter && yType == DataPair::RangeCalculation)
+            {
+                x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                    xEntityID, xAttr, secs, m_xRate);
+
+                auto yTargetEntityID = data->getTargetEntityIDY();
+                auto yCalType = data->getYCalType();
+                y = DataManagerInstance->rangeCalculationValueList(
+                    yEntityID, yTargetEntityID, yCalType, secs, m_xRate);
+            }
+            else if(xType == DataPair::RangeCalculation && yType == DataPair::Time)
+            {
+                auto xTargetEntityID = data->getTargetEntityIDX();
+                auto xCalType = data->getXCalType();
+                x = DataManagerInstance->rangeCalculationValueList(
+                    xEntityID, xTargetEntityID, xCalType, secs, m_xRate);
+
+                y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                    xEntityID, xAttr, secs, m_xRate);
+            }
+            else if(xType == DataPair::RangeCalculation && yType == DataPair::Parameter)
+            {
+                auto xTargetEntityID = data->getTargetEntityIDX();
+                auto xCalType = data->getXCalType();
+                x = DataManagerInstance->rangeCalculationValueList(
+                    xEntityID, xTargetEntityID, xCalType, secs, m_xRate);
+
+                y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                    yEntityID, xAttr, secs, m_xRate);
+            }
+            else if(xType == DataPair::RangeCalculation && yType == DataPair::RangeCalculation)
+            {
+                auto xTargetEntityID = data->getTargetEntityIDX();
+                auto xCalType = data->getXCalType();
+                x = DataManagerInstance->rangeCalculationValueList(
+                    xEntityID, xTargetEntityID, xCalType, secs, m_xRate);
+
+                auto yTargetEntityID = data->getTargetEntityIDY();
+                auto yCalType = data->getYCalType();
+                y = DataManagerInstance->rangeCalculationValueList(
+                    yEntityID, yTargetEntityID, yCalType, secs, m_xRate);
             }
             m_dataHash.insert(uuid, qMakePair(x, y));
             if(!x.isEmpty() && !y.isEmpty())

@@ -408,8 +408,8 @@ void PlotPolar::drawGOGData()
 
 void PlotPolar::updateDataForDataPairsByTime(double secs)
 {
+    m_dataHash.clear();
     int isize = getDataPairs().size();
-
     for(int i = 0; i < isize; ++i)
     {
         auto dataPair = getDataPairs().at(i);
@@ -417,11 +417,88 @@ void PlotPolar::updateDataForDataPairsByTime(double secs)
         auto yEntityID = dataPair->getEntityIDY();
         auto xAttr = dataPair->getAttr_x();
         auto yAttr = dataPair->getAttr_y();
+        auto xType = dataPair->getXDataType();
+        auto yType = dataPair->getYDataType();
+        QVector<double> x;
+        QVector<double> y;
+        if(xType == DataPair::Time && yType == DataPair::Time)
+        {
+            x = DataManager::getInstance()->getTimeDataSet();
+            y = DataManager::getInstance()->getTimeDataSet();
+        }
+        else if(xType == DataPair::Time && yType == DataPair::Parameter)
+        {
+            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                yEntityID, xAttr, secs, m_xRate);
+            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                yEntityID, yAttr, secs, m_yRate);
+        }
+        else if(xType == DataPair::Time && yType == DataPair::RangeCalculation)
+        {
+            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                yEntityID, xAttr, secs, m_xRate);
 
-        QVector<double> x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
-            xEntityID, xAttr, secs, m_xRate);
-        QVector<double> y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
-            yEntityID, yAttr, secs, m_yRate);
+            auto yTargetEntityID = dataPair->getTargetEntityIDY();
+            auto yCalType = dataPair->getYCalType();
+            y = DataManagerInstance->rangeCalculationValueList(
+                yEntityID, yTargetEntityID, yCalType, secs, m_xRate);
+        }
+        else if(xType == DataPair::Parameter && yType == DataPair::Time)
+        {
+            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                xEntityID, xAttr, secs, m_xRate);
+            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                xEntityID, yAttr, secs, m_yRate);
+        }
+        else if(xType == DataPair::Parameter && yType == DataPair::Parameter)
+        {
+            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                xEntityID, xAttr, secs, m_xRate);
+            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                yEntityID, yAttr, secs, m_yRate);
+        }
+        else if(xType == DataPair::Parameter && yType == DataPair::RangeCalculation)
+        {
+            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                xEntityID, xAttr, secs, m_xRate);
+
+            auto yTargetEntityID = dataPair->getTargetEntityIDY();
+            auto yCalType = dataPair->getYCalType();
+            y = DataManagerInstance->rangeCalculationValueList(
+                yEntityID, yTargetEntityID, yCalType, secs, m_xRate);
+        }
+        else if(xType == DataPair::RangeCalculation && yType == DataPair::Time)
+        {
+            auto xTargetEntityID = dataPair->getTargetEntityIDX();
+            auto xCalType = dataPair->getXCalType();
+            x = DataManagerInstance->rangeCalculationValueList(
+                xEntityID, xTargetEntityID, xCalType, secs, m_xRate);
+
+            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                xEntityID, xAttr, secs, m_xRate);
+        }
+        else if(xType == DataPair::RangeCalculation && yType == DataPair::Parameter)
+        {
+            auto xTargetEntityID = dataPair->getTargetEntityIDX();
+            auto xCalType = dataPair->getXCalType();
+            x = DataManagerInstance->rangeCalculationValueList(
+                xEntityID, xTargetEntityID, xCalType, secs, m_xRate);
+
+            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                yEntityID, xAttr, secs, m_xRate);
+        }
+        else if(xType == DataPair::RangeCalculation && yType == DataPair::RangeCalculation)
+        {
+            auto xTargetEntityID = dataPair->getTargetEntityIDX();
+            auto xCalType = dataPair->getXCalType();
+            x = DataManagerInstance->rangeCalculationValueList(
+                xEntityID, xTargetEntityID, xCalType, secs, m_xRate);
+
+            auto yTargetEntityID = dataPair->getTargetEntityIDY();
+            auto yCalType = dataPair->getYCalType();
+            y = DataManagerInstance->rangeCalculationValueList(
+                yEntityID, yTargetEntityID, yCalType, secs, m_xRate);
+        }
 
         m_dataHash.insert(dataPair->getUuid(), qMakePair(x, y));
     }

@@ -17,7 +17,7 @@
    <item>
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>3</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="page">
       <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -780,7 +780,7 @@
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="QComboBox" name="comboBoxCalType">
+                <widget class="QComboBox" name="comboBoxCalTypeScatterX">
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
@@ -789,7 +789,7 @@
                  </property>
                  <item>
                   <property name="text">
-                   <string>Altitude Delta</string>
+                   <string>Relative Altitude</string>
                   </property>
                  </item>
                 </widget>
@@ -802,7 +802,7 @@
                 </widget>
                </item>
                <item row="1" column="1">
-                <widget class="QComboBox" name="comboBoxEarthType">
+                <widget class="QComboBox" name="comboBoxEarthTypeScatterX">
                  <item>
                   <property name="text">
                    <string>WGS-84</string>
@@ -907,7 +907,7 @@
          <item>
           <widget class="QStackedWidget" name="stackedWidget_3">
            <property name="currentIndex">
-            <number>1</number>
+            <number>2</number>
            </property>
            <widget class="QWidget" name="page_8">
             <layout class="QVBoxLayout" name="verticalLayout_19">
@@ -1200,7 +1200,7 @@
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="QComboBox" name="comboBox_3">
+                <widget class="QComboBox" name="comboBoxCalTypeScatterY">
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
@@ -1209,7 +1209,7 @@
                  </property>
                  <item>
                   <property name="text">
-                   <string>Ground Rng</string>
+                   <string>Relative Altitude</string>
                   </property>
                  </item>
                 </widget>
@@ -1222,7 +1222,7 @@
                 </widget>
                </item>
                <item row="1" column="1">
-                <widget class="QComboBox" name="comboBox_4">
+                <widget class="QComboBox" name="comboBoxEarthTypeScatterY">
                  <item>
                   <property name="text">
                    <string>WGS-84</string>

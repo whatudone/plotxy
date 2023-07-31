@@ -799,11 +799,11 @@ QStringList DataManager::getGenericDataTagsByID(int32_t entityID)
     return QStringList();
 }
 
-double DataManager::rangeCalculation(int32_t sourceID,
-                                     int32_t targetID,
-                                     DataPair::RangeCalculationType type,
-                                     double secs,
-                                     double rate)
+double DataManager::rangeCalculationLastValue(int32_t sourceID,
+                                              int32_t targetID,
+                                              DataPair::RangeCalculationType type,
+                                              double secs,
+                                              double rate)
 {
     double value = std::numeric_limits<double>::max();
     if(type == DataPair::RelativeAltitude)
@@ -813,6 +813,43 @@ double DataManager::rangeCalculation(int32_t sourceID,
         value = sourceAltitude - targetAltitude;
     }
     return value;
+}
+
+QVector<double> DataManager::rangeCalculationValueList(int32_t sourceID,
+                                                       int32_t targetID,
+                                                       DataPair::RangeCalculationType type,
+                                                       double secs,
+                                                       double rate)
+{
+    QVector<double> valueList;
+    if(type == DataPair::RelativeAltitude)
+    {
+        QVector<double> sourceAltitude =
+            getEntityAttrValueListByMaxTime(sourceID, "Alt", secs, rate);
+        QVector<double> targetAltitude =
+            getEntityAttrValueListByMaxTime(targetID, "Alt", secs, rate);
+        /*
+         * 两个目标实体的属性数量可能不一致，以sourceID对应的实体为准，因为当另外一个轴为Time类型时
+         * time的属性数量是从sourceID实体中获取，为了保证两个轴数据数量一致，这里如果targetID中的属性多，
+         * 那么丢掉多余的，如果少，那么用0填充
+        */
+        int32_t sourceSize = sourceAltitude.size();
+        int32_t targetSize = targetAltitude.size();
+        if(sourceSize > targetSize)
+        {
+            targetAltitude.insert(targetAltitude.begin(), sourceSize - targetSize, 0.0);
+        }
+        if(sourceSize < targetSize)
+        {
+            targetAltitude.remove(0, targetSize - sourceSize);
+        }
+        valueList.resize(sourceSize);
+        for(int32_t i = 0; i < sourceSize; ++i)
+        {
+            valueList[i] = sourceAltitude.at(i) - targetAltitude.at(i);
+        }
+    }
+    return valueList;
 }
 
 bool DataManager::isEntityContainsGenericTags(int32_t id)

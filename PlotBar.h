@@ -4,8 +4,8 @@
 * @create time: 2022-09-21
 *  */
 
-#ifndef _PLOT_BAR_H_
-#define _PLOT_BAR_H_
+#ifndef PLOT_BAR_H
+#define PLOT_BAR_H
 
 #include "BaseData.h"
 #include "PlotItemBase.h"
@@ -76,4 +76,4 @@ private:
     QHash<QString, QCPItemText*> m_barValueLabelHash;
 };
 
-#endif // _PLOT_BAR_H_
+#endif // _PLOT_BAR_H

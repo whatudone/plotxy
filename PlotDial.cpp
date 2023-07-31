@@ -214,7 +214,7 @@ void PlotDial::updateDataForDataPairsByTime(double secs)
         {
             auto xTargetEntityID = dataPair->getTargetEntityIDX();
             auto xCalType = dataPair->getXCalType();
-            value = DataManagerInstance->rangeCalculation(
+            value = DataManagerInstance->rangeCalculationLastValue(
                 xEntityID, xTargetEntityID, xCalType, secs, m_xRate);
         }
         m_valueMap.insert(uuid, value);

@@ -46,7 +46,7 @@ void PlotBar::updateDataForDataPairsByTime(double secs)
         {
             auto xTargetEntityID = data->getTargetEntityIDX();
             auto xCalType = data->getXCalType();
-            value = DataManagerInstance->rangeCalculation(
+            value = DataManagerInstance->rangeCalculationLastValue(
                 xEntityID, xTargetEntityID, xCalType, secs, m_xRate);
         }
 

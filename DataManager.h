@@ -172,11 +172,17 @@ public:
     QStringList getGenericDataTagsByID(int32_t entityID);
 
     // 范围计算，根据两个实体以及计算类型和地球模型处理数据
-    double rangeCalculation(int32_t sourceID,
-                            int32_t targetID,
-                            DataPair::RangeCalculationType type,
-                            double secs,
-                            double rate);
+    double rangeCalculationLastValue(int32_t sourceID,
+                                     int32_t targetID,
+                                     DataPair::RangeCalculationType type,
+                                     double secs,
+                                     double rate);
+
+    QVector<double> rangeCalculationValueList(int32_t sourceID,
+                                              int32_t targetID,
+                                              DataPair::RangeCalculationType type,
+                                              double secs,
+                                              double rate);
 
     // 判断是否某个实体存在事件
     bool isEntityContainsGenericTags(int32_t id);

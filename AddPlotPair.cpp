@@ -415,15 +415,19 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
     case 1:
         if(ui.radioButton_7->isChecked())
         {
+            // time
             xAttrName = "Time";
+            xType = DataPair::Time;
         }
         else if(ui.radioButton_5->isChecked())
         {
+            // parameter
             if(ui.tableWidget_Entity_2->currentItem() == nullptr ||
                ui.tableWidget_nameUnits_2->item(ui.tableWidget_nameUnits_2->currentRow(), 0) ==
                    nullptr)
                 return false;
 
+            xType = DataPair::Parameter;
             xEntityID = ui.tableWidget_Entity_2->currentItem()->data(Qt::UserRole + 1).toInt();
             xAttrName =
                 ui.tableWidget_nameUnits_2->item(ui.tableWidget_nameUnits_2->currentRow(), 0)
@@ -434,16 +438,22 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
         }
         else if(ui.radioButton_6->isChecked())
         {
+            // range
             if(ui.tableWidget_Entity_5->currentItem() == nullptr ||
                ui.tableWidget_Entity_6->currentItem() == nullptr)
                 return false;
+            xType = DataPair::RangeCalculation;
 
-            //            strEntity1 = ui.tableWidget_Entity_5->currentItem()->text();
-            //            strNameUnit1 = ui.tableWidget_Entity_6->currentItem()->text();
+            xEntityID = ui.tableWidget_Entity_5->currentItem()->data(Qt::UserRole + 1).toInt();
+            xTargetEntityID =
+                ui.tableWidget_Entity_6->currentItem()->data(Qt::UserRole + 1).toInt();
+            xCalType = static_cast<DataPair::RangeCalculationType>(
+                ui.comboBoxCalTypeScatterX->currentIndex());
         }
 
         if(ui.radioButton_8->isChecked())
         {
+            yType = DataPair::Time;
             yAttrName = "Time";
         }
         else if(ui.radioButton_3->isChecked())
@@ -453,6 +463,7 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
                    nullptr)
                 return false;
 
+            yType = DataPair::Parameter;
             yEntityID = ui.tableWidget_Entity_3->currentItem()->data(Qt::UserRole + 1).toInt();
             yAttrName =
                 ui.tableWidget_nameUnits_3->item(ui.tableWidget_nameUnits_3->currentRow(), 0)
@@ -467,8 +478,12 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
                ui.tableWidget_Entity_8->currentItem() == nullptr)
                 return false;
 
-            //            strEntity2 = ui.tableWidget_Entity_7->currentItem()->text();
-            //            strNameUnit2 = ui.tableWidget_Entity_8->currentItem()->text();
+            yType = DataPair::RangeCalculation;
+            yEntityID = ui.tableWidget_Entity_7->currentItem()->data(Qt::UserRole + 1).toInt();
+            yTargetEntityID =
+                ui.tableWidget_Entity_8->currentItem()->data(Qt::UserRole + 1).toInt();
+            yCalType = static_cast<DataPair::RangeCalculationType>(
+                ui.comboBoxCalTypeScatterY->currentIndex());
         }
         break;
         // Attitude
