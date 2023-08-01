@@ -59,7 +59,6 @@ signals:
     void sgn_updatePlotPair(QString, QString); //tabName, plotName
     void lightConstraintUpdate(
         const QList<std::tuple<int32_t, QString, QString, double, QString, QString>>&);
-	void sgn_onTextLightBtnClicked();
 
 public slots:
     void updatePlotTrees();

@@ -810,6 +810,14 @@ double DataManager::rangeCalculationLastValue(int32_t sourceID,
     {
         double sourceAltitude = getEntityAttrValueByMaxTime(sourceID, "Alt", secs, rate);
         double targetAltitude = getEntityAttrValueByMaxTime(targetID, "Alt", secs, rate);
+        if(math::doubleEqual(sourceAltitude, std::numeric_limits<double>::max()))
+        {
+            sourceAltitude = 0.0;
+        }
+        if(math::doubleEqual(targetAltitude, std::numeric_limits<double>::max()))
+        {
+            targetAltitude = 0.0;
+        }
         value = sourceAltitude - targetAltitude;
     }
     return value;

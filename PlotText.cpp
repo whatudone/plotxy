@@ -41,8 +41,24 @@ void PlotText::updateDataForDataPairsByTime(double secs)
         auto xEntityID = dataPair->getEntityIDX();
         auto xAttr = dataPair->getAttr_x();
 
-        double value = DataManager::getInstance()->getEntityAttrValueByMaxTime(
-            xEntityID, xAttr, secs, m_xRate);
+        auto xDataType = dataPair->getXDataType();
+        double value = 0.0;
+        if(xDataType == DataPair::Time)
+        {
+            value = secs;
+        }
+        else if(xDataType == DataPair::Parameter)
+        {
+            value =
+                DataManagerInstance->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs, m_xRate);
+        }
+        else
+        {
+            auto xTargetEntityID = dataPair->getTargetEntityIDX();
+            auto xCalType = dataPair->getXCalType();
+            value = DataManagerInstance->rangeCalculationLastValue(
+                xEntityID, xTargetEntityID, xCalType, secs, m_xRate);
+        }
         m_dataList.append(value);
     }
     update();
@@ -51,6 +67,7 @@ void PlotText::updateDataForDataPairsByTime(double secs)
 void PlotText::updateGraphByDataPair(DataPair* data, double curSecs)
 {
     Q_UNUSED(data)
+    Q_UNUSED(curSecs)
     // 暂时无法单独更新每个DataPair数据，只能全局刷新
     update();
 }
@@ -230,12 +247,20 @@ void PlotText::drawCellData(QPainter& painter)
                     break;
 
                 auto data = dataPairList.at(curIndex);
-                auto xAttr = data->getAttr_x();
-                auto entity = data->getEntity_x();
 
                 if(data->isDraw())
                 {
-                    // 顺便画Attr Label，减少重复循环
+                    // 绘制第一列属性
+                    QString desc;
+                    auto xDataType = data->getXDataType();
+                    if(xDataType == DataPair::Time)
+                    {
+                        desc = "Time";
+                    }
+                    else
+                    {
+                        desc = data->getXEntityAttrPair();
+                    }
                     int offset = m_textLeftOffset - m_textRightOffset;
                     int hx1 = drawRect.left() + horiGridWidth * colIndex * 2 + offset;
                     int hy1 = drawRect.y() + verGridWidth * rowIndex;
@@ -248,7 +273,7 @@ void PlotText::drawCellData(QPainter& painter)
 
                     cellRect.setRect(hx1, hy1, horiGridWidth, verGridWidth);
                     auto alignFlag = data->getLabelTextAlign();
-                    painter.drawText(cellRect, alignFlag | Qt::TextWordWrap, entity + " " + xAttr);
+                    painter.drawText(cellRect, alignFlag | Qt::TextWordWrap, desc);
                     painter.restore();
 
                     // 绘制X和Y轴的value
@@ -272,7 +297,8 @@ void PlotText::drawCellData(QPainter& painter)
                     cellRect.setRect(x, y, horiGridWidth, verGridWidth);
                     double value = m_dataList.at(curIndex);
                     QString text;
-                    if(math::doubleEqual(value, std::numeric_limits<double>::max()))
+                    if(math::doubleEqual(value, std::numeric_limits<double>::max()) ||
+                       math::doubleEqual(value, std::numeric_limits<double>::min()))
                     {
                         text = "---";
                     }

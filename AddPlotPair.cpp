@@ -218,6 +218,8 @@ void AddPlotPair::initStackedWidget_page4()
 
     ui.radioButton_9->clicked();
     ui.radioButton_9->setChecked(true);
+    // 隐藏自定义选项
+    ui.radioButton_11->setVisible(false);
 }
 
 void AddPlotPair::initStackedWidget_pageLight()
@@ -495,7 +497,7 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
            ui.tableWidget_nameUnits_Attitude1->item(
                ui.tableWidget_nameUnits_Attitude2->currentRow(), 0) == nullptr)
             return false;
-
+        xType = DataPair::Parameter;
         xEntityID = ui.tableWidget_Entity_Attitude1->currentItem()->data(Qt::UserRole + 1).toInt();
         xAttrName = ui.tableWidget_nameUnits_Attitude1
                         ->item(ui.tableWidget_nameUnits_Attitude1->currentRow(), 0)
@@ -504,6 +506,7 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
                             ->item(ui.tableWidget_nameUnits_Attitude1->currentRow(), 1)
                             ->text();
 
+        yType = DataPair::Parameter;
         yEntityID = ui.tableWidget_Entity_Attitude2->currentItem()->data(Qt::UserRole + 1).toInt();
         yAttrName = ui.tableWidget_nameUnits_Attitude2
                         ->item(ui.tableWidget_nameUnits_Attitude2->currentRow(), 0)
@@ -517,7 +520,9 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
     case 3:
         if(ui.radioButton_12->isChecked())
         {
+            xType = DataPair::Time;
             xAttrName = "Time";
+            yAttrName = "Time";
         }
         else if(ui.radioButton_9->isChecked())
         {
@@ -526,6 +531,7 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
                    nullptr)
                 return false;
 
+            xType = DataPair::Parameter;
             xEntityID = ui.tableWidget_Entity_4->currentItem()->data(Qt::UserRole + 1).toInt();
             xAttrName =
                 ui.tableWidget_nameUnits_4->item(ui.tableWidget_nameUnits_4->currentRow(), 0)
@@ -535,12 +541,28 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
                     ->text();
 
             yAttrName = "Time";
-            emit sgn_onTextLightBtnClicked();
         }
         else if(ui.radioButton_10->isChecked())
-        {}
+        {
+            if(!ui.tableWidgetTextEntity->currentItem() ||
+               !ui.tableWidgetTextTargetEntity->currentItem())
+            {
+                return false;
+            }
+            xType = DataPair::RangeCalculation;
+            xEntityID = ui.tableWidgetTextEntity->currentItem()->data(Qt::UserRole + 1).toInt();
+            xTargetEntityID =
+                ui.tableWidgetTextTargetEntity->currentItem()->data(Qt::UserRole + 1).toInt();
+            xCalType =
+                static_cast<DataPair::RangeCalculationType>(ui.comboBoxTextCaltype->currentIndex());
+
+            yAttrName = "Time";
+        }
         else if(ui.radioButton_11->isChecked())
-        {}
+        {
+            xType = DataPair::UserDefine;
+            yAttrName = "Time";
+        }
         break;
         // light
     case 4: {
@@ -736,7 +758,8 @@ void AddPlotPair::onUpdateEntityTableByDataChanged()
               << ui.tableWidget_Entity_6 << ui.tableWidget_Entity_7 << ui.tableWidget_Entity_8
               << ui.tableWidget_Entity_9 << ui.tableWidget_Entity_10
               << ui.tableWidget_Entity_Attitude1 << ui.tableWidget_Entity_Attitude2
-              << ui.tableWidget_AScopeEntity;
+              << ui.tableWidget_AScopeEntity << ui.tableWidgetTextEntity
+              << ui.tableWidgetTextTargetEntity;
     for(auto tableWidget : tableList)
     {
         tableWidget->clearContents();
