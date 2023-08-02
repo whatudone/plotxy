@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>613</width>
+    <width>626</width>
     <height>847</height>
    </rect>
   </property>
@@ -17,7 +17,7 @@
    <item>
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>3</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="page">
       <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -1856,14 +1856,14 @@
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton">
+          <widget class="QPushButton" name="pushButtonLightTest">
            <property name="text">
             <string>测试...</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_2">
+          <widget class="QPushButton" name="pushButtonLightHelp">
            <property name="text">
             <string>帮助...</string>
            </property>
@@ -1958,6 +1958,12 @@
           <layout class="QVBoxLayout" name="verticalLayout_15">
            <item>
             <widget class="QTableWidget" name="tableWidget_lightNameUnits">
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
              <column>
               <property name="text">
                <string>名称</string>

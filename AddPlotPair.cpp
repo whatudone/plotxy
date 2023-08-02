@@ -232,6 +232,10 @@ void AddPlotPair::initStackedWidget_pageLight()
     ui.tableWidget_lightNameUnits->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui.radioButton_lightParameter->setChecked(true);
     ui.tableWidget_LightSet->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui.pushButtonLightTest->setVisible(false);
+    ui.pushButtonLightHelp->setVisible(false);
+    ui.radioButtonLightTemplate->setVisible(false);
+    ui.radioButtonLightColor->setVisible(false);
     connect(ui.tableWidget_lightEntity,
             SIGNAL(itemClicked(QTableWidgetItem*)),
             this,
@@ -572,6 +576,7 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
                ui.tableWidget_lightNameUnits->item(ui.tableWidget_lightNameUnits->currentRow(),
                                                    0) == nullptr)
                 return false;
+            xType = DataPair::Parameter;
             xEntityID = ui.tableWidget_lightEntity->currentItem()->data(Qt::UserRole + 1).toInt();
             xAttrName =
                 ui.tableWidget_lightNameUnits->item(ui.tableWidget_lightNameUnits->currentRow(), 0)
@@ -589,6 +594,7 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
 
         if(!ui.tableWidget_AScopeEntity->currentItem())
             return false;
+        xType = DataPair::Parameter;
         xEntityID = ui.tableWidget_AScopeEntity->currentItem()->data(Qt::UserRole + 1).toInt();
         // 目前根据需求将此处属性和单位写死，后续看是否存在动态变化的需求
         xAttrName = "Range";
