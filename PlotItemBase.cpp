@@ -8,6 +8,7 @@
 #include "DataManager.h"
 #include "PlotXYDemo.h"
 #include "Utils.h"
+#include "label_edit.h"
 
 #include <QDebug>
 #include <QPainter>
@@ -652,13 +653,10 @@ void PlotItemBase::setPaddings(int32_t top, int32_t bottom, int32_t left, int32_
 
 void PlotItemBase::updateTitle()
 {
-    pTitleLabel->setVisible(m_titleVisible);
-    pTitleLabel->setFont(m_titleFont);
-    pTitleLabel->setText(m_title);
-    QPalette pal(pTitleLabel->palette());
-    pal.setColor(QPalette::WindowText, m_titleColor);
-    pal.setColor(QPalette::Background, m_titleFillColor);
-    pTitleLabel->setPalette(pal);
+    m_pTitleLabel->setVisible(m_titleVisible);
+    m_pTitleLabel->setLabelFont(m_titleFont);
+    m_pTitleLabel->setLabelText(m_title);
+    m_pTitleLabel->setLabelColor(m_titleColor, m_titleFillColor);
 }
 
 // NOTE::其他地方不要直接创建DataPair对象，需要通过本接口创建，不然会导致丢失信号槽逻辑
@@ -1612,24 +1610,21 @@ void PlotItemBase::setCustomPlotMouseTransparent(bool baseTransparent, bool cust
 
 void PlotItemBase::setupLayout()
 {
-    pTitleLabel = new QLabel;
-    pTitleLabel->setFont(m_titleFont);
-    pTitleLabel->setText(m_title);
-    pTitleLabel->setContentsMargins(0, 0, 0, 0);
-    pTitleLabel->setAlignment(Qt::AlignCenter);
-
+    m_pTitleLabel = new LabelEdit;
+    connect(
+        m_pTitleLabel, &LabelEdit::textChanged, [this](const QString& text) { m_title = text; });
     titleLayout = new QHBoxLayout;
     titleLayout->addSpacerItem(
         new QSpacerItem(10, 10, QSizePolicy::Expanding, QSizePolicy::Preferred));
-    titleLayout->addWidget(pTitleLabel);
+    titleLayout->addWidget(m_pTitleLabel);
     titleLayout->addSpacerItem(
         new QSpacerItem(10, 10, QSizePolicy::Expanding, QSizePolicy::Preferred));
 
-    QPalette pe(pTitleLabel->palette());
-    pe.setColor(QPalette::WindowText, m_titleColor);
-    pe.setColor(QPalette::Background, m_titleFillColor);
-    pTitleLabel->setAutoFillBackground(true);
-    pTitleLabel->setPalette(pe);
+    QTimer::singleShot(10, [this]() {
+        m_pTitleLabel->setLabelFont(m_titleFont);
+        m_pTitleLabel->setLabelText(m_title);
+        m_pTitleLabel->setLabelColor(m_titleColor, m_titleFillColor);
+    });
 
     mainLayout = new QVBoxLayout;
     mainLayout->setContentsMargins(
@@ -1637,7 +1632,7 @@ void PlotItemBase::setupLayout()
 
     mainLayout->addLayout(titleLayout, 1);
 
-    pTitleLabel->setVisible(m_titleVisible);
+    m_pTitleLabel->setVisible(m_titleVisible);
 
     // 绘图分为两种，一种是qcustomplot绘制，一种是自绘
     if(m_customPlot)

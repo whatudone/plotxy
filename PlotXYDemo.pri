@@ -9,6 +9,7 @@
 
 HEADERS += $$PWD/TimeClass.h \
     $$PWD/RecvThread.h \
+    $$PWD/label_edit.h \
     $$PWD/mydialpointer.h \
     $$PWD/rename_tab_dialog.h \
     $$PWD/tabdrawwidget.h \
@@ -52,6 +53,7 @@ HEADERS += $$PWD/TimeClass.h \
 
 SOURCES += $$PWD/AddPlotPair.cpp \
     $$PWD/RecvThread.cpp \
+    $$PWD/label_edit.cpp \
     $$PWD/mydialpointer.cpp \
     $$PWD/rename_tab_dialog.cpp \
     $$PWD/tabdrawwidget.cpp \
@@ -105,6 +107,7 @@ FORMS += $$PWD/AddPlotPair.ui \
     $$PWD/TimeControls.ui \
     $$PWD/ToolBox.ui \
     $$PWD/ToolPage.ui \
+    $$PWD/label_edit.ui \
     $$PWD/rename_tab_dialog.ui \
     $$PWD/choose_plot_type_dialog.ui\
     $$PWD/NetSettingDialog.ui
