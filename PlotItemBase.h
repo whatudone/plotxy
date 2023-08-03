@@ -14,7 +14,7 @@
 
 #include <QWidget>
 
-class QCustomPlot;
+class LabelEdit;
 class PlotItemBase : public QWidget
 {
     Q_OBJECT
@@ -535,7 +535,7 @@ private:
     QCPItemText* m_measureTextItem = nullptr;
 
     // 标题Label
-    QLabel* pTitleLabel = nullptr;
+    LabelEdit* m_pTitleLabel = nullptr;
     QVBoxLayout* mainLayout = nullptr;
     QHBoxLayout* titleLayout = nullptr;
 
