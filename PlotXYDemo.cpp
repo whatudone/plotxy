@@ -1385,6 +1385,27 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
             plotObject.insert("RTIColorRangeInfo", colorInfo);
         }
     }
+    else if(type == PlotType::Type_PlotDoppler)
+    {
+        PlotDoppler* dopplerPlot = dynamic_cast<PlotDoppler*>(plot);
+        if(dopplerPlot)
+        {
+            plotObject.insert("DopplerShowToolTip", dopplerPlot->getIsShowToolTip());
+
+            QJsonArray colorInfo;
+            QMap<double, QColor> colorMap = dopplerPlot->getColorRangeMap();
+            QList<double> valueList = colorMap.keys();
+            for(auto value : valueList)
+            {
+                QJsonObject object;
+                object.insert("DopplerColorRangeValue", value);
+                object.insert("DopplerColorRangeColor",
+                              color_transfer::QColorToRGBAStr(colorMap.value(value)));
+                colorInfo.append(object);
+            }
+            plotObject.insert("DopplerColorRangeInfo", colorInfo);
+        }
+    }
 
     // 图表存在多个数据对
     QJsonArray dataPairArray;
@@ -1739,6 +1760,27 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
                 colorMap.insert(value, color);
             }
             rtiPlot->setColorRangeMap(colorMap);
+        }
+    }
+    else if(type == PlotType::Type_PlotDoppler)
+    {
+        PlotDoppler* dopplerPlot = dynamic_cast<PlotDoppler*>(plot);
+        if(dopplerPlot)
+        {
+            dopplerPlot->setIsShowToolTip(plotObject.value("DopplerShowToolTip").toBool());
+
+            QJsonArray colorInfo = plotObject.value("DopplerColorRangeInfo").toArray();
+            int size = colorInfo.size();
+            QMap<double, QColor> colorMap;
+            for(int i = 0; i < size; i++)
+            {
+                QJsonObject obj = colorInfo.at(i).toObject();
+                double value = obj.value("DopplerColorRangeValue").toDouble();
+                QColor color = color_transfer::QColorFromRGBAStr(
+                    obj.value("DopplerColorRangeColor").toString());
+                colorMap.insert(value, color);
+            }
+            dopplerPlot->setColorRangeMap(colorMap);
         }
     }
 

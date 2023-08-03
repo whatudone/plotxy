@@ -8,6 +8,7 @@
 #include "PlotAttitude.h"
 #include "PlotBar.h"
 #include "PlotDial.h"
+#include "PlotDoppler.h"
 #include "PlotLight.h"
 #include "PlotManagerData.h"
 #include "PlotRTI.h"
@@ -69,6 +70,7 @@ void PlotManager::init()
     initBarUI();
     initAScopeUI();
     initRTIUI();
+    initDopplerUI();
     initEditableMap();
 }
 
@@ -520,6 +522,46 @@ void PlotManager::initRTIUI()
     ui.spinBox_8->setVisible(false);
     ui.label_97->setVisible(false);
     ui.comboBox_17->setVisible(false);
+}
+
+void PlotManager::initDopplerUI()
+{
+    connect(ui.checkBox_ShowToolTip,
+            &QCheckBox::stateChanged,
+            this,
+            &PlotManager::onCheckBox_ShowToolTipStateChanged);
+    connect(ui.pushButton_AScopeAxisColor,
+            &QPushButton::clicked,
+            this,
+            &PlotManager::onPushButton_AScopeAxisColorClicked);
+    connect(ui.pushButton_AScopeAxisLineColor,
+            &QPushButton::clicked,
+            this,
+            &PlotManager::onPushButton_AScopeAxisLineColorClicked);
+    connect(ui.spinBox_AScopeLineWidth,
+            QOverload<int>::of(&QSpinBox::valueChanged),
+            this,
+            &PlotManager::onSpinBox_AScopeAxisLineWidthChanged);
+    connect(ui.horizontalSlider_DopplerColorSlider,
+            &QSlider::valueChanged,
+            this,
+            &PlotManager::onSlider_DopplerColorValueChanged);
+    connect(ui.comboBox_DopplerColorIndex,
+            QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this,
+            &PlotManager::onComboBox_DopplerColorIndexChanged);
+    connect(ui.pushButton_DopplerNewColor,
+            &QPushButton::clicked,
+            this,
+            &PlotManager::onPushButton_DopplerNewColorClicked);
+    connect(ui.pushButton_DopplerDeleteColor,
+            &QPushButton::clicked,
+            this,
+            &PlotManager::onPushButton_DopplerDeleteColorClicked);
+
+    ui.checkBox_ShowSelectionBands->setVisible(false);
+    ui.label_158->setVisible(false);
+    ui.pushButton_93->setVisible(false);
 }
 
 void PlotManager::initEditableMap()
@@ -1229,6 +1271,28 @@ void PlotManager::refreshRTIUI(PlotItemBase* plot)
     ui.comboBox_ColorIndex->blockSignals(false);
 }
 
+void PlotManager::refreshDopplerUI(PlotItemBase* plot)
+{
+    auto item = dynamic_cast<PlotDoppler*>(plot);
+    if(item == nullptr)
+        return;
+
+    ui.checkBox_ShowToolTip->setChecked(item->getIsShowToolTip());
+    ui.pushButton_AScopeAxisColor->setColor(item->getAxisColor());
+    ui.pushButton_AScopeAxisLineColor->setColor(item->getGridColor());
+    ui.spinBox_AScopeLineWidth->setValue(item->getGridWidth());
+
+    refreshDopplerColorRange();
+
+    ui.comboBox_DopplerColorIndex->blockSignals(true);
+    ui.comboBox_DopplerColorIndex->clear();
+    for(int i = 0; i < item->getColorRangeMap().size(); i++)
+    {
+        ui.comboBox_DopplerColorIndex->addItem(QString::number(i));
+    }
+    ui.comboBox_DopplerColorIndex->blockSignals(false);
+}
+
 void PlotManager::refreshTextEditUI(PlotItemBase* plot)
 {
 	ui.checkBox_12->setChecked(plot->unitsShowX());
@@ -1548,6 +1612,31 @@ void PlotManager::refreshRTIColorRange()
     m_RTIColorSliderImage = pixmap.toImage();
 }
 
+void PlotManager::refreshDopplerColorRange()
+{
+    if(!m_curSelectPlot)
+        return;
+    auto item = dynamic_cast<PlotDoppler*>(m_curSelectPlot);
+    if(!item)
+        return;
+
+    QMap<double, QColor> colorMap = item->getColorRangeMap();
+    QString scaleStr;
+    QList<double> keys = colorMap.keys();
+    for(auto stop : keys)
+    {
+        scaleStr += QString(", stop:%1 %2").arg(stop).arg(colorMap.value(stop).name());
+    }
+    QString gradientStr =
+        QString("background:qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0%1);border:none;")
+            .arg(scaleStr);
+    ui.label_DopplerColorRangeBar->setStyleSheet(gradientStr);
+
+    QPixmap pixmap(ui.label_DopplerColorRangeBar->size());
+    ui.label_DopplerColorRangeBar->render(&pixmap);
+    m_DopplerColorSliderImage = pixmap.toImage();
+}
+
 void PlotManager::onTWSPclicked(QTreeWidgetItem* item, int column)
 {
     QTreeWidgetItem* parent = item->parent();
@@ -1758,6 +1847,7 @@ void PlotManager::onTWSclicked(QTreeWidgetItem* item, int column)
         else if(compare == QString("Range Doppler设置"))
         {
             ui.stackedWidget->setCurrentIndex(17);
+            refreshDopplerUI(m_curSelectPlot);
         }
     }
 }
@@ -3793,4 +3883,145 @@ void PlotManager::onPushButton_DeleteColorClicked()
     ui.comboBox_ColorIndex->blockSignals(false);
 
     refreshRTIColorRange();
+}
+
+void PlotManager::onCheckBox_ShowToolTipStateChanged(int state)
+{
+    if(!m_curSelectPlot)
+        return;
+    auto dopplerPlot = dynamic_cast<PlotDoppler*>(m_curSelectPlot);
+    if(!dopplerPlot)
+        return;
+    dopplerPlot->setIsShowToolTip(state == 2);
+}
+
+void PlotManager::onPushButton_AScopeAxisColorClicked()
+{
+    if(!m_curSelectPlot)
+        return;
+    auto dopplerPlot = dynamic_cast<PlotDoppler*>(m_curSelectPlot);
+    if(!dopplerPlot)
+        return;
+    dopplerPlot->setAxisColorWidth(ui.pushButton_AScopeAxisColor->color(),
+                                   dopplerPlot->getAxisWidth());
+}
+
+void PlotManager::onPushButton_AScopeAxisLineColorClicked()
+{
+    if(!m_curSelectPlot)
+        return;
+    auto dopplerPlot = dynamic_cast<PlotDoppler*>(m_curSelectPlot);
+    if(!dopplerPlot)
+        return;
+    dopplerPlot->setGridColorWidth(ui.pushButton_AScopeAxisLineColor->color(),
+                                   ui.spinBox_AScopeLineWidth->value());
+}
+
+void PlotManager::onSpinBox_AScopeAxisLineWidthChanged(int value)
+{
+    if(!m_curSelectPlot)
+        return;
+    auto dopplerPlot = dynamic_cast<PlotDoppler*>(m_curSelectPlot);
+    if(!dopplerPlot)
+        return;
+    dopplerPlot->setGridColorWidth(ui.pushButton_AScopeAxisLineColor->color(), value);
+}
+
+void PlotManager::onSlider_DopplerColorValueChanged(int value)
+{
+    if(!m_curSelectPlot)
+        return;
+    auto dopplerPlot = dynamic_cast<PlotDoppler*>(m_curSelectPlot);
+    if(!dopplerPlot)
+        return;
+    if(value == 0 || value == 100)
+    {
+        ui.pushButton_DopplerDeleteColor->setEnabled(false);
+    }
+    else
+    {
+        ui.pushButton_DopplerDeleteColor->setEnabled(true);
+    }
+    ui.spinBox_DopplerColorPosition->setValue(value);
+
+    // 最右边要往左偏1个像素，否则会超出范围，取到的颜色是黑色
+    int offset = value == 100 ? 1 : 0;
+    QPoint point(m_DopplerColorSliderImage.width() * value / 100 - offset, 1);
+    QColor color = QColor(m_DopplerColorSliderImage.pixelColor(point));
+
+    ui.pushButton_DopplerColor->setColor(color);
+}
+
+void PlotManager::onComboBox_DopplerColorIndexChanged(int index)
+{
+    if(!m_curSelectPlot)
+        return;
+    auto dopplerPlot = dynamic_cast<PlotDoppler*>(m_curSelectPlot);
+    if(!dopplerPlot)
+        return;
+    QMap<double, QColor> colorMap = dopplerPlot->getColorRangeMap();
+    QList<double> keyList = colorMap.keys();
+    if(keyList.isEmpty() || keyList.size() < index + 1)
+        return;
+    double value = keyList.at(index);
+    QColor color = colorMap.value(value);
+    ui.spinBox_DopplerColorPosition->setValue(int(value * 100));
+    ui.pushButton_DopplerColor->setColor(color);
+    if(index == 0 || index == ui.comboBox_DopplerColorIndex->count() - 1)
+    {
+        ui.pushButton_DopplerDeleteColor->setEnabled(false);
+    }
+    else
+    {
+        ui.pushButton_DopplerDeleteColor->setEnabled(true);
+    }
+}
+
+void PlotManager::onPushButton_DopplerNewColorClicked()
+{
+    if(!m_curSelectPlot)
+        return;
+    auto dopplerPlot = dynamic_cast<PlotDoppler*>(m_curSelectPlot);
+    if(!dopplerPlot)
+        return;
+    QMap<double, QColor> colorMap = dopplerPlot->getColorRangeMap();
+    double value = ui.spinBox_DopplerColorPosition->value() / 100.0;
+    QColor posColor = ui.pushButton_DopplerColor->color();
+    colorMap.insert(value, posColor);
+    dopplerPlot->setColorRangeMap(colorMap);
+    ui.comboBox_DopplerColorIndex->blockSignals(true);
+    ui.comboBox_DopplerColorIndex->clear();
+    for(int i = 0; i < colorMap.size(); i++)
+    {
+        ui.comboBox_DopplerColorIndex->addItem(QString::number(i));
+    }
+    ui.comboBox_DopplerColorIndex->blockSignals(false);
+
+    refreshDopplerColorRange();
+}
+
+void PlotManager::onPushButton_DopplerDeleteColorClicked()
+{
+    if(!m_curSelectPlot)
+        return;
+    auto dopplerPlot = dynamic_cast<PlotDoppler*>(m_curSelectPlot);
+    if(!dopplerPlot)
+        return;
+    QMap<double, QColor> colorMap = dopplerPlot->getColorRangeMap();
+    double value = ui.spinBox_DopplerColorPosition->value() / 100.0;
+    if(!colorMap.contains(value))
+    {
+        return;
+    }
+    colorMap.remove(value);
+    dopplerPlot->setColorRangeMap(colorMap);
+    ui.comboBox_DopplerColorIndex->blockSignals(true);
+    ui.comboBox_DopplerColorIndex->clear();
+    for(int i = 0; i < colorMap.size(); i++)
+    {
+        ui.comboBox_DopplerColorIndex->addItem(QString::number(i));
+    }
+    ui.comboBox_DopplerColorIndex->blockSignals(false);
+
+    refreshDopplerColorRange();
 }

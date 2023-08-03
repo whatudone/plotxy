@@ -14,7 +14,7 @@ class PlotDoppler : public PlotItemBase
 
 public:
 	PlotDoppler(QWidget* parent = Q_NULLPTR);
-	~PlotDoppler();
+    ~PlotDoppler() override;
 
 	void initPlot();
 
@@ -26,6 +26,15 @@ public:
 public:
     static int m_instanceCount; //实体个数
 
+    QMap<double, QColor> getColorRangeMap() const;
+    void setColorRangeMap(const QMap<double, QColor>& colorRangeMap);
+
+    bool getIsShowToolTip() const;
+    void setIsShowToolTip(bool isShowToolTip);
+
+    virtual void setAxisColorWidth(const QColor& color, int32_t width) override;
+    virtual void setGridColorWidth(const QColor& color, int32_t width) override;
+
 private:
     // 通过指定X值获取对应的切片数据
     void getYToValueVecByX(double x, QVector<double>& yVec, QVector<double>& dataVec);
@@ -34,9 +43,11 @@ private:
     // 响应时间变化刷新图表
     void updateDataForDataPairsByTime(double secs) override;
     // 响应DataPair的修改
-    void updateGraphByDataPair(DataPair* data, double curSecs);
+    void updateGraphByDataPair(DataPair* data, double curSecs) override;
     // 响应游标移动时，切片点移动，更新水平和垂直的切片图表
     void updateAScopesBySlicePoint(const QPointF& point);
+
+    void initColorRangeMap();
 
 private:
     QCPColorMap* m_colorMap = nullptr;
@@ -58,4 +69,11 @@ private:
     QCPItemTracer* m_tracer = nullptr;
     // 文本信息
     QCPItemText* m_tracerText = nullptr;
+
+    bool m_isShowToolTip = false;
+    QMap<double, QColor> m_colorRangeMap;
+
+private slots:
+    void onMouseRelease(QMouseEvent* event);
+    void onShowToolTips(QMouseEvent* event);
 };

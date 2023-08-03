@@ -37,6 +37,7 @@ private:
     void initScatterMarkersUI();
     void initAScopeUI();
     void initRTIUI();
+    void initDopplerUI();
     void initEditableMap();
     void initUnitData();
 
@@ -52,6 +53,7 @@ private:
     void refreshGOGUI(PlotItemBase* plot);
     void refreshAScopeUI(PlotItemBase* plot);
     void refreshRTIUI(PlotItemBase* plot);
+    void refreshDopplerUI(PlotItemBase* plot);
 
 	void refreshTextEditUI(PlotItemBase* plot);
 	void refreshAttitudeUI(PlotItemBase* plot);
@@ -73,6 +75,7 @@ private:
 
     void exchangeItem(QTableWidget* tableWidget, int selectedRow, int targetRow);
     void refreshRTIColorRange();
+    void refreshDopplerColorRange();
 
 public slots:
     void onTWSclicked(QTreeWidgetItem* item, int i);
@@ -250,6 +253,16 @@ public slots:
     void onPushButton_NewColorClicked();
     void onPushButton_DeleteColorClicked();
 
+    // Doppler
+    void onCheckBox_ShowToolTipStateChanged(int state);
+    void onPushButton_AScopeAxisColorClicked();
+    void onPushButton_AScopeAxisLineColorClicked();
+    void onSpinBox_AScopeAxisLineWidthChanged(int value);
+    void onSlider_DopplerColorValueChanged(int value);
+    void onComboBox_DopplerColorIndexChanged(int index);
+    void onPushButton_DopplerNewColorClicked();
+    void onPushButton_DopplerDeleteColorClicked();
+
 signals:
     void sigAddPlotPair();
 	void sigAdvancedDataManager();
@@ -288,6 +301,7 @@ private:
     QMap<QString, QHash<QString, double>>
         m_rateMap; // QString：文件中的原始单位  QString：当前选中的单位  double：原始单位转换成当前单位需要除以的比例。例如 <m<mm,0.001>>
     QImage m_RTIColorSliderImage;
+    QImage m_DopplerColorSliderImage;
 };
 
 #endif // !

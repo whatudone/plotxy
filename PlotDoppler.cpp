@@ -1,5 +1,6 @@
 ﻿#include "PlotDoppler.h"
 #include "DataManager.h"
+#include "PlotXYDemo.h"
 #include "Utils.h"
 
 #include <QGridLayout>
@@ -19,6 +20,7 @@ PlotDoppler::PlotDoppler(QWidget* parent)
     m_showUnits_x = false;
     m_showUnits_y = false;
 
+    initColorRangeMap();
     initPlot();
     setupLayout();
 }
@@ -93,6 +95,9 @@ void PlotDoppler::initPlot()
 
     horPlotX->setLabelColor(m_xAxisLabelColor);
     verPlotX->setLabelColor(m_yAxisLabelColor);
+
+    connect(m_customPlot, &QCustomPlot::mouseRelease, this, &PlotDoppler::onMouseRelease);
+    connect(m_customPlot, &QCustomPlot::mouseMove, this, &PlotDoppler::onShowToolTips);
 }
 
 void PlotDoppler::getYToValueVecByX(double x, QVector<double>& yVec, QVector<double>& dataVec)
@@ -195,4 +200,97 @@ void PlotDoppler::updateAScopesBySlicePoint(const QPointF& point)
     QVector<double> vValues;
     getYToValueVecByX(point.y(), vYDatas, vValues);
     m_customPlot->graph(2)->setData(vYDatas, vValues, true);
+}
+
+void PlotDoppler::initColorRangeMap()
+{
+    m_colorRangeMap.clear();
+    m_colorRangeMap.insert(0.0, QColor(0, 0, 100));
+    m_colorRangeMap.insert(0.1, QColor(0, 35, 200));
+    m_colorRangeMap.insert(0.2, QColor(0, 100, 255));
+    m_colorRangeMap.insert(0.3, QColor(0, 200, 255));
+    m_colorRangeMap.insert(0.4, QColor(45, 255, 200));
+    m_colorRangeMap.insert(0.5, QColor(127, 255, 127));
+    m_colorRangeMap.insert(0.6, QColor(200, 255, 45));
+    m_colorRangeMap.insert(0.7, QColor(255, 200, 0));
+    m_colorRangeMap.insert(0.8, QColor(255, 200, 0));
+    m_colorRangeMap.insert(0.9, QColor(200, 20, 0));
+    m_colorRangeMap.insert(1.0, QColor(100, 0, 0));
+}
+
+void PlotDoppler::setAxisColorWidth(const QColor& color, int32_t width)
+{
+    m_axisColor = color;
+    m_axisWidth = width;
+    m_customPlot->graph(1)->keyAxis()->setBasePen(QPen(color, width));
+    m_customPlot->graph(1)->valueAxis()->setBasePen(QPen(color, width));
+    m_customPlot->graph(2)->keyAxis()->setBasePen(QPen(color, width));
+    m_customPlot->graph(2)->valueAxis()->setBasePen(QPen(color, width));
+    m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
+}
+
+void PlotDoppler::setGridColorWidth(const QColor& color, int32_t width)
+{
+    m_gridColor = color;
+    m_gridWidth = width;
+    m_customPlot->graph(1)->keyAxis()->grid()->setPen(QPen(m_gridColor, m_gridWidth));
+    m_customPlot->graph(1)->valueAxis()->grid()->setPen(QPen(m_gridColor, m_gridWidth));
+    m_customPlot->graph(2)->keyAxis()->grid()->setPen(QPen(m_gridColor, m_gridWidth));
+    m_customPlot->graph(2)->valueAxis()->grid()->setPen(QPen(m_gridColor, m_gridWidth));
+    m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
+}
+
+bool PlotDoppler::getIsShowToolTip() const
+{
+    return m_isShowToolTip;
+}
+
+void PlotDoppler::setIsShowToolTip(bool isShowToolTip)
+{
+    m_isShowToolTip = isShowToolTip;
+}
+
+QMap<double, QColor> PlotDoppler::getColorRangeMap() const
+{
+    return m_colorRangeMap;
+}
+
+void PlotDoppler::setColorRangeMap(const QMap<double, QColor>& colorRangeMap)
+{
+    QCPColorGradient m_colorGradient;
+    m_colorRangeMap = colorRangeMap;
+    auto colorKeys = colorRangeMap.keys();
+    for(auto value : colorKeys)
+    {
+        m_colorGradient.setColorStopAt(value, colorRangeMap.value(value));
+    }
+    m_colorScale->setGradient(m_colorGradient);
+    m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
+}
+
+void PlotDoppler::onMouseRelease(QMouseEvent* event)
+{
+    if(getDataPairs().isEmpty())
+    {
+        return;
+    }
+    auto data = getDataPairs().last();
+    double range = m_customPlot->graph(0)->keyAxis()->pixelToCoord(event->pos().x());
+    double time = m_customPlot->graph(0)->valueAxis()->pixelToCoord(event->pos().y());
+    m_slicePoint.setX(time);
+    m_slicePoint.setY(range);
+    updateGraphByDataPair(data, 0);
+    m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
+}
+
+void PlotDoppler::onShowToolTips(QMouseEvent* event)
+{
+    if(m_isShowToolTip)
+    {
+        double range = m_customPlot->graph(0)->keyAxis()->pixelToCoord(event->pos().x());
+        double time = m_customPlot->graph(0)->valueAxis()->pixelToCoord(event->pos().y());
+        m_customPlot->setToolTip(QString("time:%1\nrange:%2").arg(time).arg(range));
+    }
+    else
+        m_customPlot->setToolTip("");
 }
