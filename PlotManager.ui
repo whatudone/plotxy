@@ -6910,107 +6910,147 @@ background-color: rgb(127, 127, 127);</string>
            </item>
            <item>
             <widget class="QGroupBox" name="groupBox_40">
-             <property name="title">
-              <string>Format</string>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
              </property>
-             <layout class="QVBoxLayout" name="verticalLayout_61">
+             <property name="title">
+              <string>格式</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_70">
+              <property name="leftMargin">
+               <number>10</number>
+              </property>
+              <property name="topMargin">
+               <number>10</number>
+              </property>
+              <property name="rightMargin">
+               <number>10</number>
+              </property>
+              <property name="bottomMargin">
+               <number>10</number>
+              </property>
               <item>
-               <widget class="QCheckBox" name="checkBox_38">
-                <property name="text">
-                 <string>Show ToolTip</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="checkBox_39">
-                <property name="text">
-                 <string>Showw Selection Bands</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_131">
+               <layout class="QVBoxLayout" name="verticalLayout_61">
                 <item>
-                 <widget class="QLabel" name="label_158">
+                 <widget class="QCheckBox" name="checkBox_ShowToolTip">
                   <property name="text">
-                   <string>Selected Bands Color:</string>
+                   <string>显示提示信息</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="ColorButton" name="pushButton_93">
-                  <property name="maximumSize">
-                   <size>
-                    <width>30</width>
-                    <height>30</height>
-                   </size>
-                  </property>
+                 <widget class="QCheckBox" name="checkBox_ShowSelectionBands">
                   <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_132">
-                <item>
-                 <widget class="QLabel" name="label_160">
-                  <property name="text">
-                   <string>AScope Axis Color:</string>
+                   <string>显示选中频带</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="ColorButton" name="pushButton_94">
-                  <property name="maximumSize">
-                   <size>
-                    <width>30</width>
-                    <height>30</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_133">
-                <item>
-                 <widget class="QLabel" name="label_161">
-                  <property name="text">
-                   <string>AScope Line Color:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="ColorButton" name="pushButton_95">
-                  <property name="maximumSize">
-                   <size>
-                    <width>30</width>
-                    <height>30</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_134">
-                <item>
-                 <widget class="QLabel" name="label_159">
-                  <property name="text">
-                   <string>Update Rate:</string>
-                  </property>
-                 </widget>
+                 <layout class="QHBoxLayout" name="horizontalLayout_57">
+                  <item>
+                   <widget class="QLabel" name="label_158">
+                    <property name="text">
+                     <string>选中的色彩颜色:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="ColorButton" name="pushButton_93">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>30</width>
+                      <height>30</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                 <item>
-                 <widget class="QSpinBox" name="spinBox_38"/>
+                 <layout class="QHBoxLayout" name="horizontalLayout_56">
+                  <item>
+                   <widget class="QLabel" name="label_160">
+                    <property name="text">
+                     <string>AScope坐标轴颜色:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="ColorButton" name="pushButton_AScopeAxisColor">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>30</width>
+                      <height>30</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_54">
+                  <item>
+                   <widget class="QLabel" name="label_161">
+                    <property name="text">
+                     <string>AScope网格线颜色:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="ColorButton" name="pushButton_AScopeAxisLineColor">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>30</width>
+                      <height>30</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_53">
+                  <item>
+                   <widget class="QLabel" name="label_159">
+                    <property name="text">
+                     <string>AScope网格线宽度:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSpinBox" name="spinBox_AScopeLineWidth"/>
+                  </item>
+                 </layout>
                 </item>
                </layout>
               </item>
@@ -7051,43 +7091,17 @@ background-color: rgb(127, 127, 127);</string>
          <item>
           <widget class="QGroupBox" name="groupBox_39">
            <property name="title">
-            <string>Amplitude Color Gradient</string>
+            <string>振幅颜色渐变设置</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_60">
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_125">
               <item>
-               <spacer name="horizontalSpacer_97">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_153">
+               <widget class="QLabel" name="label_DopplerColorRangeBar">
                 <property name="text">
-                 <string>这里有个不会做的动态colorbar</string>
+                 <string/>
                 </property>
                </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_98">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
               </item>
              </layout>
             </item>
@@ -7099,9 +7113,18 @@ background-color: rgb(127, 127, 127);</string>
              </widget>
             </item>
             <item>
-             <widget class="QSlider" name="horizontalSlider_2">
+             <widget class="QSlider" name="horizontalSlider_DopplerColorSlider">
+              <property name="maximum">
+               <number>100</number>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="tickPosition">
+               <enum>QSlider::TicksBelow</enum>
+              </property>
+              <property name="tickInterval">
+               <number>10</number>
               </property>
              </widget>
             </item>
@@ -7142,12 +7165,17 @@ background-color: rgb(127, 127, 127);</string>
                     <item row="0" column="0">
                      <widget class="QLabel" name="label_154">
                       <property name="text">
-                       <string>Update Rate:</string>
+                       <string>选中:</string>
                       </property>
                      </widget>
                     </item>
                     <item row="0" column="1">
-                     <widget class="QComboBox" name="comboBox_23">
+                     <widget class="QComboBox" name="comboBox_DopplerColorIndex">
+                      <item>
+                       <property name="text">
+                        <string>0</string>
+                       </property>
+                      </item>
                       <item>
                        <property name="text">
                         <string>1</string>
@@ -7173,17 +7201,46 @@ background-color: rgb(127, 127, 127);</string>
                         <string>5</string>
                        </property>
                       </item>
+                      <item>
+                       <property name="text">
+                        <string>6</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>7</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>8</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>9</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>10</string>
+                       </property>
+                      </item>
                      </widget>
                     </item>
                     <item row="1" column="0">
                      <widget class="QLabel" name="label_155">
                       <property name="text">
-                       <string>Update Rate:</string>
+                       <string>位置:</string>
                       </property>
                      </widget>
                     </item>
                     <item row="1" column="1">
-                     <widget class="QSpinBox" name="spinBox_36"/>
+                     <widget class="QSpinBox" name="spinBox_DopplerColorPosition">
+                      <property name="maximum">
+                       <number>100</number>
+                      </property>
+                     </widget>
                     </item>
                     <item row="1" column="2">
                      <widget class="QLabel" name="label_156">
@@ -7195,12 +7252,12 @@ background-color: rgb(127, 127, 127);</string>
                     <item row="2" column="0">
                      <widget class="QLabel" name="label_157">
                       <property name="text">
-                       <string>Color:</string>
+                       <string>颜色:</string>
                       </property>
                      </widget>
                     </item>
                     <item row="2" column="1">
-                     <widget class="ColorButton" name="pushButton_90">
+                     <widget class="ColorButton" name="pushButton_DopplerColor">
                       <property name="maximumSize">
                        <size>
                         <width>30</width>
@@ -7232,7 +7289,7 @@ background-color: rgb(127, 127, 127);</string>
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_37" stretch="1,1">
                   <item>
-                   <widget class="QPushButton" name="pushButton_91">
+                   <widget class="QPushButton" name="pushButton_DopplerNewColor">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                       <horstretch>0</horstretch>
@@ -7240,14 +7297,14 @@ background-color: rgb(127, 127, 127);</string>
                      </sizepolicy>
                     </property>
                     <property name="text">
-                     <string>New Color</string>
+                     <string>新建颜色</string>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="pushButton_92">
+                   <widget class="QPushButton" name="pushButton_DopplerDeleteColor">
                     <property name="text">
-                     <string>Delete Selected</string>
+                     <string>删除选中</string>
                     </property>
                    </widget>
                   </item>
