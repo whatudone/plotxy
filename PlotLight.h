@@ -104,8 +104,6 @@ private:
     // 动态计算圆圈适合的半径
     void calculateRaidus();
 
-    void clearLineList();
-
 private:
     // 原始的属性-值约束信息，由添加数据对时的界面进行编辑，和数据对是独立的两对数据 entityid,attr,condition,threshold,colorName
     QList<std::tuple<int32_t, QString, QString, double, QString, QString>> m_constraintList;

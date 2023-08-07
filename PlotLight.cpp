@@ -72,10 +72,10 @@ void PlotLight::updateDataForDataPairsByTime(double secs)
         m_dataHash.insert(dataPair->getUuid(),
                           std::make_tuple(desc, xEntityID, xEntityName, xAttr, value));
     }
+    clearPlotContent();
     if(!m_dataHash.isEmpty())
     {
         processDataByConstraints();
-        clearPlotContent();
         calculateRaidus();
     }
     for(int i = 0; i < isize; i++)
@@ -89,7 +89,6 @@ void PlotLight::updateDataForDataPairsByTime(double secs)
 
 void PlotLight::updateGraphByDataPair(DataPair* data, double curSecs)
 {
-    clearLineList();
     QRect drawRect(0, 0, m_customPlot->width(), m_customPlot->height());
     int32_t itemSize = m_drawDataHash.size() == 0 ? 1 : m_drawDataHash.size();
 
@@ -525,9 +524,11 @@ void PlotLight::initPlot()
 
 void PlotLight::clearPlotContent()
 {
-
     m_customPlot->clearItems();
     m_drawItemHash.clear();
+    m_horLineList.clear();
+    m_verLineList.clear();
+    m_outRectList.clear();
 }
 
 QColor PlotLight::getColorByDataPairWithCon(int32_t id, const QString& attr, double value)
@@ -564,28 +565,6 @@ void PlotLight::calculateRaidus()
     auto rect = m_customPlot->rect();
     m_circleRadius = (rect.height() - 2 * m_innerPadding - (m_dataHash.size() - 1) * m_horPadding) /
                      m_dataHash.size() / 2;
-}
-
-void PlotLight::clearLineList()
-{
-    for(int i = 0; i < m_horLineList.size(); i++)
-    {
-        m_customPlot->removeItem(m_horLineList.at(i));
-    }
-
-    for(int i = 0; i < m_verLineList.size(); i++)
-    {
-        m_customPlot->removeItem(m_verLineList.at(i));
-    }
-
-    for(int i = 0; i < m_outRectList.size(); i++)
-    {
-        m_customPlot->removeItem(m_outRectList.at(i));
-    }
-
-    m_horLineList.clear();
-    m_verLineList.clear();
-    m_outRectList.clear();
 }
 
 int PlotLight::getColsNum() const
