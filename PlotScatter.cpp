@@ -243,7 +243,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
         return;
     }
     if(m_isTimeLine)
-	{
+    {
         updateTimelineGraph();
         return;
     }
@@ -251,7 +251,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
     auto x = m_dataHash.value(uuid).first;
     auto y = m_dataHash.value(uuid).second;
     if(x.isEmpty() || y.isEmpty())
-    {
+	{
         //无效数据自动隐藏Label和Icon
         if(m_mapScatter.contains(uuid))
         {
@@ -265,7 +265,11 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
     {
         DrawComponents info;
         info.graph = m_customPlot->addGraph();
-        // 默认采样值是true，在某些情况下采样会导致把原始数据处理错误，导致连线时路径错误
+        /*
+         * 默认采样值是true，在某些情况下采样会导致把原始数据处理错误，导致连线时路径错误
+         * 但是在线模式会一直无限追加数据，需要开启采样，不然数据量太大会严重卡顿
+         * 离线模式不启用采样
+         */
         info.graph->setAdaptiveSampling(false);
         info.graph->setBrush(Qt::NoBrush);
         info.tracerText = new QCPItemText(m_customPlot);
@@ -300,6 +304,8 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
             x = x.mid(x.size() - pointsLimit);
             y = y.mid(y.size() - pointsLimit);
         }
+        graph->setAdaptiveSampling(PlotXYDemo::getIsRealTime());
+
         graph->setVisible(true);
         // 第三个参数设置为true，禁止内部对数据根据x轴的数值大小进行排序，导致数据插入顺序不对，出现line模式连线不对
         graph->setData(x, y, true);

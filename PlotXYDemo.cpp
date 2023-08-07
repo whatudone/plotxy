@@ -37,6 +37,7 @@
 #include "H5Cpp.h"
 using namespace H5;
 double PlotXYDemo::m_seconds = 0.0;
+bool PlotXYDemo::m_isRealTime = false;
 
 PlotXYDemo::PlotXYDemo(QWidget* parent)
     : QMainWindow(parent)
@@ -288,6 +289,8 @@ void PlotXYDemo::onSelectedPlot(const QList<PlotItemBase*> plots)
     {
         m_pCurSelectedPlot = plots.at(0);
         updateStatusBarInfo();
+        // 切换新的选中图表之后需要将当前鼠标状态应用于此图表，不然新选中的图表不会应用当前鼠标状态
+        onStatusBtnClicked(static_cast<int>(m_mouseMode));
     }
 }
 
@@ -640,8 +643,29 @@ void PlotXYDemo::onSliderValueChanged(int value)
     QString dataTime = OrdinalTimeFormatter::toString(m_seconds, refYear);
     m_statusBar_dataTime->setText(dataTime);
 
-    //发送数据时间
-    emit currentSecsChanged(m_seconds);
+    /*
+     * 通知图表刷新数据，在线模式，如果数据接收频率很快，那么会频繁刷新界面，导致界面卡顿
+     * 采取限制措施，每秒限制刷新次数，然后给用户设置入口，可以进行设置。
+     * 离线模式不必限制，可以持续刷新
+    */
+    if(ui.actionReal_Time->isChecked())
+    {
+        int64_t curMSecs = QDateTime::currentMSecsSinceEpoch();
+        // 单位ms，目前设置刷新间隔为100ms
+        if(curMSecs - m_lastUpdateTime < 500)
+        {
+            return;
+        }
+        else
+        {
+            m_lastUpdateTime = curMSecs;
+            emit currentSecsChanged(m_seconds);
+        }
+    }
+    else
+    {
+        emit currentSecsChanged(m_seconds);
+    }
 }
 
 void PlotXYDemo::onRemoteSliderValueChanged(int value)
@@ -2307,6 +2331,11 @@ void PlotXYDemo::closeEvent(QCloseEvent* e)
     qApp->quit();
 }
 
+bool PlotXYDemo::getIsRealTime()
+{
+    return m_isRealTime;
+}
+
 double PlotXYDemo::getSeconds()
 {
     return m_seconds;
@@ -2407,9 +2436,9 @@ void PlotXYDemo::onTimeClient() {}
 
 void PlotXYDemo::onRealTime()
 {
-    bool isChecked = ui.actionReal_Time->isChecked();
+    m_isRealTime = ui.actionReal_Time->isChecked();
     DataManager::getInstance()->loadLiveEventType();
-    if(isChecked)
+    if(m_isRealTime)
     {
         // 清理离线数据
         DataManager::getInstance()->clearData();

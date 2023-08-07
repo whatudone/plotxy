@@ -5,8 +5,10 @@
 #include "TimeControls.h"
 #include "constdef.h"
 #include "ui_PlotXYDemo.h"
+
 #include <QContextMenuEvent>
-#include <QtWidgets/QMainWindow>
+#include <QDateTime>
+#include <QMainWindow>
 
 class PlotItemBase;
 class PlotManager;
@@ -183,6 +185,8 @@ public:
 
     static double getSeconds();
 
+    static bool getIsRealTime();
+
 private:
     void addTabPage(const QString& tabName = QString());
     // 将添加图表控件操作合并到一个函数
@@ -246,6 +250,10 @@ private:
     QLabel* m_statusBar_null;
     // 当前时间
     static double m_seconds;
+    // 是否处于实时模式
+    static bool m_isRealTime;
+    // 上次图表刷新时间
+    int64_t m_lastUpdateTime = QDateTime::currentMSecsSinceEpoch();
 };
 
 #endif // !

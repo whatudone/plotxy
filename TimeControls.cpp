@@ -57,6 +57,10 @@ TimeControls::TimeControls(QWidget* parent)
     connect(this, &TimeControls::sgn_setSliderRange, this, &TimeControls::onSetSliderRange);
 
     ui.checkBox_T0->setVisible(false);
+    ui.label_15->setVisible(false);
+    ui.lineEdit_TALO->setVisible(false);
+    ui.label_16->setVisible(false);
+    ui.pushButton->setVisible(false);
 }
 
 TimeControls::~TimeControls() {}
