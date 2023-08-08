@@ -1045,7 +1045,7 @@ void PlotManager::refreshAxisGridUI(PlotItemBase* plot)
     {
         ui.comboBox_XUnits->addItems(m_unitsMap.value("velocity"));
     }
-    else if(unitX == "sec")
+    else if(unitX == "sec" || m_unitsMap.value("time").contains(unitX, Qt::CaseInsensitive))
     {
         ui.comboBox_XUnits->addItems(m_unitsMap.value("time"));
     }
@@ -1064,7 +1064,7 @@ void PlotManager::refreshAxisGridUI(PlotItemBase* plot)
     {
         ui.comboBox_YUnits->addItems(m_unitsMap.value("velocity"));
     }
-    else if(unitY == "sec")
+    else if(unitY == "sec" || m_unitsMap.value("time").contains(unitY, Qt::CaseInsensitive))
     {
         ui.comboBox_YUnits->addItems(m_unitsMap.value("time"));
     }
