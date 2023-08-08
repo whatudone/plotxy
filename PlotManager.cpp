@@ -613,7 +613,8 @@ void PlotManager::initUnitData()
     m_unitsMap.insert("distance", {"mm", "cm", "dm", "ft", "m", "km"});
     m_unitsMap.insert("angle", {"mrad", "mil", "rad", "deg"});
     m_unitsMap.insert("velocity", {"m/sec", "km/sec", "dm/hr", "km/hr", "mph"});
-    m_unitsMap.insert("time", {"seconds", "ordinal", "month day"});
+    //    m_unitsMap.insert("time", {"seconds", "ordinal", "month day"});
+    m_unitsMap.insert("time", {"seconds", "ordinal"});
 
     QHash<QString, double> tmpMap;
     // distance

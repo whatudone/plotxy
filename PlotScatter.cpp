@@ -1138,7 +1138,7 @@ void PlotScatter::setTimeTickerFormat(const QString& format, bool isXAxis)
         auto yAxis = m_customPlot->yAxis;
         if(format == "seconds")
         {
-            yAxis->setTicker(m_oriXAxisTicker);
+            yAxis->setTicker(m_oriYAxisTicker);
         }
         else if(format == "ordinal")
         {
