@@ -133,6 +133,12 @@ public:
 
     void setBkgLimitSegMap(const QMap<double, BackgroundLimitSeg>& bkgLimitSegMap);
 
+    void setTimeTickerFormat(const QString& format, bool isXAxis);
+
+    QString getXTimeTickFormat() const;
+
+    QString getYTimeTickFormat() const;
+
 protected:
     void updateDataForDataPairsByTime(double secs) override;
 
@@ -199,6 +205,11 @@ private:
     double m_yLead = 0.0;
     double m_yFollow = 0.0;
     QHash<QString, bool> m_yScrollHash;
+
+    QSharedPointer<QCPAxisTicker> m_oriXAxisTicker;
+    QSharedPointer<QCPAxisTicker> m_oriYAxisTicker;
+    QString m_xTimeTickFormat;
+    QString m_yTimeTickFormat;
 };
 
 #endif // PLOTSCATTER_H

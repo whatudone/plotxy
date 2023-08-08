@@ -105,7 +105,7 @@
         <number>1</number>
        </property>
        <property name="currentIndex">
-        <number>17</number>
+        <number>7</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QVBoxLayout" name="verticalLayout_64" stretch="0,1,0,0,0,1">
@@ -168,7 +168,7 @@ color: rgb(255, 255, 255);</string>
            <item>
             <widget class="QLabel" name="label">
              <property name="text">
-              <string>Name:</string>
+              <string>名称:</string>
              </property>
             </widget>
            </item>
@@ -178,7 +178,7 @@ color: rgb(255, 255, 255);</string>
            <item>
             <widget class="QCheckBox" name="checkBox_draw">
              <property name="text">
-              <string>Draw</string>
+              <string>绘制</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -198,7 +198,7 @@ color: rgb(255, 255, 255);</string>
            <item>
             <widget class="QLabel" name="label_2">
              <property name="text">
-              <string> Tab:</string>
+              <string>标签:</string>
              </property>
             </widget>
            </item>
@@ -231,7 +231,7 @@ color: rgb(255, 255, 255);</string>
            <item>
             <widget class="QGroupBox" name="groupBox_3">
              <property name="title">
-              <string>Position</string>
+              <string>位置</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_63">
               <item>
@@ -311,7 +311,7 @@ color: rgb(255, 255, 255);</string>
                 <item row="0" column="0">
                  <widget class="QRadioButton" name="radioButton_pixel">
                   <property name="text">
-                   <string>Pixel Values</string>
+                   <string>像素值</string>
                   </property>
                  </widget>
                 </item>
@@ -331,14 +331,14 @@ color: rgb(255, 255, 255);</string>
                 <item row="0" column="2">
                  <widget class="QPushButton" name="pushButton_flipWidth">
                   <property name="text">
-                   <string>Flip Width</string>
+                   <string>宽度</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="0">
                  <widget class="QRadioButton" name="radioButton_percent">
                   <property name="text">
-                   <string>Percentage Values</string>
+                   <string>百分比</string>
                   </property>
                   <property name="checked">
                    <bool>true</bool>
@@ -361,7 +361,7 @@ color: rgb(255, 255, 255);</string>
                 <item row="1" column="2">
                  <widget class="QPushButton" name="pushButton_flipHeight">
                   <property name="text">
-                   <string>Flip Height</string>
+                   <string>高度</string>
                   </property>
                  </widget>
                 </item>
@@ -394,7 +394,7 @@ color: rgb(255, 255, 255);</string>
                 <item row="0" column="0">
                  <widget class="QLabel" name="label_7">
                   <property name="text">
-                   <string>Outer Fill:</string>
+                   <string>填充颜色:</string>
                   </property>
                  </widget>
                 </item>
@@ -414,7 +414,7 @@ color: rgb(255, 255, 255);</string>
                 <item row="1" column="0">
                  <widget class="QLabel" name="label_8">
                   <property name="text">
-                   <string>   Outline:</string>
+                   <string>线条颜色:</string>
                   </property>
                  </widget>
                 </item>
@@ -499,7 +499,7 @@ color: rgb(255, 255, 255);</string>
             <enum>QFrame::Raised</enum>
            </property>
            <property name="text">
-            <string> Axis and Grid</string>
+            <string>坐标轴和网格</string>
            </property>
           </widget>
          </item>
@@ -651,7 +651,7 @@ color: rgb(255, 255, 255);</string>
                   <item>
                    <widget class="QCheckBox" name="checkBoxScrollX">
                     <property name="text">
-                     <string>Scroll X Value</string>
+                     <string>滚动X值</string>
                     </property>
                    </widget>
                   </item>
@@ -745,7 +745,7 @@ color: rgb(255, 255, 255);</string>
                   <item>
                    <widget class="QCheckBox" name="checkBoxScrollY">
                     <property name="text">
-                     <string>Scroll Y Value</string>
+                     <string>滚动Y值</string>
                     </property>
                    </widget>
                   </item>
@@ -927,7 +927,7 @@ color: rgb(255, 255, 255);</string>
                   <item>
                    <widget class="QPushButton" name="pushButton_11">
                     <property name="text">
-                     <string>Color Scheme...</string>
+                     <string>颜色设置</string>
                     </property>
                    </widget>
                   </item>
@@ -995,7 +995,7 @@ color: rgb(255, 255, 255);</string>
                   <item row="2" column="0">
                    <widget class="QLabel" name="label_36">
                     <property name="text">
-                     <string>Grid Fill:</string>
+                     <string>填充颜色:</string>
                     </property>
                    </widget>
                   </item>
@@ -1017,7 +1017,7 @@ color: rgb(255, 255, 255);</string>
                 <item>
                  <widget class="QCheckBox" name="checkBox_9">
                   <property name="text">
-                   <string>Gradient Fill</string>
+                   <string>渐变填充</string>
                   </property>
                  </widget>
                 </item>
@@ -1059,7 +1059,7 @@ color: rgb(255, 255, 255);</string>
                 <item>
                  <widget class="QCheckBox" name="checkBox_6">
                   <property name="text">
-                   <string>Enable Static Grid</string>
+                   <string>使用静态网格</string>
                   </property>
                  </widget>
                 </item>
@@ -1083,7 +1083,7 @@ color: rgb(255, 255, 255);</string>
                 <item>
                  <widget class="QLabel" name="label_19">
                   <property name="text">
-                   <string>Text Color:</string>
+                   <string>文字颜色:</string>
                   </property>
                  </widget>
                 </item>
@@ -1120,21 +1120,21 @@ color: rgb(255, 255, 255);</string>
                 <item row="2" column="0">
                  <widget class="QLabel" name="label_22">
                   <property name="text">
-                   <string>Grid Density:</string>
+                   <string>网格密度:</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="0">
                  <widget class="QLabel" name="label_21">
                   <property name="text">
-                   <string>Grid Style:</string>
+                   <string>网格风格:</string>
                   </property>
                  </widget>
                 </item>
                 <item row="0" column="0">
                  <widget class="QLabel" name="label_20">
                   <property name="text">
-                   <string>Font:</string>
+                   <string>字体:</string>
                   </property>
                  </widget>
                 </item>
@@ -1251,21 +1251,21 @@ color: rgb(255, 255, 255);</string>
                 <item row="0" column="1">
                  <widget class="QLabel" name="label_23">
                   <property name="text">
-                   <string>Unit Format</string>
+                   <string>单位格式</string>
                   </property>
                  </widget>
                 </item>
                 <item row="0" column="2">
                  <widget class="QLabel" name="label_26">
                   <property name="text">
-                   <string>Precision</string>
+                   <string>精度</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="0">
                  <widget class="QLabel" name="label_24">
                   <property name="text">
-                   <string>X Axis</string>
+                   <string>X坐标轴</string>
                   </property>
                  </widget>
                 </item>
@@ -1275,7 +1275,7 @@ color: rgb(255, 255, 255);</string>
                 <item row="2" column="0">
                  <widget class="QLabel" name="label_25">
                   <property name="text">
-                   <string>Y Axis</string>
+                   <string>Y坐标轴</string>
                   </property>
                  </widget>
                 </item>
@@ -1499,14 +1499,14 @@ color: rgb(255, 255, 255);</string>
              <item>
               <widget class="QPushButton" name="pushButton_15">
                <property name="text">
-                <string>Move Up</string>
+                <string>向上移动</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QPushButton" name="pushButton_16">
                <property name="text">
-                <string>Move Down</string>
+                <string>向下移动</string>
                </property>
               </widget>
              </item>
@@ -1785,20 +1785,20 @@ color: rgb(255, 255, 255);</string>
            <item>
             <widget class="QGroupBox" name="groupBox_6">
              <property name="title">
-              <string>Axis Units Display</string>
+              <string>坐标轴单位显示</string>
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout_21">
               <item>
                <widget class="QCheckBox" name="checkBox_12">
                 <property name="text">
-                 <string>Add Units to X-Axis</string>
+                 <string>X轴显示单位</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QCheckBox" name="checkBox_13">
                 <property name="text">
-                 <string>Add Units to Y-Axis</string>
+                 <string>Y轴显示单位</string>
                 </property>
                </widget>
               </item>
@@ -1808,7 +1808,7 @@ color: rgb(255, 255, 255);</string>
            <item>
             <widget class="QGroupBox" name="groupBox_13">
              <property name="title">
-              <string>Text Settings</string>
+              <string>文本设置</string>
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout_15">
               <item>
@@ -1826,7 +1826,7 @@ color: rgb(255, 255, 255);</string>
                 <item row="2" column="0">
                  <widget class="QLabel" name="label_42">
                   <property name="text">
-                   <string>Color:</string>
+                   <string>颜色:</string>
                   </property>
                  </widget>
                 </item>
@@ -1872,7 +1872,7 @@ color: rgb(255, 255, 255);</string>
                 <item row="5" column="0">
                  <widget class="QLabel" name="label_45">
                   <property name="text">
-                   <string>Offset X:</string>
+                   <string>水平偏移:</string>
                   </property>
                  </widget>
                 </item>
@@ -1892,14 +1892,14 @@ color: rgb(255, 255, 255);</string>
                 <item row="3" column="0">
                  <widget class="QLabel" name="label_43">
                   <property name="text">
-                   <string>Fill: </string>
+                   <string>填充颜色: </string>
                   </property>
                  </widget>
                 </item>
                 <item row="0" column="0" colspan="2">
                  <widget class="QCheckBox" name="checkBox_14">
                   <property name="text">
-                   <string>Visible</string>
+                   <string>显示</string>
                   </property>
                  </widget>
                 </item>
@@ -1909,7 +1909,7 @@ color: rgb(255, 255, 255);</string>
                 <item row="4" column="0">
                  <widget class="QLabel" name="label_47">
                   <property name="text">
-                   <string>Font:</string>
+                   <string>字体:</string>
                   </property>
                  </widget>
                 </item>
@@ -1919,14 +1919,14 @@ color: rgb(255, 255, 255);</string>
                 <item row="1" column="0">
                  <widget class="QLabel" name="label_41">
                   <property name="text">
-                   <string>Text:</string>
+                   <string>文本:</string>
                   </property>
                  </widget>
                 </item>
                 <item row="6" column="0">
                  <widget class="QLabel" name="label_46">
                   <property name="text">
-                   <string>Offset Y:</string>
+                   <string>垂直偏移:</string>
                   </property>
                  </widget>
                 </item>
@@ -1992,7 +1992,7 @@ color: rgb(255, 255, 255);</string>
             <enum>QFrame::Raised</enum>
            </property>
            <property name="text">
-            <string> Text</string>
+            <string>文本信息</string>
            </property>
           </widget>
          </item>
@@ -2049,7 +2049,7 @@ color: rgb(255, 255, 255);</string>
            <item>
             <widget class="QLabel" name="label_168">
              <property name="text">
-              <string>Loaded GOG Files:</string>
+              <string>加载GOG文件:</string>
              </property>
             </widget>
            </item>
@@ -2061,7 +2061,7 @@ color: rgb(255, 255, 255);</string>
              <item>
               <widget class="QPushButton" name="pushButton_24">
                <property name="text">
-                <string>Reload</string>
+                <string>重新加载</string>
                </property>
               </widget>
              </item>
@@ -2081,21 +2081,21 @@ color: rgb(255, 255, 255);</string>
              <item>
               <widget class="QPushButton" name="pushButton_25">
                <property name="text">
-                <string>Add...</string>
+                <string>添加</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QPushButton" name="pushButton_27">
                <property name="text">
-                <string>Add Relative</string>
+                <string>添加关联</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QPushButton" name="pushButton_26">
                <property name="text">
-                <string>Remove</string>
+                <string>删除</string>
                </property>
               </widget>
              </item>
@@ -2129,7 +2129,7 @@ color: rgb(255, 255, 255);</string>
                 <item>
                  <widget class="QCheckBox" name="checkBox_15">
                   <property name="text">
-                   <string>Draw</string>
+                   <string>绘制</string>
                   </property>
                  </widget>
                 </item>
@@ -2149,7 +2149,7 @@ color: rgb(255, 255, 255);</string>
                 <item>
                  <widget class="QLabel" name="label_44">
                   <property name="text">
-                   <string>Color:</string>
+                   <string>颜色:</string>
                   </property>
                  </widget>
                 </item>
@@ -2182,7 +2182,7 @@ color: rgb(255, 255, 255);</string>
                 <item>
                  <widget class="QCheckBox" name="checkBox_16">
                   <property name="text">
-                   <string>Filled</string>
+                   <string>填充</string>
                   </property>
                   <property name="checkable">
                    <bool>true</bool>
@@ -2199,7 +2199,7 @@ color: rgb(255, 255, 255);</string>
                 <item>
                  <widget class="QLabel" name="label_48">
                   <property name="text">
-                   <string>Line Width:</string>
+                   <string>线条宽度:</string>
                   </property>
                  </widget>
                 </item>
@@ -2209,7 +2209,7 @@ color: rgb(255, 255, 255);</string>
                 <item>
                  <widget class="QLabel" name="label_49">
                   <property name="text">
-                   <string>Point Size:</string>
+                   <string>点大小:</string>
                   </property>
                  </widget>
                 </item>
@@ -2247,7 +2247,7 @@ color: rgb(255, 255, 255);</string>
                 <item>
                  <widget class="QLabel" name="label_52">
                   <property name="text">
-                   <string>Font:</string>
+                   <string>字体:</string>
                   </property>
                  </widget>
                 </item>
@@ -2357,7 +2357,7 @@ color: rgb(255, 255, 255);</string>
             <enum>QFrame::Raised</enum>
            </property>
            <property name="text">
-            <string> Linked Axis</string>
+            <string>链接轴</string>
            </property>
           </widget>
          </item>
@@ -2420,7 +2420,7 @@ color: rgb(255, 255, 255);</string>
                <item>
                 <widget class="QLabel" name="label_54">
                  <property name="text">
-                  <string>Link Group Name:</string>
+                  <string>链接组名:</string>
                  </property>
                 </widget>
                </item>
@@ -2443,14 +2443,14 @@ color: rgb(255, 255, 255);</string>
                  <item>
                   <widget class="QCheckBox" name="checkBoxLinkX">
                    <property name="text">
-                    <string>Link X Axis</string>
+                    <string>链接X轴</string>
                    </property>
                   </widget>
                  </item>
                  <item>
                   <widget class="QCheckBox" name="checkBoxLinkY">
                    <property name="text">
-                    <string>Link Y Axis</string>
+                    <string>链接Y轴</string>
                    </property>
                   </widget>
                  </item>
@@ -2506,7 +2506,7 @@ color: rgb(255, 255, 255);</string>
                <item>
                 <widget class="QLabel" name="label_57">
                  <property name="text">
-                  <string>Current Link Set</string>
+                  <string>当前链接设置</string>
                  </property>
                 </widget>
                </item>
@@ -2533,14 +2533,14 @@ color: rgb(255, 255, 255);</string>
                <item>
                 <widget class="QPushButton" name="pushButtonRemoveLinkSet">
                  <property name="text">
-                  <string>Remove</string>
+                  <string>移除</string>
                  </property>
                 </widget>
                </item>
                <item>
                 <widget class="QPushButton" name="pushButtonResetLinkSet">
                  <property name="text">
-                  <string>Reset</string>
+                  <string>重置</string>
                  </property>
                 </widget>
                </item>
@@ -2561,7 +2561,7 @@ color: rgb(255, 255, 255);</string>
               <item>
                <widget class="QLabel" name="label_53">
                 <property name="text">
-                 <string>All Linked Axes:</string>
+                 <string>所有连接轴:</string>
                 </property>
                </widget>
               </item>
@@ -2581,28 +2581,28 @@ color: rgb(255, 255, 255);</string>
               <item>
                <widget class="QPushButton" name="pushButtonAddLinkedSet">
                 <property name="text">
-                 <string>Add</string>
+                 <string>添加</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QPushButton" name="pushButtonUpdateLinkedSet">
                 <property name="text">
-                 <string>Update</string>
+                 <string>更新</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QPushButton" name="pushButtonRemoveLinkedSet">
                 <property name="text">
-                 <string>Remove</string>
+                 <string>移除</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QPushButton" name="pushButtonRemoveAllLinkedSet">
                 <property name="text">
-                 <string>Remove All</string>
+                 <string>移除全部</string>
                 </property>
                </widget>
               </item>
@@ -2618,12 +2618,12 @@ color: rgb(255, 255, 255);</string>
               </attribute>
               <column>
                <property name="text">
-                <string>Group Name</string>
+                <string>组名</string>
                </property>
               </column>
               <column>
                <property name="text">
-                <string>Linked Axes</string>
+                <string>链接轴</string>
                </property>
               </column>
              </widget>
@@ -2666,7 +2666,7 @@ background-color: rgb(127, 127, 127);</string>
             <enum>QFrame::Raised</enum>
            </property>
            <property name="text">
-            <string> Limits</string>
+            <string>限制</string>
            </property>
           </widget>
          </item>
@@ -2689,7 +2689,7 @@ background-color: rgb(127, 127, 127);</string>
              <item>
               <widget class="QGroupBox" name="groupBox_17">
                <property name="title">
-                <string>Limit Options</string>
+                <string>限制设置</string>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_26">
                 <item>
@@ -2697,7 +2697,7 @@ background-color: rgb(127, 127, 127);</string>
                   <item row="0" column="0">
                    <widget class="QLabel" name="label_58">
                     <property name="text">
-                     <string>Name:</string>
+                     <string>名称:</string>
                     </property>
                    </widget>
                   </item>
@@ -2707,7 +2707,7 @@ background-color: rgb(127, 127, 127);</string>
                   <item row="1" column="0">
                    <widget class="QLabel" name="label_59">
                     <property name="text">
-                     <string>Align:</string>
+                     <string>格式:</string>
                     </property>
                    </widget>
                   </item>
@@ -2726,7 +2726,7 @@ background-color: rgb(127, 127, 127);</string>
                   <item row="2" column="0">
                    <widget class="QLabel" name="label_60">
                     <property name="text">
-                     <string>Value:</string>
+                     <string>数值:</string>
                     </property>
                    </widget>
                   </item>
@@ -2736,7 +2736,7 @@ background-color: rgb(127, 127, 127);</string>
                   <item row="3" column="0">
                    <widget class="QLabel" name="label_61">
                     <property name="text">
-                     <string>Line:</string>
+                     <string>线条:</string>
                     </property>
                    </widget>
                   </item>
@@ -2756,7 +2756,7 @@ background-color: rgb(127, 127, 127);</string>
                   <item row="3" column="2">
                    <widget class="QLabel" name="label_184">
                     <property name="text">
-                     <string>Color</string>
+                     <string>颜色</string>
                     </property>
                    </widget>
                   </item>
@@ -2770,14 +2770,14 @@ background-color: rgb(127, 127, 127);</string>
                   <item row="3" column="4" colspan="2">
                    <widget class="QLabel" name="label_63">
                     <property name="text">
-                     <string>Width</string>
+                     <string>宽度</string>
                     </property>
                    </widget>
                   </item>
                   <item row="4" column="0">
                    <widget class="QLabel" name="label_62">
                     <property name="text">
-                     <string>Fill Color:</string>
+                     <string>填充颜色:</string>
                     </property>
                    </widget>
                   </item>
@@ -2797,7 +2797,7 @@ background-color: rgb(127, 127, 127);</string>
                   <item row="4" column="2">
                    <widget class="QLabel" name="label_72">
                     <property name="text">
-                     <string>Above</string>
+                     <string>上方</string>
                     </property>
                    </widget>
                   </item>
@@ -2817,7 +2817,7 @@ background-color: rgb(127, 127, 127);</string>
                   <item row="4" column="4" colspan="2">
                    <widget class="QLabel" name="label_73">
                     <property name="text">
-                     <string>Below</string>
+                     <string>下方</string>
                     </property>
                    </widget>
                   </item>
@@ -3097,14 +3097,14 @@ background-color: rgb(127, 127, 127);</string>
              <item>
               <widget class="QPushButton" name="pushButton_40">
                <property name="text">
-                <string>Move Up</string>
+                <string>向上移动</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QPushButton" name="pushButton_41">
                <property name="text">
-                <string>Move Down</string>
+                <string>向下移动</string>
                </property>
               </widget>
              </item>
@@ -3202,7 +3202,7 @@ background-color: rgb(127, 127, 127);</string>
 background-color: rgb(127, 127, 127);</string>
            </property>
            <property name="text">
-            <string> Plot Markers</string>
+            <string>图表标记</string>
            </property>
           </widget>
          </item>
@@ -3245,7 +3245,7 @@ background-color: rgb(127, 127, 127);</string>
              <item row="3" column="2">
               <widget class="QLabel" name="label_81">
                <property name="text">
-                <string>Color:</string>
+                <string>颜色:</string>
                </property>
               </widget>
              </item>
@@ -3265,7 +3265,7 @@ background-color: rgb(127, 127, 127);</string>
              <item row="3" column="0">
               <widget class="QLabel" name="label_77">
                <property name="text">
-                <string>Icon:</string>
+                <string>图标:</string>
                </property>
               </widget>
              </item>
@@ -3285,7 +3285,7 @@ background-color: rgb(127, 127, 127);</string>
              <item row="2" column="0">
               <widget class="QLabel" name="label_76">
                <property name="text">
-                <string>Time:</string>
+                <string>时间:</string>
                </property>
               </widget>
              </item>
@@ -3308,7 +3308,7 @@ background-color: rgb(127, 127, 127);</string>
              <item row="5" column="0">
               <widget class="QLabel" name="label_79">
                <property name="text">
-                <string>Font:</string>
+                <string>字体:</string>
                </property>
               </widget>
              </item>
@@ -3331,7 +3331,7 @@ background-color: rgb(127, 127, 127);</string>
              <item row="4" column="0">
               <widget class="QLabel" name="label_78">
                <property name="text">
-                <string>Text:</string>
+                <string>文本:</string>
                </property>
               </widget>
              </item>

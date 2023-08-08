@@ -669,13 +669,23 @@ DataPair* PlotItemBase::addPlotDataPair(int32_t xEntityID,
                                         const QHash<QString, QVariant>& extraParams,
                                         bool isFromJson)
 {
-    DataPair* data =
-        new DataPair(xEntityID, xAttrName, xAttrUnitName, yEntityID, yAttrName, yAttrUnitName);
+    QString unitsX;
+    QString unitsY;
+    if(xAttrName == "Time")
+        unitsX = "sec";
+    else
+        unitsX = xAttrUnitName;
+    if(yAttrName == "Time")
+        unitsY = "sec";
+    else
+        unitsY = yAttrUnitName;
+
+    DataPair* data = new DataPair(xEntityID, xAttrName, unitsX, yEntityID, yAttrName, unitsY);
     m_dataPairs.append(data);
     if(!isFromJson)
     {
-        m_units_x = xAttrUnitName;
-        m_units_y = yAttrUnitName;
+        m_units_x = unitsX;
+        m_units_y = unitsY;
     }
     // 设置额外参数
     if(plotType() == PlotType::Type_PlotLight)

@@ -1287,6 +1287,9 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
             plotObject.insert("XScrollOn", scatter->getXScrollOn());
             plotObject.insert("XFollow", scatter->getXFollow());
             plotObject.insert("XLead", scatter->getXLead());
+            plotObject.insert("XTimeFormat", scatter->getXTimeTickFormat());
+            plotObject.insert("YTimeFormat", scatter->getYTimeTickFormat());
+
             auto xScrollHash = scatter->getXScrollHash();
             auto xUuids = xScrollHash.keys();
             QJsonObject xDataPairEnableObj;
@@ -1674,6 +1677,8 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
             scatter->setYScrollOn(plotObject.value("YScrollOn").toBool());
             scatter->setYFollow(plotObject.value("YFollow").toDouble());
             scatter->setYLead(plotObject.value("YLead").toDouble());
+            scatter->setTimeTickerFormat(plotObject.value("XTimeFormat").toString(), true);
+            scatter->setTimeTickerFormat(plotObject.value("YTimeFormat").toString(), false);
             QHash<QString, bool> yScrollHash;
             QJsonObject yDataPairEnableObj = plotObject.value("YDataPairEnableMap").toObject();
             for(auto it = yDataPairEnableObj.begin(); it != yDataPairEnableObj.end(); ++it)

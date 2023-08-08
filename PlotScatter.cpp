@@ -53,6 +53,8 @@ void PlotScatter::initPlot()
     m_customPlot->yAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
     m_customPlot->xAxis->ticker()->setTickCount(m_vertGrids);
     m_customPlot->yAxis->ticker()->setTickCount(m_horzGrids);
+    m_oriXAxisTicker = m_customPlot->xAxis->ticker();
+    m_oriYAxisTicker = m_customPlot->yAxis->ticker();
     m_customPlot->xAxis->setTickLabelColor(m_xTickLabelColor);
     m_customPlot->yAxis->setTickLabelColor(m_yTickLabelColor);
     m_customPlot->xAxis->setTickLabelFont(m_xTickLabelFont);
@@ -308,6 +310,34 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
 
         graph->setVisible(true);
         // 第三个参数设置为true，禁止内部对数据根据x轴的数值大小进行排序，导致数据插入顺序不对，出现line模式连线不对
+
+        // seconds  ,ordinal  ,month day
+        if(m_xTimeTickFormat == "ordinal")
+        {
+            int refYear = DataManager::getInstance()->getRefYear();
+            QDateTime refTime = QDateTime::fromString(QString("%1-01-01 00:00:00").arg(refYear),
+                                                      "yyyy-MM-dd hh:mm:ss");
+            qint64 offsetSeconds = refTime.toSecsSinceEpoch();
+            for(int i = 0; i < x.size(); i++)
+            {
+                x.replace(i, x.at(i) + offsetSeconds);
+            }
+            //            m_customPlot->xAxis->ticker()->setTickOrigin(offsetSeconds);
+            //            setCoordRangeX(m_coordBgn_x + offsetSeconds, m_coordEnd_x + offsetSeconds);
+        }
+
+        if(m_yTimeTickFormat == "ordinal")
+        {
+            int refYear = DataManager::getInstance()->getRefYear();
+            QDateTime refTime = QDateTime::fromString(QString("%1-01-01 00:00:00").arg(refYear),
+                                                      "yyyy-MM-dd hh:mm:ss");
+            qint64 offsetSeconds = refTime.toSecsSinceEpoch();
+            for(int i = 0; i < y.size(); i++)
+            {
+                y.replace(i, y.at(i) + offsetSeconds);
+            }
+            //            setCoordRangeY(m_coordBgn_y + offsetSeconds, m_coordEnd_y + offsetSeconds);
+        }
         graph->setData(x, y, true);
         QPen pen(data->dataColor(), data->width());
 		//line mode
@@ -1056,9 +1086,72 @@ QPointF PlotScatter::getCurrentAverageXYValue(bool& xNeedScroll, bool& yNeedScro
     return point;
 }
 
+QString PlotScatter::getYTimeTickFormat() const
+{
+    return m_yTimeTickFormat;
+}
+
+QString PlotScatter::getXTimeTickFormat() const
+{
+    return m_xTimeTickFormat;
+}
+
 void PlotScatter::setBkgLimitSegMap(const QMap<double, BackgroundLimitSeg>& bkgLimitSegMap)
 {
     m_bkgLimitSegMap = bkgLimitSegMap;
+}
+
+void PlotScatter::setTimeTickerFormat(const QString& format, bool isXAxis)
+{
+
+    if(isXAxis)
+    {
+        m_xTimeTickFormat = format;
+        auto xAxis = m_customPlot->xAxis;
+        if(format == "seconds")
+        {
+            xAxis->setTicker(m_oriXAxisTicker);
+        }
+        else if(format == "ordinal")
+        {
+            QSharedPointer<QCPAxisTickerDateTime> xDateTimeTicker(new QCPAxisTickerDateTime);
+            xDateTimeTicker->setDateTimeFormat("yyyy/MM/dd hh:mm:ss.zzz");
+            xDateTimeTicker->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
+            xAxis->setTicker(xDateTimeTicker);
+        }
+        else if(format == "month day")
+        {
+            //            QSharedPointer<QCPAxisTickerDateTime> monthDayTicker(new QCPAxisTickerDateTime);
+
+            //            int refYear = DataManager::getInstance()->getRefYear();
+            //            // show data time
+            //            QString dataTime = OrdinalTimeFormatter::toString(m_seconds, refYear);
+
+            //            monthDayTicker->setDateTimeFormat("yyyy/MM/dd hh:mm:ss.zzz");
+            //            monthDayTicker->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
+            //            xAxis->setTicker(monthDayTicker);
+        }
+    }
+    else
+    {
+        m_yTimeTickFormat = format;
+        auto yAxis = m_customPlot->yAxis;
+        if(format == "seconds")
+        {
+            yAxis->setTicker(m_oriXAxisTicker);
+        }
+        else if(format == "ordinal")
+        {
+            QSharedPointer<QCPAxisTickerDateTime> yDateTimeTicker(new QCPAxisTickerDateTime);
+            yDateTimeTicker->setDateTimeFormat("yyyy/MM/dd hh:mm:ss.zzz");
+            yDateTimeTicker->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
+            yAxis->setTicker(yDateTimeTicker);
+        }
+        else if(format == "month day")
+        {}
+    }
+
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
 }
 
 QHash<QString, bool> PlotScatter::getYScrollHash() const
