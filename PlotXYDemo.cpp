@@ -1050,26 +1050,32 @@ void PlotXYDemo::writeHDF5(const QString& outputFileName,
 }
 void PlotXYDemo::readHDF5(const QString& inputFileName, QByteArray& pxyData, QByteArray& asiData)
 {
-    H5::H5File file(inputFileName.toLocal8Bit().data(), H5F_ACC_RDONLY);
+    try
+    {
+        H5::H5File file(inputFileName.toLocal8Bit().data(), H5F_ACC_RDONLY);
+        H5::DataSet pxyDataset = file.openDataSet("PXY_DATASET");
+        DataSpace pxyDataSpace = pxyDataset.getSpace();
+        hsize_t pxyDim = 0;
+        pxyDataSpace.getSimpleExtentDims(&pxyDim);
+        char* pxyBuffer = new char[pxyDim];
+        memset(pxyBuffer, 0, pxyDim);
+        pxyDataset.read(pxyBuffer, H5::PredType::NATIVE_CHAR);
+        pxyData = QByteArray(pxyBuffer, pxyDim);
 
-    H5::DataSet pxyDataset = file.openDataSet("PXY_DATASET");
-    DataSpace pxyDataSpace = pxyDataset.getSpace();
-    hsize_t pxyDim = 0;
-    pxyDataSpace.getSimpleExtentDims(&pxyDim);
-    char* pxyBuffer = new char[pxyDim];
-    memset(pxyBuffer, 0, pxyDim);
-    pxyDataset.read(pxyBuffer, H5::PredType::NATIVE_CHAR);
-    pxyData = QByteArray(pxyBuffer, pxyDim);
-
-    H5::DataSet asiDataset = file.openDataSet("ASI_DATASET");
-    DataSpace asiDataSpace = asiDataset.getSpace();
-    hsize_t asiDim = 0;
-    asiDataSpace.getSimpleExtentDims(&asiDim);
-    char* asiBuffer = new char[asiDim];
-    memset(asiBuffer, 0, asiDim);
-    asiDataset.read(asiBuffer, H5::PredType::NATIVE_CHAR);
-    asiData = QByteArray(asiBuffer, asiDim);
-    file.close();
+        H5::DataSet asiDataset = file.openDataSet("ASI_DATASET");
+        DataSpace asiDataSpace = asiDataset.getSpace();
+        hsize_t asiDim = 0;
+        asiDataSpace.getSimpleExtentDims(&asiDim);
+        char* asiBuffer = new char[asiDim];
+        memset(asiBuffer, 0, asiDim);
+        asiDataset.read(asiBuffer, H5::PredType::NATIVE_CHAR);
+        asiData = QByteArray(asiBuffer, asiDim);
+        file.close();
+    }
+    catch(const H5::FileIException& e)
+    {
+        QMessageBox::warning(nullptr, "提示", "无法加载中文路径文档");
+    }
 }
 
 void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
