@@ -197,6 +197,9 @@ void PlotManager::initAxisGridUI()
 {
     ui.pushButton_flipXValues->setVisible(false);
     ui.pushButton_flipYValues->setVisible(false);
+    ui.checkBox_oneToOneScale->setVisible(false);
+    ui.checkBox_adjustTimeBoundOnTALOChange->setVisible(false);
+    ui.groupBox_10->setVisible(false);
 
     ui.lineEdit_23->setText("1");
 
@@ -610,6 +613,7 @@ void PlotManager::initUnitData()
     m_unitsMap.insert("distance", {"mm", "cm", "dm", "ft", "m", "km"});
     m_unitsMap.insert("angle", {"mrad", "mil", "rad", "deg"});
     m_unitsMap.insert("velocity", {"m/sec", "km/sec", "dm/hr", "km/hr", "mph"});
+    m_unitsMap.insert("time", {"seconds", "ordinal", "month day"});
 
     QHash<QString, double> tmpMap;
     // distance
@@ -805,6 +809,15 @@ void PlotManager::initAttitudeUI()
 
 void PlotManager::initGOGUI()
 {
+    ui.label_50->setVisible(false);
+    ui.lineEdit_33->setVisible(false);
+    ui.label_51->setVisible(false);
+    ui.lineEdit_34->setVisible(false);
+    ui.checkBox_17->setVisible(false);
+    ui.checkBox_18->setVisible(false);
+    ui.pushButton_29->setVisible(false);
+    ui.pushButton_27->setVisible(false);
+
     // Filled有三种状态：未选中：不填充   半选中：根据GOG文件来  全选中：填充
     ui.checkBox_16->setTristate(true);
     connect(ui.pushButton_24, &QPushButton::clicked, this, &PlotManager::onPushButton_24Clicked);
@@ -1031,6 +1044,10 @@ void PlotManager::refreshAxisGridUI(PlotItemBase* plot)
     {
         ui.comboBox_XUnits->addItems(m_unitsMap.value("velocity"));
     }
+    else if(unitX == "sec")
+    {
+        ui.comboBox_XUnits->addItems(m_unitsMap.value("time"));
+    }
 
     QString unitY = plot->getUnitsY();
     ui.comboBox_YUnits->clear();
@@ -1045,6 +1062,10 @@ void PlotManager::refreshAxisGridUI(PlotItemBase* plot)
     else if(m_unitsMap.value("velocity").contains(unitY, Qt::CaseInsensitive))
     {
         ui.comboBox_YUnits->addItems(m_unitsMap.value("velocity"));
+    }
+    else if(unitY == "sec")
+    {
+        ui.comboBox_YUnits->addItems(m_unitsMap.value("time"));
     }
     ui.comboBox_XUnits->blockSignals(false);
     ui.comboBox_YUnits->blockSignals(false);
@@ -2392,6 +2413,18 @@ void PlotManager::onComboBox_XUnitChanged(const QString& newUnit)
         int32_t id = m_curSelectPlot->getDataPairs().at(0)->getEntityIDX();
         QString attr = m_curSelectPlot->getDataPairs().at(0)->getAttr_x();
         oriUnit = DataManagerInstance->getUnitByAttr(id, attr);
+        if(attr == "Time" && oriUnit.isEmpty())
+            oriUnit = "seconds";
+    }
+    if(m_unitsMap.value("time").contains(oriUnit, Qt::CaseInsensitive))
+    {
+        if(auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot))
+        {
+            plot->setTimeTickerFormat(newUnit, true);
+            plot->setXRate(1);
+            plot->setUnitsX(newUnit);
+        }
+        return;
     }
     double rate = m_rateMap.value(oriUnit).value(newUnit);
     m_curSelectPlot->setXRate(rate);
@@ -2408,7 +2441,20 @@ void PlotManager::onComboBox_YUnitChanged(const QString& newUnit)
         int32_t id = m_curSelectPlot->getDataPairs().at(0)->getEntityIDY();
         QString attr = m_curSelectPlot->getDataPairs().at(0)->getAttr_y();
         oriUnit = DataManagerInstance->getUnitByAttr(id, attr);
+        if(attr == "Time" && oriUnit.isEmpty())
+            oriUnit = "seconds";
     }
+    if(m_unitsMap.value("time").contains(oriUnit, Qt::CaseInsensitive))
+    {
+        if(auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot))
+        {
+            plot->setTimeTickerFormat(newUnit, false);
+            plot->setYRate(1);
+            plot->setUnitsY(newUnit);
+        }
+        return;
+    }
+
     double rate = m_rateMap.value(oriUnit).value(newUnit);
     m_curSelectPlot->setYRate(rate);
     m_curSelectPlot->setUnitsY(newUnit);
