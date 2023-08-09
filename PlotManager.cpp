@@ -141,6 +141,7 @@ void PlotManager::initTreeWidgetSettings()
     m_itemLimits = new QTreeWidgetItem(m_itemScatterPlot, QStringList(QString("限制")));
     m_itemPlotMarkers = new QTreeWidgetItem(m_itemScatterPlot, QStringList(QString("标记")));
     m_itemTimeLine = new QTreeWidgetItem(m_itemScatterPlot, QStringList("Time Line"));
+    m_itemTimeLine->setHidden(true);
     m_itemHandsOff = new QTreeWidgetItem(m_itemScatterPlot, QStringList("Hands-Off"));
     m_itemHandsOff->setHidden(true);
 
@@ -442,6 +443,8 @@ void PlotManager::initTextLightUI()
 
 void PlotManager::initScatterLimitUI()
 {
+    ui.groupBox_18->setVisible(false);
+
     connect(ui.pushButtonLimitAdd, &QPushButton::clicked, this, &PlotManager::onAddScatterLimit);
     connect(
         ui.pushButtonLimitRemove, &QPushButton::clicked, this, &PlotManager::onRemoveScatterLimit);
@@ -1139,8 +1142,8 @@ void PlotManager::refreshLinkAxesUI(PlotItemBase* plot)
     ui.checkBoxLinkY->blockSignals(true);
     ui.checkBoxLinkX->setChecked(false);
     ui.checkBoxLinkY->setChecked(false);
-    ui.checkBoxLinkX->setText(QString("Link X Axis(%1)").arg(plot->getUnitsX()));
-    ui.checkBoxLinkY->setText(QString("Link Y Axis(%1)").arg(plot->getUnitsY()));
+    ui.checkBoxLinkX->setText(QString("链接X轴(%1)").arg(plot->getUnitsX()));
+    ui.checkBoxLinkY->setText(QString("链接Y轴(%1)").arg(plot->getUnitsY()));
     ui.checkBoxLinkX->blockSignals(false);
     ui.checkBoxLinkY->blockSignals(false);
 }
@@ -2913,19 +2916,19 @@ void PlotManager::onComboBox_LightShapeChanged(const QString& type)
     if(!m_curSelectPlot)
         return;
 
-    if(type == "Rectangle")
+    if(type == "矩形")
     {
         ui.spinBox_LightHeight->setEnabled(true);
     }
-    else if(type == "Square")
+    else if(type == "正方形")
     {
         ui.spinBox_LightHeight->setEnabled(false);
     }
-    else if(type == "Ellipse")
+    else if(type == "椭圆")
     {
         ui.spinBox_LightHeight->setEnabled(true);
     }
-    else if(type == "Circle")
+    else if(type == "正圆")
     {
         ui.spinBox_LightHeight->setEnabled(false);
     }

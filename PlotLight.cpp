@@ -219,14 +219,14 @@ void PlotLight::updateGraphByDataPair(DataPair* data, double curSecs)
                 lightColor = data->dataColor();
             }
             QString type = getLightType();
-            if(type == "Rectangle" || type == "Square")
+            if(type == "矩形" || type == "正方形")
             {
                 statusEllipseLamp->setVisible(false);
                 statusRectLamp->setVisible(true);
                 statusRectLamp->setBrush(QBrush(lightColor));
                 statusRectLamp->topLeft->setType(QCPItemPosition::ptViewportRatio);
                 statusRectLamp->bottomRight->setType(QCPItemPosition::ptViewportRatio);
-                if(type == "Rectangle")
+                if(type == "矩形")
                 {
                     statusRectLamp->topLeft->setCoords(lampCenterX - lampRatioWidth / 2,
                                                        lampCenterY - lampRatioHeight / 2);
@@ -243,14 +243,14 @@ void PlotLight::updateGraphByDataPair(DataPair* data, double curSecs)
                                                                              ratioWidthAndHeight);
                 }
             }
-            else if(type == "Ellipse" || type == "Circle")
+            else if(type == "椭圆" || type == "正圆")
             {
                 statusEllipseLamp->setVisible(true);
                 statusRectLamp->setVisible(false);
                 statusEllipseLamp->setBrush(QBrush(lightColor));
                 statusEllipseLamp->topLeft->setType(QCPItemPosition::ptViewportRatio);
                 statusEllipseLamp->bottomRight->setType(QCPItemPosition::ptViewportRatio);
-                if(type == "Ellipse")
+                if(type == "椭圆")
                 {
                     statusEllipseLamp->topLeft->setCoords(lampCenterX - lampRatioWidth / 2,
                                                           lampCenterY - lampRatioHeight / 2);
@@ -385,14 +385,14 @@ void PlotLight::updateGraphByDataPair(DataPair* data, double curSecs)
                 lightColor = data->dataColor();
             }
             QString type = getLightType();
-            if(type == "Rectangle" || type == "Square")
+            if(type == "矩形" || type == "正方形")
             {
                 statusEllipseLamp->setVisible(false);
                 statusRectLamp->setVisible(true);
                 statusRectLamp->setBrush(QBrush(lightColor));
                 statusRectLamp->topLeft->setType(QCPItemPosition::ptViewportRatio);
                 statusRectLamp->bottomRight->setType(QCPItemPosition::ptViewportRatio);
-                if(type == "Rectangle")
+                if(type == "矩形")
                 {
                     statusRectLamp->topLeft->setCoords(lampCenterX - lampRatioWidth / 2,
                                                        lampCenterY - lampRatioHeight / 2);
@@ -409,14 +409,14 @@ void PlotLight::updateGraphByDataPair(DataPair* data, double curSecs)
                                                                              ratioWidthAndHeight);
                 }
             }
-            else if(type == "Ellipse" || type == "Circle")
+            else if(type == "椭圆" || type == "正圆")
             {
                 statusEllipseLamp->setVisible(true);
                 statusRectLamp->setVisible(false);
                 statusEllipseLamp->setBrush(QBrush(lightColor));
                 statusEllipseLamp->topLeft->setType(QCPItemPosition::ptViewportRatio);
                 statusEllipseLamp->bottomRight->setType(QCPItemPosition::ptViewportRatio);
-                if(type == "Ellipse")
+                if(type == "椭圆")
                 {
                     statusEllipseLamp->topLeft->setCoords(lampCenterX - lampRatioWidth / 2,
                                                           lampCenterY - lampRatioHeight / 2);
