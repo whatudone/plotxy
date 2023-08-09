@@ -12,6 +12,7 @@
 #include "qcustomplot.h"
 #include "ui_PlotItemBase.h"
 
+#include <QHash>
 #include <QWidget>
 
 class LabelEdit;

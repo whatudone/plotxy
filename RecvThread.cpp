@@ -6,8 +6,9 @@
 #include <QApplication>
 #include <QFile>
 #include <QSettings>
+#include <QTextCodec>
+
 #include <string>
-#include <thread>
 
 recvThread::recvThread(QObject* parent)
     : QThread(parent)
@@ -28,6 +29,7 @@ void recvThread::run()
     int port;
     QString address;
     QSettings setting(QCoreApplication::applicationDirPath() + "/PlotXY.ini", QSettings::IniFormat);
+    setting.setIniCodec(QTextCodec::codecForName("utf-8"));
     if(!QFile::exists(iniFileName))
     {
         port = 8888;
@@ -42,12 +44,10 @@ void recvThread::run()
     }
 
     QHostAddress localAddress(address);
-    //    m_udpSocket->setSocketOption(QUdpSocket::ShareAddress|QUdpSocket::ReuseAddressHint,true);
     m_udpSocket->bind(QHostAddress::AnyIPv4, port, QUdpSocket::ShareAddress);
     bool flag = m_udpSocket->joinMulticastGroup(localAddress);
     if(flag)
     {
-        //        connect(m_udpSocket, &QUdpSocket::readyRead, this, &recvThread::onReadyRead, Qt::DirectConnection);
         connect(m_udpSocket,
                 &QUdpSocket::readyRead,
                 this,

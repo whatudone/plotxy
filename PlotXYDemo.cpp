@@ -651,8 +651,8 @@ void PlotXYDemo::onSliderValueChanged(int value)
     if(ui.actionReal_Time->isChecked())
     {
         int64_t curMSecs = QDateTime::currentMSecsSinceEpoch();
-        // 单位ms，目前设置刷新间隔为100ms
-        if(curMSecs - m_lastUpdateTime < 500)
+        // 单位ms，目前设置刷新间隔为1000ms
+        if(curMSecs - m_lastUpdateTime < 1000)
         {
             return;
         }

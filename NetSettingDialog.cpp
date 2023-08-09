@@ -3,6 +3,7 @@
 
 #include <QDebug>
 #include <QFile>
+#include <QTextCodec>
 
 NetSettingDialog::NetSettingDialog(QWidget* parent)
     : QDialog(parent)
@@ -16,6 +17,7 @@ NetSettingDialog::NetSettingDialog(QWidget* parent)
     iniFileName += "/PlotXY.ini";
 
     settings = new QSettings(iniFileName, QSettings::IniFormat);
+    settings->setIniCodec(QTextCodec::codecForName("utf-8"));
     if(!QFile::exists(iniFileName))
     {
         settings->setValue("netConfig/address", "127.0.0.1");
@@ -29,6 +31,7 @@ NetSettingDialog::NetSettingDialog(QWidget* parent)
 
 NetSettingDialog::~NetSettingDialog()
 {
+    settings->deleteLater();
     delete ui;
 }
 
