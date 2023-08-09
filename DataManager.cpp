@@ -459,34 +459,38 @@ void DataManager::loadASIData(const QString& asiFileName)
                 // 事件(Event)等其他类型数据.tag为了兼容在线数据，也可能是其他类型
                 if(lineData.startsWith("GenericData"))
                 {
-                    if(lineData.contains("Event"))
+                    // 时间数据中可能存在空格无法直接按照空格来分割数据
+                    QStringList eventDataList = parsePlatformData(lineData);
+                    if(eventDataList.size() != 6)
                     {
-                        // 时间数据中可能存在空格无法直接按照空格来分割数据
-                        QStringList eventDataList = parsePlatformData(lineData);
-                        if(eventDataList.size() != 6)
-                        {
-                            continue;
-                        }
-                        GenericData g;
-                        g.m_eventType = eventDataList[2].remove('\"');
-                        g.m_eventName = eventDataList.at(3);
-                        g.m_eventName = g.m_eventName.remove("\"").trimmed();
-                        g.m_relativeTime = OrdinalTimeFormatter::getSecondsFromTimeStr(
-                            eventDataList.at(4).trimmed(), m_refYear);
-                        g.m_timeOffset = eventDataList.at(5).trimmed().toInt();
+                        continue;
+                    }
+                    GenericData g;
+                    g.m_eventType = eventDataList[2].remove('\"');
+                    g.m_eventName = eventDataList.at(3);
+                    g.m_eventName = g.m_eventName.remove("\"").trimmed();
+                    g.m_relativeTime = OrdinalTimeFormatter::getSecondsFromTimeStr(
+                        eventDataList.at(4).trimmed(), m_refYear);
+                    g.m_timeOffset = eventDataList.at(5).trimmed().toInt();
 
-                        if(m_genericMap.contains(p.m_platformDataID) &&
-                           m_genericMap.value(p.m_platformDataID).contains(g.m_eventType))
-                        {
-                            // 直接通过引用修改值
-                            m_genericMap[p.m_platformDataID][g.m_eventType].append(g);
-                        }
-                        else
-                        {
-                            QMap<QString, QList<GenericData>> tmpMap;
-                            tmpMap.insert(g.m_eventType, QList<GenericData>() << g);
-                            m_genericMap.insert(p.m_platformDataID, tmpMap);
-                        }
+                    if(m_genericMap.contains(p.m_platformDataID) &&
+                       m_genericMap.value(p.m_platformDataID).contains(g.m_eventType))
+                    {
+                        // 直接通过引用修改值
+                        m_genericMap[p.m_platformDataID][g.m_eventType].append(g);
+                    }
+                    else if(m_genericMap.contains(p.m_platformDataID) &&
+                            !m_genericMap.value(p.m_platformDataID).contains(g.m_eventType))
+                    {
+                        QList<GenericData> tmpList;
+                        tmpList.append(g);
+                        m_genericMap[p.m_platformDataID].insert(g.m_eventType, tmpList);
+                    }
+                    else
+                    {
+                        QMap<QString, QList<GenericData>> tmpMap;
+                        tmpMap.insert(g.m_eventType, QList<GenericData>() << g);
+                        m_genericMap.insert(p.m_platformDataID, tmpMap);
                     }
                 }
             }
