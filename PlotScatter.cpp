@@ -901,39 +901,39 @@ void PlotScatter::updateMarkers(double currentSeconds)
         }
         QCPItemText* textItem = new QCPItemText(m_customPlot);
         QCPItemLine* lineItem = new QCPItemLine(m_customPlot);
-        if(marker.iconType == "None")
+        if(marker.iconType == "无")
         {
             textItem->setText(marker.text);
             lineItem->setVisible(false);
         }
-        else if(marker.iconType == "O Circle")
+        else if(marker.iconType == "O 圆圈")
         {
             textItem->setText("O " + marker.text);
             lineItem->setVisible(false);
         }
-        else if(marker.iconType == "X Cross")
+        else if(marker.iconType == "X 叉")
         {
             textItem->setText("× " + marker.text);
             lineItem->setVisible(false);
         }
-        else if(marker.iconType == "+ Plus")
+        else if(marker.iconType == "+ 加号")
         {
             textItem->setText("+ " + marker.text);
             lineItem->setVisible(false);
         }
-        else if(marker.iconType == "[]  Square")
+        else if(marker.iconType == "[] 方框")
         {
             textItem->setText("[] " + marker.text);
             lineItem->setVisible(false);
         }
-        else if(marker.iconType == "<> Diamond")
+        else if(marker.iconType == "<> 菱形")
         {
             textItem->setText("<> " + marker.text);
             lineItem->setVisible(false);
         }
-        else if(marker.iconType == "- Horizontal Line")
+        else if(marker.iconType == "- 水平线")
         {
-            textItem->setText("× " + marker.text);
+            textItem->setText("- " + marker.text);
             lineItem->setVisible(true);
         }
         else
@@ -951,7 +951,7 @@ void PlotScatter::updateMarkers(double currentSeconds)
         {
             QPen pen(marker.color, 2);
             lineItem->setPen(pen);
-            if(marker.iconType == "- Horizontal Line")
+            if(marker.iconType == "- 水平线")
             {
                 lineItem->start->setTypeX(QCPItemPosition::ptAxisRectRatio);
                 lineItem->start->setTypeY(QCPItemPosition::ptPlotCoords);

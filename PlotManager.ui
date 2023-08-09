@@ -105,7 +105,7 @@
         <number>1</number>
        </property>
        <property name="currentIndex">
-        <number>7</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QVBoxLayout" name="verticalLayout_64" stretch="0,1,0,0,0,1">
@@ -660,7 +660,7 @@ color: rgb(255, 255, 255);</string>
                     <item row="0" column="0">
                      <widget class="QLabel" name="label_13">
                       <property name="text">
-                       <string> Lead:</string>
+                       <string>引导:</string>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -680,7 +680,7 @@ color: rgb(255, 255, 255);</string>
                     <item row="1" column="0">
                      <widget class="QLabel" name="label_14">
                       <property name="text">
-                       <string>Follow:</string>
+                       <string>跟随:</string>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -718,7 +718,7 @@ color: rgb(255, 255, 255);</string>
                   </attribute>
                   <column>
                    <property name="text">
-                    <string>Enable</string>
+                    <string>可用</string>
                    </property>
                   </column>
                   <column>
@@ -754,7 +754,7 @@ color: rgb(255, 255, 255);</string>
                     <item row="0" column="0">
                      <widget class="QLabel" name="label_15">
                       <property name="text">
-                       <string> Lead:</string>
+                       <string>引导:</string>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -774,7 +774,7 @@ color: rgb(255, 255, 255);</string>
                     <item row="1" column="0">
                      <widget class="QLabel" name="label_16">
                       <property name="text">
-                       <string>Follow:</string>
+                       <string>跟随:</string>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -812,7 +812,7 @@ color: rgb(255, 255, 255);</string>
                   </attribute>
                   <column>
                    <property name="text">
-                    <string>Enable</string>
+                    <string>可用</string>
                    </property>
                   </column>
                   <column>
@@ -1149,17 +1149,17 @@ color: rgb(255, 255, 255);</string>
                  <widget class="QComboBox" name="comboBox_3">
                   <item>
                    <property name="text">
-                    <string>Less Grids</string>
+                    <string>少量</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>Normal</string>
+                    <string>中等</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>More Grids</string>
+                    <string>大量</string>
                    </property>
                   </item>
                  </widget>
@@ -1171,22 +1171,22 @@ color: rgb(255, 255, 255);</string>
                  <widget class="QComboBox" name="comboBox_2">
                   <item>
                    <property name="text">
-                    <string>SolidLine</string>
+                    <string>实线</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>DashLine</string>
+                    <string>短线</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>DotLine</string>
+                    <string>点线</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>DashDotLine</string>
+                    <string>点划线</string>
                    </property>
                   </item>
                  </widget>
@@ -2408,7 +2408,7 @@ color: rgb(255, 255, 255);</string>
              <item>
               <widget class="QLabel" name="label_55">
                <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;To link one or more axes of different plots,select plots in Plot Manager then choose axes to link.Linking one axis to another forms a linked group of axes.The current grouping is shown on the right, Click the Add button below to add the current grouping to the list of all linked axes.Note that no linking will take placec intil you click the Add button below.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;要链接不同绘图的一个或多个轴，请在绘图管理器中选择绘图，然后选择要链接的轴。将一个轴链接到另一个轴会形成一组链接的轴。当前的分组显示在右侧，请点击下方的“添加”按钮，将当前分组添加到所有链接轴的列表中。请注意，在您点击下方的“添加”按钮之前，不会进行任何链接。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="wordWrap">
                 <bool>true</bool>
@@ -2430,7 +2430,7 @@ color: rgb(255, 255, 255);</string>
                   <string/>
                  </property>
                  <property name="placeholderText">
-                  <string>Enter Linked Axes Group</string>
+                  <string>输入链接的坐标轴组</string>
                  </property>
                 </widget>
                </item>
@@ -2829,7 +2829,7 @@ background-color: rgb(127, 127, 127);</string>
              <item>
               <widget class="QGroupBox" name="groupBox_18">
                <property name="title">
-                <string>Toggle Options</string>
+                <string>切换设置</string>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_27">
                 <item>
@@ -2837,7 +2837,7 @@ background-color: rgb(127, 127, 127);</string>
                   <item row="0" column="0">
                    <widget class="QLabel" name="label_64">
                     <property name="text">
-                     <string>Data is</string>
+                     <string>数据关系</string>
                     </property>
                    </widget>
                   </item>
@@ -2886,7 +2886,7 @@ background-color: rgb(127, 127, 127);</string>
                   <item row="1" column="0">
                    <widget class="QCheckBox" name="checkBox_21">
                     <property name="text">
-                     <string>Line:</string>
+                     <string>线条:</string>
                     </property>
                    </widget>
                   </item>
@@ -2906,7 +2906,7 @@ background-color: rgb(127, 127, 127);</string>
                   <item row="1" column="2" colspan="3">
                    <widget class="QLabel" name="label_66">
                     <property name="text">
-                     <string>Color</string>
+                     <string>颜色</string>
                     </property>
                    </widget>
                   </item>
@@ -2916,7 +2916,7 @@ background-color: rgb(127, 127, 127);</string>
                   <item row="1" column="7" colspan="3">
                    <widget class="QLabel" name="label_67">
                     <property name="text">
-                     <string>Width</string>
+                     <string>线条宽度</string>
                     </property>
                    </widget>
                   </item>
@@ -2936,14 +2936,14 @@ background-color: rgb(127, 127, 127);</string>
                   <item row="2" column="0">
                    <widget class="QCheckBox" name="checkBox_22">
                     <property name="text">
-                     <string>Icon:</string>
+                     <string>图标:</string>
                     </property>
                    </widget>
                   </item>
                   <item row="2" column="1" colspan="3">
                    <widget class="QLabel" name="label_68">
                     <property name="text">
-                     <string>Filename</string>
+                     <string>文件名</string>
                     </property>
                    </widget>
                   </item>
@@ -2964,7 +2964,7 @@ background-color: rgb(127, 127, 127);</string>
                   <item row="3" column="1" colspan="2">
                    <widget class="QLabel" name="label_185">
                     <property name="text">
-                     <string>Width</string>
+                     <string>宽度</string>
                     </property>
                    </widget>
                   </item>
@@ -2974,7 +2974,7 @@ background-color: rgb(127, 127, 127);</string>
                   <item row="3" column="6" colspan="2">
                    <widget class="QLabel" name="label_69">
                     <property name="text">
-                     <string>Height</string>
+                     <string>高度</string>
                     </property>
                    </widget>
                   </item>
@@ -3040,7 +3040,7 @@ background-color: rgb(127, 127, 127);</string>
                   <item row="4" column="0">
                    <widget class="QCheckBox" name="checkBox_23">
                     <property name="text">
-                     <string>Text:</string>
+                     <string>文本:</string>
                     </property>
                    </widget>
                   </item>
@@ -3124,21 +3124,21 @@ background-color: rgb(127, 127, 127);</string>
              <item>
               <widget class="QPushButton" name="pushButtonLimitAdd">
                <property name="text">
-                <string>Add</string>
+                <string>添加</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QPushButton" name="pushButtonLimitUpdate">
                <property name="text">
-                <string>Update</string>
+                <string>更新</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QPushButton" name="pushButtonLimitRemove">
                <property name="text">
-                <string>Remove</string>
+                <string>移除</string>
                </property>
               </widget>
              </item>
@@ -3151,17 +3151,17 @@ background-color: rgb(127, 127, 127);</string>
              </attribute>
              <column>
               <property name="text">
-               <string>Name</string>
+               <string>名称</string>
               </property>
              </column>
              <column>
               <property name="text">
-               <string>Value</string>
+               <string>数值</string>
               </property>
              </column>
              <column>
               <property name="text">
-               <string>Trigger</string>
+               <string>触发条件</string>
               </property>
              </column>
              <column>
@@ -3300,7 +3300,7 @@ background-color: rgb(127, 127, 127);</string>
               <widget class="QComboBox" name="comboBoxMarkerYUnit">
                <item>
                 <property name="text">
-                 <string>None</string>
+                 <string>无</string>
                 </property>
                </item>
               </widget>
@@ -3323,7 +3323,7 @@ background-color: rgb(127, 127, 127);</string>
               <widget class="QComboBox" name="comboBoxMarkerXUnit">
                <item>
                 <property name="text">
-                 <string>None</string>
+                 <string>无</string>
                 </property>
                </item>
               </widget>
@@ -3366,42 +3366,42 @@ background-color: rgb(127, 127, 127);</string>
               <widget class="QComboBox" name="comboBoxMarkerIcon">
                <item>
                 <property name="text">
-                 <string>None</string>
+                 <string>无</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>O Circle</string>
+                 <string>O 圆圈</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>X Cross</string>
+                 <string>X 叉</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>+ Plus</string>
+                 <string>+ 加号</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>[]  Square</string>
+                 <string>[] 方框</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>&lt;&gt; Diamond</string>
+                 <string>&lt;&gt; 菱形</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>- Horizontal Line</string>
+                 <string>- 水平线</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>|  Vertical Line</string>
+                 <string>|  竖直线</string>
                 </property>
                </item>
               </widget>
@@ -3472,7 +3472,7 @@ background-color: rgb(127, 127, 127);</string>
              </column>
              <column>
               <property name="text">
-               <string>X Units</string>
+               <string>X单位</string>
               </property>
              </column>
              <column>
@@ -3482,17 +3482,17 @@ background-color: rgb(127, 127, 127);</string>
              </column>
              <column>
               <property name="text">
-               <string>Y Units</string>
+               <string>Y单位</string>
               </property>
              </column>
              <column>
               <property name="text">
-               <string>Time</string>
+               <string>时间</string>
               </property>
              </column>
              <column>
               <property name="text">
-               <string>Text</string>
+               <string>文本</string>
               </property>
              </column>
              <column>
@@ -4128,7 +4128,7 @@ background-color: rgb(127, 127, 127);</string>
             <enum>QFrame::Raised</enum>
            </property>
            <property name="text">
-            <string> A-Scope Plots</string>
+            <string> A-Scope 图表设置</string>
            </property>
           </widget>
          </item>
@@ -4165,20 +4165,20 @@ background-color: rgb(127, 127, 127);</string>
              <item>
               <widget class="QGroupBox" name="groupBox_23">
                <property name="title">
-                <string>Auto-Adjustment</string>
+                <string>自适应调整</string>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_36">
                 <item>
                  <widget class="QCheckBox" name="checkBox_AutofitX">
                   <property name="text">
-                   <string>Autofit X-Axis</string>
+                   <string>自适应X轴</string>
                   </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QCheckBox" name="checkBox_AutofitY">
                   <property name="text">
-                   <string>Autofit Y-Axis</string>
+                   <string>自适应Y轴</string>
                   </property>
                  </widget>
                 </item>
@@ -4188,13 +4188,13 @@ background-color: rgb(127, 127, 127);</string>
              <item>
               <widget class="QGroupBox" name="groupBox_24">
                <property name="title">
-                <string>Gates</string>
+                <string>门</string>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_37">
                 <item>
                  <widget class="QCheckBox" name="checkBox_DrawGates">
                   <property name="text">
-                   <string>Draw Gates</string>
+                   <string>绘制</string>
                   </property>
                  </widget>
                 </item>
@@ -4203,7 +4203,7 @@ background-color: rgb(127, 127, 127);</string>
                   <item>
                    <widget class="QLabel" name="label_92">
                     <property name="text">
-                     <string>Height(%):</string>
+                     <string>高度(%):</string>
                     </property>
                    </widget>
                   </item>
@@ -4217,7 +4217,7 @@ background-color: rgb(127, 127, 127);</string>
                   <item>
                    <widget class="QLabel" name="label_93">
                     <property name="text">
-                     <string>Override Color:</string>
+                     <string>颜色:</string>
                     </property>
                    </widget>
                   </item>
@@ -5336,22 +5336,22 @@ background-color: rgb(127, 127, 127);</string>
                   </property>
                   <item>
                    <property name="text">
-                    <string>Rectangle</string>
+                    <string>矩形</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>Square</string>
+                    <string>正方形</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>Ellipse</string>
+                    <string>椭圆</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>Circle</string>
+                    <string>正圆</string>
                    </property>
                   </item>
                  </widget>
