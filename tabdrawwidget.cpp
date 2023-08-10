@@ -31,6 +31,12 @@ void TabDrawWidget::mousePressEvent(QMouseEvent* event)
 {
     if((event->button() == Qt::LeftButton))
     {
+        if(auto plot = findPlotByMousePos(event->pos()))
+        {
+            m_curSelectedPlots.clear();
+            m_curSelectedPlots.append(plot);
+            emit selectedPlotChanged(m_curSelectedPlots);
+        }
         m_originPoint = event->pos();
         if((m_mouseMode == MouseMode::BoxZoom) || (m_mouseMode == MouseMode::CreatePlot))
         {
@@ -148,8 +154,17 @@ void TabDrawWidget::mouseReleaseEvent(QMouseEvent* event)
             // 更新所有图表的缩放控制绘制
             updateSelectedPlotsBorderVisible();
         }
-        QWidget::mouseReleaseEvent(event);
     }
+    else if(event->button() == Qt::RightButton)
+    {
+        if(auto plot = findPlotByMousePos(event->pos()))
+        {
+            m_curSelectedPlots.clear();
+            m_curSelectedPlots.append(plot);
+            emit selectedPlotChanged(m_curSelectedPlots);
+        }
+    }
+    QWidget::mouseReleaseEvent(event);
 }
 
 PlotItemBase* TabDrawWidget::findPlotByMousePos(const QPoint& mouseEventPoint)
