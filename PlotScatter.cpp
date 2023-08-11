@@ -241,11 +241,11 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
 void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
 {
     if(!data)
-	{
+    {
         return;
     }
     if(m_isTimeLine)
-    {
+	{
         updateTimelineGraph();
         return;
     }
@@ -253,7 +253,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
     auto x = m_dataHash.value(uuid).first;
     auto y = m_dataHash.value(uuid).second;
     if(x.isEmpty() || y.isEmpty())
-	{
+    {
         //无效数据自动隐藏Label和Icon
         if(m_mapScatter.contains(uuid))
         {
@@ -264,7 +264,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
         return;
     }
     if(!m_mapScatter.contains(uuid))
-    {
+	{
         DrawComponents info;
         info.graph = m_customPlot->addGraph();
         /*
@@ -709,11 +709,11 @@ void PlotScatter::updateTimelineGraph()
         }
 
         m_customPlot->xAxis->setLabel("Time(s)");
-        setCoordRangeY(0.0, 1.0);
         m_customPlot->yAxis->setLabel("All Platforms");
-        m_customPlot->yAxis->setTickLabels(false);
     }
     m_customPlot->yAxis->grid()->setVisible(false);
+    setCoordRangeY(0.0, 1.0);
+    m_customPlot->yAxis->setTickLabels(true);
     double now = PlotXYDemo::getSeconds();
     if(!m_timelineNowRect)
     {
@@ -747,11 +747,30 @@ void PlotScatter::updateTimelineGraph()
     clearEventText();
 
     auto eventList = getEventList();
+    // 动态给左边添加显示平台名称的ticker
+    QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
+
     // 上下预留0.1，中间区域占比0.8
     double heightDelta = 0.8 / eventList.size();
     int32_t index = 0;
-    for(auto& event : eventList)
+    QHash<int32_t, double> entityHeightHash;
+    for(const auto& event : eventList)
     {
+        // 当前平台处于图表中的高度比率
+        double height = 0.0;
+        // 相同平台的事件在同一个平台高度
+        if(entityHeightHash.contains(event.m_entityID))
+        {
+            height = entityHeightHash.value(event.m_entityID);
+        }
+        else
+        {
+            height = 0.1 + index * heightDelta;
+            entityHeightHash.insert(event.m_entityID, height);
+            // 根据text的高度比率计算ticker的坐标值,因为y轴范围0-1，所以省去乘以1的操作
+            double tickerCoord = (1 - height) * 1;
+            textTicker->addTick(tickerCoord, event.m_entityName);
+        }
         auto dataList = DataManagerInstance->getGenericDataListByID(event.m_entityID, event.m_type);
         //如果x轴是time，那么需要绘制事件标签，整个用一个Text显示
         for(const auto& data : dataList)
@@ -775,7 +794,7 @@ void PlotScatter::updateTimelineGraph()
             {
                 text = "× ";
                 lineItem->setVisible(false);
-                textItem->position->setCoords(data.m_relativeTime, 0.1 + index * heightDelta);
+                textItem->position->setCoords(data.m_relativeTime, height);
             }
             else
             {
@@ -792,7 +811,7 @@ void PlotScatter::updateTimelineGraph()
 
                 double textXPixel = m_customPlot->xAxis->coordToPixel(data.m_relativeTime) + 10;
                 double textXCoord = m_customPlot->xAxis->pixelToCoord(textXPixel);
-                textItem->position->setCoords(textXCoord, 0.1 + index * heightDelta);
+                textItem->position->setCoords(textXCoord, height);
             }
             if(event.m_isIncludeTag)
             {
@@ -809,6 +828,7 @@ void PlotScatter::updateTimelineGraph()
         }
         ++index;
     }
+    m_customPlot->yAxis->setTicker(textTicker);
     m_customPlot->replot();
 }
 
