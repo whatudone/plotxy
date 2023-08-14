@@ -61,6 +61,18 @@ TimeControls::TimeControls(QWidget* parent)
     ui.lineEdit_TALO->setVisible(false);
     ui.label_16->setVisible(false);
     ui.pushButton->setVisible(false);
+
+    ui.checkBox_loopTime->setVisible(false);
+    ui.label_17->setVisible(false);
+    ui.spinBox_refTimeD->setVisible(false);
+    ui.spinBox_refTimeY->setVisible(false);
+    ui.spinBox_refTimeH->setVisible(false);
+    ui.label_20->setVisible(false);
+    ui.spinBox_refTimeM->setVisible(false);
+    ui.label_18->setVisible(false);
+    ui.doubleSpinBox_refTimeS->setVisible(false);
+    ui.label_19->setVisible(false);
+    ui.pushButton_refNow->setVisible(false);
 }
 
 TimeControls::~TimeControls() {}

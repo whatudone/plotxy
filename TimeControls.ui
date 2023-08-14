@@ -420,7 +420,7 @@
         <item row="1" column="6">
          <widget class="QLabel" name="label_11">
           <property name="text">
-           <string>h</string>
+           <string>时</string>
           </property>
          </widget>
         </item>
@@ -441,7 +441,7 @@
         <item row="9" column="12">
          <widget class="QLabel" name="label_19">
           <property name="text">
-           <string>s</string>
+           <string>秒</string>
           </property>
          </widget>
         </item>
@@ -521,7 +521,7 @@
         <item row="1" column="8">
          <widget class="QLabel" name="label_10">
           <property name="text">
-           <string>m</string>
+           <string>分</string>
           </property>
          </widget>
         </item>
@@ -561,7 +561,7 @@
         <item row="2" column="10">
          <widget class="QLabel" name="label_13">
           <property name="text">
-           <string>s</string>
+           <string>秒</string>
           </property>
          </widget>
         </item>
@@ -604,14 +604,14 @@
         <item row="2" column="8">
          <widget class="QLabel" name="label_14">
           <property name="text">
-           <string>m</string>
+           <string>分</string>
           </property>
          </widget>
         </item>
         <item row="9" column="6">
          <widget class="QLabel" name="label_20">
           <property name="text">
-           <string>h</string>
+           <string>时</string>
           </property>
          </widget>
         </item>
@@ -667,7 +667,7 @@
         <item row="0" column="14">
          <widget class="QLabel" name="label_8">
           <property name="text">
-           <string>s</string>
+           <string>秒</string>
           </property>
          </widget>
         </item>
@@ -684,14 +684,14 @@
         <item row="9" column="8">
          <widget class="QLabel" name="label_18">
           <property name="text">
-           <string>m</string>
+           <string>分</string>
           </property>
          </widget>
         </item>
         <item row="1" column="10">
          <widget class="QLabel" name="label_9">
           <property name="text">
-           <string>s</string>
+           <string>秒</string>
           </property>
          </widget>
         </item>
@@ -817,7 +817,7 @@
         <item row="0" column="6">
          <widget class="QLabel" name="label_6">
           <property name="text">
-           <string>h</string>
+           <string>时</string>
           </property>
          </widget>
         </item>
@@ -834,7 +834,7 @@
         <item row="0" column="8">
          <widget class="QLabel" name="label_7">
           <property name="text">
-           <string>m</string>
+           <string>分</string>
           </property>
          </widget>
         </item>
@@ -946,7 +946,7 @@
         <item row="2" column="6">
          <widget class="QLabel" name="label_12">
           <property name="text">
-           <string>h</string>
+           <string>时</string>
           </property>
          </widget>
         </item>
