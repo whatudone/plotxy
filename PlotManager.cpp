@@ -373,9 +373,12 @@ void PlotManager::initTextLightUI()
             &QTableWidget::itemSelectionChanged,
             this,
             &PlotManager::onTableWidget_textLightDataSortItemSelectionChanged);
-    connect(ui.spinBox_10, &QSpinBox::editingFinished, this, &PlotManager::onSpinbox_10Changed);
+    connect(ui.spinBox_10,
+            QOverload<int>::of(&QSpinBox::valueChanged),
+            this,
+            &PlotManager::onSpinbox_10Changed);
     connect(ui.spinBox_TextOutlineWidth,
-            &QSpinBox::editingFinished,
+            QOverload<int>::of(&QSpinBox::valueChanged),
             this,
             &PlotManager::onSpinbox_TextOutlineWidthChanged);
     connect(ui.pushButton_71, &QPushButton::clicked, this, &PlotManager::onPushButton_71Clicked);
