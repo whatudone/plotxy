@@ -122,13 +122,13 @@ void PlotBar::updateGraphByDataPair(DataPair* data, double curSecs)
     }
     if(m_barColorInfoMap.contains(uuid))
     {
-        m_barColorInfoMap[uuid].clear();
+        m_barColorInfoMap.remove(uuid);
     }
     // 有效的ColorRange需要将原始的单个Bar拆分成多个Bar,无效的则直接使用添加数据对时产生的默认单个Bar
     if(data->getColorRangeEnable())
     {
         auto mode = data->getColorRangeMode();
-        if(mode == DataPair::MutilColor && isValidColorRange(data))
+        if(mode == DataPair::MutilColor)
         {
             QList<std::tuple<QString, double, QColor>> colorList = data->getColorRanges();
             m_allColorInfoList.insert(uuid, colorList);
@@ -166,9 +166,9 @@ void PlotBar::updateGraphByDataPair(DataPair* data, double curSecs)
                 }
             }
         }
-        // 渐变先按照单色处理
-        if(mode == DataPair::SingleColor || mode == DataPair::Gradient)
+        else
         {
+            // 渐变先按照单色处理
             QList<QCPBars*> tarBar;
             QCPBars* subBar = new QCPBars(keyAxis(), valueAxis());
             subBar->setPen(QPen(data->getColorRangeDefaultColor().lighter(130)));
@@ -421,6 +421,7 @@ bool PlotBar::isValidColorRange(DataPair* data)
     }
 
     // 如果用户设置的colorRange范围在所有数据的最小值和最大值之外，则认为设置无效，跳过本数据对，采用默认颜色
+    // TODO:垂直显示用y值作为判断，水平则用X判断，此处存在问题，所以将调用的地方暂时去掉
     for(int i = 0; i < colorList.size(); i++)
     {
         if(std::get<1>(colorList.at(i)) < m_coordBgn_y ||

@@ -2122,8 +2122,8 @@ void PlotXYDemo::loadDataPairJson(const QJsonObject& dataPairObject, PlotItemBas
             static_cast<DataPair::TEXT_POSITION>(dataPairObject.value("LabelPosition").toInt()));
 
         dataPair->setColorRangeEnable(dataPairObject.value("ColorRangesEnable").toBool());
-        dataPair->setColorRangeDefaultColor(
-            QColor(dataPairObject.value("ColorRangesDefColor").toString()));
+        dataPair->setColorRangeDefaultColor(color_transfer::QColorFromRGBAStr(
+            dataPairObject.value("ColorRangesDefColor").toString()));
         dataPair->setColorRangeMode(
             static_cast<DataPair::ColorRangeMode>(dataPairObject.value("ColorRangesMode").toInt()));
         dataPair->colorRangesFromString(dataPairObject.value("ColorRangesDesc").toString());
