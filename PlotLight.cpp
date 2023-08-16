@@ -23,7 +23,7 @@ PlotLight::PlotLight(QWidget* parent)
 	this->setName(name);
 	m_instanceCount += 1;
     m_title = "Events";
-    m_lightType = "Circle";
+    m_lightType = "正圆";
     m_lightWidth = 40;
     m_lightHeight = 40;
     m_lightTextYPos = 0; //light的文字Y位置
@@ -153,7 +153,7 @@ void PlotLight::updateGraphByDataPair(DataPair* data, double curSecs)
                 QCPItemLine* m_verLine = new QCPItemLine(m_customPlot);
                 m_verLine->start->setType(QCPItemPosition::ptViewportRatio);
                 m_verLine->end->setType(QCPItemPosition::ptViewportRatio);
-                m_verLine->setPen(QPen(m_gridColor, m_gridWidth, Qt::DotLine));
+                m_verLine->setPen(QPen(m_gridColor, m_gridWidth, Qt::SolidLine));
                 m_verLine->setVisible(true);
                 double vx = (drawRect.x() + horGridWidth * (i + 1)) / m_customPlot->width();
                 // 垂直线
@@ -175,7 +175,7 @@ void PlotLight::updateGraphByDataPair(DataPair* data, double curSecs)
                 QCPItemLine* m_horLine = new QCPItemLine(m_customPlot);
                 m_horLine->start->setType(QCPItemPosition::ptViewportRatio);
                 m_horLine->end->setType(QCPItemPosition::ptViewportRatio);
-                m_horLine->setPen(QPen(m_gridColor, m_gridWidth, Qt::DotLine));
+                m_horLine->setPen(QPen(m_gridColor, m_gridWidth, Qt::SolidLine));
                 m_horLine->setVisible(true);
                 double vy = (drawRect.x() + verGridWidth * (i + 1)) / m_customPlot->height();
                 // 水平线
@@ -320,7 +320,7 @@ void PlotLight::updateGraphByDataPair(DataPair* data, double curSecs)
                 QCPItemLine* m_verLine = new QCPItemLine(m_customPlot);
                 m_verLine->start->setType(QCPItemPosition::ptViewportRatio);
                 m_verLine->end->setType(QCPItemPosition::ptViewportRatio);
-                m_verLine->setPen(QPen(m_gridColor, m_gridWidth, Qt::DotLine));
+                m_verLine->setPen(QPen(m_gridColor, m_gridWidth, Qt::SolidLine));
                 m_verLine->setVisible(true);
                 double vx = (drawRect.x() + horGridWidth * (i + 1)) / m_customPlot->width();
                 // 垂直线
@@ -342,7 +342,7 @@ void PlotLight::updateGraphByDataPair(DataPair* data, double curSecs)
                 QCPItemLine* m_horLine = new QCPItemLine(m_customPlot);
                 m_horLine->start->setType(QCPItemPosition::ptViewportRatio);
                 m_horLine->end->setType(QCPItemPosition::ptViewportRatio);
-                m_horLine->setPen(QPen(m_gridColor, m_gridWidth, Qt::DotLine));
+                m_horLine->setPen(QPen(m_gridColor, m_gridWidth, Qt::SolidLine));
                 m_horLine->setVisible(true);
                 double vy = (drawRect.x() + verGridWidth * (i + 1)) / m_customPlot->height();
                 // 水平线

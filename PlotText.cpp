@@ -91,15 +91,15 @@ void PlotText::drawCellData(QPainter& painter)
     painter.fillRect(drawRect, brush);
     // 绘制外层矩形边框
     QPen pen;
-    pen.setColor(getAxisColor());
-    pen.setWidth(getAxisWidth());
+    pen.setColor(getGridColor());
+    pen.setWidth(getGridWidth());
     painter.setPen(pen);
     painter.drawRect(drawRect);
 
     // 绘制M*2的网格线
     pen.setColor(getGridColor());
     pen.setWidth(getGridWidth());
-    pen.setStyle(getGridStyle());
+    pen.setStyle(Qt::SolidLine);
     painter.setPen(pen);
 
     if(m_isFillByRow)
