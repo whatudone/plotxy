@@ -357,6 +357,14 @@ void TabDrawWidget::setCurSelectedPlots(const QList<PlotItemBase*>& curSelectedP
     m_curSelectedPlots = curSelectedPlots;
 }
 
+void TabDrawWidget::removeUselessPlot(PlotItemBase* plot)
+{
+    if(m_curSelectedPlots.contains(plot))
+    {
+        m_curSelectedPlots.removeOne(plot);
+    }
+}
+
 void TabDrawWidget::bringToTop()
 {
     if(m_curSelectedPlots.size() == 1)

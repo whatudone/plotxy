@@ -31,6 +31,7 @@ public:
 
     static QList<PlotItemBase*> getCurSelectedPlots();
     static void setCurSelectedPlots(const QList<PlotItemBase*>& curSelectedPlots);
+    static void removeUselessPlot(PlotItemBase* plot);
     // 调整图表的z轴顺序
     void bringToTop();
     void sendToBottom();

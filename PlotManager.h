@@ -16,11 +16,12 @@ public:
     explicit PlotManager(QWidget* parent = Q_NULLPTR);
     ~PlotManager();
 
-    void init(); //初始化函数，连接信号槽
     void addPlot(const QString&, PlotItemBase*); //添加Plot
     void setTabWidgetRect(const QRect& rect);
+    void clearCurSelectedPlot();
 
 private:
+    void init(); //初始化函数，连接信号槽
 	void initTreeWidgetSettings();
 	void initGeneralUI();
 	void initAxisGridUI();
@@ -99,7 +100,6 @@ public slots:
 	void onCheckBox_drawStateChanged();
 	void onPushButton_outerFillColorClicked();
 	void onPushButton_outlineColorClicked();
-	void onMouseEventDone();
 
 	//Axis and Grid
     void oncheckBoxScrollXStateChanged();

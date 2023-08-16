@@ -746,10 +746,6 @@ void PlotXYDemo::addTabPage(const QString& tabName)
     ui.tabWidget->addTab(tabWidgetItem, name);
     ui.tabWidget->setCurrentIndex(currCount);
 
-    connect(tabWidgetItem,
-            &TabDrawWidget::selectedPlotChanged,
-            m_plotManager,
-            &PlotManager::onMouseEventDone);
     connect(tabWidgetItem, &TabDrawWidget::selectedPlotChanged, this, &PlotXYDemo::onSelectedPlot);
 
     connect(
@@ -2869,8 +2865,11 @@ void PlotXYDemo::onDelete()
 {
     if(m_pCurSelectedPlot)
     {
+        // 清理各个模块中残留的被释放的指针地址
         PlotManagerData::getInstance()->deletePlotByTab(m_pCurSelectedPlot->getTabName(),
                                                         m_pCurSelectedPlot);
+        TabDrawWidget::removeUselessPlot(m_pCurSelectedPlot);
+        m_plotManager->clearCurSelectedPlot();
         m_pCurSelectedPlot->deleteLater();
         m_pCurSelectedPlot = nullptr;
         updateStatusBarInfo();
