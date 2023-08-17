@@ -3481,7 +3481,7 @@ void PlotManager::onPushButton_76Clicked()
 {
     QList<DialColorInfo> dialInfoList;
     int cnt = ui.treeWidget_colorRanges->topLevelItemCount();
-    if(cnt < 2)
+    if(cnt == 0)
         return;
     for(int i = 1; i < cnt; i++)
     {
@@ -3507,8 +3507,12 @@ void PlotManager::onPushButton_76Clicked()
 void PlotManager::onPushButton_77Clicked()
 {
     for(auto item : ui.treeWidget_colorRanges->selectedItems())
-        ui.treeWidget_colorRanges->takeTopLevelItem(
-            ui.treeWidget_colorRanges->indexOfTopLevelItem(item));
+    {
+        int index = ui.treeWidget_colorRanges->indexOfTopLevelItem(item);
+        if(index == 0)
+            return;
+        ui.treeWidget_colorRanges->takeTopLevelItem(index);
+    }
 }
 
 void PlotManager::onComboBox_dialStyleCurrentTextChanged(const QString& text)
