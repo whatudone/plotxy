@@ -1,5 +1,6 @@
 ﻿#include "AddPlotPair.h"
 #include "DataManager.h"
+#include "PlotLight.h"
 #include "PlotManagerData.h"
 #include "Utils.h"
 #include "ui_AddPlotPair.h"
@@ -820,11 +821,71 @@ void AddPlotPair::onDoubleClickedTreeWidgetItem(QTreeWidgetItem* item, int colum
         for(int row = 0; row < dataPairs.size(); ++row)
         {
             auto dataPair = dataPairs.value(row);
-            QTableWidgetItem* addplot1 = new QTableWidgetItem(dataPair->getXEntityAttrPair());
-            QTableWidgetItem* addplot2 = new QTableWidgetItem(dataPair->getYEntityAttrPair());
-            addplot1->setData(Qt::UserRole + 1, dataPair->getUuid());
-            ui.tableWidget_union->setItem(row, 0, addplot1);
-            ui.tableWidget_union->setItem(row, 1, addplot2);
+            QTableWidgetItem* item1 = new QTableWidgetItem(dataPair->getXEntityAttrPair());
+            QTableWidgetItem* item2 = new QTableWidgetItem(dataPair->getYEntityAttrPair());
+            item1->setData(Qt::UserRole + 1, dataPair->getUuid());
+            ui.tableWidget_union->setItem(row, 0, item1);
+            ui.tableWidget_union->setItem(row, 1, item2);
+        }
+        // light图需要刷新约束表格
+        if(plot->plotType() == PlotType::Type_PlotLight)
+        {
+            PlotLight* light = static_cast<PlotLight*>(plot);
+            auto conList = light->getConstraintList();
+            int32_t size = conList.size();
+            ui.tableWidget_LightSet->setRowCount(size);
+
+            for(int32_t row = 0; row < size; ++row)
+            {
+                auto tuple = conList.at(row);
+                int32_t conId = std::get<0>(tuple);
+                QString conAttr = std::get<1>(tuple);
+                QString conCondition = std::get<2>(tuple);
+                double threshold = std::get<3>(tuple);
+                QString qualifiedColorName = std::get<4>(tuple);
+                QString unqualifiedColorName = std::get<5>(tuple);
+
+                QString entityName = DataManagerInstance->getEntityNameByID(conId);
+                QTableWidgetItem* entityNameItem = new QTableWidgetItem(entityName);
+                entityNameItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+                entityNameItem->setData(Qt::UserRole + 1, conId);
+
+                QTableWidgetItem* attrNameItem = new QTableWidgetItem(conAttr);
+                attrNameItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+                QTableWidgetItem* thresholdItem = new QTableWidgetItem(QString::number(threshold));
+
+                QTableWidgetItem* conformityColorNameItem = new QTableWidgetItem();
+                // 符合颜色默认绿色
+                conformityColorNameItem->setBackgroundColor(
+                    color_transfer::QColorFromRGBAStr(qualifiedColorName));
+                conformityColorNameItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+                QTableWidgetItem* inconformityColorNameItem = new QTableWidgetItem();
+                // 不符合颜色默认红色
+                inconformityColorNameItem->setBackgroundColor(
+                    color_transfer::QColorFromRGBAStr(unqualifiedColorName));
+                inconformityColorNameItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+                QComboBox* constraintCom = new QComboBox;
+                constraintCom->addItem(QString("≥"));
+                constraintCom->addItem("<");
+                if(conCondition == "≥")
+                {
+                    constraintCom->setCurrentIndex(0);
+                }
+                else
+                {
+                    constraintCom->setCurrentIndex(1);
+                }
+
+                ui.tableWidget_LightSet->setItem(row, 0, entityNameItem);
+                ui.tableWidget_LightSet->setItem(row, 1, attrNameItem);
+                ui.tableWidget_LightSet->setCellWidget(row, 2, constraintCom);
+                ui.tableWidget_LightSet->setItem(row, 3, thresholdItem);
+                ui.tableWidget_LightSet->setItem(row, 4, conformityColorNameItem);
+                ui.tableWidget_LightSet->setItem(row, 5, inconformityColorNameItem);
+            }
         }
     }
     // 双击之后隐藏树形菜单

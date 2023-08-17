@@ -58,6 +58,7 @@ void PlotLight::onLightConstraintUpdate(
 void PlotLight::updateDataForDataPairsByTime(double secs)
 {
     m_dataHash.clear();
+    m_drawDataHash.clear();
     int isize = getDataPairs().size();
     for(int i = 0; i < isize; i++)
     {
@@ -499,7 +500,6 @@ void PlotLight::setGridFillColor(const QColor& color)
 
 void PlotLight::processDataByConstraints()
 {
-    m_drawDataHash.clear();
     auto keys = m_dataHash.keys();
     for(const auto& uuid : keys)
     {
@@ -533,6 +533,10 @@ void PlotLight::clearPlotContent()
 
 QColor PlotLight::getColorByDataPairWithCon(int32_t id, const QString& attr, double value)
 {
+    if(math::doubleEqual(value, std::numeric_limits<double>::max()))
+    {
+        return QColor();
+    }
     for(const auto& tuple : m_constraintList)
     {
         int32_t conId = std::get<0>(tuple);
@@ -565,6 +569,18 @@ void PlotLight::calculateRaidus()
     auto rect = m_customPlot->rect();
     m_circleRadius = (rect.height() - 2 * m_innerPadding - (m_dataHash.size() - 1) * m_horPadding) /
                      m_dataHash.size() / 2;
+}
+
+QList<std::tuple<int32_t, QString, QString, double, QString, QString>>
+PlotLight::getConstraintList() const
+{
+    return m_constraintList;
+}
+
+void PlotLight::setConstraintList(
+    const QList<std::tuple<int32_t, QString, QString, double, QString, QString>>& constraintList)
+{
+    m_constraintList = constraintList;
 }
 
 int PlotLight::getColsNum() const

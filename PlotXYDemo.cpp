@@ -1377,6 +1377,30 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
             plotObject.insert("LightIndOutlineWidth", lightPlot->getLightOutlineWidth());
             plotObject.insert("LightIndOutlineColor",
                               color_transfer::QColorToRGBAStr(lightPlot->getLightOutlineColor()));
+            // 约束条件
+            auto conList = lightPlot->getConstraintList();
+            QJsonArray conArray;
+            for(const auto& tuple : conList)
+            {
+                int32_t conId = std::get<0>(tuple);
+                QString conAttr = std::get<1>(tuple);
+                QString conCondition = std::get<2>(tuple);
+                double threshold = std::get<3>(tuple);
+                QString qualifiedColorName = std::get<4>(tuple);
+                QString unqualifiedColorName = std::get<5>(tuple);
+                QJsonObject conObject;
+                conObject.insert("LightConEID", conId);
+                conObject.insert("LightConAttr", conAttr);
+                conObject.insert("LightConCondition", conCondition);
+                conObject.insert("LightConThreshold", threshold);
+                conObject.insert("LightConQColor", qualifiedColorName);
+                conObject.insert("LightConUQColor", unqualifiedColorName);
+                conArray.append(conObject);
+            }
+            if(!conArray.isEmpty())
+            {
+                plotObject.insert("LightConArray", conArray);
+            }
         }
     }
     else if(type == PlotType::Type_PlotAScope)
@@ -1756,6 +1780,30 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
             lightPlot->setLightOutlineWidth(plotObject.value("LightIndOutlineWidth").toInt());
             lightPlot->setLightOutlineColor(color_transfer::QColorFromRGBAStr(
                 plotObject.value("LightIndOutlineColor").toString()));
+
+            if(plotObject.contains("LightConArray"))
+            {
+                QJsonArray conArray = plotObject.value("LightConArray").toArray();
+                QList<std::tuple<int32_t, QString, QString, double, QString, QString>>
+                    constraintList;
+                for(const auto value : conArray)
+                {
+                    QJsonObject conObject = value.toObject();
+                    int32_t conId = conObject.value("LightConEID").toInt();
+                    QString conAttr = conObject.value("LightConAttr").toString();
+                    QString conCondition = conObject.value("LightConCondition").toString();
+                    double threshold = conObject.value("LightConThreshold").toDouble();
+                    QString qualifiedColorName = conObject.value("LightConQColor").toString();
+                    QString unqualifiedColorName = conObject.value("LightConUQColor").toString();
+                    constraintList.append(std::make_tuple(conId,
+                                                          conAttr,
+                                                          conCondition,
+                                                          threshold,
+                                                          qualifiedColorName,
+                                                          unqualifiedColorName));
+                }
+                lightPlot->setConstraintList(constraintList);
+            }
         }
     }
     else if(type == PlotType::Type_PlotAScope)

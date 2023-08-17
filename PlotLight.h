@@ -82,6 +82,12 @@ public:
     int getColsNum() const;
     void setColsNum(int colsNum);
 
+    QList<std::tuple<int32_t, QString, QString, double, QString, QString>>
+    getConstraintList() const;
+    void
+    setConstraintList(const QList<std::tuple<int32_t, QString, QString, double, QString, QString>>&
+                          constraintList);
+
 public slots:
     void onLightConstraintUpdate(
         const QList<std::tuple<int32_t, QString, QString, double, QString, QString>>&
