@@ -1587,7 +1587,7 @@ void PlotItemBase::setIsDrawMeasureLine(bool isDraw)
 {
     m_isDrawMeasureLine = isDraw;
 
-    if(m_customPlot && isDraw)
+    if(m_customPlot && isDraw && !m_measureLineItem && !m_measureTextItem)
     {
         m_measureLineItem = new QCPItemLine(m_customPlot);
         QPen linePen(Qt::red);
