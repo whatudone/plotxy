@@ -76,12 +76,6 @@ void PlotTrack::updateDataForDataPairsByTime(double secs)
 
     for(int i = 0; i < itemCnt; i++)
     {
-        auto data = getDataPairs().at(i);
-        m_curValue.insert(data->getUuid(), secs);
-    }
-
-    for(int i = 0; i < itemCnt; i++)
-    {
         updateGraphByDataPair(getDataPairs().at(i), secs);
     }
 
@@ -115,34 +109,30 @@ void PlotTrack::updateGraphByDataPair(DataPair* dataPair, double curSecs)
         }
     }
 
-    if(m_curValue.contains(uuid))
+    if(curSecs < lowLimit)
     {
-        double secs = m_curValue[uuid];
-        if(secs < lowLimit)
-        {
-            // 仅有Unavailable数据
-            m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << secs);
-            m_allBar[uuid].at(1)->setData(QVector<double>() << cnt, QVector<double>() << 0);
-            m_allBar[uuid].at(2)->setData(QVector<double>() << cnt, QVector<double>() << 0);
-        }
-        else if(secs > lowLimit && secs < highLimit)
-        {
-            // 仅有Unavailable数据和部分Available数据
-            m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << lowLimit);
-            m_allBar[uuid].at(1)->setData(QVector<double>() << cnt,
-                                          QVector<double>() << (secs - lowLimit));
-            m_allBar[uuid].at(2)->setData(QVector<double>() << cnt, QVector<double>() << 0);
-        }
-        else if(secs > highLimit)
-        {
-            // 仅有Unavailable数据和全部Available数据
-            // 目前超过Available的数据临时用Invalid的Bar显示，后期再进行优化
-            m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << lowLimit);
-            m_allBar[uuid].at(1)->setData(QVector<double>() << cnt,
-                                          QVector<double>() << highLimit - lowLimit);
-            m_allBar[uuid].at(2)->setData(QVector<double>() << cnt,
-                                          QVector<double>() << (secs - highLimit));
-        }
+        // 仅有Unavailable数据
+        m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << curSecs);
+        m_allBar[uuid].at(1)->setData(QVector<double>() << cnt, QVector<double>() << 0);
+        m_allBar[uuid].at(2)->setData(QVector<double>() << cnt, QVector<double>() << 0);
+    }
+    else if(curSecs > lowLimit && curSecs < highLimit)
+    {
+        // 仅有Unavailable数据和部分Available数据
+        m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << lowLimit);
+        m_allBar[uuid].at(1)->setData(QVector<double>() << cnt,
+                                      QVector<double>() << (curSecs - lowLimit));
+        m_allBar[uuid].at(2)->setData(QVector<double>() << cnt, QVector<double>() << 0);
+    }
+    else if(curSecs > highLimit)
+    {
+        // 仅有Unavailable数据和全部Available数据
+        // 目前超过Available的数据临时用Invalid的Bar显示，后期再进行优化
+        m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << lowLimit);
+        m_allBar[uuid].at(1)->setData(QVector<double>() << cnt,
+                                      QVector<double>() << highLimit - lowLimit);
+        m_allBar[uuid].at(2)->setData(QVector<double>() << cnt,
+                                      QVector<double>() << (curSecs - highLimit));
     }
 }
 

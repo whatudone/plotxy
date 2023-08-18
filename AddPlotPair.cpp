@@ -337,6 +337,10 @@ void AddPlotPair::setPlotBaseInfo(PlotItemBase* pBaseItem)
     {
         m_treePlot->itemDoubleClicked(plotItems[0], 0);
     }
+    if(m_pCurSelectedPlot->plotType() == PlotType::Type_PlotTrack)
+        ui.tableWidget_nameUnits->setHidden(true);
+    else
+        ui.tableWidget_nameUnits->setHidden(false);
 }
 
 void AddPlotPair::updatePlotTrees()
@@ -386,15 +390,29 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
         // parameter
         if(ui.radioButton->isChecked())
         {
-            if(ui.tableWidget_Entity->currentItem() == nullptr ||
-               ui.tableWidget_nameUnits->item(ui.tableWidget_nameUnits->currentRow(), 0) == nullptr)
-                return false;
+            if(m_pCurSelectedPlot->plotType() == PlotType::Type_PlotTrack)
+            {
+                if(ui.tableWidget_Entity->currentItem() == nullptr)
+                    return false;
+                yEntityID = ui.tableWidget_Entity->currentItem()->data(Qt::UserRole + 1).toInt();
+            }
+            else
+            {
+                if(ui.tableWidget_Entity->currentItem() == nullptr ||
+                   ui.tableWidget_nameUnits->item(ui.tableWidget_nameUnits->currentRow(), 0) ==
+                       nullptr)
+                    return false;
 
+                xAttrName =
+                    ui.tableWidget_nameUnits->item(ui.tableWidget_nameUnits->currentRow(), 0)
+                        ->text();
+                xAttrUnitName =
+                    ui.tableWidget_nameUnits->item(ui.tableWidget_nameUnits->currentRow(), 1)
+                        ->text();
+                // 固定y轴为时间
+                yAttrName = "Time";
+            }
             xEntityID = ui.tableWidget_Entity->currentItem()->data(Qt::UserRole + 1).toInt();
-            xAttrName =
-                ui.tableWidget_nameUnits->item(ui.tableWidget_nameUnits->currentRow(), 0)->text();
-            xAttrUnitName =
-                ui.tableWidget_nameUnits->item(ui.tableWidget_nameUnits->currentRow(), 1)->text();
             xType = DataPair::Parameter;
             yType = DataPair::Parameter;
         }
@@ -413,9 +431,9 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
             // 这里默认使用下拉框的序号作为枚举值，所以下拉框中的选项顺序需要和枚举值保持一致
             xCalType =
                 static_cast<DataPair::RangeCalculationType>(ui.comboBoxCalTypeBar->currentIndex());
+            // 固定y轴为时间
+            yAttrName = "Time";
         }
-        // 固定y轴为时间
-        yAttrName = "Time";
 
         break;
     // scatter polar

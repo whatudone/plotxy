@@ -49,7 +49,6 @@ protected:
 private:
     QMap<QString, QMap<double, QColor>>
         m_trackDrawDataMap; //key:entityType+entityAttr, threshold,QColor
-    QMap<QString, double> m_curValue;
     QMap<TrackStatus, QColor> m_defaultColorMap;
 
     QVector<double> m_barTicks;
