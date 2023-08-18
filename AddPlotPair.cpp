@@ -337,10 +337,6 @@ void AddPlotPair::setPlotBaseInfo(PlotItemBase* pBaseItem)
     {
         m_treePlot->itemDoubleClicked(plotItems[0], 0);
     }
-    if(m_pCurSelectedPlot->plotType() == PlotType::Type_PlotTrack)
-        ui.tableWidget_nameUnits->setHidden(true);
-    else
-        ui.tableWidget_nameUnits->setHidden(false);
 }
 
 void AddPlotPair::updatePlotTrees()
@@ -390,11 +386,12 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
         // parameter
         if(ui.radioButton->isChecked())
         {
+            xEntityID = ui.tableWidget_Entity->currentItem()->data(Qt::UserRole + 1).toInt();
             if(m_pCurSelectedPlot->plotType() == PlotType::Type_PlotTrack)
             {
                 if(ui.tableWidget_Entity->currentItem() == nullptr)
                     return false;
-                yEntityID = ui.tableWidget_Entity->currentItem()->data(Qt::UserRole + 1).toInt();
+                yEntityID = xEntityID;
             }
             else
             {
@@ -412,7 +409,6 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
                 // 固定y轴为时间
                 yAttrName = "Time";
             }
-            xEntityID = ui.tableWidget_Entity->currentItem()->data(Qt::UserRole + 1).toInt();
             xType = DataPair::Parameter;
             yType = DataPair::Parameter;
         }
@@ -905,6 +901,11 @@ void AddPlotPair::onDoubleClickedTreeWidgetItem(QTreeWidgetItem* item, int colum
                 ui.tableWidget_LightSet->setItem(row, 5, inconformityColorNameItem);
             }
         }
+
+        if(m_pCurSelectedPlot->plotType() == PlotType::Type_PlotTrack)
+            ui.tableWidget_nameUnits->setHidden(true);
+        else
+            ui.tableWidget_nameUnits->setHidden(false);
     }
     // 双击之后隐藏树形菜单
     m_menuPlot->close();

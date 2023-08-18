@@ -78,6 +78,7 @@ public slots:
     // 加载数据后重新更新所有的实体表格数据
     void onUpdateEntityTableByDataChanged();
 	void onAddPlot(const QString&, PlotItemBase*);
+    // 刷新界面的入口，自动刷新和进入界面之后的手动刷新都在这里处理
     void onDoubleClickedTreeWidgetItem(QTreeWidgetItem* item, int column);
 	void onBtnLightAddClicked();
 	void onBtnLightDeleteClicked();
