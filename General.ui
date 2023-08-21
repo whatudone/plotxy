@@ -67,6 +67,12 @@
          <height>30</height>
         </size>
        </property>
+       <property name="maximum">
+        <number>100000000</number>
+       </property>
+       <property name="stepType">
+        <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+       </property>
       </widget>
      </item>
      <item row="0" column="1">

@@ -143,20 +143,26 @@ void PlotRTI::setColorRangeMap(const QMap<double, QColor>& colorMap)
 
 void PlotRTI::updateDataForDataPairsByTime(double secs)
 {
-    if(getDataPairs().isEmpty())
+    m_rangeList.clear();
+    m_timeList.clear();
+    m_dataHash.clear();
+    m_colorMap->data()->clear();
+    if(!getDataPairs().isEmpty())
     {
-        return;
+        auto data = getDataPairs().last();
+        int32_t eid = data->getEntityIDX();
+        DataManagerInstance->getRTIDataByTime(eid, secs, m_rangeList, m_timeList, m_dataHash);
+        updateGraphByDataPair(data, secs);
     }
-    auto data = getDataPairs().last();
-    int32_t eid = data->getEntityIDX();
-    DataManagerInstance->getRTIDataByTime(eid, secs, m_rangeList, m_timeList, m_dataHash);
-
-    updateGraphByDataPair(data, secs);
     m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
 }
 
 void PlotRTI::updateGraphByDataPair(DataPair* data, double curSecs)
 {
+    if(!data)
+    {
+        return;
+    }
     if(data->isDraw())
     {
         m_colorMap->setVisible(true);
@@ -167,9 +173,6 @@ void PlotRTI::updateGraphByDataPair(DataPair* data, double curSecs)
         }
         int nx = m_rangeList.size();
         int ny = m_timeList.size();
-        //        m_colorMap->data()->setSize(nx, ny);
-        //        m_colorMap->data()->setRange(QCPRange(m_rangeList.first(), m_rangeList.last()),
-        //                                     QCPRange(m_timeList.first(), m_timeList.last()));
 
         // 实际显示的时间跨度数据
         int showTimeData = int(m_timeSpan / (m_timeList.last() - m_timeList.first()) * ny);
