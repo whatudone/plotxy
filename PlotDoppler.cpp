@@ -218,6 +218,11 @@ void PlotDoppler::initColorRangeMap()
     m_colorRangeMap.insert(1.0, QColor(100, 0, 0));
 }
 
+bool PlotDoppler::isValidDataPoint(double time, double range)
+{
+    return m_horizonDataHash.contains(time) && m_verticalDataHash.contains(range);
+}
+
 void PlotDoppler::setAxisColorWidth(const QColor& color, int32_t width)
 {
     m_axisColor = color;
@@ -274,13 +279,16 @@ void PlotDoppler::onMouseRelease(QMouseEvent* event)
     {
         return;
     }
-    auto data = getDataPairs().last();
+
     double range = m_customPlot->graph(0)->keyAxis()->pixelToCoord(event->pos().x());
     double time = m_customPlot->graph(0)->valueAxis()->pixelToCoord(event->pos().y());
-    m_slicePoint.setX(time);
-    m_slicePoint.setY(range);
-    updateGraphByDataPair(data, 0);
-    m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
+    if(isValidDataPoint(time, range))
+    {
+        m_slicePoint.setX(time);
+        m_slicePoint.setY(range);
+        updateAScopesBySlicePoint(m_slicePoint);
+        m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
+    }
 }
 
 void PlotDoppler::onShowToolTips(QMouseEvent* event)
@@ -292,5 +300,7 @@ void PlotDoppler::onShowToolTips(QMouseEvent* event)
         m_customPlot->setToolTip(QString("time:%1\nrange:%2").arg(time).arg(range));
     }
     else
+    {
         m_customPlot->setToolTip("");
+    }
 }

@@ -48,6 +48,8 @@ private:
     void updateAScopesBySlicePoint(const QPointF& point);
 
     void initColorRangeMap();
+    // 判断点击的时候获取的对应坐标是否存在真实的数据
+    bool isValidDataPoint(double time, double range);
 
 private:
     QCPColorMap* m_colorMap = nullptr;
