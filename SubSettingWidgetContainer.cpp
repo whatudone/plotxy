@@ -100,7 +100,7 @@ void SubSettingWidgetContainer::updateVisibleOnPlotTypeChanged(PlotType curType)
     }
     else if(curType == PlotType::Type_PlotScatter)
     {
-        visibleList << true << false << true << true << true << true << true << true << true;
+        visibleList << true << false << true << true << true << true << true << false << true;
     }
     else if(curType == PlotType::Type_PlotText)
     {

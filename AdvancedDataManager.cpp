@@ -901,6 +901,13 @@ void AdvancedDataManager::initEventConnections()
     connect(ui.pushButtonAddEvent, &QPushButton::clicked, this, &AdvancedDataManager::onAddEvent);
     connect(
         ui.pushButtonRemoveEvent, &QPushButton::clicked, this, &AdvancedDataManager::onRemoveEvent);
+    // 隐藏未实现界面
+    ui.pushButton->setVisible(false);
+    ui.pushButtonEventSort->setVisible(false);
+    ui.pushButtonEventRefresh->setVisible(false);
+    ui.checkBoxLimit->setVisible(false);
+    ui.lineEdit_2->setVisible(false);
+    ui.checkBox_2->setVisible(false);
 }
 
 void AdvancedDataManager::initStippleConnections()

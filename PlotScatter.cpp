@@ -293,7 +293,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
     if(data->isDraw())
     {
         double secsLimit = data->getSecondsLimit();
-        if(!math::doubleEqual(secsLimit, 0.0) && !math::doubleEqual(secsLimit, curSecs))
+        if(!math::doubleEqual(secsLimit, 0.0) && (curSecs > secsLimit))
         {
             graph->setVisible(false);
             tracerText->setVisible(false);
@@ -322,8 +322,6 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
             {
                 x.replace(i, x.at(i) + offsetSeconds);
             }
-            //            m_customPlot->xAxis->ticker()->setTickOrigin(offsetSeconds);
-            //            setCoordRangeX(m_coordBgn_x + offsetSeconds, m_coordEnd_x + offsetSeconds);
         }
 
         if(m_yTimeTickFormat == "ordinal")
@@ -336,7 +334,6 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
             {
                 y.replace(i, y.at(i) + offsetSeconds);
             }
-            //            setCoordRangeY(m_coordBgn_y + offsetSeconds, m_coordEnd_y + offsetSeconds);
         }
         graph->setData(x, y, true);
         QPen pen(data->dataColor(), data->width());

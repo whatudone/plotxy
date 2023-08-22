@@ -6,6 +6,11 @@ StippleSetting::StippleSetting(QWidget* parent)
 	ui.setupUi(this);
     initPatternComboBox();
     initConnections();
+
+    ui.labelCustom->setVisible(false);
+    ui.lineEditCustom->setVisible(false);
+    ui.labelFactor->setVisible(false);
+    ui.spinBoxFactor->setVisible(false);
 }
 
 StippleSetting::~StippleSetting() {}

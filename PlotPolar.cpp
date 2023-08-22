@@ -546,7 +546,7 @@ void PlotPolar::updateGraphByDataPair(DataPair* data, double curSecs)
             return;
         }
         double secsLimit = data->getSecondsLimit();
-        if(!math::doubleEqual(secsLimit, 0.0) && !math::doubleEqual(secsLimit, curSecs))
+        if(!math::doubleEqual(secsLimit, 0.0) && (curSecs > secsLimit))
         {
             graph->setVisible(false);
             return;

@@ -19,6 +19,9 @@ IconSetting::IconSetting(QWidget* parent)
 	connect(ui.spinBox, SIGNAL(valueChanged(int)), this, SLOT(onSpinBoxValueChanged(int)));
 	connect(ui.spinBox_2, SIGNAL(valueChanged(int)), this, SLOT(onSpinBox_2ValueChanged(int)));
 	connect(ui.pushButton_2, &QPushButton::clicked, this, &IconSetting::onPushButton_2Clicked);
+
+    ui.label_20->setVisible(false);
+    ui.pushButton_2->setVisible(false);
 }
 
 IconSetting::~IconSetting() {}
