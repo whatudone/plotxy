@@ -128,6 +128,8 @@ private:
     void initColorRangeConnections();
     void initConConnections();
 
+    void hideUselessWidget();
+
 private:
     Ui::AdvancedDataManager ui;
 

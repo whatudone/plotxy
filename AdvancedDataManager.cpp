@@ -23,6 +23,7 @@ AdvancedDataManager::AdvancedDataManager(QWidget* parent)
 	ui.stackedWidget_aDMrpart->setCurrentIndex(0);
 
     initConnections();
+    hideUselessWidget();
 }
 
 AdvancedDataManager::~AdvancedDataManager() {}
@@ -883,6 +884,15 @@ void AdvancedDataManager::initConConnections()
             &QTableWidget::cellClicked,
             this,
             &AdvancedDataManager::onConnectionItemClicked);
+}
+
+void AdvancedDataManager::hideUselessWidget()
+{
+    ui.label->setVisible(false);
+    ui.lineEdit->setVisible(false);
+    ui.comboBox_Sort->setVisible(false);
+    ui.pushButton_copy->setVisible(false);
+    ui.pushButton_autofit->setVisible(false);
 }
 
 void AdvancedDataManager::initEventConnections()
