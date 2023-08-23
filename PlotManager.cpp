@@ -201,6 +201,9 @@ void PlotManager::initAxisGridUI()
     ui.checkBox_oneToOneScale->setVisible(false);
     ui.checkBox_adjustTimeBoundOnTALOChange->setVisible(false);
     ui.groupBox_10->setVisible(false);
+    ui.groupBox_8->setVisible(false);
+    ui.checkBox_9->setVisible(false);
+    ui.pushButton_11->setVisible(false);
 
     ui.lineEdit_23->setText("1");
 
