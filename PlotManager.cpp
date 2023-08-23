@@ -30,7 +30,6 @@ PlotManager::PlotManager(QWidget* parent)
     : QWidget(parent)
 {
     ui.setupUi(this);
-    setWindowTitle(QString("图表管理器"));
 
     init();
     connect(ui.pushButton_close, &QPushButton::clicked, this, &PlotManager::onBtnCloseClicked);
