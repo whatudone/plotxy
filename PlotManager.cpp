@@ -839,6 +839,7 @@ void PlotManager::initGOGUI()
     ui.pushButton_27->setVisible(false);
     ui.fontComboBox->setVisible(false);
     ui.comboBox_25->setVisible(false);
+    ui.pushButton_24->setVisible(false);
 
     // Filled有三种状态：未选中：不填充   半选中：根据GOG文件来  全选中：填充
     ui.checkBox_16->setTristate(true);

@@ -105,7 +105,7 @@
         <number>1</number>
        </property>
        <property name="currentIndex">
-        <number>12</number>
+        <number>7</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QVBoxLayout" name="verticalLayout_64" stretch="0,1,0,0,0,1">
@@ -3225,7 +3225,7 @@ background-color: rgb(127, 127, 127);</string>
              <item row="2" column="4">
               <widget class="QLabel" name="label_173">
                <property name="text">
-                <string>h</string>
+                <string>时</string>
                </property>
               </widget>
              </item>
@@ -3272,7 +3272,7 @@ background-color: rgb(127, 127, 127);</string>
              <item row="2" column="11">
               <widget class="QLabel" name="label_80">
                <property name="text">
-                <string>s</string>
+                <string>秒</string>
                </property>
               </widget>
              </item>
@@ -3419,7 +3419,7 @@ background-color: rgb(127, 127, 127);</string>
              <item row="2" column="6">
               <widget class="QLabel" name="label_195">
                <property name="text">
-                <string>m</string>
+                <string>分</string>
                </property>
               </widget>
              </item>
