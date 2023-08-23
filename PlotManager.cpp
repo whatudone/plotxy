@@ -780,6 +780,11 @@ void PlotManager::initPlotDataUI()
 
 void PlotManager::initTextEditUI()
 {
+    ui.label_45->setVisible(false);
+    ui.label_46->setVisible(false);
+    ui.lineEdit_29->setVisible(false);
+    ui.lineEdit_30->setVisible(false);
+
     connect(
         ui.checkBox_12, &QCheckBox::stateChanged, this, &PlotManager::onCheckBox_12StateChanged);
     connect(
@@ -818,14 +823,22 @@ void PlotManager::initAttitudeUI()
 
 void PlotManager::initGOGUI()
 {
+    ui.label_44->setVisible(false);
+    ui.label_49->setVisible(false);
     ui.label_50->setVisible(false);
-    ui.lineEdit_33->setVisible(false);
     ui.label_51->setVisible(false);
+    ui.label_52->setVisible(false);
+    ui.lineEdit_32->setVisible(false);
+    ui.lineEdit_33->setVisible(false);
     ui.lineEdit_34->setVisible(false);
+    ui.checkBox_16->setVisible(false);
     ui.checkBox_17->setVisible(false);
     ui.checkBox_18->setVisible(false);
     ui.pushButton_29->setVisible(false);
+    ui.pushButton_28->setVisible(false);
     ui.pushButton_27->setVisible(false);
+    ui.fontComboBox->setVisible(false);
+    ui.comboBox_25->setVisible(false);
 
     // Filled有三种状态：未选中：不填充   半选中：根据GOG文件来  全选中：填充
     ui.checkBox_16->setTristate(true);
