@@ -105,7 +105,7 @@
         <number>1</number>
        </property>
        <property name="currentIndex">
-        <number>7</number>
+        <number>14</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QVBoxLayout" name="verticalLayout_64" stretch="0,1,0,0,0,1">
@@ -5648,7 +5648,7 @@ background-color: rgb(127, 127, 127);</string>
                   <item row="3" column="0">
                    <widget class="QLabel" name="label_123">
                     <property name="text">
-                     <string>指针:</string>
+                     <string>刻度线:</string>
                     </property>
                    </widget>
                   </item>
