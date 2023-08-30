@@ -17,7 +17,7 @@
    <item>
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>4</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="page">
       <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -362,7 +362,7 @@
          <item>
           <widget class="QStackedWidget" name="stackedWidget_2">
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="page_5">
             <layout class="QVBoxLayout" name="verticalLayout_14">
@@ -433,6 +433,9 @@
               <layout class="QVBoxLayout" name="verticalLayout_2">
                <item>
                 <widget class="QTableWidget" name="tableWidget_Entity_2">
+                 <property name="selectionBehavior">
+                  <enum>QAbstractItemView::SelectRows</enum>
+                 </property>
                  <column>
                   <property name="text">
                    <string>X轴实体</string>
@@ -449,6 +452,12 @@
               <layout class="QVBoxLayout" name="verticalLayout_12">
                <item>
                 <widget class="QTableWidget" name="tableWidget_nameUnits_2">
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::SingleSelection</enum>
+                 </property>
+                 <property name="selectionBehavior">
+                  <enum>QAbstractItemView::SelectRows</enum>
+                 </property>
                  <attribute name="horizontalHeaderDefaultSectionSize">
                   <number>130</number>
                  </attribute>
@@ -728,6 +737,9 @@
               <layout class="QVBoxLayout" name="verticalLayout_11">
                <item>
                 <widget class="QTableWidget" name="tableWidget_Entity_3">
+                 <property name="selectionBehavior">
+                  <enum>QAbstractItemView::SelectRows</enum>
+                 </property>
                  <column>
                   <property name="text">
                    <string>Y轴实体</string>
@@ -744,6 +756,12 @@
               <layout class="QVBoxLayout" name="verticalLayout_13">
                <item>
                 <widget class="QTableWidget" name="tableWidget_nameUnits_3">
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::SingleSelection</enum>
+                 </property>
+                 <property name="selectionBehavior">
+                  <enum>QAbstractItemView::SelectRows</enum>
+                 </property>
                  <attribute name="horizontalHeaderDefaultSectionSize">
                   <number>130</number>
                  </attribute>
@@ -1419,7 +1437,7 @@
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_37" stretch=""/>
+            <layout class="QHBoxLayout" name="horizontalLayout_37"/>
            </item>
           </layout>
          </item>
@@ -1575,7 +1593,7 @@
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_40" stretch=""/>
+            <layout class="QHBoxLayout" name="horizontalLayout_40"/>
            </item>
           </layout>
          </item>

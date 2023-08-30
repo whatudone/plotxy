@@ -54,6 +54,8 @@ private:
     void updateAttrTableWidgetOnEntityChanged(QTableWidgetItem* entityItem,
                                               QTableWidget* attrTableWidget);
 
+    bool handleMultiSelectedEntity();
+
 signals:
 	void sgn_addPlotPair(QString, QString, QString, QString);
     void sgn_updatePlotPair(QString, QString); //tabName, plotName

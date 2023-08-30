@@ -447,7 +447,6 @@ bool AddPlotPair::getCurrentSelectParam(int32_t& xEntityID,
                ui.tableWidget_nameUnits_2->item(ui.tableWidget_nameUnits_2->currentRow(), 0) ==
                    nullptr)
                 return false;
-
             xType = DataPair::Parameter;
             xEntityID = ui.tableWidget_Entity_2->currentItem()->data(Qt::UserRole + 1).toInt();
             xAttrName =
@@ -656,6 +655,71 @@ void AddPlotPair::updateAttrTableWidgetOnEntityChanged(QTableWidgetItem* entityI
         }
     }
 }
+
+bool AddPlotPair::handleMultiSelectedEntity()
+{
+    int index = ui.stackedWidget->currentIndex();
+    if(index != 1)
+    {
+        return false;
+    }
+    if(ui.radioButton_5->isChecked() && ui.radioButton_3->isChecked())
+    {
+        if((ui.tableWidget_Entity_2->selectedItems().size() > 1) &&
+           (ui.tableWidget_Entity_3->selectedItems().size() > 1) &&
+           (ui.tableWidget_Entity_2->selectedItems().size() ==
+            ui.tableWidget_Entity_3->selectedItems().size()) &&
+           (ui.tableWidget_nameUnits_2->currentItem()) &&
+           (ui.tableWidget_nameUnits_3->currentItem()) && m_pCurSelectedPlot)
+        {
+            auto xItemList = ui.tableWidget_Entity_2->selectedItems();
+            auto yItemList = ui.tableWidget_Entity_3->selectedItems();
+            int32_t size = xItemList.size();
+            for(int32_t i = 0; i < size; ++i)
+            {
+                auto xItem = xItemList.at(i);
+                DataPair::DataType xType = DataPair::Parameter;
+                int32_t xEntityID = xItem->data(Qt::UserRole + 1).toInt();
+                QString xAttrName =
+                    ui.tableWidget_nameUnits_2->item(ui.tableWidget_nameUnits_2->currentRow(), 0)
+                        ->text();
+                QString xAttrUnitName =
+                    ui.tableWidget_nameUnits_2->item(ui.tableWidget_nameUnits_2->currentRow(), 1)
+                        ->text();
+
+                auto yItem = yItemList.at(i);
+                DataPair::DataType yType = DataPair::Parameter;
+                int32_t yEntityID = yItem->data(Qt::UserRole + 1).toInt();
+                QString yAttrName =
+                    ui.tableWidget_nameUnits_3->item(ui.tableWidget_nameUnits_3->currentRow(), 0)
+                        ->text();
+                QString yAttrUnitName =
+                    ui.tableWidget_nameUnits_3->item(ui.tableWidget_nameUnits_3->currentRow(), 1)
+                        ->text();
+
+                QHash<QString, QVariant> dataHash;
+                if(m_pCurSelectedPlot->plotType() == PlotType::Type_PlotLight)
+                {
+                    dataHash.insert("Desc", ui.lineEdit_LightDesc->text());
+                }
+                dataHash.insert("XDataType", static_cast<int32_t>(xType));
+
+                dataHash.insert("YDataType", static_cast<int32_t>(yType));
+
+                // 数据对触发的DataPairsChanged信号会在后续触发数据对表格的刷新操作
+                m_pCurSelectedPlot->addPlotDataPair(xEntityID,
+                                                    xAttrName,
+                                                    xAttrUnitName,
+                                                    yEntityID,
+                                                    yAttrName,
+                                                    yAttrUnitName,
+                                                    dataHash);
+            }
+            return true;
+        }
+    }
+    return false;
+}
 // 添加数据对
 void AddPlotPair::onBtnAddClicked()
 {
@@ -674,6 +738,11 @@ void AddPlotPair::onBtnAddClicked()
     DataPair::RangeCalculationType xCalType = DataPair::RelativeAltitude;
     DataPair::RangeCalculationType yCalType = DataPair::RelativeAltitude;
 
+    // 特殊处理散点图多选情况,如果处理成功则不进行下面的单选处理
+    if(handleMultiSelectedEntity())
+    {
+        return;
+    }
     if(!getCurrentSelectParam(xEntityID,
                               xTargetEntityID,
                               xAttrName,
