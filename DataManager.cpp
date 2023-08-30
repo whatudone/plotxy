@@ -540,7 +540,7 @@ DataManager::getEntityAttrValueList(int32_t entityID, const QString& attr, doubl
             valueList.append(value * rate);
         }
     }
-	return valueList;
+    return valueList;
 }
 
 QVector<double> DataManager::getEntityAttrValueListByMaxTime(int32_t entityID,
@@ -555,6 +555,55 @@ QVector<double> DataManager::getEntityAttrValueListByMaxTime(int32_t entityID,
         valueList = getEntityAttrValueList(entityID, attr, rate);
         // length = index +1
         valueList = valueList.mid(0, index + 1);
+    }
+    return valueList;
+}
+
+QVector<double> DataManager::getEntityAttrValueListByMaxTimeAndIniFile(int32_t entityID,
+                                                                       const QString& attr,
+                                                                       double secs,
+                                                                       double rate)
+{
+    int index = getEntityAttrMaxIndexByTime(entityID, secs);
+    QVector<double> valueList;
+    if(index >= 0)
+    {
+        valueList = getEntityAttrValueList(entityID, attr, rate);
+
+        QString iniFileName = QCoreApplication::applicationDirPath() + "/PlotXY.ini";
+        int32_t dataLimit = 0;
+        if(QFile::exists(iniFileName))
+        {
+            QSettings settings(iniFileName, QSettings::IniFormat);
+            settings.setIniCodec(QTextCodec::codecForName("utf-8"));
+            dataLimit = settings.value("dataConfig/TimeLimit").toInt();
+        }
+        int limitIndex = getEntityAttrMaxIndexByTime(entityID, secs - dataLimit);
+        int nStart = 0;
+        int len = 0;
+
+        if(dataLimit == 0)
+        {
+            nStart = 0;
+            len = index + 1;
+        }
+        else
+        {
+            if(limitIndex == -1)
+            {
+                // 无限制，显示所有数据
+                nStart = 0;
+                len = index + 1;
+            }
+            else
+            {
+                nStart = limitIndex;
+                len = index + 1 - limitIndex;
+            }
+        }
+
+        // length = index +1
+        valueList = valueList.mid(nStart, len);
     }
     return valueList;
 }

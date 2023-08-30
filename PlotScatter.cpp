@@ -143,14 +143,14 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
             }
             else if(xType == DataPair::Time && yType == DataPair::Parameter)
             {
-                x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                x = DataManager::getInstance()->getEntityAttrValueListByMaxTimeAndIniFile(
                     yEntityID, xAttr, secs, m_xRate);
-                y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                y = DataManager::getInstance()->getEntityAttrValueListByMaxTimeAndIniFile(
                     yEntityID, yAttr, secs, m_yRate);
             }
             else if(xType == DataPair::Time && yType == DataPair::RangeCalculation)
             {
-                x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                x = DataManager::getInstance()->getEntityAttrValueListByMaxTimeAndIniFile(
                     yEntityID, xAttr, secs, m_xRate);
 
                 auto yTargetEntityID = data->getTargetEntityIDY();
@@ -160,21 +160,21 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
             }
             else if(xType == DataPair::Parameter && yType == DataPair::Time)
             {
-                x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                x = DataManager::getInstance()->getEntityAttrValueListByMaxTimeAndIniFile(
                     xEntityID, xAttr, secs, m_xRate);
-                y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                y = DataManager::getInstance()->getEntityAttrValueListByMaxTimeAndIniFile(
                     xEntityID, yAttr, secs, m_yRate);
             }
             else if(xType == DataPair::Parameter && yType == DataPair::Parameter)
             {
-                x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                x = DataManager::getInstance()->getEntityAttrValueListByMaxTimeAndIniFile(
                     xEntityID, xAttr, secs, m_xRate);
-                y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                y = DataManager::getInstance()->getEntityAttrValueListByMaxTimeAndIniFile(
                     yEntityID, yAttr, secs, m_yRate);
             }
             else if(xType == DataPair::Parameter && yType == DataPair::RangeCalculation)
             {
-                x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                x = DataManager::getInstance()->getEntityAttrValueListByMaxTimeAndIniFile(
                     xEntityID, xAttr, secs, m_xRate);
 
                 auto yTargetEntityID = data->getTargetEntityIDY();
@@ -189,7 +189,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
                 x = DataManagerInstance->rangeCalculationValueList(
                     xEntityID, xTargetEntityID, xCalType, secs, m_xRate);
 
-                y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                y = DataManager::getInstance()->getEntityAttrValueListByMaxTimeAndIniFile(
                     xEntityID, xAttr, secs, m_xRate);
             }
             else if(xType == DataPair::RangeCalculation && yType == DataPair::Parameter)
@@ -199,7 +199,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
                 x = DataManagerInstance->rangeCalculationValueList(
                     xEntityID, xTargetEntityID, xCalType, secs, m_xRate);
 
-                y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+                y = DataManager::getInstance()->getEntityAttrValueListByMaxTimeAndIniFile(
                     yEntityID, xAttr, secs, m_xRate);
             }
             else if(xType == DataPair::RangeCalculation && yType == DataPair::RangeCalculation)
