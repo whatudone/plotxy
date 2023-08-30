@@ -226,6 +226,7 @@ private:
     recvThread* m_recvThread = nullptr;
     // 在线数据时间类型配置信息
     QHash<QString, QStringList> m_realEventTypeInfo;
+    int32_t m_timeLimit;
 signals:
     void loadDataFinished();
     void recvData();

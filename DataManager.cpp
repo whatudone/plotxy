@@ -26,6 +26,16 @@
 DataManager::DataManager()
 {
     m_recvThread = new recvThread;
+
+    m_timeLimit = 0;
+    QString iniFileName = QCoreApplication::applicationDirPath() + "/PlotXY.ini";
+    if(QFile::exists(iniFileName))
+    {
+        QSettings settings(iniFileName, QSettings::IniFormat);
+        settings.setIniCodec(QTextCodec::codecForName("utf-8"));
+        m_timeLimit = settings.value("DataConfig/TimeLimit").toInt();
+    }
+
     connect(m_recvThread, &recvThread::genericReceived, this, &DataManager::onRecvGenericData);
     connect(m_recvThread,
             &recvThread::protobufPlatInfoReceived,
@@ -569,20 +579,11 @@ QVector<double> DataManager::getEntityAttrValueListByMaxTimeAndIniFile(int32_t e
     if(index >= 0)
     {
         valueList = getEntityAttrValueList(entityID, attr, rate);
-
-        QString iniFileName = QCoreApplication::applicationDirPath() + "/PlotXY.ini";
-        int32_t dataLimit = 0;
-        if(QFile::exists(iniFileName))
-        {
-            QSettings settings(iniFileName, QSettings::IniFormat);
-            settings.setIniCodec(QTextCodec::codecForName("utf-8"));
-            dataLimit = settings.value("dataConfig/TimeLimit").toInt();
-        }
-        int limitIndex = getEntityAttrMaxIndexByTime(entityID, secs - dataLimit);
+        int limitIndex = getEntityAttrMaxIndexByTime(entityID, secs - m_timeLimit);
         int nStart = 0;
         int len = 0;
 
-        if(dataLimit == 0)
+        if(m_timeLimit == 0)
         {
             nStart = 0;
             len = index + 1;
