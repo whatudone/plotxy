@@ -861,6 +861,20 @@ QVector<double> DataManager::rangeCalculationValueList(int32_t sourceID,
             valueList[i] = sourceAltitude.at(i) - targetAltitude.at(i);
         }
     }
+    else if(type == DataPair::GroundRng)
+    {
+        QVector<double> sourceLon = getEntityAttrValueListByMaxTime(sourceID, "Lon", secs, rate);
+        QVector<double> targetLon = getEntityAttrValueListByMaxTime(targetID, "Lon", secs, rate);
+        QVector<double> sourceLat = getEntityAttrValueListByMaxTime(sourceID, "Lat", secs, rate);
+        QVector<double> targetLat = getEntityAttrValueListByMaxTime(targetID, "Lat", secs, rate);
+        int32_t size = qMin(sourceLon.size(), targetLon.size());
+        valueList.resize(size);
+        for(int32_t i = 0; i < size; ++i)
+        {
+            valueList[i] = math::realDistance(
+                sourceLat.at(i), sourceLon.at(i), targetLat.at(i), targetLon.at(i));
+        }
+    }
     return valueList;
 }
 

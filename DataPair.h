@@ -55,7 +55,8 @@ public:
 
     enum RangeCalculationType
     {
-        RelativeAltitude = 0
+        RelativeAltitude = 0,
+        GroundRng
     };
 
     enum DataType

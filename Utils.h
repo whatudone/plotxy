@@ -270,6 +270,10 @@ namespace math
 {
 // 判断两个double是否相等，按照默认精度
 bool doubleEqual(double x, double y);
+
+double rad(double d);
+
+double realDistance(double lat1, double lng1, double lat2, double lng2);
 } // namespace math
 
 QString getDatasPath();

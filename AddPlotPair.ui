@@ -362,7 +362,7 @@
          <item>
           <widget class="QStackedWidget" name="stackedWidget_2">
            <property name="currentIndex">
-            <number>1</number>
+            <number>2</number>
            </property>
            <widget class="QWidget" name="page_5">
             <layout class="QVBoxLayout" name="verticalLayout_14">
@@ -551,6 +551,11 @@
                    <string>Relative Altitude</string>
                   </property>
                  </item>
+                 <item>
+                  <property name="text">
+                   <string>Ground Rng</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
                <item row="1" column="0">
@@ -666,7 +671,7 @@
          <item>
           <widget class="QStackedWidget" name="stackedWidget_3">
            <property name="currentIndex">
-            <number>1</number>
+            <number>2</number>
            </property>
            <widget class="QWidget" name="page_8">
             <layout class="QVBoxLayout" name="verticalLayout_19">
@@ -853,6 +858,11 @@
                  <item>
                   <property name="text">
                    <string>Relative Altitude</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Ground Rng</string>
                   </property>
                  </item>
                 </widget>
