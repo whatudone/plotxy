@@ -46,6 +46,7 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
     ui.setupUi(this);
 #ifndef QT_DEBUG
     setWindowFlag(Qt::FramelessWindowHint, true);
+    ui.menuBar->installEventFilter(this);
 #endif
 
     init();
@@ -2384,6 +2385,29 @@ void PlotXYDemo::closeEvent(QCloseEvent* e)
     //关闭本窗口时先关闭其他顶层窗口，才能结束进程
     e->accept();
     qApp->quit();
+}
+
+bool PlotXYDemo::eventFilter(QObject* object, QEvent* event)
+{
+    if(object == ui.menuBar)
+    {
+        if(event->type() == QEvent::MouseButtonPress)
+        {
+            auto mouseEvent = static_cast<QMouseEvent*>(event);
+            m_lastPos = mouseEvent->globalPos();
+        }
+        else if(event->type() == QEvent::MouseMove)
+        {
+            auto mouseEvent = static_cast<QMouseEvent*>(event);
+            if(mouseEvent->buttons() & Qt::LeftButton)
+            {
+                this->move(this->x() + (mouseEvent->globalX() - m_lastPos.x()),
+                           this->y() + (mouseEvent->globalY() - m_lastPos.y()));
+                m_lastPos = mouseEvent->globalPos();
+            }
+        }
+    }
+    return false;
 }
 
 bool PlotXYDemo::getIsRealTime()

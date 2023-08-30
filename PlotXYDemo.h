@@ -214,6 +214,7 @@ private:
 
 protected:
     void closeEvent(QCloseEvent* e) override;
+    bool eventFilter(QObject* object, QEvent* event) override;
 
 private:
     Ui::PlotXYDemo ui;
@@ -254,6 +255,9 @@ private:
     static bool m_isRealTime;
     // 上次图表刷新时间
     int64_t m_lastUpdateTime = QDateTime::currentMSecsSinceEpoch();
+
+    // 菜单栏拖动功能
+    QPoint m_lastPos;
 };
 
 #endif // !
