@@ -131,6 +131,11 @@ public:
                                                     const QString& attr,
                                                     double secs,
                                                     double rate);
+    // 获取最小时间到secs时间内的实体-属性数据list
+    QVector<double> getEntityAttrValueListByMaxTimeAndIniFile(int32_t entityID,
+                                                              const QString& attr,
+                                                              double secs,
+                                                              double rate);
     // 获取当前时间内最后一个值，用于Text-Bar这种一维数据展示
     double
     getEntityAttrValueByMaxTime(int32_t entityID, const QString& attr, double secs, double rate);
