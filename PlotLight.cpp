@@ -69,7 +69,7 @@ void PlotLight::updateDataForDataPairsByTime(double secs)
         double value = DataManager::getInstance()->getEntityAttrValueByMaxTime(
             xEntityID, xAttr, secs, m_xRate);
 
-        auto desc = dataPair->getDesc();
+        auto desc = dataPair->processLabelText(value);
         m_dataHash.insert(dataPair->getUuid(),
                           std::make_tuple(desc, xEntityID, xEntityName, xAttr, value));
     }
@@ -285,7 +285,7 @@ void PlotLight::updateGraphByDataPair(DataPair* data, double curSecs)
             //字体颜色
             statusText->setColor(data->getLabelColor());
             statusText->setFont(data->getLabelFont());
-            statusText->setText(drawDataPair.first);
+            statusText->setText(data->processLabelText(drawDataPair.first));
             statusText->setVisible(true);
             statusText->setPositionAlignment(Qt::AlignCenter);
             statusText->position->setType(QCPItemPosition::ptViewportRatio);
@@ -451,7 +451,7 @@ void PlotLight::updateGraphByDataPair(DataPair* data, double curSecs)
             //字体颜色
             statusText->setColor(data->getLabelColor());
             statusText->setFont(data->getLabelFont());
-            statusText->setText(drawDataPair.first);
+            statusText->setText(data->processLabelText(drawDataPair.first));
             statusText->setVisible(true);
             statusText->setPositionAlignment(Qt::AlignCenter);
             statusText->position->setType(QCPItemPosition::ptViewportRatio);
@@ -510,7 +510,7 @@ void PlotLight::processDataByConstraints()
         QString attr = std::get<3>(tuple);
         double value = std::get<4>(tuple);
         QString text = desc.isEmpty() ? entityName : desc;
-        m_drawDataHash.insert(uuid, qMakePair(text, getColorByDataPairWithCon(id, attr, value)));
+        m_drawDataHash.insert(uuid, qMakePair(value, getColorByDataPairWithCon(id, attr, value)));
     }
 }
 

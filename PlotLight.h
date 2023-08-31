@@ -115,8 +115,8 @@ private:
     QList<std::tuple<int32_t, QString, QString, double, QString, QString>> m_constraintList;
     // 缓存数据 desc,entityid,entityName,attr,value
     QHash<QString, std::tuple<QString, int32_t, QString, QString, double>> m_dataHash;
-    // 处理后的用于直接绘制的数据 desc,color
-    QHash<QString, QPair<QString, QColor>> m_drawDataHash;
+    // 处理后的用于直接绘制的数据 value,color
+    QHash<QString, QPair<double, QColor>> m_drawDataHash;
     // 绘制的元素指针列表，用于清除之后重绘 <uuid-draw>
     QHash<QString, DrawComponents> m_drawItemHash;
     //    QList<QCPAbstractItem*> m_drawItemList;

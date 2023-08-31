@@ -368,8 +368,8 @@ void LabelSettings::updateVisibleOnPlotTypeChanged(PlotType curType)
     }
     else if(curType == PlotType::Type_PlotLight)
     {
-        visibleList = QList<bool>() << true << true << true << false << true << false << false
-                                    << false << false << true;
+        visibleList = QList<bool>() << false << true << false << false << true << false << false
+                                    << false << false << false;
     }
     else if(curType == PlotType::Type_PlotPolar || curType == PlotType::Type_PlotScatter)
     {
@@ -386,6 +386,7 @@ void LabelSettings::updateVisibleOnPlotTypeChanged(PlotType curType)
         visibleList = QList<bool>() << true << true << true << true << true << false << false
                                     << false << false << false;
     }
+    else
     {
         // 其他类型图表不存在此设置，直接跳过
         return;

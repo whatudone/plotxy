@@ -38,14 +38,14 @@ DataPair::DataPair(QObject* parent)
     m_textPosition = center;
     m_labelPrec_x = 6;
     m_labelPrec_y = 6;
-    m_labelText_show = false;
-	m_prefix_show = true;
+    m_labelText_show = true;
+    m_prefix_show = false;
 	m_object_show = true;
 
-	m_attr_show = true;
-	m_data_show = true;
+    m_attr_show = false;
+    m_data_show = false;
 
-	m_unit_show = true;
+    m_unit_show = false;
 
     m_uuid = QUuid::createUuid().toString();
 }
