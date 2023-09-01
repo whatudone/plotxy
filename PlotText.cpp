@@ -155,38 +155,32 @@ void PlotText::drawCellData(QPainter& painter)
                     int offset = m_textLeftOffset - m_textRightOffset;
                     int hx1 = drawRect.left() + horiGridWidth * colIndex * 2 + offset;
                     int hy1 = drawRect.y() + verGridWidth * rowIndex;
-                    painter.save();
-                    pen.setColor(getxTickLabelColor());
+
+                    pen.setColor(data->getLabelColor());
                     painter.setPen(pen);
-                    QFont tickFont = getxTickLabelFont();
-                    tickFont.setPixelSize(getxTickLabelFontSize());
-                    painter.setFont(tickFont);
+                    QFont font = data->getLabelFont();
+                    font.setPixelSize(data->getLabelFontSize());
+                    painter.setFont(font);
 
                     cellRect.setRect(hx1, hy1, horiGridWidth, verGridWidth);
                     auto alignFlag = data->getLabelTextAlign();
-                    painter.drawText(cellRect, alignFlag | Qt::TextWordWrap, entity + " " + xAttr);
-                    painter.restore();
-
-                    // 绘制X和Y轴的value
-                    if(data->matchColor())
+                    double value = m_dataList.at(curIndex);
+                    QString desc;
+                    auto xDataType = data->getXDataType();
+                    if(xDataType == DataPair::Time)
                     {
-                        pen.setColor(data->dataColor());
+                        desc = "Time";
                     }
                     else
                     {
-                        pen.setColor(data->getLabelColor());
+                        desc = data->processLabelText(value);
                     }
-                    pen.setWidth(3);
-                    pen.setStyle(Qt::SolidLine);
-                    painter.setPen(pen);
-                    QFont font = data->getLabelFont();
-                    font.setPointSize(data->getLabelFontSize());
-                    painter.setFont(font);
+                    painter.drawText(cellRect, alignFlag | Qt::TextWordWrap, desc);
 
+                    // 绘制X和Y轴的value
                     int x = drawRect.x() + horiGridWidth * (colIndex * 2 + 1) + offset;
                     int y = drawRect.y() + verGridWidth * rowIndex;
                     cellRect.setRect(x, y, horiGridWidth, verGridWidth);
-                    double value = m_dataList.at(curIndex);
                     QString text;
                     if(math::doubleEqual(value, std::numeric_limits<double>::max()))
                     {
@@ -253,49 +247,31 @@ void PlotText::drawCellData(QPainter& painter)
                     // 绘制第一列属性
                     QString desc;
                     auto xDataType = data->getXDataType();
+                    double value = m_dataList.at(curIndex);
                     if(xDataType == DataPair::Time)
                     {
                         desc = "Time";
                     }
                     else
                     {
-                        desc = data->getXEntityAttrPair();
+                        desc = data->processLabelText(value);
                     }
                     int offset = m_textLeftOffset - m_textRightOffset;
                     int hx1 = drawRect.left() + horiGridWidth * colIndex * 2 + offset;
                     int hy1 = drawRect.y() + verGridWidth * rowIndex;
-                    painter.save();
-                    pen.setColor(getxTickLabelColor());
+                    pen.setColor(data->getLabelColor());
                     painter.setPen(pen);
-                    QFont tickFont = getxTickLabelFont();
-                    tickFont.setPixelSize(getxTickLabelFontSize());
-                    painter.setFont(tickFont);
+                    QFont font = data->getLabelFont();
+                    font.setPixelSize(data->getLabelFontSize());
+                    painter.setFont(font);
 
                     cellRect.setRect(hx1, hy1, horiGridWidth, verGridWidth);
                     auto alignFlag = data->getLabelTextAlign();
                     painter.drawText(cellRect, alignFlag | Qt::TextWordWrap, desc);
-                    painter.restore();
-
-                    // 绘制X和Y轴的value
-                    if(data->matchColor())
-                    {
-                        pen.setColor(data->dataColor());
-                    }
-                    else
-                    {
-                        pen.setColor(data->getLabelColor());
-                    }
-                    pen.setWidth(3);
-                    pen.setStyle(Qt::SolidLine);
-                    painter.setPen(pen);
-                    QFont font = data->getLabelFont();
-                    font.setPointSize(data->getLabelFontSize());
-                    painter.setFont(font);
 
                     int x = drawRect.x() + horiGridWidth * (colIndex * 2 + 1) + offset;
                     int y = drawRect.y() + verGridWidth * rowIndex;
                     cellRect.setRect(x, y, horiGridWidth, verGridWidth);
-                    double value = m_dataList.at(curIndex);
                     QString text;
                     if(math::doubleEqual(value, std::numeric_limits<double>::max()) ||
                        math::doubleEqual(value, std::numeric_limits<double>::min()))

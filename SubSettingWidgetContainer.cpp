@@ -104,7 +104,7 @@ void SubSettingWidgetContainer::updateVisibleOnPlotTypeChanged(PlotType curType)
     }
     else if(curType == PlotType::Type_PlotText)
     {
-        visibleList << true << false << true << true << true << false << false << false << false;
+        visibleList << true << false << false << true << true << false << false << false << false;
     }
     else if(curType == PlotType::Type_PlotTrack)
     {
@@ -166,11 +166,15 @@ void General::updateVisibleOnPlotTypeChanged(PlotType curType)
         visibleList = QList<bool>()
                       << true << true << true << true << true << true << true << false << false;
     }
-    else if(curType == PlotType::Type_PlotBar || curType == PlotType::Type_PlotDial ||
-            curType == PlotType::Type_PlotLight)
+    else if(curType == PlotType::Type_PlotBar || curType == PlotType::Type_PlotLight)
     {
         visibleList = QList<bool>()
                       << true << false << false << true << true << true << true << false << false;
+    }
+    else if(curType == PlotType::Type_PlotDial)
+    {
+        visibleList = QList<bool>()
+                      << true << false << false << false << true << true << true << false << false;
     }
     else if(curType == PlotType::Type_PlotAttitude)
     {
@@ -195,7 +199,7 @@ void General::updateVisibleOnPlotTypeChanged(PlotType curType)
     else if(curType == PlotType::Type_PlotText)
     {
         visibleList = QList<bool>()
-                      << true << false << false << true << true << true << true << false << false;
+                      << true << false << false << false << false << true << true << false << false;
     }
     else if(curType == PlotType::Type_PlotTrack)
     {
@@ -363,8 +367,8 @@ void LabelSettings::updateVisibleOnPlotTypeChanged(PlotType curType)
     QList<bool> visibleList;
     if(curType == PlotType::Type_PlotBar)
     {
-        visibleList = QList<bool>() << true << true << true << true << true << true << true << false
-                                    << false << true;
+        visibleList = QList<bool>() << true << true << false << false << true << false << true
+                                    << false << false << true;
     }
     else if(curType == PlotType::Type_PlotLight)
     {
@@ -373,17 +377,17 @@ void LabelSettings::updateVisibleOnPlotTypeChanged(PlotType curType)
     }
     else if(curType == PlotType::Type_PlotPolar || curType == PlotType::Type_PlotScatter)
     {
-        visibleList = QList<bool>() << true << true << true << false << true << true << true << true
-                                    << true << true;
+        visibleList = QList<bool>() << true << true << false << false << true << false << true
+                                    << false << true << true;
     }
     else if(curType == PlotType::Type_PlotText)
     {
-        visibleList = QList<bool>() << true << true << true << false << true << true << true
+        visibleList = QList<bool>() << true << true << false << false << true << false << true
                                     << false << false << true;
     }
     else if(curType == PlotType::Type_PlotTrack)
     {
-        visibleList = QList<bool>() << true << true << true << true << true << false << false
+        visibleList = QList<bool>() << true << true << false << false << true << false << false
                                     << false << false << false;
     }
     else
@@ -716,8 +720,6 @@ void ColorRanges::initComboBox()
     ui.comboBoxMode->addItem("多段显示",
                              QVariant::fromValue(static_cast<int32_t>(DataPair::MutilColor)));
     m_comboMap.insert(DataPair::MutilColor, 1);
-    ui.comboBoxMode->addItem("渐变", QVariant::fromValue(static_cast<int32_t>(DataPair::Gradient)));
-    m_comboMap.insert(DataPair::Gradient, 2);
 }
 
 Connections::Connections(QWidget* parent)

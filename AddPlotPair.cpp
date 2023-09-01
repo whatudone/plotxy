@@ -1189,9 +1189,10 @@ void AddPlotPair::onBtnLightUpdateClicked()
         constraintList.append(std::make_tuple(
             id, attrName, constraint, threshold, conformityColorName, inconformityColorName));
     }
-    // 更新的时候才发送信号通知图表刷新 TODO:此处信号会通知所有light图表刷新，是一个错误逻辑，应该针对当前图表进行刷新
-    if(!constraintList.isEmpty())
-        emit lightConstraintUpdate(constraintList);
+    if(auto light = dynamic_cast<PlotLight*>(m_pCurSelectedPlot))
+    {
+        light->onLightConstraintUpdate(constraintList);
+    }
 }
 
 void AddPlotPair::onBtnCloseClicked()

@@ -540,6 +540,7 @@ void DataPair::setMatchColor(bool on)
         {
             m_iconColor = m_color;
             m_labelColor = m_color;
+            emit dataUpdate();
         }
 	}
 }

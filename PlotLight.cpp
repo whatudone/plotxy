@@ -501,6 +501,7 @@ void PlotLight::setGridFillColor(const QColor& color)
 void PlotLight::processDataByConstraints()
 {
     auto keys = m_dataHash.keys();
+    m_drawDataHash.clear();
     for(const auto& uuid : keys)
     {
         auto tuple = m_dataHash.value(uuid);
