@@ -35,16 +35,19 @@ protected:
     void updateDataForDataPairsByTime(double secs) override;
     void updateKeyAxisTickLabel();
 
-    virtual DataPair* addPlotDataPair(int32_t xEntityID,
-                                      const QString& xAttrName,
-                                      const QString& xAttrUnitName,
-                                      int32_t yEntityID,
-                                      const QString& yAttrName,
-                                      const QString& yAttrUnitName,
-                                      const QHash<QString, QVariant>& extraParams,
-                                      bool isFromJson = false) override;
-    virtual void delPlotPairData(const QString& uuid) override;
-    virtual void updateGraphByDataPair(DataPair* dataPair, double curSecs) override;
+    DataPair* addPlotDataPair(int32_t xEntityID,
+                              const QString& xAttrName,
+                              const QString& xAttrUnitName,
+                              int32_t yEntityID,
+                              const QString& yAttrName,
+                              const QString& yAttrUnitName,
+                              const QHash<QString, QVariant>& extraParams,
+                              bool isFromJson = false) override;
+    void delPlotPairData(const QString& uuid) override;
+    void updateGraphByDataPair(DataPair* dataPair, double curSecs) override;
+    void setHorzGrids(int32_t count) override;
+    void setVertGrids(int32_t count) override;
+    void setGridVisible(bool enable) override;
 
 private:
     QMap<QString, QMap<double, QColor>>

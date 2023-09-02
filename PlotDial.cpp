@@ -28,6 +28,8 @@ PlotDial::PlotDial(QWidget* parent)
     m_dialCapRate = 950;
     m_dialStyle = "窄";
 
+    m_vertGrids = 4;
+
     m_title = "Dial";
 
     m_widget = new QWidget;
@@ -254,7 +256,7 @@ void PlotDial::customPainting(QPainter& painter)
 
     painter.setBrush(m_capColor);
     pen.setColor(m_capColor);
-    pen.setWidth(2);
+    pen.setWidth(m_axisWidth);
     painter.setPen(pen);
     painter.drawPath(outLinePath);
 
@@ -295,10 +297,10 @@ void PlotDial::customPainting(QPainter& painter)
     }
 
     // 绘制刻度和表盘文字
-    if(m_horzGrids < 2)
-        m_horzGrids = 2;
-    double perAngle = double(m_endAngle - m_startAngle) / (m_horzGrids - 1);
-    double perSpan = (m_coordEnd_x - m_coordBgn_x) / (m_horzGrids - 1);
+    if(m_vertGrids < 2)
+        m_vertGrids = 2;
+    double perAngle = double(m_endAngle - m_startAngle) / (m_vertGrids - 1);
+    double perSpan = (m_coordEnd_x - m_coordBgn_x) / (m_vertGrids - 1);
 
     pen.setWidth(m_gridWidth);
     QFont font = m_xTickLabelFont;
@@ -326,7 +328,7 @@ void PlotDial::customPainting(QPainter& painter)
     double posY;
     QFontMetrics fm(font);
     int w = 0;
-    for(int i = 1; i < int(m_horzGrids) - 1; i++)
+    for(int i = 1; i < m_vertGrids - 1; i++)
     {
         posX = m_circleRadius * cos((m_endAngle - perAngle * i - 90) * M_PI / 180);
         posY = m_circleRadius * sin((m_endAngle - perAngle * i - 90) * M_PI / 180);
@@ -354,8 +356,8 @@ void PlotDial::customPainting(QPainter& painter)
 
     if(m_drawFirstTick)
     {
-        posX = m_circleRadius * cos((m_endAngle - perAngle * (m_horzGrids - 1) - 90) * M_PI / 180);
-        posY = m_circleRadius * sin((m_endAngle - perAngle * (m_horzGrids - 1) - 90) * M_PI / 180);
+        posX = m_circleRadius * cos((m_endAngle - perAngle * (m_vertGrids - 1) - 90) * M_PI / 180);
+        posY = m_circleRadius * sin((m_endAngle - perAngle * (m_vertGrids - 1) - 90) * M_PI / 180);
         pen.setColor(m_axisColor);
         painter.setPen(pen);
         painter.drawLine(
@@ -364,23 +366,23 @@ void PlotDial::customPainting(QPainter& painter)
     }
     if(m_drawFirstTextLabel)
     {
-        posX = m_circleRadius * cos((m_endAngle - perAngle * (m_horzGrids - 1) - 90) * M_PI / 180);
-        posY = m_circleRadius * sin((m_endAngle - perAngle * (m_horzGrids - 1) - 90) * M_PI / 180);
+        posX = m_circleRadius * cos((m_endAngle - perAngle * (m_vertGrids - 1) - 90) * M_PI / 180);
+        posY = m_circleRadius * sin((m_endAngle - perAngle * (m_vertGrids - 1) - 90) * M_PI / 180);
         pen.setColor(m_xTickLabelColor);
         painter.setPen(pen);
         if(!m_showUnits_x)
         {
-            w = fm.width(QString("%1").arg(m_coordEnd_x - perSpan * (m_horzGrids - 1)));
+            w = fm.width(QString("%1").arg(m_coordEnd_x - perSpan * (m_vertGrids - 1)));
             painter.drawText(QPointF(posX < 0 ? posX * 0.95 : posX * 0.95 - w, posY * 0.9),
-                             QString("%1").arg(m_coordEnd_x - perSpan * (m_horzGrids - 1)));
+                             QString("%1").arg(m_coordEnd_x - perSpan * (m_vertGrids - 1)));
         }
         else
         {
             w = fm.width(
-                QString("%1%2").arg(m_coordEnd_x - perSpan * (m_horzGrids - 1)).arg(strUnit));
+                QString("%1%2").arg(m_coordEnd_x - perSpan * (m_vertGrids - 1)).arg(strUnit));
             painter.drawText(
                 QPointF(posX < 0 ? posX * 0.95 : posX * 0.95 - w, posY * 0.9),
-                QString("%1%2").arg(m_coordEnd_x - perSpan * (m_horzGrids - 1)).arg(strUnit));
+                QString("%1%2").arg(m_coordEnd_x - perSpan * (m_vertGrids - 1)).arg(strUnit));
         }
     }
     if(m_drawLastTick)

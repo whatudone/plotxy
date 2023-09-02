@@ -920,6 +920,10 @@ void PlotManager::initDialUI()
 
 void PlotManager::refreshTreeWidgetSettingEnabled(PlotItemBase* plot)
 {
+    if(!plot)
+    {
+        return;
+    }
     ui.treeWidget_settings->setEnabled(true);
     PlotType type = plot->plotType();
     showScatterEditableItem(type);
@@ -1448,6 +1452,23 @@ void PlotManager::enableItem_Scatter()
     m_itemAttitude->setDisabled(true);
     m_itemTrackStatus->setDisabled(true);
     m_itemRangeDoppler->setDisabled(true);
+    //
+    ui.lineEdit_limitBgnX->setDisabled(false);
+    ui.lineEdit_LimitBgnY->setDisabled(false);
+    ui.lineEdit_limitEndX->setDisabled(false);
+    ui.lineEdit_limitEndY->setDisabled(false);
+
+    ui.comboBox_XUnits->setDisabled(false);
+    ui.comboBox_YUnits->setDisabled(false);
+    ui.lineEdit_PrecisionX->setDisabled(false);
+    ui.lineEdit_PrecisionY->setDisabled(false);
+
+    ui.lineEdit_21->setDisabled(false);
+    ui.lineEdit_23->setDisabled(false);
+    ui.lineEdit_hrozGrids->setDisabled(false);
+    ui.lineEdit_vertGrids->setDisabled(false);
+
+    ui.checkBoxLinkY->setDisabled(false);
 }
 
 void PlotManager::enableItem_AScope()
@@ -1465,6 +1486,25 @@ void PlotManager::enableItem_AScope()
     m_itemAttitude->setDisabled(true);
     m_itemTrackStatus->setDisabled(true);
     m_itemRangeDoppler->setDisabled(true);
+
+    //-
+    ui.comboBox_XUnits->setDisabled(true);
+    ui.comboBox_YUnits->setDisabled(true);
+    ui.lineEdit_PrecisionX->setDisabled(true);
+    ui.lineEdit_PrecisionY->setDisabled(true);
+
+    //+
+    ui.lineEdit_limitBgnX->setDisabled(false);
+    ui.lineEdit_LimitBgnY->setDisabled(false);
+    ui.lineEdit_limitEndX->setDisabled(false);
+    ui.lineEdit_limitEndY->setDisabled(false);
+
+    ui.lineEdit_21->setDisabled(false);
+    ui.lineEdit_23->setDisabled(false);
+    ui.lineEdit_hrozGrids->setDisabled(false);
+    ui.lineEdit_vertGrids->setDisabled(false);
+
+    ui.checkBoxLinkY->setDisabled(false);
 }
 
 void PlotManager::enableItem_RTI()
@@ -1482,6 +1522,25 @@ void PlotManager::enableItem_RTI()
     m_itemAttitude->setDisabled(true);
     m_itemTrackStatus->setDisabled(true);
     m_itemRangeDoppler->setDisabled(true);
+
+    //-
+    ui.lineEdit_21->setDisabled(true);
+    ui.lineEdit_23->setDisabled(true);
+
+    ui.comboBox_XUnits->setDisabled(true);
+    ui.comboBox_YUnits->setDisabled(true);
+    ui.lineEdit_PrecisionX->setDisabled(true);
+    ui.lineEdit_PrecisionY->setDisabled(true);
+    //+
+    ui.lineEdit_limitBgnX->setDisabled(false);
+    ui.lineEdit_LimitBgnY->setDisabled(false);
+    ui.lineEdit_limitEndX->setDisabled(false);
+    ui.lineEdit_limitEndY->setDisabled(false);
+
+    ui.lineEdit_hrozGrids->setDisabled(false);
+    ui.lineEdit_vertGrids->setDisabled(false);
+
+    ui.checkBoxLinkY->setDisabled(false);
 }
 
 void PlotManager::enableItem_Text_Light()
@@ -1499,6 +1558,23 @@ void PlotManager::enableItem_Text_Light()
     m_itemAttitude->setDisabled(true);
     m_itemTrackStatus->setDisabled(true);
     m_itemRangeDoppler->setDisabled(true);
+    //+
+    ui.lineEdit_limitBgnX->setDisabled(false);
+    ui.lineEdit_LimitBgnY->setDisabled(false);
+    ui.lineEdit_limitEndX->setDisabled(false);
+    ui.lineEdit_limitEndY->setDisabled(false);
+
+    ui.comboBox_XUnits->setDisabled(false);
+    ui.comboBox_YUnits->setDisabled(false);
+    ui.lineEdit_PrecisionX->setDisabled(false);
+    ui.lineEdit_PrecisionY->setDisabled(false);
+
+    ui.lineEdit_21->setDisabled(false);
+    ui.lineEdit_23->setDisabled(false);
+    ui.lineEdit_hrozGrids->setDisabled(false);
+    ui.lineEdit_vertGrids->setDisabled(false);
+
+    ui.checkBoxLinkY->setDisabled(false);
 }
 
 void PlotManager::enableItem_Bar()
@@ -1516,6 +1592,23 @@ void PlotManager::enableItem_Bar()
     m_itemAttitude->setDisabled(true);
     m_itemTrackStatus->setDisabled(true);
     m_itemRangeDoppler->setDisabled(true);
+    //-
+    ui.lineEdit_hrozGrids->setDisabled(m_curSelectPlot->getIsHorizonBar());
+    ui.lineEdit_vertGrids->setDisabled(!m_curSelectPlot->getIsHorizonBar());
+    ui.checkBoxLinkY->setDisabled(true);
+    //+
+    ui.lineEdit_limitBgnX->setDisabled(false);
+    ui.lineEdit_LimitBgnY->setDisabled(false);
+    ui.lineEdit_limitEndX->setDisabled(false);
+    ui.lineEdit_limitEndY->setDisabled(false);
+
+    ui.comboBox_XUnits->setDisabled(false);
+    ui.comboBox_YUnits->setDisabled(false);
+    ui.lineEdit_PrecisionX->setDisabled(false);
+    ui.lineEdit_PrecisionY->setDisabled(false);
+
+    ui.lineEdit_21->setDisabled(false);
+    ui.lineEdit_23->setDisabled(false);
 }
 
 void PlotManager::enableItem_Dial()
@@ -1533,6 +1626,27 @@ void PlotManager::enableItem_Dial()
     m_itemAttitude->setDisabled(true);
     m_itemTrackStatus->setDisabled(true);
     m_itemRangeDoppler->setDisabled(true);
+
+    //-
+    ui.lineEdit_limitEndX->setDisabled(true);
+    ui.lineEdit_limitEndY->setDisabled(true);
+
+    ui.lineEdit_hrozGrids->setDisabled(true);
+
+    ui.comboBox_XUnits->setDisabled(true);
+    ui.comboBox_YUnits->setDisabled(true);
+    ui.lineEdit_PrecisionX->setDisabled(true);
+    ui.lineEdit_PrecisionY->setDisabled(true);
+    //+
+    ui.lineEdit_limitBgnX->setDisabled(false);
+    ui.lineEdit_LimitBgnY->setDisabled(false);
+
+    ui.lineEdit_21->setDisabled(false);
+    ui.lineEdit_23->setDisabled(false);
+
+    ui.lineEdit_vertGrids->setDisabled(false);
+
+    ui.checkBoxLinkY->setDisabled(false);
 }
 
 void PlotManager::enableItem_Attitude()
@@ -1550,6 +1664,23 @@ void PlotManager::enableItem_Attitude()
     m_itemAttitude->setDisabled(false);
     m_itemTrackStatus->setDisabled(true);
     m_itemRangeDoppler->setDisabled(true);
+    //-
+    ui.lineEdit_limitBgnX->setDisabled(true);
+    ui.lineEdit_LimitBgnY->setDisabled(true);
+    ui.lineEdit_limitEndX->setDisabled(true);
+    ui.lineEdit_limitEndY->setDisabled(true);
+    //+
+    ui.comboBox_XUnits->setDisabled(false);
+    ui.comboBox_YUnits->setDisabled(false);
+    ui.lineEdit_PrecisionX->setDisabled(false);
+    ui.lineEdit_PrecisionY->setDisabled(false);
+
+    ui.lineEdit_21->setDisabled(false);
+    ui.lineEdit_23->setDisabled(false);
+    ui.lineEdit_hrozGrids->setDisabled(false);
+    ui.lineEdit_vertGrids->setDisabled(false);
+
+    ui.checkBoxLinkY->setDisabled(false);
 }
 
 void PlotManager::enableItem_Polar()
@@ -1567,6 +1698,23 @@ void PlotManager::enableItem_Polar()
     m_itemAttitude->setDisabled(true);
     m_itemTrackStatus->setDisabled(true);
     m_itemRangeDoppler->setDisabled(true);
+    //+
+    ui.lineEdit_limitBgnX->setDisabled(false);
+    ui.lineEdit_LimitBgnY->setDisabled(false);
+    ui.lineEdit_limitEndX->setDisabled(false);
+    ui.lineEdit_limitEndY->setDisabled(false);
+
+    ui.comboBox_XUnits->setDisabled(false);
+    ui.comboBox_YUnits->setDisabled(false);
+    ui.lineEdit_PrecisionX->setDisabled(false);
+    ui.lineEdit_PrecisionY->setDisabled(false);
+
+    ui.lineEdit_21->setDisabled(false);
+    ui.lineEdit_23->setDisabled(false);
+    ui.lineEdit_hrozGrids->setDisabled(false);
+    ui.lineEdit_vertGrids->setDisabled(false);
+
+    ui.checkBoxLinkY->setDisabled(false);
 }
 
 void PlotManager::enableItem_Track()
@@ -1584,6 +1732,26 @@ void PlotManager::enableItem_Track()
     m_itemAttitude->setDisabled(true);
     m_itemTrackStatus->setDisabled(false);
     m_itemRangeDoppler->setDisabled(true);
+
+    //-
+    ui.lineEdit_hrozGrids->setDisabled(true);
+    ui.lineEdit_vertGrids->setDisabled(true);
+
+    ui.comboBox_YUnits->setDisabled(true);
+    ui.lineEdit_PrecisionY->setDisabled(true);
+    //+
+    ui.lineEdit_limitBgnX->setDisabled(false);
+    ui.lineEdit_LimitBgnY->setDisabled(false);
+    ui.lineEdit_limitEndX->setDisabled(false);
+    ui.lineEdit_limitEndY->setDisabled(false);
+
+    ui.comboBox_XUnits->setDisabled(false);
+    ui.lineEdit_PrecisionX->setDisabled(false);
+
+    ui.lineEdit_21->setDisabled(false);
+    ui.lineEdit_23->setDisabled(false);
+
+    ui.checkBoxLinkY->setDisabled(false);
 }
 
 void PlotManager::enableItem_Doppler()
@@ -1601,6 +1769,24 @@ void PlotManager::enableItem_Doppler()
     m_itemAttitude->setDisabled(true);
     m_itemTrackStatus->setDisabled(true);
     m_itemRangeDoppler->setDisabled(false);
+
+    //-
+    ui.lineEdit_21->setDisabled(true);
+    ui.lineEdit_limitBgnX->setDisabled(true);
+    ui.lineEdit_LimitBgnY->setDisabled(true);
+    ui.lineEdit_limitEndX->setDisabled(true);
+    ui.lineEdit_limitEndY->setDisabled(true);
+    //+
+    ui.comboBox_XUnits->setDisabled(false);
+    ui.comboBox_YUnits->setDisabled(false);
+    ui.lineEdit_PrecisionX->setDisabled(false);
+    ui.lineEdit_PrecisionY->setDisabled(false);
+
+    ui.lineEdit_23->setDisabled(false);
+    ui.lineEdit_hrozGrids->setDisabled(false);
+    ui.lineEdit_vertGrids->setDisabled(false);
+
+    ui.checkBoxLinkY->setDisabled(false);
 }
 
 void PlotManager::exchangeItem(QTableWidget* tableWidget, int selectedRow, int targetRow)

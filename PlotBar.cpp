@@ -83,8 +83,7 @@ void PlotBar::initPlot()
     valueAxis()->setBasePen(QPen(m_axisColor, m_axisWidth));
     keyAxis()->setBasePen(QPen(m_axisColor, m_axisWidth));
     valueAxis()->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
-    keyAxis()->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
-
+    keyAxis()->grid()->setVisible(false);
     m_customPlot->axisRect()->setBackground(m_gridFillColor);
 
     keyAxis()->setTickLabelRotation(45); // 轴刻度文字旋转45度
@@ -103,7 +102,7 @@ void PlotBar::initPlot()
     m_customPlot->yAxis->setLabelFont(m_yAxisLabelFont);
 }
 
-void PlotBar::updateGraphByDataPair(DataPair* data, double curSecs)
+void PlotBar::updateGraphByDataPair(DataPair* data, double /*curSecs*/)
 {
     if(!data)
     {
@@ -327,7 +326,8 @@ void PlotBar::setIsHorizonBar(bool isHorizonBar)
                 }
             }
         }
-
+        keyAxis()->grid()->setVisible(false);
+        valueAxis()->grid()->setVisible(true);
         m_customPlot->replot();
     }
 }

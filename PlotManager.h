@@ -1,5 +1,5 @@
-﻿#ifndef _PLOT_MANAGER_H_
-#define _PLOT_MANAGER_H_
+﻿#ifndef PLOT_MANAGER_H
+#define PLOT_MANAGER_H
 
 #include "PlotItemBase.h"
 #include "constdef.h"

@@ -38,16 +38,16 @@ void PlotTrack::initPlot()
 
     m_customPlot->xAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
     m_customPlot->yAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
-    m_customPlot->xAxis->ticker()->setTickCount(int(m_vertGrids));
-    m_customPlot->yAxis->ticker()->setTickCount(int(m_horzGrids));
+    m_customPlot->xAxis->ticker()->setTickCount(m_vertGrids);
+    m_customPlot->yAxis->ticker()->setTickCount(m_horzGrids);
     m_customPlot->xAxis->setTickLabelColor(m_xTickLabelColor);
     m_customPlot->yAxis->setTickLabelColor(m_yTickLabelColor);
     m_customPlot->xAxis->setTickLabelFont(m_xTickLabelFont);
     m_customPlot->yAxis->setTickLabelFont(m_yTickLabelFont);
     m_customPlot->xAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
     m_customPlot->yAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
-    m_customPlot->xAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
-    m_customPlot->yAxis->grid()->setPen(QPen(m_gridColor, m_gridWidth, m_gridStyle));
+    m_customPlot->xAxis->grid()->setVisible(false);
+    m_customPlot->yAxis->grid()->setVisible(false);
 
     m_customPlot->axisRect()->setBackground(m_gridFillColor);
 
@@ -142,6 +142,21 @@ void PlotTrack::updateGraphByDataPair(DataPair* dataPair, double curSecs)
     {
         m_customPlot->yAxis->setTickLabels(false);
     }
+}
+
+void PlotTrack::setHorzGrids(int32_t count)
+{
+    m_horzGrids = count;
+}
+
+void PlotTrack::setVertGrids(int32_t count)
+{
+    m_vertGrids = count;
+}
+
+void PlotTrack::setGridVisible(bool enable)
+{
+    m_gridVisible = enable;
 }
 
 void PlotTrack::updateKeyAxisTickLabel()

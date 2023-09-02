@@ -56,7 +56,7 @@ protected:
 
     void updateDataForDataPairsByTime(double secs) override;
 
-    void updateGraphByDataPair(DataPair* dataPair, double curSecs) override;
+    void updateGraphByDataPair(DataPair* dataPair, double) override;
 
     void setIsHorizonBar(bool isHorizonBar) override;
 
