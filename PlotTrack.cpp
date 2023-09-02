@@ -69,9 +69,6 @@ void PlotTrack::initPlot()
 
 void PlotTrack::updateDataForDataPairsByTime(double secs)
 {
-    if(getDataPairs().isEmpty())
-        return;
-
     int itemCnt = getDataPairs().size();
 
     for(int i = 0; i < itemCnt; i++)
@@ -91,10 +88,10 @@ void PlotTrack::updateGraphByDataPair(DataPair* dataPair, double curSecs)
     double lowLimit = std::numeric_limits<double>::min();
     double highLimit = std::numeric_limits<double>::max();
 
-    if(m_itemData[uuid].size() == 2)
+    if(m_itemData.contains(uuid) && (m_itemData.value(uuid).size() == 2))
     {
-        lowLimit = m_itemData[uuid].at(0);
-        highLimit = m_itemData[uuid].at(1);
+        lowLimit = m_itemData.value(uuid).at(0);
+        highLimit = m_itemData.value(uuid).at(1);
     }
 
     int index = 0;
@@ -134,27 +131,33 @@ void PlotTrack::updateGraphByDataPair(DataPair* dataPair, double curSecs)
         m_allBar[uuid].at(2)->setData(QVector<double>() << cnt,
                                       QVector<double>() << (curSecs - highLimit));
     }
+    // 无法单独更新坐标轴上每一个的刻度的颜色和字体，这里同一全部更新
+    if(dataPair->isLabelTextShow())
+    {
+        m_customPlot->yAxis->setTickLabelColor(dataPair->getLabelColor());
+        m_customPlot->yAxis->setTickLabelFont(dataPair->getLabelFont());
+        m_customPlot->yAxis->setTickLabels(true);
+    }
+    else
+    {
+        m_customPlot->yAxis->setTickLabels(false);
+    }
 }
 
 void PlotTrack::updateKeyAxisTickLabel()
 {
-    if(m_tickLabelMap.isEmpty())
-    {
-        return;
-    }
-
-    m_barTicks.clear();
+    QVector<double> barTicks;
     QVector<QString> labels;
 
     int index = 1;
     for(auto it = m_tickLabelMap.constBegin(); it != m_tickLabelMap.constEnd(); it++)
     {
-        m_barTicks << index++;
+        barTicks << index++;
         labels << it.value();
     }
 
     QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
-    textTicker->addTicks(m_barTicks, labels);
+    textTicker->addTicks(barTicks, labels);
     m_customPlot->yAxis->setTicker(textTicker); // 设置为文字轴
     m_customPlot->replot();
 }
@@ -269,7 +272,7 @@ DataPair* PlotTrack::addPlotDataPair(int32_t xEntityID,
     pBarAva->moveAbove(pBarUna);
     pBarInv->moveAbove(pBarAva);
     m_allBar.insert(uuid, barList);
-    m_tickLabelMap.insert(uuid, data->getEntity_x() + '_' + xAttrName);
+    m_tickLabelMap.insert(uuid, data->getEntity_x());
 
     updateKeyAxisTickLabel();
     if(!isFromJson)

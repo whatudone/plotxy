@@ -46,6 +46,7 @@ public slots:
     // 导出数据成pxy或者csv，目前先保存为pxy
 	void onExportDataStore();
     void onExportOnlyFile();
+    void onExportOnlyData();
 	void onClose_Disconnect();
 	void onRunPythonScript();
 	void onLoadPML();

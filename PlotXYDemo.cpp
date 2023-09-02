@@ -2557,6 +2557,7 @@ void PlotXYDemo::initMenuFile()
     connect(ui.actionopenNetwork, &QAction::triggered, this, &PlotXYDemo::onOpenNetwork);
     connect(ui.action_ExportDataAndFile, &QAction::triggered, this, &PlotXYDemo::onExportDataStore);
     connect(ui.action_ExportOnlyFile, &QAction::triggered, this, &PlotXYDemo::onExportOnlyFile);
+    connect(ui.actionExportData, &QAction::triggered, this, &PlotXYDemo::onExportOnlyData);
     connect(ui.actionclose, &QAction::triggered, this, &PlotXYDemo::onClose_Disconnect);
     connect(ui.actionRun_Python_Script_Ctrl_E,
             &QAction::triggered,
@@ -2883,6 +2884,19 @@ void PlotXYDemo::onExportOnlyFile()
     if(!pxyFileName.isEmpty())
     {
         savePXYData(pxyFileName, false);
+    }
+}
+
+void PlotXYDemo::onExportOnlyData()
+{
+    QString asiFileName =
+        QFileDialog::getSaveFileName(nullptr, "保存", getDatasPath(), "ASI (*.asi)");
+    if(!asiFileName.isEmpty())
+    {
+        if(!DataManagerInstance->saveDataToASI(asiFileName))
+        {
+            qDebug() << "保存数据失败";
+        }
     }
 }
 

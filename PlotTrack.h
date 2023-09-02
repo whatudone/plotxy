@@ -51,8 +51,6 @@ private:
         m_trackDrawDataMap; //key:entityType+entityAttr, threshold,QColor
     QMap<TrackStatus, QColor> m_defaultColorMap;
 
-    QVector<double> m_barTicks;
-
     QMap<QString, QList<QCPBars*>> m_allBar;
     QMap<QString, QString> m_tickLabelMap;
     QMap<QString, QList<double>> m_itemData;

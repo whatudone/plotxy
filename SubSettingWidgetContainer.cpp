@@ -108,7 +108,7 @@ void SubSettingWidgetContainer::updateVisibleOnPlotTypeChanged(PlotType curType)
     }
     else if(curType == PlotType::Type_PlotTrack)
     {
-        visibleList << true << false << false << true << true << false << false << false << false;
+        visibleList << true << false << false << true << false << false << false << false << false;
     }
     else
     {

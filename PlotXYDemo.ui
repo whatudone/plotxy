@@ -96,6 +96,7 @@ background-color: rgb(3, 57, 122);
      </property>
      <addaction name="action_ExportDataAndFile"/>
      <addaction name="action_ExportOnlyFile"/>
+     <addaction name="actionExportData"/>
     </widget>
     <addaction name="actionopen"/>
     <addaction name="actionopenNetwork"/>
@@ -1276,6 +1277,11 @@ background-color: rgb(3, 57, 122);
   <action name="action_ExportOnlyFile">
    <property name="text">
     <string>导出方案(不包含数据)</string>
+   </property>
+  </action>
+  <action name="actionExportData">
+   <property name="text">
+    <string>导出数据</string>
    </property>
   </action>
  </widget>
