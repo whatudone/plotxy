@@ -675,6 +675,8 @@ bool AddPlotPair::handleMultiSelectedEntity()
             auto xItemList = ui.tableWidget_Entity_2->selectedItems();
             auto yItemList = ui.tableWidget_Entity_3->selectedItems();
             int32_t size = xItemList.size();
+            // 每次添加数据帝都会触发刷新最底下表格的逻辑，此处先屏蔽信号，后续同一发送信号
+            m_pCurSelectedPlot->blockSignals(true);
             for(int32_t i = 0; i < size; ++i)
             {
                 auto xItem = xItemList.at(i);
@@ -715,6 +717,8 @@ bool AddPlotPair::handleMultiSelectedEntity()
                                                     yAttrUnitName,
                                                     dataHash);
             }
+            m_pCurSelectedPlot->blockSignals(false);
+            emit m_pCurSelectedPlot->dataPairsChanged(m_pCurSelectedPlot);
             return true;
         }
     }
