@@ -6424,6 +6424,19 @@ background-color: rgb(127, 127, 127);</string>
           </widget>
          </item>
          <item>
+          <spacer name="verticalSpacer_15">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
           <layout class="QVBoxLayout" name="verticalLayout_11">
            <property name="leftMargin">
             <number>10</number>
@@ -6439,171 +6452,7 @@ background-color: rgb(127, 127, 127);</string>
            </property>
            <item>
             <layout class="QGridLayout" name="gridLayout_24">
-             <item row="0" column="1">
-              <widget class="QSpinBox" name="spinBox_32"/>
-             </item>
-             <item row="0" column="2">
-              <spacer name="horizontalSpacer_85">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_142">
-               <property name="text">
-                <string>Padding Between Each Element:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QSpinBox" name="spinBox_33"/>
-             </item>
              <item row="1" column="2">
-              <spacer name="horizontalSpacer_86">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_143">
-               <property name="text">
-                <string>Status Bar Height:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QSpinBox" name="spinBox_34"/>
-             </item>
-             <item row="2" column="2">
-              <spacer name="horizontalSpacer_87">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="label_144">
-               <property name="text">
-                <string>Status Bar Texture:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="QComboBox" name="comboBox_21">
-               <item>
-                <property name="text">
-                 <string>No Texture</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Gradient</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Fractal</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Burst:Dark</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Burst:Light</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="3" column="2">
-              <spacer name="horizontalSpacer_88">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="label_145">
-               <property name="text">
-                <string>&quot;No Data&quot;Bar Color:     </string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="ColorButton" name="pushButton_82">
-               <property name="maximumSize">
-                <size>
-                 <width>25</width>
-                 <height>25</height>
-                </size>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="2">
-              <spacer name="horizontalSpacer_90">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="5" column="0">
-              <widget class="QLabel" name="label_146">
-               <property name="text">
-                <string>&quot;Invalid Data&quot;Bar Color:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="1">
-              <widget class="ColorButton" name="pushButton_83">
-               <property name="maximumSize">
-                <size>
-                 <width>25</width>
-                 <height>25</height>
-                </size>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="2">
               <spacer name="horizontalSpacer_89">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -6616,15 +6465,8 @@ background-color: rgb(127, 127, 127);</string>
                </property>
               </spacer>
              </item>
-             <item row="6" column="0">
-              <widget class="QLabel" name="label_147">
-               <property name="text">
-                <string>Event Overlay Bar Color:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="6" column="1">
-              <widget class="ColorButton" name="pushButton_84">
+             <item row="0" column="1">
+              <widget class="ColorButton" name="pushButtonUnavaBarColor">
                <property name="maximumSize">
                 <size>
                  <width>25</width>
@@ -6636,213 +6478,62 @@ background-color: rgb(127, 127, 127);</string>
                </property>
               </widget>
              </item>
-             <item row="6" column="2">
-              <spacer name="horizontalSpacer_91">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
+             <item row="1" column="1">
+              <widget class="ColorButton" name="pushButtonInvalidColor">
+               <property name="maximumSize">
                 <size>
-                 <width>40</width>
-                 <height>20</height>
+                 <width>25</width>
+                 <height>25</height>
                 </size>
                </property>
-              </spacer>
-             </item>
-             <item row="7" column="0">
-              <widget class="QLabel" name="label_148">
                <property name="text">
-                <string>Time Granularity (seconds):</string>
+                <string/>
                </property>
-              </widget>
-             </item>
-             <item row="7" column="1">
-              <widget class="QSpinBox" name="spinBox_35"/>
-             </item>
-             <item row="7" column="2">
-              <spacer name="horizontalSpacer_92">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="8" column="0">
-              <widget class="QLabel" name="label_149">
-               <property name="text">
-                <string>Reference Time:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="8" column="1" colspan="2">
-              <widget class="QDateTimeEdit" name="dateTimeEdit_2"/>
-             </item>
-             <item row="8" column="3">
-              <widget class="QLineEdit" name="lineEdit_51"/>
-             </item>
-             <item row="8" column="4">
-              <widget class="QLabel" name="label_150">
-               <property name="text">
-                <string>s</string>
-               </property>
-              </widget>
-             </item>
-             <item row="8" column="5">
-              <widget class="QPushButton" name="pushButton_85">
-               <property name="text">
-                <string>Now!</string>
-               </property>
-              </widget>
-             </item>
-             <item row="9" column="1">
-              <widget class="QComboBox" name="comboBox_22">
-               <item>
-                <property name="text">
-                 <string>Seconds</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Minutes</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Hours</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Julian</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Month Day</string>
-                </property>
-               </item>
               </widget>
              </item>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_141">
+              <widget class="QLabel" name="label_145">
                <property name="text">
-                <string>Padding Above First Element:</string>
+                <string>&quot;数据不存在&quot;柱体颜色:     </string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <spacer name="horizontalSpacer_90">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_146">
+               <property name="text">
+                <string>&quot;无效数据&quot;柱状颜色:</string>
                </property>
               </widget>
              </item>
             </layout>
            </item>
-           <item>
-            <widget class="QGroupBox" name="groupBox_38">
-             <property name="title">
-              <string>Plot Events</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_57">
-              <item>
-               <widget class="QTreeWidget" name="treeWidget_plotEvents">
-                <column>
-                 <property name="text">
-                  <string>Event Text</string>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>Time</string>
-                 </property>
-                </column>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_124">
-                <item>
-                 <widget class="QLabel" name="label_151">
-                  <property name="text">
-                   <string>Event Text:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="lineEdit_52"/>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label_152">
-                  <property name="text">
-                   <string>Time(seconds):</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="lineEdit_53"/>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_123">
-                  <item>
-                   <spacer name="horizontalSpacer_96">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="pushButton_86">
-                    <property name="text">
-                     <string>Add</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="pushButton_87">
-                    <property name="text">
-                     <string>Update</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="pushButton_88">
-                    <property name="text">
-                     <string>Remove</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="pushButton_89">
-                    <property name="text">
-                     <string>Clear</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_95">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </widget>
-           </item>
           </layout>
+         </item>
+         <item>
+          <spacer name="verticalSpacer_32">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </widget>
