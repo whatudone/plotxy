@@ -237,6 +237,8 @@ void AddPlotPair::initStackedWidget_pageLight()
     ui.pushButtonLightHelp->setVisible(false);
     ui.radioButtonLightTemplate->setVisible(false);
     ui.radioButtonLightColor->setVisible(false);
+    ui.label_17->setVisible(false);
+    ui.lineEdit_LightDesc->setVisible(false);
     connect(ui.tableWidget_lightEntity,
             SIGNAL(itemClicked(QTableWidgetItem*)),
             this,

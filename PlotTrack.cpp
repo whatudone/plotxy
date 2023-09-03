@@ -9,16 +9,10 @@ int PlotTrack::m_instanceCount = 1;
 
 PlotTrack::PlotTrack(QWidget* parent)
     : PlotItemBase(parent)
-    , m_minTime(std::numeric_limits<double>::min())
-    , m_maxTime(std::numeric_limits<double>::max())
 {
     QString name = QString("Track%1").arg(m_instanceCount);
     this->setName(name);
     m_instanceCount += 1;
-
-    m_defaultColorMap.insert(TrackStatus::Available, Qt::green);
-    m_defaultColorMap.insert(TrackStatus::Invalid, Qt::gray);
-    m_defaultColorMap.insert(TrackStatus::Unavailable, Qt::red);
 
     m_title = "Track Status";
 
@@ -105,32 +99,49 @@ void PlotTrack::updateGraphByDataPair(DataPair* dataPair, double curSecs)
             break;
         }
     }
-
-    if(curSecs < lowLimit)
+    // 当上下限为-1时，此时数据无效
+    if(math::doubleEqual(lowLimit, -1.0) && math::doubleEqual(highLimit, -1.0))
     {
-        // 仅有Unavailable数据
-        m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << curSecs);
+        m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << 0);
         m_allBar[uuid].at(1)->setData(QVector<double>() << cnt, QVector<double>() << 0);
-        m_allBar[uuid].at(2)->setData(QVector<double>() << cnt, QVector<double>() << 0);
+        m_allBar[uuid].at(2)->setData(QVector<double>() << cnt, QVector<double>() << curSecs);
     }
-    else if(curSecs > lowLimit && curSecs < highLimit)
+    else
     {
-        // 仅有Unavailable数据和部分Available数据
-        m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << lowLimit);
-        m_allBar[uuid].at(1)->setData(QVector<double>() << cnt,
-                                      QVector<double>() << (curSecs - lowLimit));
-        m_allBar[uuid].at(2)->setData(QVector<double>() << cnt, QVector<double>() << 0);
+
+        if(curSecs < lowLimit)
+        {
+            // 仅有Unavailable数据
+            m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << curSecs);
+            m_allBar[uuid].at(1)->setData(QVector<double>() << cnt, QVector<double>() << 0);
+            m_allBar[uuid].at(2)->setData(QVector<double>() << cnt, QVector<double>() << 0);
+        }
+        else if(curSecs > lowLimit && curSecs < highLimit)
+        {
+            // 仅有Unavailable数据和部分Available数据
+            m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << lowLimit);
+            m_allBar[uuid].at(1)->setData(QVector<double>() << cnt,
+                                          QVector<double>() << (curSecs - lowLimit));
+            m_allBar[uuid].at(2)->setData(QVector<double>() << cnt, QVector<double>() << 0);
+        }
+        else if(curSecs > highLimit)
+        {
+            // 仅有Unavailable数据和全部Available数据
+            // TODO:目前超过Available的数据临时用Invalid的Bar显示，后期再进行优化
+            m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << lowLimit);
+            m_allBar[uuid].at(1)->setData(QVector<double>() << cnt,
+                                          QVector<double>() << highLimit - lowLimit);
+            m_allBar[uuid].at(2)->setData(QVector<double>() << cnt,
+                                          QVector<double>() << (curSecs - highLimit));
+        }
     }
-    else if(curSecs > highLimit)
-    {
-        // 仅有Unavailable数据和全部Available数据
-        // 目前超过Available的数据临时用Invalid的Bar显示，后期再进行优化
-        m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << lowLimit);
-        m_allBar[uuid].at(1)->setData(QVector<double>() << cnt,
-                                      QVector<double>() << highLimit - lowLimit);
-        m_allBar[uuid].at(2)->setData(QVector<double>() << cnt,
-                                      QVector<double>() << (curSecs - highLimit));
-    }
+    m_allBar.value(uuid).at(0)->setBrush(m_unavailableColr);
+    m_allBar.value(uuid).at(0)->setPen(m_unavailableColr);
+    m_allBar.value(uuid).at(1)->setBrush(dataPair->dataColor());
+    m_allBar.value(uuid).at(1)->setPen(dataPair->dataColor());
+    m_allBar.value(uuid).at(2)->setBrush(m_invalidColor);
+    m_allBar.value(uuid).at(2)->setPen(m_invalidColor);
+
     // 无法单独更新坐标轴上每一个的刻度的颜色和字体，这里同一全部更新
     if(dataPair->isLabelTextShow())
     {
@@ -252,31 +263,22 @@ DataPair* PlotTrack::addPlotDataPair(int32_t xEntityID,
     // Available对应的Bar
     QCPBars* pBarAva = new QCPBars(m_customPlot->yAxis, m_customPlot->xAxis);
     pBarAva->setAntialiased(false); // 为了更好的边框效果，关闭抗齿锯
-    pBarAva->setPen(QPen(m_defaultColorMap[TrackStatus::Available].lighter(130)));
-    pBarAva->setBrush(m_defaultColorMap[TrackStatus::Available]);
 
     // Invalid对应的Bar
     QCPBars* pBarInv = new QCPBars(m_customPlot->yAxis, m_customPlot->xAxis);
     pBarInv->setAntialiased(false); // 为了更好的边框效果，关闭抗齿锯
-    pBarInv->setPen(QPen(m_defaultColorMap[TrackStatus::Invalid].lighter(130)));
-    pBarInv->setBrush(m_defaultColorMap[TrackStatus::Invalid]);
 
     // Unavailable对应的Bar
     QCPBars* pBarUna = new QCPBars(m_customPlot->yAxis, m_customPlot->xAxis);
     pBarUna->setAntialiased(false); // 为了更好的边框效果，关闭抗齿锯
-    pBarUna->setPen(QPen(m_defaultColorMap[TrackStatus::Unavailable].lighter(130)));
-    pBarUna->setBrush(m_defaultColorMap[TrackStatus::Unavailable]);
 
-    double minTime;
-    double maxTime;
-    DataManager::getInstance()->getMinMaxTime(m_minTime, m_maxTime);
-    QVector<double> timeList = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
-        xEntityID, "Time", m_maxTime, 1.0);
+    QVector<double> timeList =
+        DataManager::getInstance()->getEntityAttrValueList(xEntityID, "Time");
     if(!timeList.isEmpty())
     {
         // minTime和maxTime即为绘制的Available部分的下限和上限
-        minTime = timeList.at(0);
-        maxTime = timeList.last();
+        double minTime = timeList.at(0);
+        double maxTime = timeList.last();
         m_itemData.insert(uuid, QList<double>() << minTime << maxTime);
     }
 

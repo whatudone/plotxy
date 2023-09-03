@@ -39,6 +39,7 @@ private:
     void initAScopeUI();
     void initRTIUI();
     void initDopplerUI();
+    void initTrackUI();
     void initEditableMap();
     void initUnitData();
 

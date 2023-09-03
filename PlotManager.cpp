@@ -133,7 +133,6 @@ void PlotManager::initTreeWidgetSettings()
         new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("Attitude设置")));
     m_itemTrackStatus =
         new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("Track Status设置")));
-    m_itemTrackStatus->setHidden(true);
     m_itemRangeDoppler =
         new QTreeWidgetItem(ui.treeWidget_settings, QStringList(QString("Range Doppler设置")));
 
@@ -574,6 +573,8 @@ void PlotManager::initDopplerUI()
     ui.label_158->setVisible(false);
     ui.pushButton_93->setVisible(false);
 }
+
+void PlotManager::initTrackUI() {}
 
 void PlotManager::initEditableMap()
 {

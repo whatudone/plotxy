@@ -105,7 +105,7 @@
         <number>1</number>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>16</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QVBoxLayout" name="verticalLayout_64" stretch="0,1,0,0,0,1">
@@ -4757,7 +4757,7 @@ background-color: rgb(127, 127, 127);</string>
                     <number>300</number>
                    </attribute>
                    <attribute name="horizontalHeaderStretchLastSection">
-                    <bool>false</bool>
+                    <bool>true</bool>
                    </attribute>
                    <attribute name="verticalHeaderVisible">
                     <bool>false</bool>
@@ -6439,13 +6439,6 @@ background-color: rgb(127, 127, 127);</string>
            </property>
            <item>
             <layout class="QGridLayout" name="gridLayout_24">
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_141">
-               <property name="text">
-                <string>Padding Above First Element:</string>
-               </property>
-              </widget>
-             </item>
              <item row="0" column="1">
               <widget class="QSpinBox" name="spinBox_32"/>
              </item>
@@ -6733,6 +6726,13 @@ background-color: rgb(127, 127, 127);</string>
                  <string>Month Day</string>
                 </property>
                </item>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_141">
+               <property name="text">
+                <string>Padding Above First Element:</string>
+               </property>
               </widget>
              </item>
             </layout>

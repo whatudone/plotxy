@@ -52,13 +52,15 @@ protected:
 private:
     QMap<QString, QMap<double, QColor>>
         m_trackDrawDataMap; //key:entityType+entityAttr, threshold,QColor
-    QMap<TrackStatus, QColor> m_defaultColorMap;
 
     QMap<QString, QList<QCPBars*>> m_allBar;
     QMap<QString, QString> m_tickLabelMap;
     QMap<QString, QList<double>> m_itemData;
-    double m_minTime;
-    double m_maxTime;
+    // 有效数据由DataColor控制
+    // 无效数据颜色
+    QColor m_invalidColor = Qt::gray;
+    // 无数据
+    QColor m_unavailableColr = Qt::red;
 };
 
 #endif // _PLOT_TRACK_H_

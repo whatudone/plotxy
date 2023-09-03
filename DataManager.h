@@ -207,10 +207,11 @@ public:
     QString getGroupNameByID(int32_t id);
     QString getUnitByAttr(int32_t id, const QString& attr);
 
-private:
     //获取实体-属性的全数据，属性默认为Time
     QVector<double>
     getEntityAttrValueList(int32_t entityID, const QString& attr = "Time", double rate = 1.0);
+
+private:
     //获取secs时间内的实体-属性的最大index
     int getEntityAttrMaxIndexByTime(int32_t entityID, double secs);
 
