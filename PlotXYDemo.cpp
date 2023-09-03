@@ -1064,7 +1064,7 @@ void PlotXYDemo::readHDF5(const QString& inputFileName, QByteArray& pxyData, QBy
         asiData = QByteArray(asiBuffer, asiDim);
         file.close();
     }
-    catch(const H5::FileIException& e)
+    catch(const H5::FileIException& /*e*/)
     {
         QMessageBox::warning(nullptr, "提示", "无法加载中文路径文档");
     }
@@ -1453,6 +1453,16 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
                 colorInfo.append(object);
             }
             plotObject.insert("DopplerColorRangeInfo", colorInfo);
+        }
+    }
+    else if(type == PlotType::Type_PlotTrack)
+    {
+        if(PlotTrack* track = dynamic_cast<PlotTrack*>(plot))
+        {
+            plotObject.insert("TrackUnavaColor",
+                              color_transfer::QColorToRGBAStr(track->unavailableColr()));
+            plotObject.insert("TrackInvalidColor",
+                              color_transfer::QColorToRGBAStr(track->invalidColor()));
         }
     }
 
@@ -1856,6 +1866,22 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
                 colorMap.insert(value, color);
             }
             dopplerPlot->setColorRangeMap(colorMap);
+        }
+    }
+    else if(type == PlotType::Type_PlotTrack)
+    {
+        if(PlotTrack* track = dynamic_cast<PlotTrack*>(plot))
+        {
+            if(plotObject.contains("TrackUnavaColor"))
+            {
+                track->setUnavailableColr(color_transfer::QColorFromRGBAStr(
+                    plotObject.value("TrackUnavaColor").toString()));
+            }
+            if(plotObject.contains("TrackInvalidColor"))
+            {
+                track->setInvalidColor(color_transfer::QColorFromRGBAStr(
+                    plotObject.value("TrackInvalidColor").toString()));
+            }
         }
     }
 

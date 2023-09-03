@@ -56,6 +56,7 @@ private:
     void refreshAScopeUI(PlotItemBase* plot);
     void refreshRTIUI(PlotItemBase* plot);
     void refreshDopplerUI(PlotItemBase* plot);
+    void refreshTrackUI(PlotItemBase* plot);
 
 	void refreshTextEditUI(PlotItemBase* plot);
 	void refreshAttitudeUI(PlotItemBase* plot);
@@ -263,6 +264,10 @@ public slots:
     void onComboBox_DopplerColorIndexChanged(int index);
     void onPushButton_DopplerNewColorClicked();
     void onPushButton_DopplerDeleteColorClicked();
+
+    // Track
+    void onUnavaBarColorChanged();
+    void onInvalidBarColorChanged();
 
 signals:
     void sigAddPlotPair();

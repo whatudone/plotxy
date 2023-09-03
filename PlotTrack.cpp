@@ -1,5 +1,6 @@
 ﻿#include "PlotTrack.h"
 #include "DataManager.h"
+#include "PlotXYDemo.h"
 #include "Utils.h"
 
 #include <QDebug>
@@ -168,6 +169,34 @@ void PlotTrack::setVertGrids(int32_t count)
 void PlotTrack::setGridVisible(bool enable)
 {
     m_gridVisible = enable;
+}
+
+QColor PlotTrack::unavailableColr() const
+{
+    return m_unavailableColr;
+}
+
+void PlotTrack::setUnavailableColr(const QColor& unavailableColr, bool updateUI)
+{
+    m_unavailableColr = unavailableColr;
+    if(updateUI)
+    {
+        updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
+    }
+}
+
+QColor PlotTrack::invalidColor() const
+{
+    return m_invalidColor;
+}
+
+void PlotTrack::setInvalidColor(const QColor& invalidColor, bool updateUI)
+{
+    m_invalidColor = invalidColor;
+    if(updateUI)
+    {
+        updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
+    }
 }
 
 void PlotTrack::updateKeyAxisTickLabel()

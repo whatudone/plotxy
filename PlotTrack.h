@@ -30,6 +30,12 @@ public:
 public:
     static int m_instanceCount; //实体个数
 
+    QColor invalidColor() const;
+    void setInvalidColor(const QColor& invalidColor, bool updateUI = false);
+
+    QColor unavailableColr() const;
+    void setUnavailableColr(const QColor& unavailableColr, bool updateUI = false);
+
 protected:
     void initPlot();
     void updateDataForDataPairsByTime(double secs) override;

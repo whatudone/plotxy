@@ -14,6 +14,7 @@
 #include "PlotRTI.h"
 #include "PlotScatter.h"
 #include "PlotText.h"
+#include "PlotTrack.h"
 
 #include <QAction>
 #include <QColorDialog>
@@ -71,6 +72,7 @@ void PlotManager::init()
     initRTIUI();
     initDopplerUI();
     initEditableMap();
+    initTrackUI();
 }
 
 void PlotManager::addPlot(const QString& tabName, PlotItemBase* plotItem)
@@ -574,7 +576,17 @@ void PlotManager::initDopplerUI()
     ui.pushButton_93->setVisible(false);
 }
 
-void PlotManager::initTrackUI() {}
+void PlotManager::initTrackUI()
+{
+    connect(ui.pushButtonUnavaBarColor,
+            &QPushButton::clicked,
+            this,
+            &PlotManager::onUnavaBarColorChanged);
+    connect(ui.pushButtonInvalidColor,
+            &QPushButton::clicked,
+            this,
+            &PlotManager::onInvalidBarColorChanged);
+}
 
 void PlotManager::initEditableMap()
 {
@@ -1342,6 +1354,15 @@ void PlotManager::refreshDopplerUI(PlotItemBase* plot)
     ui.comboBox_DopplerColorIndex->blockSignals(false);
 }
 
+void PlotManager::refreshTrackUI(PlotItemBase* plot)
+{
+    if(auto track = dynamic_cast<PlotTrack*>(plot))
+    {
+        ui.pushButtonUnavaBarColor->setColor(track->unavailableColr());
+        ui.pushButtonInvalidColor->setColor(track->invalidColor());
+    }
+}
+
 void PlotManager::refreshTextEditUI(PlotItemBase* plot)
 {
 	ui.checkBox_12->setChecked(plot->unitsShowX());
@@ -2074,6 +2095,7 @@ void PlotManager::onTWSclicked(QTreeWidgetItem* item, int column)
         else if(compare == QString("Track Status设置"))
         {
             ui.stackedWidget->setCurrentIndex(16);
+            refreshTrackUI(m_curSelectPlot);
         }
         else if(compare == QString("Range Doppler设置"))
         {
@@ -4260,4 +4282,20 @@ void PlotManager::onPushButton_DopplerDeleteColorClicked()
     ui.comboBox_DopplerColorIndex->blockSignals(false);
 
     refreshDopplerColorRange();
+}
+
+void PlotManager::onUnavaBarColorChanged()
+{
+    if(auto track = dynamic_cast<PlotTrack*>(m_curSelectPlot))
+    {
+        track->setUnavailableColr(ui.pushButtonUnavaBarColor->color(), true);
+    }
+}
+
+void PlotManager::onInvalidBarColorChanged()
+{
+    if(auto track = dynamic_cast<PlotTrack*>(m_curSelectPlot))
+    {
+        track->setInvalidColor(ui.pushButtonInvalidColor->color(), true);
+    }
 }
