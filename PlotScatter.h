@@ -139,10 +139,29 @@ public:
 
     QString getYTimeTickFormat() const;
 
+    bool getIsShowStaticGrid() const;
+    void setIsShowStaticGrid(bool isShowStaticGrid);
+
+    QColor getStaticTextColor() const;
+    void setStaticTextColor(const QColor& staticTextColor);
+
+    QFont getStaticFont() const;
+    void setStaticFont(const QFont& staticFont);
+
+    GridStyle getStaticGridStyle() const;
+    void setStaticGridStyle(const GridStyle& staticGridStyle);
+
+    GridDensity getStaticGridDensity() const;
+    void setStaticGridDensity(const GridDensity& staticGridDensity);
+
+    void setStaticGrid(bool isResetRange = false);
+
 protected:
     void updateDataForDataPairsByTime(double secs) override;
 
     void updateGraphByDataPair(DataPair* data, double curSecs) override;
+
+    void resizeEvent(QResizeEvent* event) override;
 
 private:
     void initPlot();
@@ -210,6 +229,17 @@ private:
     QSharedPointer<QCPAxisTicker> m_oriYAxisTicker;
     QString m_xTimeTickFormat;
     QString m_yTimeTickFormat;
+
+    bool m_isShowStaticGrid;
+    QColor m_staticTextColor;
+    QFont m_staticFont;
+    GridStyle m_staticGridStyle;
+    GridDensity m_staticGridDensity;
+    QList<QCPAbstractItem*> m_staticGridItemList;
+    double m_tmpCoordBgnX;
+    double m_tmpCoordBgnY;
+    double m_tmpCoordEndX;
+    double m_tmpCoordEndY;
 };
 
 #endif // PLOTSCATTER_H

@@ -105,7 +105,7 @@
         <number>1</number>
        </property>
        <property name="currentIndex">
-        <number>10</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QVBoxLayout" name="verticalLayout_64" stretch="0,1,0,0,0,1">
@@ -1309,7 +1309,7 @@ color: rgb(255, 255, 255);</string>
            <item>
             <widget class="QGroupBox" name="groupBox_10">
              <property name="title">
-              <string>Cyclical Reprojection</string>
+              <string>循环投影</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_65">
               <property name="leftMargin">
@@ -1342,14 +1342,14 @@ color: rgb(255, 255, 255);</string>
                 <item row="0" column="3">
                  <widget class="QLabel" name="label_29">
                   <property name="text">
-                   <string>Max.Value</string>
+                   <string>上限值</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="0" colspan="2">
                  <widget class="QCheckBox" name="checkBox_7">
                   <property name="text">
-                   <string>X Axis</string>
+                   <string>X轴</string>
                   </property>
                  </widget>
                 </item>
@@ -1362,7 +1362,7 @@ color: rgb(255, 255, 255);</string>
                 <item row="2" column="0" colspan="2">
                  <widget class="QCheckBox" name="checkBox_8">
                   <property name="text">
-                   <string>Y Axis</string>
+                   <string>Y轴</string>
                   </property>
                  </widget>
                 </item>
@@ -1375,14 +1375,14 @@ color: rgb(255, 255, 255);</string>
                 <item row="0" column="2">
                  <widget class="QLabel" name="label_28">
                   <property name="text">
-                   <string>Min.Value</string>
+                   <string>下限值</string>
                   </property>
                  </widget>
                 </item>
                 <item row="0" column="0" colspan="2">
                  <widget class="QLabel" name="label_27">
                   <property name="text">
-                   <string>Enable</string>
+                   <string>启用</string>
                   </property>
                  </widget>
                 </item>
