@@ -78,80 +78,91 @@ void PlotTrack::updateGraphByDataPair(DataPair* dataPair, double curSecs)
 {
     if(!dataPair)
         return;
-
     QString uuid = dataPair->getUuid();
-    double lowLimit = std::numeric_limits<double>::min();
-    double highLimit = std::numeric_limits<double>::max();
+    if(dataPair->isDraw()){
 
-    if(m_itemData.contains(uuid) && (m_itemData.value(uuid).size() == 2))
-    {
-        lowLimit = m_itemData.value(uuid).at(0);
-        highLimit = m_itemData.value(uuid).at(1);
-    }
+        double lowLimit = std::numeric_limits<double>::min();
+        double highLimit = std::numeric_limits<double>::max();
 
-    int index = 0;
-    int cnt = 0; // 标记是哪一条Target对应的Bar
-    for(auto it = m_tickLabelMap.constBegin(); it != m_tickLabelMap.constEnd(); it++)
-    {
-        index++;
-        if(it.key() == uuid)
+        if(m_itemData.contains(uuid) && (m_itemData.value(uuid).size() == 2))
         {
-            cnt = index;
-            break;
+            lowLimit = m_itemData.value(uuid).at(0);
+            highLimit = m_itemData.value(uuid).at(1);
         }
-    }
-    // 当上下限为-1时，此时数据无效
-    if(math::doubleEqual(lowLimit, -1.0) && math::doubleEqual(highLimit, -1.0))
-    {
-        m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << 0);
-        m_allBar[uuid].at(1)->setData(QVector<double>() << cnt, QVector<double>() << 0);
-        m_allBar[uuid].at(2)->setData(QVector<double>() << cnt, QVector<double>() << curSecs);
-    }
-    else
-    {
 
-        if(curSecs < lowLimit)
+        int index = 0;
+        int cnt = 0; // 标记是哪一条Target对应的Bar
+        for(auto it = m_tickLabelMap.constBegin(); it != m_tickLabelMap.constEnd(); it++)
         {
-            // 仅有Unavailable数据
-            m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << curSecs);
+            index++;
+            if(it.key() == uuid)
+            {
+                cnt = index;
+                break;
+            }
+        }
+        // 当上下限为-1时，此时数据无效
+        if(math::doubleEqual(lowLimit, -1.0) && math::doubleEqual(highLimit, -1.0))
+        {
+            m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << 0);
             m_allBar[uuid].at(1)->setData(QVector<double>() << cnt, QVector<double>() << 0);
-            m_allBar[uuid].at(2)->setData(QVector<double>() << cnt, QVector<double>() << 0);
+            m_allBar[uuid].at(2)->setData(QVector<double>() << cnt, QVector<double>() << curSecs);
         }
-        else if(curSecs > lowLimit && curSecs < highLimit)
+        else
         {
-            // 仅有Unavailable数据和部分Available数据
-            m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << lowLimit);
-            m_allBar[uuid].at(1)->setData(QVector<double>() << cnt,
-                                          QVector<double>() << (curSecs - lowLimit));
-            m_allBar[uuid].at(2)->setData(QVector<double>() << cnt, QVector<double>() << 0);
-        }
-        else if(curSecs > highLimit)
-        {
-            // 仅有Unavailable数据和全部Available数据
-            // TODO:目前超过Available的数据临时用Invalid的Bar显示，后期再进行优化
-            m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << lowLimit);
-            m_allBar[uuid].at(1)->setData(QVector<double>() << cnt,
-                                          QVector<double>() << highLimit - lowLimit);
-            m_allBar[uuid].at(2)->setData(QVector<double>() << cnt,
-                                          QVector<double>() << (curSecs - highLimit));
-        }
-    }
-    m_allBar.value(uuid).at(0)->setBrush(m_unavailableColr);
-    m_allBar.value(uuid).at(0)->setPen(m_unavailableColr);
-    m_allBar.value(uuid).at(1)->setBrush(dataPair->dataColor());
-    m_allBar.value(uuid).at(1)->setPen(dataPair->dataColor());
-    m_allBar.value(uuid).at(2)->setBrush(m_invalidColor);
-    m_allBar.value(uuid).at(2)->setPen(m_invalidColor);
 
-    // 无法单独更新坐标轴上每一个的刻度的颜色和字体，这里同一全部更新
-    if(dataPair->isLabelTextShow())
-    {
-        m_customPlot->yAxis->setTickLabelColor(dataPair->getLabelColor());
-        m_customPlot->yAxis->setTickLabelFont(dataPair->getLabelFont());
-        m_customPlot->yAxis->setTickLabels(true);
-    }
-    else
-    {
+            if(curSecs < lowLimit)
+            {
+                // 仅有Unavailable数据
+                m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << curSecs);
+                m_allBar[uuid].at(1)->setData(QVector<double>() << cnt, QVector<double>() << 0);
+                m_allBar[uuid].at(2)->setData(QVector<double>() << cnt, QVector<double>() << 0);
+            }
+            else if(curSecs > lowLimit && curSecs < highLimit)
+            {
+                // 仅有Unavailable数据和部分Available数据
+                m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << lowLimit);
+                m_allBar[uuid].at(1)->setData(QVector<double>() << cnt,
+                                              QVector<double>() << (curSecs - lowLimit));
+                m_allBar[uuid].at(2)->setData(QVector<double>() << cnt, QVector<double>() << 0);
+            }
+            else if(curSecs > highLimit)
+            {
+                // 仅有Unavailable数据和全部Available数据
+                // TODO:目前超过Available的数据临时用Invalid的Bar显示，后期再进行优化
+                m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << lowLimit);
+                m_allBar[uuid].at(1)->setData(QVector<double>() << cnt,
+                                              QVector<double>() << highLimit - lowLimit);
+                m_allBar[uuid].at(2)->setData(QVector<double>() << cnt,
+                                              QVector<double>() << (curSecs - highLimit));
+            }
+        }
+        m_allBar.value(uuid).at(0)->setBrush(m_unavailableColr);
+        m_allBar.value(uuid).at(0)->setPen(m_unavailableColr);
+        m_allBar.value(uuid).at(1)->setBrush(dataPair->dataColor());
+        m_allBar.value(uuid).at(1)->setPen(dataPair->dataColor());
+        m_allBar.value(uuid).at(2)->setBrush(m_invalidColor);
+        m_allBar.value(uuid).at(2)->setPen(m_invalidColor);
+
+        m_allBar.value(uuid).at(0)->setVisible(true);
+        m_allBar.value(uuid).at(1)->setVisible(true);
+        m_allBar.value(uuid).at(2)->setVisible(true);
+
+        // 无法单独更新坐标轴上每一个的刻度的颜色和字体，这里同一全部更新
+        if(dataPair->isLabelTextShow())
+        {
+            m_customPlot->yAxis->setTickLabelColor(dataPair->getLabelColor());
+            m_customPlot->yAxis->setTickLabelFont(dataPair->getLabelFont());
+            m_customPlot->yAxis->setTickLabels(true);
+        }
+        else
+        {
+            m_customPlot->yAxis->setTickLabels(false);
+        }
+    }else{
+        m_allBar.value(uuid).at(0)->setVisible(false);
+        m_allBar.value(uuid).at(1)->setVisible(false);
+        m_allBar.value(uuid).at(2)->setVisible(false);
         m_customPlot->yAxis->setTickLabels(false);
     }
 }

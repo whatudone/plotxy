@@ -171,6 +171,8 @@ public slots:
 
     void onTabDrawWidgetCreatePlot(PlotType type, const QRect& rect);
 
+    void onCurrentTabChange(int32_t index);
+
 signals:
     // 通知图表时间轴当前时间发送变化
     void currentSecsChanged(double secs);
@@ -187,6 +189,8 @@ public:
     static double getSeconds();
 
     static bool getIsRealTime();
+
+    static QString getCurreentTabName();
 
 private:
     void addTabPage(const QString& tabName = QString());
@@ -259,6 +263,8 @@ private:
 
     // 菜单栏拖动功能
     QPoint m_lastPos;
+    // 当前tab页
+    static QString m_curreentTabName;
 };
 
 #endif // !

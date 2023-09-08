@@ -184,22 +184,27 @@ void PlotDoppler::updateGraphByDataPair(DataPair* data, double curSecs)
     {
         m_colorMap->setVisible(false);
         m_colorScale->setVisible(false);
+        m_customPlot->graph(1)->setVisible(false);
+        m_customPlot->graph(2)->setVisible(false);
     }
 }
 
 void PlotDoppler::updateAScopesBySlicePoint(const QPointF& point)
 {
-    // 水平曲线图加载数据
+
+                // 水平曲线图加载数据
     QVector<double> hXDatas;
     QVector<double> hValues;
     getXToValueVecByY(point.x(), hXDatas, hValues);
     m_customPlot->graph(1)->setData(hXDatas, hValues, true);
 
-    // 垂直曲线图加载数据
+                // 垂直曲线图加载数据
     QVector<double> vYDatas;
     QVector<double> vValues;
     getYToValueVecByX(point.y(), vYDatas, vValues);
     m_customPlot->graph(2)->setData(vYDatas, vValues, true);
+    m_customPlot->graph(1)->setVisible(true);
+    m_customPlot->graph(2)->setVisible(true);
 }
 
 void PlotDoppler::initColorRangeMap()
@@ -243,6 +248,57 @@ void PlotDoppler::setGridColorWidth(const QColor& color, int32_t width)
     m_customPlot->graph(2)->keyAxis()->grid()->setPen(QPen(m_gridColor, m_gridWidth));
     m_customPlot->graph(2)->valueAxis()->grid()->setPen(QPen(m_gridColor, m_gridWidth));
     m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
+}
+
+void PlotDoppler::setHorzGrids(int32_t count)
+{
+    m_horzGrids = count;
+    if(count == 0)
+    {
+        m_customPlot->graph(1)->keyAxis()->grid()->setVisible(false);
+        m_customPlot->graph(2)->keyAxis()->grid()->setVisible(false);
+    }
+    else
+    {
+        m_customPlot->graph(1)->keyAxis()->grid()->setVisible(true);
+        m_customPlot->graph(2)->keyAxis()->grid()->setVisible(true);
+
+        m_customPlot->graph(1)->keyAxis()->ticker()->setTickCount(m_horzGrids);
+        m_customPlot->graph(2)->keyAxis()->ticker()->setTickCount(m_horzGrids);
+    }
+    m_customPlot->replot();
+}
+
+void PlotDoppler::setVertGrids(int32_t count)
+{
+    m_vertGrids = count;
+
+    if(count == 0)
+    {
+        m_customPlot->graph(1)->valueAxis()->grid()->setVisible(false);
+        m_customPlot->graph(2)->valueAxis()->grid()->setVisible(false);
+    }
+    else
+    {
+        m_customPlot->graph(1)->valueAxis()->grid()->setVisible(true);
+        m_customPlot->graph(2)->valueAxis()->grid()->setVisible(true);
+
+        m_customPlot->graph(1)->valueAxis()->ticker()->setTickCount(m_vertGrids);
+        m_customPlot->graph(2)->valueAxis()->ticker()->setTickCount(m_vertGrids);
+    }
+    m_customPlot->replot();
+}
+
+void PlotDoppler::setGridFillColor(const QColor &color)
+{
+    m_gridFillColor = color;
+
+
+    m_customPlot->axisRect(0)->setBackground(color);
+    m_customPlot->axisRect(1)->setBackground(color);
+    m_customPlot->axisRect(2)->setBackground(color);
+
+    m_customPlot->replot();
 }
 
 bool PlotDoppler::getIsShowToolTip() const
