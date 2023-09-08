@@ -164,7 +164,7 @@ void General::updateVisibleOnPlotTypeChanged(PlotType curType)
     if(curType == PlotType::Type_PlotAScope)
     {
         visibleList = QList<bool>()
-                      << true << true << true << true << true << true << true << false << false;
+                      << true << true << true << false << true << true << true << false << false;
     }
     else if(curType == PlotType::Type_PlotBar || curType == PlotType::Type_PlotLight)
     {

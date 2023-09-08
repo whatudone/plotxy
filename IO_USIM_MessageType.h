@@ -95,6 +95,9 @@
 #define USIM_MineSweepSuccess_Message 1069  //扫雷成功
 #define USIM_MineSweepExploded_Message 1070  //水雷爆炸
 
+//编译不过，临时修改，可能和客户现场有差别，后期联调需注意
+#define USIM_ASSOCIENTITYLAUNCH_MESSAGE 1071 //平台出航
+
 #pragma pack (push ,1) 
 
 //struct Z_SendHeader{

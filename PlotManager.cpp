@@ -1650,7 +1650,7 @@ void PlotManager::enableItem_Dial()
     m_itemRangeDoppler->setDisabled(true);
 
     //-
-    ui.lineEdit_limitEndX->setDisabled(true);
+    ui.lineEdit_LimitBgnY->setDisabled(true);
     ui.lineEdit_limitEndY->setDisabled(true);
 
     ui.lineEdit_hrozGrids->setDisabled(true);
@@ -1661,7 +1661,7 @@ void PlotManager::enableItem_Dial()
     ui.lineEdit_PrecisionY->setDisabled(true);
     //+
     ui.lineEdit_limitBgnX->setDisabled(false);
-    ui.lineEdit_LimitBgnY->setDisabled(false);
+    ui.lineEdit_limitEndX->setDisabled(false);
 
     ui.lineEdit_21->setDisabled(false);
     ui.lineEdit_23->setDisabled(false);
@@ -1794,10 +1794,7 @@ void PlotManager::enableItem_Doppler()
 
     //-
     ui.lineEdit_21->setDisabled(true);
-    ui.lineEdit_limitBgnX->setDisabled(true);
-    ui.lineEdit_LimitBgnY->setDisabled(true);
-    ui.lineEdit_limitEndX->setDisabled(true);
-    ui.lineEdit_limitEndY->setDisabled(true);
+
     //+
     ui.comboBox_XUnits->setDisabled(false);
     ui.comboBox_YUnits->setDisabled(false);
@@ -1809,6 +1806,11 @@ void PlotManager::enableItem_Doppler()
     ui.lineEdit_vertGrids->setDisabled(false);
 
     ui.checkBoxLinkY->setDisabled(false);
+
+    ui.lineEdit_limitBgnX->setDisabled(false);
+    ui.lineEdit_LimitBgnY->setDisabled(false);
+    ui.lineEdit_limitEndX->setDisabled(false);
+    ui.lineEdit_limitEndY->setDisabled(false);
 }
 
 void PlotManager::exchangeItem(QTableWidget* tableWidget, int selectedRow, int targetRow)

@@ -933,19 +933,37 @@ bool DataManager::isEntityContainsGenericTags(int32_t id)
     return m_genericMap.contains(id);
 }
 
+int32_t getIndexInVector(const QVector<double> vec,double element){
+    int32_t left=0;
+    int32_t right=vec.size()-1;
+    while(left<=right){
+        int32_t mid=left+(right-left)/2;
+        if(math::doubleEqual( vec.at(mid),element)){
+            return mid;
+        }else if (vec.at(mid)<element) {
+            left=mid+1;
+        }else {
+            right=mid-1;
+        }
+    }
+    return left;
+}
+
 int DataManager::getEntityAttrMaxIndexByTime(int32_t entityID, double secs)
 {
 	int index = 0;
     QVector<double> timeList = getEntityAttrValueList(entityID, "Time");
     if(!timeList.isEmpty())
 	{
-        for(index = 0; index < timeList.size(); ++index)
-		{
-            if(timeList.at(index) > secs)
-			{
-				break;
-			}
-		}
+//        int32_t size=timeList.size();
+//        for(index = 0; index < size; ++index)
+//		{
+//            if(timeList.at(index) > secs)
+//			{
+//				break;
+//			}
+//		}
+        index=getIndexInVector(timeList,secs);
 	}
     return (index - 1);
 }
@@ -1009,6 +1027,7 @@ QString DataManager::getUnitByAttr(int32_t id, const QString& attr)
 
 void DataManager::onRecvGenericData(const GenericData& generic)
 {
+//    qDebug()<<generic.m_ID<<" "<<generic.m_eventType<<" "<<generic.m_eventName<<" "<<generic.m_platName;
     int32_t uID = -1;
     if(generic.m_ID != -1)
     {
@@ -1017,9 +1036,11 @@ void DataManager::onRecvGenericData(const GenericData& generic)
     else if(!generic.m_platName.isEmpty())
     {
         uID = findIDByName(generic.m_platName);
+//        qDebug()<<"FIND ID="<<uID;
     }
     if(uID == -1)
     {
+//        qDebug()<<"ID=-1";
         return;
     }
 

@@ -35,6 +35,10 @@ public:
     virtual void setAxisColorWidth(const QColor& color, int32_t width) override;
     virtual void setGridColorWidth(const QColor& color, int32_t width) override;
 
+    virtual void setHorzGrids(int32_t count) override;
+    virtual void setVertGrids(int32_t count) override;
+    virtual void setGridFillColor(const QColor& color) override;
+
 private:
     // 通过指定X值获取对应的切片数据
     void getYToValueVecByX(double x, QVector<double>& yVec, QVector<double>& dataVec);

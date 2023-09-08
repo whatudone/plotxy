@@ -259,7 +259,9 @@ bool PlotAScope::isAutofitX() const
 void PlotAScope::setIsAutofitX(bool isAutofitX)
 {
     m_isAutofitX = isAutofitX;
-    m_customPlot->replot();
+    if(isAutofitX){
+        rescaleXAxis();
+    }
 }
 
 bool PlotAScope::isAutofitY() const
@@ -270,7 +272,9 @@ bool PlotAScope::isAutofitY() const
 void PlotAScope::setIsAutofitY(bool isAutofitY)
 {
     m_isAutofitY = isAutofitY;
-    m_customPlot->replot();
+    if(isAutofitY){
+        rescaleYAxis();
+    }
 }
 
 void PlotAScope::setAxisVisible(bool on, AxisType type)

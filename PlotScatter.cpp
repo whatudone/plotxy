@@ -272,7 +272,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
          * 但是在线模式会一直无限追加数据，需要开启采样，不然数据量太大会严重卡顿
          * 离线模式不启用采样
          */
-        info.graph->setAdaptiveSampling(false);
+        info.graph->setAdaptiveSampling(true);
         info.graph->setBrush(Qt::NoBrush);
         info.tracerText = new QCPItemText(m_customPlot);
         info.tracerText->position->setType(QCPItemPosition::ptPlotCoords);
@@ -306,7 +306,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
             x = x.mid(x.size() - pointsLimit);
             y = y.mid(y.size() - pointsLimit);
         }
-        graph->setAdaptiveSampling(PlotXYDemo::getIsRealTime());
+        graph->setAdaptiveSampling(true);
 
         graph->setVisible(true);
         // 第三个参数设置为true，禁止内部对数据根据x轴的数值大小进行排序，导致数据插入顺序不对，出现line模式连线不对
