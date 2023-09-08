@@ -200,8 +200,6 @@ void PlotManager::initAxisGridUI()
     ui.pushButton_flipYValues->setVisible(false);
     ui.checkBox_oneToOneScale->setVisible(false);
     ui.checkBox_adjustTimeBoundOnTALOChange->setVisible(false);
-    ui.groupBox_10->setVisible(false);
-    ui.groupBox_8->setVisible(false);
     ui.checkBox_9->setVisible(false);
     ui.pushButton_11->setVisible(false);
 
@@ -997,6 +995,17 @@ void PlotManager::refreshTreeWidgetSettingEnabled(PlotItemBase* plot)
     {
         enableItem_Doppler();
     }
+
+    if(type == PlotType::Type_PlotScatter)
+    {
+        ui.groupBox_8->setEnabled(true);
+        ui.groupBox_10->setEnabled(true);
+    }
+    else
+    {
+        ui.groupBox_8->setEnabled(false);
+        ui.groupBox_10->setEnabled(false);
+    }
 }
 
 void PlotManager::refreshGeneralUI(PlotItemBase* plot)
@@ -1044,25 +1053,31 @@ void PlotManager::refreshAxisGridUI(PlotItemBase* plot)
 	ui.pushButton_axisColor->setColor(plot->getAxisColor());
 	ui.pushButton_gridColor->setColor(plot->getGridColor());
 	ui.pushButton_gridFill->setColor(plot->getGridFillColor());
-	ui.checkBox_6->setChecked(plot->getGridVisible());
-    ui.pushButton_10->setColor(plot->getxTickLabelColor());
-    ui.fontComboBox_3->setCurrentFont(plot->getxTickLabelFont());
-    ui.comboBox_AxisGrid_FontSize->setCurrentText(QString("%1").arg(plot->getxTickLabelFontSize()));
-    ui.comboBox_2->setCurrentIndex(int(plot->getGridStyle()) - 1);
     ui.lineEdit_PrecisionX->setText(QString::number(plot->getXPrecision()));
     ui.lineEdit_PrecisionY->setText(QString::number(plot->getYPrecision()));
 
-    switch(plot->getGridDensity())
+    // 静态网格部分
+    auto scatterPlot = dynamic_cast<PlotScatter*>(plot);
+    if(scatterPlot)
     {
-    case GridDensity::LESS:
-        ui.comboBox_3->setCurrentIndex(0);
-        break;
-    case GridDensity::NORMAL:
-        ui.comboBox_3->setCurrentIndex(1);
-        break;
-    case GridDensity::MORE:
-        ui.comboBox_3->setCurrentIndex(2);
-        break;
+        ui.checkBox_6->setChecked(scatterPlot->getIsShowStaticGrid());
+        ui.pushButton_10->setColor(scatterPlot->getStaticTextColor());
+        ui.comboBox_AxisGrid_FontSize->setCurrentText(
+            QString("%1").arg(scatterPlot->getStaticFont().pixelSize()));
+        ui.fontComboBox_3->setCurrentFont(scatterPlot->getStaticFont().family());
+        ui.comboBox_2->setCurrentIndex(int(scatterPlot->getStaticGridStyle()));
+        switch(scatterPlot->getStaticGridDensity())
+        {
+        case GridDensity::LESS:
+            ui.comboBox_3->setCurrentIndex(0);
+            break;
+        case GridDensity::NORMAL:
+            ui.comboBox_3->setCurrentIndex(1);
+            break;
+        case GridDensity::MORE:
+            ui.comboBox_3->setCurrentIndex(2);
+            break;
+        }
     }
 
     // scroll
@@ -2529,14 +2544,17 @@ void PlotManager::onPushButton_gridFillClicked()
     m_curSelectPlot->setGridFillColor(ui.pushButton_gridFill->color());
 }
 
-void PlotManager::onCheckBox_6StateChanged()
+void PlotManager::onCheckBox_6StateChanged(int state)
 {
     if(m_curSelectPlot == nullptr)
     {
         return;
     }
 
-    m_curSelectPlot->setGridVisible(ui.checkBox_6->isChecked());
+    auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot);
+    if(!plot)
+        return;
+    plot->setIsShowStaticGrid(state == 2);
 }
 
 void PlotManager::onPushButton_10Clicked()
@@ -2546,7 +2564,10 @@ void PlotManager::onPushButton_10Clicked()
         return;
     }
 
-    m_curSelectPlot->setxTickLabelColor(ui.pushButton_10->color());
+    auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot);
+    if(!plot)
+        return;
+    plot->setStaticTextColor(ui.pushButton_10->color());
 }
 
 void PlotManager::onfontComboBox_3CurrentFontChanged(const QFont& font)
@@ -2555,11 +2576,16 @@ void PlotManager::onfontComboBox_3CurrentFontChanged(const QFont& font)
     {
         return;
     }
+
+    auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot);
+    if(!plot)
+        return;
+
     int fontSize = ui.comboBox_AxisGrid_FontSize->currentText().toInt();
     QFont newFont;
     newFont.setFamily(font.family());
     newFont.setPixelSize(fontSize);
-    m_curSelectPlot->setxTickLabelFont(newFont);
+    plot->setStaticFont(newFont);
 }
 
 void PlotManager::onComboBox_AxisGrid_FontSizeCurrentTextChanged(const QString& text)
@@ -2569,7 +2595,15 @@ void PlotManager::onComboBox_AxisGrid_FontSizeCurrentTextChanged(const QString& 
         return;
     }
 
-    m_curSelectPlot->setxTickLabelFontSize(text.toInt());
+    auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot);
+    if(!plot)
+        return;
+
+    QFont font = ui.fontComboBox_3->currentFont();
+    QFont newFont;
+    newFont.setFamily(font.family());
+    newFont.setPixelSize(text.toInt());
+    plot->setStaticFont(newFont);
 }
 
 void PlotManager::onComboBox_2CurrentIndexChanged(int index)
@@ -2578,7 +2612,11 @@ void PlotManager::onComboBox_2CurrentIndexChanged(int index)
     {
         return;
     }
-    m_curSelectPlot->setGridStyle(GridStyle(index));
+
+    auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot);
+    if(!plot)
+        return;
+    plot->setStaticGridStyle(GridStyle(index));
 }
 
 void PlotManager::onComboBox_3CurrentIndexChanged(int index)
@@ -2587,6 +2625,10 @@ void PlotManager::onComboBox_3CurrentIndexChanged(int index)
     {
         return;
     }
+
+    auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot);
+    if(!plot)
+        return;
 
     GridDensity density;
     switch(index)
@@ -2601,7 +2643,7 @@ void PlotManager::onComboBox_3CurrentIndexChanged(int index)
         density = GridDensity::MORE;
         break;
     }
-    m_curSelectPlot->setGridDensity(density);
+    plot->setStaticGridDensity(density);
 }
 
 void PlotManager::onLineEdit_PrecisionXEditingFinished()

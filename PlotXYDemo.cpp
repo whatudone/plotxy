@@ -1308,6 +1308,14 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
             {
                 plotObject.insert("BGLimits", bgArray);
             }
+            // static grid
+            plotObject.insert("StaticGridShow", scatter->getIsShowStaticGrid());
+            plotObject.insert("StaticGridTextColor",
+                              color_transfer::QColorToRGBAStr(scatter->getStaticTextColor()));
+            plotObject.insert("StaticGridFont", scatter->getStaticFont().family());
+            plotObject.insert("StaticGridFontSize", scatter->getStaticFont().pixelSize());
+            plotObject.insert("StaticGridStyle", scatter->getStaticGridStyle());
+            plotObject.insert("StaticGridDensity", scatter->getStaticGridDensity());
         }
     }
     else if(type == PlotType::Type_PlotText)
@@ -1721,6 +1729,18 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
                 }
                 scatter->setBkgLimitSegMap(bkgLimitSegMap);
             }
+
+            // static grid
+            scatter->setIsShowStaticGrid(plotObject.value("StaticGridShow").toBool());
+            scatter->setStaticTextColor(color_transfer::QColorFromRGBAStr(
+                plotObject.value("StaticGridTextColor").toString()));
+            QFont newFont;
+            newFont.setFamily(plotObject.value("StaticGridFont").toString());
+            newFont.setPixelSize(plotObject.value("StaticGridFontSize").toInt());
+            scatter->setStaticFont(newFont);
+            scatter->setStaticGridStyle(GridStyle(plotObject.value("StaticGridStyle").toInt()));
+            scatter->setStaticGridDensity(
+                GridDensity(plotObject.value("StaticGridDensity").toInt()));
         }
     }
     else if(type == PlotType::Type_PlotText)

@@ -121,7 +121,7 @@ public slots:
 	void onSetAxisColorWidth();
 	void onSetGridColorWidth();
 	void onPushButton_gridFillClicked();
-	void onCheckBox_6StateChanged();
+    void onCheckBox_6StateChanged(int state);
 	void onPushButton_10Clicked();
 	void onfontComboBox_3CurrentFontChanged(const QFont& font);
 	void onComboBox_AxisGrid_FontSizeCurrentTextChanged(const QString& text);

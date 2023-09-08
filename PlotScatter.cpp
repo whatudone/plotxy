@@ -26,6 +26,18 @@ PlotScatter::PlotScatter(QWidget* parent)
     m_showUnits_x = false;
     m_showUnits_y = false;
 
+    m_isShowStaticGrid = false;
+    m_staticTextColor = Qt::green;
+    m_staticFont.setFamily("Microsoft YaHei");
+    m_staticFont.setPixelSize(12);
+
+    m_staticGridStyle = SOLIDLINE;
+    m_staticGridDensity = GridDensity::NORMAL;
+    m_tmpCoordBgnX = m_coordBgn_x;
+    m_tmpCoordBgnY = m_coordBgn_y;
+    m_tmpCoordEndX = m_coordEnd_x;
+    m_tmpCoordEndY = m_coordEnd_y;
+
     initPlot();
     setupLayout();
 }
@@ -243,7 +255,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
 void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
 {
     if(!data)
-	{
+    {
         return;
     }
     if(m_isTimeLine)
@@ -411,6 +423,83 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
         pixmap->setVisible(false);
         tracerText->setVisible(false);
     }
+}
+
+void PlotScatter::resizeEvent(QResizeEvent* event)
+{
+    setStaticGrid();
+    QWidget::resizeEvent(event);
+}
+
+void PlotScatter::setStaticGrid(bool isResetRange)
+{
+    for(const auto& item : m_staticGridItemList)
+    {
+        m_customPlot->removeItem(item);
+    }
+    m_staticGridItemList.clear();
+
+    if(m_isShowStaticGrid)
+    {
+        int gridNum = 0;
+        switch(m_staticGridDensity)
+        {
+        case GridDensity::LESS:
+            gridNum = 5;
+            break;
+        case GridDensity::NORMAL:
+            gridNum = 7;
+            break;
+        case GridDensity::MORE:
+            gridNum = 9;
+            break;
+        }
+
+        if(isResetRange)
+        {
+            m_tmpCoordBgnX = m_coordBgn_x;
+            m_tmpCoordBgnY = m_coordBgn_y;
+            m_tmpCoordEndX = m_coordEnd_x;
+            m_tmpCoordEndY = m_coordEnd_y;
+        }
+
+        QCPItemPixmap* pixmapItem = new QCPItemPixmap(m_customPlot);
+        int width = m_customPlot->axisRect()->width();
+        int height = m_customPlot->axisRect()->height();
+        QPixmap pixmap(width, height);
+        pixmap.fill(Qt::transparent);
+        QPainter painter(&pixmap);
+        painter.setPen(QPen(Qt::white, 1, Qt::PenStyle(m_staticGridStyle + 1)));
+        for(int gridIndex = 1; gridIndex < gridNum - 1; gridIndex++)
+        {
+            painter.drawLine(
+                width / (gridNum - 1) * gridIndex, 0, width / (gridNum - 1) * gridIndex, height);
+            painter.drawLine(
+                0, height / (gridNum - 1) * gridIndex, width, height / (gridNum - 1) * gridIndex);
+        }
+        painter.setPen(QPen(m_staticTextColor));
+        painter.setFont(m_staticFont);
+        for(int gridIndex = 1; gridIndex < gridNum - 1; gridIndex++)
+        {
+            QString xText = QString::number(m_tmpCoordBgnX + (m_tmpCoordEndX - m_tmpCoordBgnX) /
+                                                                 (gridNum - 1) * gridIndex);
+            QString yText = QString::number(m_tmpCoordEndY - (m_tmpCoordEndY - m_tmpCoordBgnY) /
+                                                                 (gridNum - 1) * gridIndex);
+            painter.drawText(width / (gridNum - 1) * gridIndex, int(height * 0.05), xText);
+            painter.drawText(width / (gridNum - 1) * gridIndex, int(height * 0.95), xText);
+            painter.drawText(int(width * 0.05), height / (gridNum - 1) * gridIndex, yText);
+            painter.drawText(int(width * 0.95), height / (gridNum - 1) * gridIndex, yText);
+        }
+        pixmapItem->topLeft->setType(QCPItemPosition::ptAxisRectRatio);
+        pixmapItem->topLeft->setCoords(0, 0);
+        pixmapItem->bottomRight->setType(QCPItemPosition::ptAxisRectRatio);
+        pixmapItem->bottomRight->setCoords(1, 1);
+        pixmapItem->setPixmap(pixmap);
+        pixmapItem->setLayer("grid");
+        m_staticGridItemList.append(pixmapItem);
+    }
+
+    m_customPlot->replot();
 }
 
 void PlotScatter::exportDataToFile(const QString& filename) const
@@ -1101,6 +1190,61 @@ QPointF PlotScatter::getCurrentAverageXYValue(bool& xNeedScroll, bool& yNeedScro
         yNeedScroll = false;
     }
     return point;
+}
+
+GridDensity PlotScatter::getStaticGridDensity() const
+{
+    return m_staticGridDensity;
+}
+
+void PlotScatter::setStaticGridDensity(const GridDensity& staticGridDensity)
+{
+    m_staticGridDensity = staticGridDensity;
+    setStaticGrid();
+}
+
+GridStyle PlotScatter::getStaticGridStyle() const
+{
+    return m_staticGridStyle;
+}
+
+void PlotScatter::setStaticGridStyle(const GridStyle& staticGridStyle)
+{
+    m_staticGridStyle = staticGridStyle;
+    setStaticGrid();
+}
+
+QFont PlotScatter::getStaticFont() const
+{
+    return m_staticFont;
+}
+
+void PlotScatter::setStaticFont(const QFont& staticFont)
+{
+    m_staticFont = staticFont;
+    setStaticGrid();
+}
+
+QColor PlotScatter::getStaticTextColor() const
+{
+    return m_staticTextColor;
+}
+
+void PlotScatter::setStaticTextColor(const QColor& staticTextColor)
+{
+    m_staticTextColor = staticTextColor;
+    setStaticGrid();
+}
+
+bool PlotScatter::getIsShowStaticGrid() const
+{
+    return m_isShowStaticGrid;
+}
+
+void PlotScatter::setIsShowStaticGrid(bool isShowStaticGrid)
+{
+    m_isShowStaticGrid = isShowStaticGrid;
+    setStaticGrid(true);
 }
 
 QString PlotScatter::getYTimeTickFormat() const
