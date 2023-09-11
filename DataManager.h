@@ -38,20 +38,6 @@ public:
             return m_platformDataID == p.m_platformDataID;
         }
     };
-
-    struct RealPlatform
-    {
-        int platformDataID;
-        QString platformName;
-        Mars_OpsStatus OpsStatus; //状态
-        Mars_Alliance Alliance; //联盟方
-        Mars_Operating_medium Operation_medium; //运动介质
-        Mars_IconType Icon_Type; //类型
-        QString basePlatName; //类型名称
-        QString hullName; //舷号
-        QString cStandBy; //备用字
-    };
-
     enum USIM_Alliance
     {
         USIM_Alliance_UNKNOW = 0,

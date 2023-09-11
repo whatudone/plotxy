@@ -1046,7 +1046,6 @@ void DataManager::onRecvGenericData(const GenericData& generic)
     }
 
     m_genericMap[uID][generic.m_eventType].append(generic);
-    emit updateRealTime();
 }
 
 void DataManager::onRecvProtobufPlatinfoData(const USIM_PlatInfoMessage_Proto& plat)
