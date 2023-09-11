@@ -138,20 +138,16 @@ void recvThread::onProtoBufReadyRead()
             plat.ParseFromString(str);
 
             emit protobufPlatInfoReceived(plat);
-//            DataManagerInstance->onRecvProtobufPlatinfoData(plat);
         }
         else
         {
-            // TODO,等待后续客户提供分类依据，然后开始分类
-
             GenericData data;
             data.m_relativeTime = header->dfTime * 3600;
             QByteArray genericData = datagram.mid(sizeof(Z_SendHeader), header->ilength);
             std::string str(genericData.data(), header->ilength);
             QString type = DataManagerInstance->getGroupNameByID(header->iMessageType);
-//            qDebug()<<"接收事件："<<header->iMessageType;
-            if(type.isEmpty()){
-//                qDebug()<<"未配置的事件："<<header->iMessageType;
+            if(type.isEmpty())
+            {
                 continue;
             }
 
@@ -426,22 +422,6 @@ void recvThread::onProtoBufReadyRead()
             {
                 data.m_eventName = QString("浮标阵探测详情");
             }
-//            else if(header->iMessageType == USIM_AirDeckAbort_MESSAGE)
-//            {
-//                USIM_AircraftDeckAbortEvent_Proto generic;
-//                generic.ParseFromString(str);
-//                data.m_platName = QString::fromLocal8Bit(generic.aircraft().data());
-//                data.m_eventName = QString("飞机甲板中止事件信息");
-//                data.m_ID = generic.major_p();
-//            }
-//            else if(header->iMessageType == USIM_IssuingTaskAssignment_MESSAGE)
-//            {
-//                USIM_IssuingTaskAssignment_Proto generic;
-//                generic.ParseFromString(str);
-//                data.m_platName = QString::fromLocal8Bit(generic.thewarfarecommander().data());
-//                data.m_eventName = QString("指挥任务分派信息");
-//                data.m_ID = generic.commandertrackid();
-//            }
             else if(header->iMessageType == USIM_CommandTaskCompleted_MESSAGE)
             {
                 USIM_CommandTaskCompleted_Proto generic;
@@ -649,13 +629,12 @@ void recvThread::onProtoBufReadyRead()
             {
                 USIM_AssociEntityLaunchEvent_Proto generic;
                 generic.ParseFromString(str);
-                data.m_ID= generic.uplatid();
-                data.m_platName= QString::fromLocal8Bit(generic.splatname().data());
+                data.m_ID = generic.uplatid();
+                data.m_platName = QString::fromLocal8Bit(generic.splatname().data());
                 data.m_eventName = QString("平台出航");
             }
             else
             {
-//                qDebug()<<"不支持的事件:"<<header->iMessageType<<header<<" "<<type;
                 continue;
             }
             emit genericReceived(data);

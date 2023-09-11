@@ -38,7 +38,7 @@
 using namespace H5;
 double PlotXYDemo::m_seconds = 0.0;
 bool PlotXYDemo::m_isRealTime = false;
-QString PlotXYDemo::m_curreentTabName="";
+QString PlotXYDemo::m_curreentTabName = "";
 
 PlotXYDemo::PlotXYDemo(QWidget* parent)
     : QMainWindow(parent)
@@ -90,7 +90,7 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
             SIGNAL(customContextMenuRequested(const QPoint&)),
             this,
             SLOT(onContextMenu(const QPoint&)));
-    connect(ui.tabWidget,&QTabWidget::currentChanged,this,&PlotXYDemo::onCurrentTabChange);
+    connect(ui.tabWidget, &QTabWidget::currentChanged, this, &PlotXYDemo::onCurrentTabChange);
     m_lastSelectedType = PlotType::Type_PlotScatter;
 }
 
@@ -738,7 +738,6 @@ void PlotXYDemo::onTabDrawWidgetCreatePlot(PlotType type, const QRect& rect)
 void PlotXYDemo::onCurrentTabChange(int32_t index)
 {
     m_curreentTabName = ui.tabWidget->tabText(index);
-//    qDebug()<<"当前页："<<index<<" "<<m_curreentTabName;
 }
 
 void PlotXYDemo::addTabPage(const QString& tabName)

@@ -849,12 +849,10 @@ void PlotItemBase::slot_setVisible(bool on)
 void PlotItemBase::onGetCurrentSeconds(double secs)
 {
     // 不在当前tab页的图表不进行刷新操作
-    if(m_tabName==PlotXYDemo::getCurreentTabName()){
+    if(m_tabName == PlotXYDemo::getCurreentTabName())
+    {
         updateDataForDataPairsByTime(secs);
-    }/*else{
-        qDebug()<<QString("%1 %2 不刷新,当前tab:%3").arg(m_tabName).arg(m_plotItemName).arg(PlotXYDemo::getCurreentTabName());
-    }*/
-
+    }
 }
 
 void PlotItemBase::slot_updateRect(const QRect& rect)
@@ -1150,7 +1148,6 @@ void PlotItemBase::updateYLabelDescrption()
 void PlotItemBase::onDataPairsChanged()
 {
     // 使用时间轴的当前时间
-
     updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
 }
 
