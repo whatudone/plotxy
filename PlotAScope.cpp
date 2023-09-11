@@ -1,6 +1,6 @@
 ﻿#include "PlotAScope.h"
-#include "DataManager.h"
 #include "Utils.h"
+#include "data_manager_data.h"
 
 int PlotAScope::m_instanceCount = 1;
 PlotAScope::PlotAScope(QWidget* parent)
@@ -93,7 +93,7 @@ void PlotAScope::updateDataForDataPairsByTime(double secs)
         QString uuid = data->getUuid();
         QVector<double> x, y;
         int32_t eid = data->getEntityIDX();
-        auto pair = DataManagerInstance->getSliceDataByTime(eid, secs);
+        auto pair = DataManagerDataInstance->getSliceDataByTime(eid, secs);
         x = pair.first;
         y = pair.second;
         m_dataHash.insert(uuid, qMakePair(x, y));
@@ -259,7 +259,8 @@ bool PlotAScope::isAutofitX() const
 void PlotAScope::setIsAutofitX(bool isAutofitX)
 {
     m_isAutofitX = isAutofitX;
-    if(isAutofitX){
+    if(isAutofitX)
+    {
         rescaleXAxis();
     }
 }
@@ -272,7 +273,8 @@ bool PlotAScope::isAutofitY() const
 void PlotAScope::setIsAutofitY(bool isAutofitY)
 {
     m_isAutofitY = isAutofitY;
-    if(isAutofitY){
+    if(isAutofitY)
+    {
         rescaleYAxis();
     }
 }

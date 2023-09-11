@@ -1,7 +1,7 @@
 ﻿#include "DataPair.h"
-#include "DataManager.h"
 #include "PlotXYDemo.h"
 #include "Utils.h"
+#include "data_manager_data.h"
 
 #include <QDebug>
 #include <QFileInfo>
@@ -61,8 +61,8 @@ DataPair::DataPair(int32_t xEntityID,
 {
     m_entityIDX = xEntityID;
     m_entityIDY = yEntityID;
-    m_entity_x = DataManagerInstance->getEntityNameByID(xEntityID);
-    m_entity_y = DataManagerInstance->getEntityNameByID(yEntityID);
+    m_entity_x = DataManagerDataInstance->getEntityNameByID(xEntityID);
+    m_entity_y = DataManagerDataInstance->getEntityNameByID(yEntityID);
     m_attr_x = xAttrName;
     m_attr_y = yAttrName;
     m_unit_x = xAttrUnitName;
@@ -113,7 +113,7 @@ int32_t DataPair::getEntityIDX() const
 void DataPair::setEntityIDX(const int32_t& entityIDX)
 {
     m_entityIDX = entityIDX;
-    m_entity_x = DataManagerInstance->getEntityNameByID(entityIDX);
+    m_entity_x = DataManagerDataInstance->getEntityNameByID(entityIDX);
 }
 
 int32_t DataPair::getEntityIDY() const
@@ -124,7 +124,7 @@ int32_t DataPair::getEntityIDY() const
 void DataPair::setEntityIDY(const int32_t& entityIDY)
 {
     m_entityIDY = entityIDY;
-    m_entity_y = DataManagerInstance->getEntityNameByID(entityIDY);
+    m_entity_y = DataManagerDataInstance->getEntityNameByID(entityIDY);
 }
 
 QString DataPair::getEntity_x() const
@@ -425,25 +425,25 @@ QPixmap DataPair::processIcon()
         trans.rotate(270);
         break;
     case DataPair::FollowYaw: {
-        double yaw = DataManagerInstance->getEntityAttrValueByMaxTime(
+        double yaw = DataManagerDataInstance->getEntityAttrValueByMaxTime(
             m_entityIDX, "Yaw", PlotXYDemo::getSeconds(), 1.0);
         trans.rotate(yaw);
     }
     break;
     case DataPair::FollowPitch: {
-        double pitch = DataManagerInstance->getEntityAttrValueByMaxTime(
+        double pitch = DataManagerDataInstance->getEntityAttrValueByMaxTime(
             m_entityIDX, "Pitch", PlotXYDemo::getSeconds(), 1.0);
         trans.rotate(pitch);
     }
     break;
     case DataPair::FollowRoll: {
-        double roll = DataManagerInstance->getEntityAttrValueByMaxTime(
+        double roll = DataManagerDataInstance->getEntityAttrValueByMaxTime(
             m_entityIDX, "Roll", PlotXYDemo::getSeconds(), 1.0);
         trans.rotate(roll);
     }
     break;
     case DataPair::FollowBearing: {
-        double bearing = DataManagerInstance->getEntityAttrValueByMaxTime(
+        double bearing = DataManagerDataInstance->getEntityAttrValueByMaxTime(
             m_entityIDX, "Bearing", PlotXYDemo::getSeconds(), 1.0);
         trans.rotate(bearing);
     }
@@ -1129,7 +1129,7 @@ int32_t DataPair::getTargetEntityIDX() const
 void DataPair::setTargetEntityIDX(const int32_t& targetEntityIDX)
 {
     m_targetEntityIDX = targetEntityIDX;
-    m_targetEntityX = DataManagerInstance->getEntityNameByID(targetEntityIDX);
+    m_targetEntityX = DataManagerDataInstance->getEntityNameByID(targetEntityIDX);
 }
 
 int32_t DataPair::getTargetEntityIDY() const
@@ -1140,7 +1140,7 @@ int32_t DataPair::getTargetEntityIDY() const
 void DataPair::setTargetEntityIDY(const int32_t& targetEntityIDY)
 {
     m_targetEntityIDY = targetEntityIDY;
-    m_targetEntityY = DataManagerInstance->getEntityNameByID(targetEntityIDY);
+    m_targetEntityY = DataManagerDataInstance->getEntityNameByID(targetEntityIDY);
 }
 
 QString DataPair::getTargetEntityX() const

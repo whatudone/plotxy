@@ -31,6 +31,7 @@
 #include "PlotText.h"
 #include "PlotTrack.h"
 #include "Utils.h"
+#include "data_manager_data.h"
 #include "rename_tab_dialog.h"
 #include "tabdrawwidget.h"
 
@@ -56,14 +57,13 @@ PlotXYDemo::PlotXYDemo(QWidget* parent)
     m_plotManager = new PlotManager();
     m_addPlotPair = new AddPlotPair();
 
-    connect(DataManager::getInstance(),
+    connect(DataManagerInstance,
             &DataManager::loadDataFinished,
             m_addPlotPair,
             &AddPlotPair::onUpdateEntityTableByDataChanged);
-    connect(
-        DataManager::getInstance(), SIGNAL(loadDataFinished()), m_timeCtrl, SLOT(onUpdateData()));
-    connect(DataManager::getInstance(),
-            &DataManager::updateRealTime,
+    connect(DataManagerInstance, SIGNAL(loadDataFinished()), m_timeCtrl, SLOT(onUpdateData()));
+    connect(DataManagerInstance->getRecvThread(),
+            &recvThread::updateRealTime,
             m_timeCtrl,
             &TimeControls::onUpdateRealData);
 
@@ -194,7 +194,7 @@ void PlotXYDemo::onOpenFile()
     QString suffix = info.suffix().toLower();
     if(suffix == "asi")
     {
-        DataManager::getInstance()->loadFileData(path);
+        DataManagerInstance->loadFileData(path);
     }
     else
     {
@@ -982,7 +982,7 @@ void PlotXYDemo::loadPXYData(const QString& pxyFileName)
                     file.write(asiData);
                     file.close();
                     DataManagerInstance->loadFileData(tmpPath);
-                    DataManagerInstance->setDataFileName("");
+                    DataManagerDataInstance->setDataFileName("");
                 }
                 file.remove();
             }
@@ -2550,16 +2550,15 @@ void PlotXYDemo::onTimeClient() {}
 void PlotXYDemo::onRealTime()
 {
     m_isRealTime = ui.actionReal_Time->isChecked();
-    DataManager::getInstance()->loadLiveEventType();
     if(m_isRealTime)
     {
         // 清理离线数据
-        DataManager::getInstance()->clearData();
-        DataManager::getInstance()->getRecvThread()->start();
+        DataManagerDataInstance->clearData();
+        DataManagerInstance->getRecvThread()->startThread();
     }
     else
     {
-        DataManager::getInstance()->getRecvThread()->stop();
+        DataManagerInstance->getRecvThread()->stop();
     }
 }
 
@@ -2942,7 +2941,7 @@ void PlotXYDemo::onExportOnlyData()
 void PlotXYDemo::onClose_Disconnect()
 {
     //清空上次加载数据
-    DataManagerInstance->clearData();
+    DataManagerDataInstance->clearData();
 }
 
 void PlotXYDemo::onRunPythonScript() {}

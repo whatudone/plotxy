@@ -1,7 +1,7 @@
 ﻿#include "AdvancedDataManager.h"
-#include "DataManager.h"
 #include "PlotManagerData.h"
 #include "PlotScatter.h"
+#include "data_manager_data.h"
 
 #include <QColor>
 #include <QColorDialog>
@@ -492,7 +492,7 @@ void AdvancedDataManager::refreshStipple()
 void AdvancedDataManager::refreshEvent()
 {
     // 刷新实体表格
-    auto entityMap = DataManagerInstance->getEntityIDAndNameMap();
+    auto entityMap = DataManagerDataInstance->getEntityIDAndNameMap();
     ui.tableWidgetEventEntity->clearContents();
     ui.tableWidgetEventEntity->setRowCount(entityMap.size());
     auto idList = entityMap.keys();
@@ -1029,7 +1029,7 @@ void AdvancedDataManager::onGenericDataEntityChanged(int32_t row, int32_t col)
     if(entityItem)
     {
         int32_t id = entityItem->data(Qt::UserRole + 1).toInt();
-        auto tags = DataManagerInstance->getGenericDataTagsByID(id);
+        auto tags = DataManagerDataInstance->getGenericDataTagsByID(id);
         int32_t rowCount = tags.size();
         ui.tableWidgetGenericTag->clearContents();
         ui.tableWidgetGenericTag->setRowCount(rowCount);

@@ -1,7 +1,8 @@
 ﻿#include "PlotDoppler.h"
-#include "DataManager.h"
+
 #include "PlotXYDemo.h"
 #include "Utils.h"
+#include "data_manager_data.h"
 
 #include <QGridLayout>
 int PlotDoppler::m_instanceCount = 1;
@@ -132,7 +133,7 @@ void PlotDoppler::updateDataForDataPairsByTime(double secs)
     }
     auto data = getDataPairs().last();
     int32_t eid = data->getEntityIDX();
-    DataManagerInstance->getDopplerDataByTime(
+    DataManagerDataInstance->getDopplerDataByTime(
         eid, secs, m_rangeList, m_timeList, m_dataHash, m_horizonDataHash, m_verticalDataHash);
     if(m_dataHash.isEmpty())
     {
@@ -192,13 +193,13 @@ void PlotDoppler::updateGraphByDataPair(DataPair* data, double curSecs)
 void PlotDoppler::updateAScopesBySlicePoint(const QPointF& point)
 {
 
-                // 水平曲线图加载数据
+    // 水平曲线图加载数据
     QVector<double> hXDatas;
     QVector<double> hValues;
     getXToValueVecByY(point.x(), hXDatas, hValues);
     m_customPlot->graph(1)->setData(hXDatas, hValues, true);
 
-                // 垂直曲线图加载数据
+    // 垂直曲线图加载数据
     QVector<double> vYDatas;
     QVector<double> vValues;
     getYToValueVecByX(point.y(), vYDatas, vValues);
@@ -289,10 +290,9 @@ void PlotDoppler::setVertGrids(int32_t count)
     m_customPlot->replot();
 }
 
-void PlotDoppler::setGridFillColor(const QColor &color)
+void PlotDoppler::setGridFillColor(const QColor& color)
 {
     m_gridFillColor = color;
-
 
     m_customPlot->axisRect(0)->setBackground(color);
     m_customPlot->axisRect(1)->setBackground(color);

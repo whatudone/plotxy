@@ -1,6 +1,7 @@
 ﻿#include "PlotDial.h"
-#include "DataManager.h"
+
 #include "Utils.h"
+#include "data_manager_data.h"
 
 #include <QDebug>
 #include <QPainter>
@@ -209,14 +210,14 @@ void PlotDial::updateDataForDataPairsByTime(double secs)
         double value = 0.0;
         if(xDataType == DataPair::Parameter)
         {
-            value =
-                DataManagerInstance->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs, m_xRate);
+            value = DataManagerDataInstance->getEntityAttrValueByMaxTime(
+                xEntityID, xAttr, secs, m_xRate);
         }
         else
         {
             auto xTargetEntityID = dataPair->getTargetEntityIDX();
             auto xCalType = dataPair->getXCalType();
-            value = DataManagerInstance->rangeCalculationLastValue(
+            value = DataManagerDataInstance->rangeCalculationLastValue(
                 xEntityID, xTargetEntityID, xCalType, secs, m_xRate);
         }
         m_valueMap.insert(uuid, value);

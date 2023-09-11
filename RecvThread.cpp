@@ -1,7 +1,7 @@
 #include "RecvThread.h"
-#include "DataManager.h"
 #include "IO_USIM_MessageType.h"
 #include "Utils.h"
+#include "data_manager_data.h"
 
 #include <QApplication>
 #include <QFile>
@@ -18,8 +18,16 @@ recvThread::~recvThread() {}
 
 void recvThread::stop()
 {
+    m_startFlag = false;
     quit();
+    // 如果线程中待处理的数据太大，会导致调用此接口的主线程卡死,所以在槽函数的死循环中加入运行标记位
     wait();
+}
+
+void recvThread::startThread()
+{
+    m_startFlag = true;
+    start();
 }
 
 void recvThread::run()
@@ -47,7 +55,8 @@ void recvThread::run()
     m_udpSocket->bind(QHostAddress::AnyIPv4, port, QUdpSocket::ShareAddress);
     bool flag = m_udpSocket->joinMulticastGroup(localAddress);
 #else
-    bool flag = m_udpSocket->bind(QHostAddress::AnyIPv4, 8888, QUdpSocket::ShareAddress);
+    bool flag = m_udpSocket->bind(
+        QHostAddress::AnyIPv4, 8888, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 #endif
     if(flag)
     {
@@ -57,66 +66,23 @@ void recvThread::run()
                 &recvThread::onProtoBufReadyRead,
                 Qt::DirectConnection);
         exec();
+        disconnect(m_udpSocket, &QUdpSocket::readyRead, this, &recvThread::onProtoBufReadyRead);
     }
     else
     {
         qDebug() << "join udp multi failed";
     }
     m_udpSocket->deleteLater();
-}
-
-void recvThread::onReadyRead()
-{
-    while(m_udpSocket->hasPendingDatagrams())
-    {
-        QByteArray datagram;
-        datagram.resize(m_udpSocket->pendingDatagramSize());
-        QHostAddress senderAddress;
-
-        m_udpSocket->readDatagram(datagram.data(), datagram.size(), &senderAddress);
-        QByteArray headerData = datagram.mid(0, sizeof(Z_SendHeader));
-        // 处理接收到的数据
-        Z_SendHeader* header = reinterpret_cast<Z_SendHeader*>(headerData.data());
-        if(!header)
-        {
-            continue;
-        }
-        if(header->iMessageType == MARS_ADD_PLATINFODATA)
-        {
-            QByteArray platData = datagram.mid(sizeof(Z_SendHeader), header->ilength);
-            MARS_PlatInfoDataExcect* plat =
-                reinterpret_cast<MARS_PlatInfoDataExcect*>(platData.data());
-
-            if(plat)
-            {
-                emit platInfoReceived(*plat);
-            }
-        }
-        else
-        {
-            GenericData data;
-            data.m_relativeTime = header->dfTime * 3600;
-            QByteArray genericData = datagram.mid(sizeof(Z_SendHeader), header->ilength);
-            if(header->iMessageType == MARS_TRANSMIT_NORMAL)
-            {
-                MARS_MsgSimMessage* generic =
-                    reinterpret_cast<MARS_MsgSimMessage*>(genericData.data());
-                data.m_platName = QString::fromLocal8Bit(generic->OriginSender);
-            }
-            else if(header->iMessageType == VNR_GY_MOVETOPOINT)
-            {
-                MOVE_CTRL_POINT* generic = reinterpret_cast<MOVE_CTRL_POINT*>(genericData.data());
-                data.m_platName = QString::fromLocal8Bit(generic->host_name);
-            }
-
-            emit genericReceived(data);
-        }
-    }
+    qDebug() << "接收线程停止";
 }
 
 void recvThread::onProtoBufReadyRead()
 {
-    while(m_udpSocket->hasPendingDatagrams())
+    if(!m_startFlag)
+    {
+        return;
+    }
+    while(m_startFlag && m_udpSocket->hasPendingDatagrams())
     {
         QByteArray datagram;
         datagram.resize(m_udpSocket->pendingDatagramSize());
@@ -137,7 +103,9 @@ void recvThread::onProtoBufReadyRead()
             std::string str(platData.data(), header->ilength);
             plat.ParseFromString(str);
 
-            emit protobufPlatInfoReceived(plat);
+            DataManagerDataInstance->insertProtobufPlatinfoData(plat);
+            //TODO:控制发送频率
+            //            emit updateRealTime();
         }
         else
         {
@@ -145,7 +113,7 @@ void recvThread::onProtoBufReadyRead()
             data.m_relativeTime = header->dfTime * 3600;
             QByteArray genericData = datagram.mid(sizeof(Z_SendHeader), header->ilength);
             std::string str(genericData.data(), header->ilength);
-            QString type = DataManagerInstance->getGroupNameByID(header->iMessageType);
+            QString type = DataManagerDataInstance->getGroupNameByID(header->iMessageType);
             if(type.isEmpty())
             {
                 continue;
@@ -637,7 +605,7 @@ void recvThread::onProtoBufReadyRead()
             {
                 continue;
             }
-            emit genericReceived(data);
+            DataManagerDataInstance->insertGenericData(data);
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿#include "AddPlotPair.h"
-#include "DataManager.h"
 #include "PlotLight.h"
 #include "PlotManagerData.h"
 #include "Utils.h"
+#include "data_manager_data.h"
 #include "ui_AddPlotPair.h"
 
 #include <QDebug>
@@ -642,7 +642,7 @@ void AddPlotPair::updateAttrTableWidgetOnEntityChanged(QTableWidgetItem* entityI
     else
     {
         int32_t id = entityItem->data(Qt::UserRole + 1).toInt();
-        auto pairList = DataManagerInstance->getAttrAndUnitPairList(id);
+        auto pairList = DataManagerDataInstance->getAttrAndUnitPairList(id);
         auto pairSize = pairList.size();
         attrTableWidget->setRowCount(pairSize);
         QString attr;
@@ -841,7 +841,7 @@ void AddPlotPair::onTableWidgetItemClicked_Attitude2(QTableWidgetItem* curItem)
 void AddPlotPair::onUpdateEntityTableByDataChanged()
 {
     // 数据更新，重新刷新实体表格数据
-    auto dataMap = DataManager::getInstance()->getDataMap();
+    auto dataMap = DataManagerDataInstance->getDataMap();
     if(dataMap.isEmpty())
     {
         qWarning() << QString("尚未加载数据,当前数据为空");
@@ -867,7 +867,7 @@ void AddPlotPair::onUpdateEntityTableByDataChanged()
         int index = 0;
         for(auto it = dataMap.begin(); it != dataMap.end(); it++)
         {
-            QString currEntityType = DataManagerInstance->getEntityNameByID(it.key());
+            QString currEntityType = DataManagerDataInstance->getEntityNameByID(it.key());
             QTableWidgetItem* item = new QTableWidgetItem(currEntityType);
             // 将key作为隐藏数据设置到item中，方便后续通过key查找数据
             item->setData(Qt::UserRole + 1, it.key());
@@ -934,7 +934,7 @@ void AddPlotPair::onDoubleClickedTreeWidgetItem(QTreeWidgetItem* item, int colum
                 QString qualifiedColorName = std::get<4>(tuple);
                 QString unqualifiedColorName = std::get<5>(tuple);
 
-                QString entityName = DataManagerInstance->getEntityNameByID(conId);
+                QString entityName = DataManagerDataInstance->getEntityNameByID(conId);
                 QTableWidgetItem* entityNameItem = new QTableWidgetItem(entityName);
                 entityNameItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
                 entityNameItem->setData(Qt::UserRole + 1, conId);

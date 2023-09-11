@@ -1,6 +1,7 @@
 ﻿#include "PlotPolar.h"
-#include "DataManager.h"
+
 #include "Utils.h"
+#include "data_manager_data.h"
 
 int PlotPolar::m_instanceCount = 1;
 PlotPolar::PlotPolar(QWidget* parent)
@@ -423,80 +424,80 @@ void PlotPolar::updateDataForDataPairsByTime(double secs)
         QVector<double> y;
         if(xType == DataPair::Time && yType == DataPair::Time)
         {
-            x = DataManager::getInstance()->getTimeDataSet();
-            y = DataManager::getInstance()->getTimeDataSet();
+            x = DataManagerDataInstance->getTimeDataSet();
+            y = DataManagerDataInstance->getTimeDataSet();
         }
         else if(xType == DataPair::Time && yType == DataPair::Parameter)
         {
-            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+            x = DataManagerDataInstance->getEntityAttrValueListByMaxTime(
                 yEntityID, xAttr, secs, m_xRate);
-            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+            y = DataManagerDataInstance->getEntityAttrValueListByMaxTime(
                 yEntityID, yAttr, secs, m_yRate);
         }
         else if(xType == DataPair::Time && yType == DataPair::RangeCalculation)
         {
-            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+            x = DataManagerDataInstance->getEntityAttrValueListByMaxTime(
                 yEntityID, xAttr, secs, m_xRate);
 
             auto yTargetEntityID = dataPair->getTargetEntityIDY();
             auto yCalType = dataPair->getYCalType();
-            y = DataManagerInstance->rangeCalculationValueList(
+            y = DataManagerDataInstance->rangeCalculationValueList(
                 yEntityID, yTargetEntityID, yCalType, secs, m_xRate);
         }
         else if(xType == DataPair::Parameter && yType == DataPair::Time)
         {
-            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+            x = DataManagerDataInstance->getEntityAttrValueListByMaxTime(
                 xEntityID, xAttr, secs, m_xRate);
-            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+            y = DataManagerDataInstance->getEntityAttrValueListByMaxTime(
                 xEntityID, yAttr, secs, m_yRate);
         }
         else if(xType == DataPair::Parameter && yType == DataPair::Parameter)
         {
-            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+            x = DataManagerDataInstance->getEntityAttrValueListByMaxTime(
                 xEntityID, xAttr, secs, m_xRate);
-            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+            y = DataManagerDataInstance->getEntityAttrValueListByMaxTime(
                 yEntityID, yAttr, secs, m_yRate);
         }
         else if(xType == DataPair::Parameter && yType == DataPair::RangeCalculation)
         {
-            x = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+            x = DataManagerDataInstance->getEntityAttrValueListByMaxTime(
                 xEntityID, xAttr, secs, m_xRate);
 
             auto yTargetEntityID = dataPair->getTargetEntityIDY();
             auto yCalType = dataPair->getYCalType();
-            y = DataManagerInstance->rangeCalculationValueList(
+            y = DataManagerDataInstance->rangeCalculationValueList(
                 yEntityID, yTargetEntityID, yCalType, secs, m_xRate);
         }
         else if(xType == DataPair::RangeCalculation && yType == DataPair::Time)
         {
             auto xTargetEntityID = dataPair->getTargetEntityIDX();
             auto xCalType = dataPair->getXCalType();
-            x = DataManagerInstance->rangeCalculationValueList(
+            x = DataManagerDataInstance->rangeCalculationValueList(
                 xEntityID, xTargetEntityID, xCalType, secs, m_xRate);
 
-            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+            y = DataManagerDataInstance->getEntityAttrValueListByMaxTime(
                 xEntityID, xAttr, secs, m_xRate);
         }
         else if(xType == DataPair::RangeCalculation && yType == DataPair::Parameter)
         {
             auto xTargetEntityID = dataPair->getTargetEntityIDX();
             auto xCalType = dataPair->getXCalType();
-            x = DataManagerInstance->rangeCalculationValueList(
+            x = DataManagerDataInstance->rangeCalculationValueList(
                 xEntityID, xTargetEntityID, xCalType, secs, m_xRate);
 
-            y = DataManager::getInstance()->getEntityAttrValueListByMaxTime(
+            y = DataManagerDataInstance->getEntityAttrValueListByMaxTime(
                 yEntityID, xAttr, secs, m_xRate);
         }
         else if(xType == DataPair::RangeCalculation && yType == DataPair::RangeCalculation)
         {
             auto xTargetEntityID = dataPair->getTargetEntityIDX();
             auto xCalType = dataPair->getXCalType();
-            x = DataManagerInstance->rangeCalculationValueList(
+            x = DataManagerDataInstance->rangeCalculationValueList(
                 xEntityID, xTargetEntityID, xCalType, secs, m_xRate);
 
             auto yTargetEntityID = dataPair->getTargetEntityIDY();
             auto yCalType = dataPair->getYCalType();
-            y = DataManagerInstance->rangeCalculationValueList(
+            y = DataManagerDataInstance->rangeCalculationValueList(
                 yEntityID, yTargetEntityID, yCalType, secs, m_xRate);
         }
 

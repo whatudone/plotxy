@@ -1,8 +1,8 @@
 ﻿#include "PlotText.h"
-#include "DataManager.h"
 
 #include "Utils.h"
 #include "constdef.h"
+#include "data_manager_data.h"
 
 #include <QDebug>
 #include <QFont>
@@ -49,14 +49,14 @@ void PlotText::updateDataForDataPairsByTime(double secs)
         }
         else if(xDataType == DataPair::Parameter)
         {
-            value =
-                DataManagerInstance->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs, m_xRate);
+            value = DataManagerDataInstance->getEntityAttrValueByMaxTime(
+                xEntityID, xAttr, secs, m_xRate);
         }
         else
         {
             auto xTargetEntityID = dataPair->getTargetEntityIDX();
             auto xCalType = dataPair->getXCalType();
-            value = DataManagerInstance->rangeCalculationLastValue(
+            value = DataManagerDataInstance->rangeCalculationLastValue(
                 xEntityID, xTargetEntityID, xCalType, secs, m_xRate);
         }
         m_dataList.append(value);

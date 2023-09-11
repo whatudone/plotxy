@@ -1,6 +1,7 @@
 ﻿#include "PlotRTI.h"
-#include "DataManager.h"
+
 #include "PlotXYDemo.h"
+#include "data_manager_data.h"
 
 int PlotRTI::m_instanceCount = 1;
 PlotRTI::PlotRTI(QWidget* parent)
@@ -151,7 +152,7 @@ void PlotRTI::updateDataForDataPairsByTime(double secs)
     {
         auto data = getDataPairs().last();
         int32_t eid = data->getEntityIDX();
-        DataManagerInstance->getRTIDataByTime(eid, secs, m_rangeList, m_timeList, m_dataHash);
+        DataManagerDataInstance->getRTIDataByTime(eid, secs, m_rangeList, m_timeList, m_dataHash);
         updateGraphByDataPair(data, secs);
     }
     m_customPlot->replot(QCustomPlot::rpQueuedRefresh);

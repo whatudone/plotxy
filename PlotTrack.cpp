@@ -1,7 +1,7 @@
 ﻿#include "PlotTrack.h"
-#include "DataManager.h"
 #include "PlotXYDemo.h"
 #include "Utils.h"
+#include "data_manager_data.h"
 
 #include <QDebug>
 #include <QPainter>
@@ -79,7 +79,8 @@ void PlotTrack::updateGraphByDataPair(DataPair* dataPair, double curSecs)
     if(!dataPair)
         return;
     QString uuid = dataPair->getUuid();
-    if(dataPair->isDraw()){
+    if(dataPair->isDraw())
+    {
 
         double lowLimit = std::numeric_limits<double>::min();
         double highLimit = std::numeric_limits<double>::max();
@@ -114,14 +115,16 @@ void PlotTrack::updateGraphByDataPair(DataPair* dataPair, double curSecs)
             if(curSecs < lowLimit)
             {
                 // 仅有Unavailable数据
-                m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << curSecs);
+                m_allBar[uuid].at(0)->setData(QVector<double>() << cnt,
+                                              QVector<double>() << curSecs);
                 m_allBar[uuid].at(1)->setData(QVector<double>() << cnt, QVector<double>() << 0);
                 m_allBar[uuid].at(2)->setData(QVector<double>() << cnt, QVector<double>() << 0);
             }
             else if(curSecs > lowLimit && curSecs < highLimit)
             {
                 // 仅有Unavailable数据和部分Available数据
-                m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << lowLimit);
+                m_allBar[uuid].at(0)->setData(QVector<double>() << cnt,
+                                              QVector<double>() << lowLimit);
                 m_allBar[uuid].at(1)->setData(QVector<double>() << cnt,
                                               QVector<double>() << (curSecs - lowLimit));
                 m_allBar[uuid].at(2)->setData(QVector<double>() << cnt, QVector<double>() << 0);
@@ -130,7 +133,8 @@ void PlotTrack::updateGraphByDataPair(DataPair* dataPair, double curSecs)
             {
                 // 仅有Unavailable数据和全部Available数据
                 // TODO:目前超过Available的数据临时用Invalid的Bar显示，后期再进行优化
-                m_allBar[uuid].at(0)->setData(QVector<double>() << cnt, QVector<double>() << lowLimit);
+                m_allBar[uuid].at(0)->setData(QVector<double>() << cnt,
+                                              QVector<double>() << lowLimit);
                 m_allBar[uuid].at(1)->setData(QVector<double>() << cnt,
                                               QVector<double>() << highLimit - lowLimit);
                 m_allBar[uuid].at(2)->setData(QVector<double>() << cnt,
@@ -159,7 +163,9 @@ void PlotTrack::updateGraphByDataPair(DataPair* dataPair, double curSecs)
         {
             m_customPlot->yAxis->setTickLabels(false);
         }
-    }else{
+    }
+    else
+    {
         m_allBar.value(uuid).at(0)->setVisible(false);
         m_allBar.value(uuid).at(1)->setVisible(false);
         m_allBar.value(uuid).at(2)->setVisible(false);
@@ -312,8 +318,7 @@ DataPair* PlotTrack::addPlotDataPair(int32_t xEntityID,
     QCPBars* pBarUna = new QCPBars(m_customPlot->yAxis, m_customPlot->xAxis);
     pBarUna->setAntialiased(false); // 为了更好的边框效果，关闭抗齿锯
 
-    QVector<double> timeList =
-        DataManager::getInstance()->getEntityAttrValueList(xEntityID, "Time");
+    QVector<double> timeList = DataManagerDataInstance->getEntityAttrValueList(xEntityID, "Time");
     if(!timeList.isEmpty())
     {
         // minTime和maxTime即为绘制的Available部分的下限和上限

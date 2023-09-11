@@ -1,8 +1,9 @@
 ﻿#include "PlotLight.h"
-#include "DataManager.h"
+
 #include "PlotItemBase.h"
 #include "PlotXYDemo.h"
 #include "Utils.h"
+#include "data_manager_data.h"
 
 #include <QBrush>
 #include <QDebug>
@@ -66,8 +67,8 @@ void PlotLight::updateDataForDataPairsByTime(double secs)
         auto xEntityID = dataPair->getEntityIDX();
         auto xEntityName = dataPair->getEntity_x();
         auto xAttr = dataPair->getAttr_x();
-        double value = DataManager::getInstance()->getEntityAttrValueByMaxTime(
-            xEntityID, xAttr, secs, m_xRate);
+        double value =
+            DataManagerDataInstance->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs, m_xRate);
 
         auto desc = dataPair->processLabelText(value);
         m_dataHash.insert(dataPair->getUuid(),

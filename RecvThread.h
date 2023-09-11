@@ -16,21 +16,18 @@ public:
     ~recvThread() override;
 
     void stop();
+    void startThread();
 
 protected:
     void run() override;
-
-    void onReadyRead();
     void onProtoBufReadyRead();
 
 signals:
-    void platInfoReceived(const MARS_PlatInfoDataExcect &plat);
-    void genericReceived(const GenericData &generic);
-
-    void protobufPlatInfoReceived(const USIM_PlatInfoMessage_Proto &plat);
+    void updateRealTime();
 
 private:
     QUdpSocket* m_udpSocket = nullptr;
+    bool m_startFlag = false;
 };
 
 #endif // RECVTHREAD_H

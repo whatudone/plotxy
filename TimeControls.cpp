@@ -1,5 +1,6 @@
 ﻿#include "TimeControls.h"
-#include "DataManager.h"
+#include "data_manager_data.h"
+
 #include <QDate>
 #include <QDebug>
 #include <QDoubleValidator>
@@ -182,12 +183,12 @@ double TimeControls::getEndTime(int refYear)
 
 void TimeControls::onUpdateData()
 {
-	auto dataMap = DataManager::getInstance()->getDataMap();
+    auto dataMap = DataManagerDataInstance->getDataMap();
     if(dataMap.isEmpty())
 		return;
 
-	DataManager::getInstance()->getMinMaxTime(m_minTime, m_maxTime);
-	m_refYear = DataManager::getInstance()->getRefYear();
+    DataManagerDataInstance->getMinMaxTime(m_minTime, m_maxTime);
+    m_refYear = DataManagerDataInstance->getRefYear();
 
 	setBeginTime(m_minTime, m_refYear);
     setCurTime(m_maxTime, m_refYear);
@@ -202,11 +203,11 @@ void TimeControls::onUpdateData()
 
 void TimeControls::onUpdateRealData()
 {
-    auto dataMap = DataManager::getInstance()->getDataMap();
+    auto dataMap = DataManagerDataInstance->getDataMap();
     if(dataMap.isEmpty())
         return;
 
-    DataManager::getInstance()->getMinMaxRealTime(m_minTime, m_maxTime);
+    DataManagerDataInstance->getMinMaxRealTime(m_minTime, m_maxTime);
     m_refYear = QDate::currentDate().year();
 
     setBeginTime(m_minTime, m_refYear);

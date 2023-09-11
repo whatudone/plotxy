@@ -1,7 +1,8 @@
 ﻿#include "PlotScatter.h"
-#include "DataManager.h"
+
 #include "PlotXYDemo.h"
 #include "Utils.h"
+#include "data_manager_data.h"
 
 #include <QDebug>
 #include <QHBoxLayout>
@@ -138,80 +139,80 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
         {
             if(xType == DataPair::Time && yType == DataPair::Time)
             {
-                x = DataManager::getInstance()->getTimeDataSet();
-                y = DataManager::getInstance()->getTimeDataSet();
+                x = DataManagerDataInstance->getTimeDataSet();
+                y = DataManagerDataInstance->getTimeDataSet();
             }
             else if(xType == DataPair::Time && yType == DataPair::Parameter)
             {
-                x = DataManager::getInstance()->getEntityAttrValueListByMaxTimeAndIniFile(
+                x = DataManagerDataInstance->getEntityAttrValueListByMaxTimeAndIniFile(
                     yEntityID, xAttr, secs, m_xRate);
-                y = DataManager::getInstance()->getEntityAttrValueListByMaxTimeAndIniFile(
+                y = DataManagerDataInstance->getEntityAttrValueListByMaxTimeAndIniFile(
                     yEntityID, yAttr, secs, m_yRate);
             }
             else if(xType == DataPair::Time && yType == DataPair::RangeCalculation)
             {
-                x = DataManager::getInstance()->getEntityAttrValueListByMaxTimeAndIniFile(
+                x = DataManagerDataInstance->getEntityAttrValueListByMaxTimeAndIniFile(
                     yEntityID, xAttr, secs, m_xRate);
 
                 auto yTargetEntityID = data->getTargetEntityIDY();
                 auto yCalType = data->getYCalType();
-                y = DataManagerInstance->rangeCalculationValueList(
+                y = DataManagerDataInstance->rangeCalculationValueList(
                     yEntityID, yTargetEntityID, yCalType, secs, m_xRate);
             }
             else if(xType == DataPair::Parameter && yType == DataPair::Time)
             {
-                x = DataManager::getInstance()->getEntityAttrValueListByMaxTimeAndIniFile(
+                x = DataManagerDataInstance->getEntityAttrValueListByMaxTimeAndIniFile(
                     xEntityID, xAttr, secs, m_xRate);
-                y = DataManager::getInstance()->getEntityAttrValueListByMaxTimeAndIniFile(
+                y = DataManagerDataInstance->getEntityAttrValueListByMaxTimeAndIniFile(
                     xEntityID, yAttr, secs, m_yRate);
             }
             else if(xType == DataPair::Parameter && yType == DataPair::Parameter)
             {
-                x = DataManager::getInstance()->getEntityAttrValueListByMaxTimeAndIniFile(
+                x = DataManagerDataInstance->getEntityAttrValueListByMaxTimeAndIniFile(
                     xEntityID, xAttr, secs, m_xRate);
-                y = DataManager::getInstance()->getEntityAttrValueListByMaxTimeAndIniFile(
+                y = DataManagerDataInstance->getEntityAttrValueListByMaxTimeAndIniFile(
                     yEntityID, yAttr, secs, m_yRate);
             }
             else if(xType == DataPair::Parameter && yType == DataPair::RangeCalculation)
             {
-                x = DataManager::getInstance()->getEntityAttrValueListByMaxTimeAndIniFile(
+                x = DataManagerDataInstance->getEntityAttrValueListByMaxTimeAndIniFile(
                     xEntityID, xAttr, secs, m_xRate);
 
                 auto yTargetEntityID = data->getTargetEntityIDY();
                 auto yCalType = data->getYCalType();
-                y = DataManagerInstance->rangeCalculationValueList(
+                y = DataManagerDataInstance->rangeCalculationValueList(
                     yEntityID, yTargetEntityID, yCalType, secs, m_xRate);
             }
             else if(xType == DataPair::RangeCalculation && yType == DataPair::Time)
             {
                 auto xTargetEntityID = data->getTargetEntityIDX();
                 auto xCalType = data->getXCalType();
-                x = DataManagerInstance->rangeCalculationValueList(
+                x = DataManagerDataInstance->rangeCalculationValueList(
                     xEntityID, xTargetEntityID, xCalType, secs, m_xRate);
 
-                y = DataManager::getInstance()->getEntityAttrValueListByMaxTimeAndIniFile(
+                y = DataManagerDataInstance->getEntityAttrValueListByMaxTimeAndIniFile(
                     xEntityID, xAttr, secs, m_xRate);
             }
             else if(xType == DataPair::RangeCalculation && yType == DataPair::Parameter)
             {
                 auto xTargetEntityID = data->getTargetEntityIDX();
                 auto xCalType = data->getXCalType();
-                x = DataManagerInstance->rangeCalculationValueList(
+                x = DataManagerDataInstance->rangeCalculationValueList(
                     xEntityID, xTargetEntityID, xCalType, secs, m_xRate);
 
-                y = DataManager::getInstance()->getEntityAttrValueListByMaxTimeAndIniFile(
+                y = DataManagerDataInstance->getEntityAttrValueListByMaxTimeAndIniFile(
                     yEntityID, xAttr, secs, m_xRate);
             }
             else if(xType == DataPair::RangeCalculation && yType == DataPair::RangeCalculation)
             {
                 auto xTargetEntityID = data->getTargetEntityIDX();
                 auto xCalType = data->getXCalType();
-                x = DataManagerInstance->rangeCalculationValueList(
+                x = DataManagerDataInstance->rangeCalculationValueList(
                     xEntityID, xTargetEntityID, xCalType, secs, m_xRate);
 
                 auto yTargetEntityID = data->getTargetEntityIDY();
                 auto yCalType = data->getYCalType();
-                y = DataManagerInstance->rangeCalculationValueList(
+                y = DataManagerDataInstance->rangeCalculationValueList(
                     yEntityID, yTargetEntityID, yCalType, secs, m_xRate);
             }
             m_dataHash.insert(uuid, qMakePair(x, y));
@@ -314,7 +315,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
         // seconds  ,ordinal  ,month day
         if(m_xTimeTickFormat == "ordinal")
         {
-            int refYear = DataManager::getInstance()->getRefYear();
+            int refYear = DataManagerDataInstance->getRefYear();
             QDateTime refTime = QDateTime::fromString(QString("%1-01-01 00:00:00").arg(refYear),
                                                       "yyyy-MM-dd hh:mm:ss");
             qint64 offsetSeconds = refTime.toSecsSinceEpoch();
@@ -326,7 +327,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
 
         if(m_yTimeTickFormat == "ordinal")
         {
-            int refYear = DataManager::getInstance()->getRefYear();
+            int refYear = DataManagerDataInstance->getRefYear();
             QDateTime refTime = QDateTime::fromString(QString("%1-01-01 00:00:00").arg(refYear),
                                                       "yyyy-MM-dd hh:mm:ss");
             qint64 offsetSeconds = refTime.toSecsSinceEpoch();
@@ -589,13 +590,13 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
         QPair<double, double> xlimit;
         if(xAttrName == "Time")
         {
-            xlimit = DataManager::getInstance()->getMaxAndMinEntityAttrValue(
-                yEntityID, xAttrName, m_xRate);
+            xlimit =
+                DataManagerDataInstance->getMaxAndMinEntityAttrValue(yEntityID, xAttrName, m_xRate);
         }
         else
         {
-            xlimit = DataManager::getInstance()->getMaxAndMinEntityAttrValue(
-                xEntityID, xAttrName, m_xRate);
+            xlimit =
+                DataManagerDataInstance->getMaxAndMinEntityAttrValue(xEntityID, xAttrName, m_xRate);
         }
 
         // x轴
@@ -621,7 +622,7 @@ DataPair* PlotScatter::addPlotDataPair(int32_t xEntityID,
 
         // y轴
         QPair<double, double> ylimit =
-            DataManager::getInstance()->getMaxAndMinEntityAttrValue(yEntityID, yAttrName, m_yRate);
+            DataManagerDataInstance->getMaxAndMinEntityAttrValue(yEntityID, yAttrName, m_yRate);
         if(!m_isInitCoorRange)
         {
             // 表示m_min数值无意义，先赋值
@@ -695,7 +696,7 @@ void PlotScatter::updateTimelineGraph()
     {
         m_timelineGraph = m_customPlot->addGraph();
         m_timelineGraph->setVisible(true);
-        QVector<double> timeVec = DataManager::getInstance()->getTimeDataSet();
+        QVector<double> timeVec = DataManagerDataInstance->getTimeDataSet();
         if(!timeVec.isEmpty())
         {
             setCoordRangeX(timeVec.first(), timeVec.last());
@@ -768,7 +769,8 @@ void PlotScatter::updateTimelineGraph()
             double tickerCoord = (1 - height) * 1;
             textTicker->addTick(tickerCoord, event.m_entityName);
         }
-        auto dataList = DataManagerInstance->getGenericDataListByID(event.m_entityID, event.m_type);
+        auto dataList =
+            DataManagerDataInstance->getGenericDataListByID(event.m_entityID, event.m_type);
         //如果x轴是time，那么需要绘制事件标签，整个用一个Text显示
         for(const auto& data : dataList)
         {
@@ -1140,7 +1142,7 @@ void PlotScatter::setTimeTickerFormat(const QString& format, bool isXAxis)
         {
             //            QSharedPointer<QCPAxisTickerDateTime> monthDayTicker(new QCPAxisTickerDateTime);
 
-            //            int refYear = DataManager::getInstance()->getRefYear();
+            //            int refYear = DataManagerDataInstance->getRefYear();
             //            // show data time
             //            QString dataTime = OrdinalTimeFormatter::toString(m_seconds, refYear);
 

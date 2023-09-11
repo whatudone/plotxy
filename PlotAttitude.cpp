@@ -1,6 +1,7 @@
 ﻿#include "PlotAttitude.h"
-#include "DataManager.h"
+
 #include "Utils.h"
+#include "data_manager_data.h"
 
 #include <QDebug>
 #include <QPainter>
@@ -487,9 +488,9 @@ void PlotAttitude::updateDataForDataPairsByTime(double secs)
     auto xAttr = dataPair->getAttr_x();
     auto yAttr = dataPair->getAttr_y();
     m_rollValue =
-        DataManager::getInstance()->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs, m_xRate);
+        DataManagerDataInstance->getEntityAttrValueByMaxTime(xEntityID, xAttr, secs, m_xRate);
     m_pitchValue =
-        DataManager::getInstance()->getEntityAttrValueByMaxTime(yEntityID, yAttr, secs, m_yRate);
+        DataManagerDataInstance->getEntityAttrValueByMaxTime(yEntityID, yAttr, secs, m_yRate);
     update();
 }
 

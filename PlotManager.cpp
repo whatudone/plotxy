@@ -1,8 +1,8 @@
 ﻿#include "PlotManager.h"
 #include "AddPlotPair.h"
-#include "DataManager.h"
 #include "PlotManagerData.h"
 #include "TimeClass.h"
+#include "data_manager_data.h"
 
 #include "PlotAScope.h"
 #include "PlotAttitude.h"
@@ -1451,7 +1451,8 @@ void PlotManager::refreshScatterMarkersUI(PlotItemBase* plot)
             item->setText(2, QString::number(marker.y));
             item->setText(3, marker.yUnit);
             item->setText(
-                4, OrdinalTimeFormatter::toString(marker.time, DataManagerInstance->getRefYear()));
+                4,
+                OrdinalTimeFormatter::toString(marker.time, DataManagerDataInstance->getRefYear()));
             item->setText(5, marker.text);
             item->setData(0, Qt::UserRole + 1, marker.uuid);
             ui.treeWidgetMarker->addTopLevelItem(item);
@@ -2622,7 +2623,7 @@ void PlotManager::onComboBox_XUnitChanged(const QString& newUnit)
     {
         int32_t id = m_curSelectPlot->getDataPairs().at(0)->getEntityIDX();
         QString attr = m_curSelectPlot->getDataPairs().at(0)->getAttr_x();
-        oriUnit = DataManagerInstance->getUnitByAttr(id, attr);
+        oriUnit = DataManagerDataInstance->getUnitByAttr(id, attr);
         if(attr == "Time" && oriUnit.isEmpty())
             oriUnit = "seconds";
     }
@@ -2650,7 +2651,7 @@ void PlotManager::onComboBox_YUnitChanged(const QString& newUnit)
     {
         int32_t id = m_curSelectPlot->getDataPairs().at(0)->getEntityIDY();
         QString attr = m_curSelectPlot->getDataPairs().at(0)->getAttr_y();
-        oriUnit = DataManagerInstance->getUnitByAttr(id, attr);
+        oriUnit = DataManagerDataInstance->getUnitByAttr(id, attr);
         if(attr == "Time" && oriUnit.isEmpty())
             oriUnit = "seconds";
     }
@@ -2769,7 +2770,7 @@ void PlotManager::onPushButton_24Clicked()
     // 去掉reload时加载asi中gog文件的逻辑
     return;
     // 重新加载asi文件中关联的gog文件
-    //    QList<QString> list = DataManager::getInstance()->getGOGFileList();
+    //    QList<QString> list = DataManagerDataInstance->getGOGFileList();
     //    for(auto item : list)
     //    {
     //        addGOGTableItem(item);
@@ -3857,8 +3858,8 @@ void PlotManager::onAddScatterMarkers()
                                  .arg(ui.spinBoxMarkerMins->value())
                                  .arg(ui.lineEditSecs->text());
 
-        marker.time =
-            OrdinalTimeFormatter::convertToSeconds(odiTimeStr, DataManagerInstance->getRefYear());
+        marker.time = OrdinalTimeFormatter::convertToSeconds(odiTimeStr,
+                                                             DataManagerDataInstance->getRefYear());
         marker.iconType = ui.comboBoxMarkerIcon->currentText();
         marker.color = ui.pushButtonMarkerColor->color();
         marker.text = ui.lineEditMarkerText->text();
@@ -3904,8 +3905,8 @@ void PlotManager::onModifyScatterMarkers()
                                  .arg(ui.spinBoxMarkerMins->value())
                                  .arg(ui.lineEditSecs->text());
 
-        marker.time =
-            OrdinalTimeFormatter::convertToSeconds(odiTimeStr, DataManagerInstance->getRefYear());
+        marker.time = OrdinalTimeFormatter::convertToSeconds(odiTimeStr,
+                                                             DataManagerDataInstance->getRefYear());
         marker.iconType = ui.comboBoxMarkerIcon->currentText();
         marker.color = ui.pushButtonMarkerColor->color();
         marker.text = ui.lineEditMarkerText->text();
@@ -3956,7 +3957,7 @@ void PlotManager::onCurrentMarkerChanged()
         ui.spinBoxMarkerFontSize->setValue(marker.fontSize);
 
         QString timeStr =
-            OrdinalTimeFormatter::toString(marker.time, DataManagerInstance->getRefYear());
+            OrdinalTimeFormatter::toString(marker.time, DataManagerDataInstance->getRefYear());
         int32_t days;
         int32_t year;
         int32_t hour;
