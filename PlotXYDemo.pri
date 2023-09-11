@@ -9,6 +9,7 @@
 
 HEADERS += $$PWD/TimeClass.h \
     $$PWD/RecvThread.h \
+    $$PWD/data_manager_data.h \
     $$PWD/label_edit.h \
     $$PWD/mydialpointer.h \
     $$PWD/rename_tab_dialog.h \
@@ -53,6 +54,7 @@ HEADERS += $$PWD/TimeClass.h \
 
 SOURCES += $$PWD/AddPlotPair.cpp \
     $$PWD/RecvThread.cpp \
+    $$PWD/data_manager_data.cpp \
     $$PWD/label_edit.cpp \
     $$PWD/mydialpointer.cpp \
     $$PWD/rename_tab_dialog.cpp \

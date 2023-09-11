@@ -42,10 +42,13 @@ void recvThread::run()
         address = setting.value("netConfig/address").toString();
         port = setting.value("netConfig/port").toInt();
     }
-
+#if 0
     QHostAddress localAddress(address);
     m_udpSocket->bind(QHostAddress::AnyIPv4, port, QUdpSocket::ShareAddress);
     bool flag = m_udpSocket->joinMulticastGroup(localAddress);
+#else
+    bool flag = m_udpSocket->bind(QHostAddress::AnyIPv4, 8888, QUdpSocket::ShareAddress);
+#endif
     if(flag)
     {
         connect(m_udpSocket,
