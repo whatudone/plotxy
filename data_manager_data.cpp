@@ -490,15 +490,18 @@ QVector<double>
 DataManagerData::getEntityAttrValueList(int32_t entityID, const QString& attr, double rate)
 {
     std::shared_lock<std::shared_mutex> lck(m_entityMutex);
-    QVector<double> valueList;
+    QVector<double> resultValueVec;
     if(m_newEntityDataMap.contains(entityID) && m_newEntityDataMap.value(entityID).contains(attr))
     {
-        foreach(auto value, m_newEntityDataMap.value(entityID).value(attr))
+        QVector<double> valueVec = m_newEntityDataMap.value(entityID).value(attr);
+        int32_t valueSize = valueVec.size();
+        resultValueVec.resize(valueSize);
+        for(int32_t i = 0; i < valueSize; ++i)
         {
-            valueList.append(value * rate);
+            resultValueVec[i] = valueVec.at(i) * rate;
         }
     }
-    return valueList;
+    return resultValueVec;
 }
 
 bool DataManagerData::entityDataIsEmpty()

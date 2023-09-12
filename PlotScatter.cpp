@@ -43,6 +43,7 @@ void PlotScatter::initPlot()
         if(m_isTimeLine)
         {
             updateTimelineGraph();
+            m_customPlot->replot();
         }
     });
     connect(m_customPlot->yAxis, QOverload<const QCPRange&>::of(&QCPAxis::rangeChanged), [this]() {
@@ -242,12 +243,13 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
 void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
 {
     if(!data)
-    {
+	{
         return;
     }
     if(m_isTimeLine)
-	{
+    {
         updateTimelineGraph();
+        m_customPlot->replot();
         return;
     }
     auto uuid = data->getUuid();
@@ -827,7 +829,6 @@ void PlotScatter::updateTimelineGraph()
         ++index;
     }
     m_customPlot->yAxis->setTicker(textTicker);
-    m_customPlot->replot();
 }
 
 void PlotScatter::updateBackgroundColorSeg()
@@ -908,7 +909,6 @@ void PlotScatter::updateMarkers(double currentSeconds)
     m_plotMarkerItems.clear();
     if(m_plotMarkers.isEmpty())
     {
-        m_customPlot->replot();
         return;
     }
     for(const auto& marker : m_plotMarkers)
@@ -1038,7 +1038,6 @@ void PlotScatter::updateConnectionLines()
             m_connectionLines.append(line);
         }
     }
-    m_customPlot->replot();
 }
 
 void PlotScatter::updateScrollAxis()
@@ -1312,6 +1311,7 @@ void PlotScatter::addConnection(const ConnectionSetting& con)
     {
         m_conHash.insert(con.uuid, con);
         updateConnectionLines();
+        m_customPlot->replot();
     }
 }
 
@@ -1321,6 +1321,7 @@ void PlotScatter::removeConnection(const QString& uuid)
     {
         m_conHash.remove(uuid);
         updateConnectionLines();
+        m_customPlot->replot();
     }
 }
 
@@ -1334,6 +1335,7 @@ void PlotScatter::updateConnection(
         m_conHash[uuid].stipple = stipple;
         m_conHash[uuid].speed = speed;
         updateConnectionLines();
+        m_customPlot->replot();
     }
 }
 
@@ -1348,6 +1350,7 @@ void PlotScatter::addMarker(const PlotMarker& marker)
     {
         m_plotMarkers.insert(marker.uuid, marker);
         updateMarkers(PlotXYDemo::getSeconds());
+        m_customPlot->replot();
     }
 }
 
@@ -1357,6 +1360,7 @@ void PlotScatter::removeMarker(const QString& uuid)
     {
         m_plotMarkers.remove(uuid);
         updateMarkers(PlotXYDemo::getSeconds());
+        m_customPlot->replot();
     }
 }
 
@@ -1366,5 +1370,6 @@ void PlotScatter::modifyMarker(const QString& uuid, const PlotMarker& marker)
     {
         m_plotMarkers.insert(uuid, marker);
         updateMarkers(PlotXYDemo::getSeconds());
+        m_customPlot->replot();
     }
 }
