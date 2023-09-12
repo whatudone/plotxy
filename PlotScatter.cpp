@@ -307,7 +307,6 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
             x = x.mid(x.size() - pointsLimit);
             y = y.mid(y.size() - pointsLimit);
         }
-        graph->setAdaptiveSampling(true);
 
         graph->setVisible(true);
         // 第三个参数设置为true，禁止内部对数据根据x轴的数值大小进行排序，导致数据插入顺序不对，出现line模式连线不对
@@ -770,7 +769,7 @@ void PlotScatter::updateTimelineGraph()
             textTicker->addTick(tickerCoord, event.m_entityName);
         }
         auto dataList =
-            DataManagerDataInstance->getGenericDataListByID(event.m_entityID, event.m_type);
+            DataManagerDataInstance->getGenericDataListByID(event.m_entityID, event.m_type, 10);
         //如果x轴是time，那么需要绘制事件标签，整个用一个Text显示
         for(const auto& data : dataList)
         {

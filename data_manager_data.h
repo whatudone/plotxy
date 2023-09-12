@@ -149,8 +149,10 @@ public:
     QList<QPair<QString, QString>> getAttrAndUnitPairList(int32_t id);
     // 获取所有<entityId,entityName>键值对
     QMap<int32_t, QString> getEntityIDAndNameMap();
-    // 获取某个实体对应的某个事件的所有数据
-    QList<GenericData> getGenericDataListByID(int32_t entityID, const QString& tag = "Event");
+    // 获取某个实体对应的某个事件的所有数据,默认不限制数量，在线模式下，事件数量较大，需要使用的时候限制最大数量
+    QList<GenericData> getGenericDataListByID(int32_t entityID,
+                                              const QString& tag = "Event",
+                                              const int32_t maxCount = 0);
     // 获取某个实体对应的所有generic data tags
     QStringList getGenericDataTagsByID(int32_t entityID);
 
@@ -210,8 +212,9 @@ private:
     QHash<QString, QStringList> m_realEventTypeInfo;
     int32_t m_timeLimit;
 
-    std::shared_mutex m_mutex;
+    std::shared_mutex m_entityMutex;
 
+    std::shared_mutex m_eventMutex;
     friend class DataManager;
 };
 #define DataManagerDataInstance DataManagerData::getInstance()

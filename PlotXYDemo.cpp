@@ -646,29 +646,7 @@ void PlotXYDemo::onSliderValueChanged(int value)
     QString dataTime = OrdinalTimeFormatter::toString(m_seconds, refYear);
     m_statusBar_dataTime->setText(dataTime);
 
-    /*
-     * 通知图表刷新数据，在线模式，如果数据接收频率很快，那么会频繁刷新界面，导致界面卡顿
-     * 采取限制措施，每秒限制刷新次数，然后给用户设置入口，可以进行设置。
-     * 离线模式不必限制，可以持续刷新
-    */
-    if(ui.actionReal_Time->isChecked())
-    {
-        int64_t curMSecs = QDateTime::currentMSecsSinceEpoch();
-        // 刷新时间间隔，单位ms
-        if(curMSecs - m_lastUpdateTime < 1500)
-        {
-            return;
-        }
-        else
-        {
-            m_lastUpdateTime = curMSecs;
-            emit currentSecsChanged(m_seconds);
-        }
-    }
-    else
-    {
-        emit currentSecsChanged(m_seconds);
-    }
+    emit currentSecsChanged(m_seconds);
 }
 
 void PlotXYDemo::onRemoteSliderValueChanged(int value)

@@ -104,8 +104,18 @@ void recvThread::onProtoBufReadyRead()
             plat.ParseFromString(str);
 
             DataManagerDataInstance->insertProtobufPlatinfoData(plat);
-            //TODO:控制发送频率
-            //            emit updateRealTime();
+
+            int64_t curMSecs = QDateTime::currentMSecsSinceEpoch();
+            // 刷新时间间隔，单位ms
+            if(curMSecs - m_lastUpdateTime < 1000)
+            {
+                return;
+            }
+            else
+            {
+                m_lastUpdateTime = curMSecs;
+                emit updateRealTime();
+            }
         }
         else
         {

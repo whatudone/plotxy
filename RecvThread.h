@@ -1,6 +1,7 @@
 #ifndef RECVTHREAD_H
 #define RECVTHREAD_H
 
+#include <QDateTime>
 #include <QThread>
 #include <QUdpSocket>
 
@@ -28,6 +29,8 @@ signals:
 private:
     QUdpSocket* m_udpSocket = nullptr;
     bool m_startFlag = false;
+    // 上次图表刷新时间
+    int64_t m_lastUpdateTime = QDateTime::currentMSecsSinceEpoch();
 };
 
 #endif // RECVTHREAD_H

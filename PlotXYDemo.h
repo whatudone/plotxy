@@ -7,7 +7,7 @@
 #include "ui_PlotXYDemo.h"
 
 #include <QContextMenuEvent>
-#include <QDateTime>
+
 #include <QMainWindow>
 
 class PlotItemBase;
@@ -258,8 +258,6 @@ private:
     static double m_seconds;
     // 是否处于实时模式
     static bool m_isRealTime;
-    // 上次图表刷新时间
-    int64_t m_lastUpdateTime = QDateTime::currentMSecsSinceEpoch();
 
     // 菜单栏拖动功能
     QPoint m_lastPos;

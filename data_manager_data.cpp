@@ -34,6 +34,7 @@ bool DataManagerData::saveDataToASI(const QString& asiFileName)
         qDebug() << "DataManagerData::saveDataToASI read file failure.";
         return false;
     }
+    std::shared_lock<std::shared_mutex> lck(m_entityMutex);
 
     auto idList = m_newEntityDataMap.keys();
     if(idList.isEmpty())
@@ -464,7 +465,7 @@ void DataManagerData::loadASIData(const QString& asiFileName)
 
 const QMap<int32_t, QHash<QString, QVector<double>>>& DataManagerData::getDataMap()
 {
-    std::shared_lock<std::shared_mutex> lck(m_mutex);
+    std::shared_lock<std::shared_mutex> lck(m_entityMutex);
     return m_newEntityDataMap;
 }
 
@@ -488,6 +489,7 @@ int DataManagerData::getRefYear()
 QVector<double>
 DataManagerData::getEntityAttrValueList(int32_t entityID, const QString& attr, double rate)
 {
+    std::shared_lock<std::shared_mutex> lck(m_entityMutex);
     QVector<double> valueList;
     if(m_newEntityDataMap.contains(entityID) && m_newEntityDataMap.value(entityID).contains(attr))
     {
@@ -501,6 +503,7 @@ DataManagerData::getEntityAttrValueList(int32_t entityID, const QString& attr, d
 
 bool DataManagerData::entityDataIsEmpty()
 {
+    std::shared_lock<std::shared_mutex> lck(m_entityMutex);
     return m_newEntityDataMap.isEmpty();
 }
 
@@ -610,6 +613,7 @@ QPair<QVector<double>, QVector<double>> DataManagerData::getSliceDataByTime(int3
                                                                             double secs)
 {
     // 将与secs时间相等的数据全部返回
+    std::shared_lock<std::shared_mutex> lck(m_entityMutex);
     QPair<QVector<double>, QVector<double>> dataListPair;
     if(m_newEntityDataMap.contains(entityID))
     {
@@ -652,6 +656,7 @@ void DataManagerData::getRTIDataByTime(int32_t entityID,
                                        QVector<double>& timeList,
                                        QHash<QPair<int32_t, int32_t>, double>& valueMap)
 {
+    std::shared_lock<std::shared_mutex> lck(m_entityMutex);
     rangeList.clear();
     timeList.clear();
     valueMap.clear();
@@ -696,7 +701,7 @@ void DataManagerData::getDopplerDataByTime(
     QMultiHash<double, QPair<double, double>>& horizonDataHash,
     QMultiHash<double, QPair<double, double>>& verticalDataHash)
 {
-
+    std::shared_lock<std::shared_mutex> lck(m_entityMutex);
     rangeList.clear();
     timeList.clear();
     valueHash.clear();
@@ -788,17 +793,30 @@ QMap<int32_t, QString> DataManagerData::getEntityIDAndNameMap()
     return map;
 }
 
-QList<GenericData> DataManagerData::getGenericDataListByID(int32_t entityID, const QString& tag)
+QList<GenericData> DataManagerData::getGenericDataListByID(int32_t entityID,
+                                                           const QString& tag,
+                                                           const int32_t maxCount)
 {
+    std::shared_lock<std::shared_mutex> lock(m_eventMutex);
     QList<GenericData> tags;
     if(m_genericMap.contains(entityID))
+    {
         tags = m_genericMap.value(entityID).value(tag);
-
+        if(maxCount > 0)
+        {
+            int32_t size = tags.size();
+            if(size > maxCount)
+            {
+                tags = tags.mid(size - maxCount);
+            }
+        }
+    }
     return tags;
 }
 
 QStringList DataManagerData::getGenericDataTagsByID(int32_t entityID)
 {
+    std::shared_lock<std::shared_mutex> lock(m_eventMutex);
     if(m_genericMap.contains(entityID))
         return m_genericMap.value(entityID).keys();
 
@@ -882,6 +900,7 @@ QVector<double> DataManagerData::rangeCalculationValueList(int32_t sourceID,
 
 bool DataManagerData::isEntityContainsGenericTags(int32_t id)
 {
+    std::shared_lock<std::shared_mutex> lock(m_eventMutex);
     return m_genericMap.contains(id);
 }
 
@@ -978,7 +997,7 @@ QString DataManagerData::getUnitByAttr(int32_t id, const QString& attr)
 
 void DataManagerData::insertGenericData(const GenericData& generic)
 {
-    std::unique_lock<std::shared_mutex> lock(m_mutex);
+    std::unique_lock<std::shared_mutex> lock(m_eventMutex);
     int32_t uID = -1;
     if(generic.m_ID != -1)
     {
@@ -1004,7 +1023,7 @@ void DataManagerData::insertGenericData(const GenericData& generic)
 
 void DataManagerData::insertProtobufPlatinfoData(const USIM_PlatInfoMessage_Proto& plat)
 {
-    std::unique_lock<std::shared_mutex> lock(m_mutex);
+    std::unique_lock<std::shared_mutex> lock(m_entityMutex);
     int32_t uID = int32_t(plat.uid());
 
     if(!m_newEntityDataMap.contains(uID))
@@ -1101,6 +1120,7 @@ void DataManagerData::setDataFileName(const QString& dataFileName)
 
 void DataManagerData::clearData()
 {
+    std::unique_lock<std::shared_mutex> lck(m_entityMutex);
     m_newEntityDataMap.clear();
     m_platformMap.clear();
     m_genericMap.clear();
