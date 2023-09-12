@@ -17,7 +17,7 @@
    <item>
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>4</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="page">
       <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -180,6 +180,12 @@
             <layout class="QVBoxLayout" name="verticalLayout_27">
              <item>
               <widget class="QTableWidget" name="tableWidget_Entity_9">
+               <property name="editTriggers">
+                <set>QAbstractItemView::NoEditTriggers</set>
+               </property>
+               <attribute name="horizontalHeaderStretchLastSection">
+                <bool>true</bool>
+               </attribute>
                <column>
                 <property name="text">
                  <string>实体</string>
@@ -196,6 +202,12 @@
             <layout class="QVBoxLayout" name="verticalLayout_28">
              <item>
               <widget class="QTableWidget" name="tableWidget_Entity_10">
+               <property name="editTriggers">
+                <set>QAbstractItemView::NoEditTriggers</set>
+               </property>
+               <attribute name="horizontalHeaderStretchLastSection">
+                <bool>true</bool>
+               </attribute>
                <column>
                 <property name="text">
                  <string>目标实体</string>
@@ -362,7 +374,7 @@
          <item>
           <widget class="QStackedWidget" name="stackedWidget_2">
            <property name="currentIndex">
-            <number>2</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="page_5">
             <layout class="QVBoxLayout" name="verticalLayout_14">
@@ -433,9 +445,15 @@
               <layout class="QVBoxLayout" name="verticalLayout_2">
                <item>
                 <widget class="QTableWidget" name="tableWidget_Entity_2">
+                 <property name="editTriggers">
+                  <set>QAbstractItemView::NoEditTriggers</set>
+                 </property>
                  <property name="selectionBehavior">
                   <enum>QAbstractItemView::SelectRows</enum>
                  </property>
+                 <attribute name="horizontalHeaderStretchLastSection">
+                  <bool>true</bool>
+                 </attribute>
                  <column>
                   <property name="text">
                    <string>X轴实体</string>
@@ -452,6 +470,9 @@
               <layout class="QVBoxLayout" name="verticalLayout_12">
                <item>
                 <widget class="QTableWidget" name="tableWidget_nameUnits_2">
+                 <property name="editTriggers">
+                  <set>QAbstractItemView::NoEditTriggers</set>
+                 </property>
                  <property name="selectionMode">
                   <enum>QAbstractItemView::SingleSelection</enum>
                  </property>
@@ -460,6 +481,9 @@
                  </property>
                  <attribute name="horizontalHeaderDefaultSectionSize">
                   <number>130</number>
+                 </attribute>
+                 <attribute name="horizontalHeaderStretchLastSection">
+                  <bool>true</bool>
                  </attribute>
                  <column>
                   <property name="text">
@@ -501,6 +525,12 @@
               <layout class="QVBoxLayout" name="verticalLayout_16">
                <item>
                 <widget class="QTableWidget" name="tableWidget_Entity_5">
+                 <property name="editTriggers">
+                  <set>QAbstractItemView::NoEditTriggers</set>
+                 </property>
+                 <attribute name="horizontalHeaderStretchLastSection">
+                  <bool>true</bool>
+                 </attribute>
                  <column>
                   <property name="text">
                    <string>X轴实体</string>
@@ -517,6 +547,12 @@
               <layout class="QVBoxLayout" name="verticalLayout_17">
                <item>
                 <widget class="QTableWidget" name="tableWidget_Entity_6">
+                 <property name="editTriggers">
+                  <set>QAbstractItemView::NoEditTriggers</set>
+                 </property>
+                 <attribute name="horizontalHeaderStretchLastSection">
+                  <bool>true</bool>
+                 </attribute>
                  <column>
                   <property name="text">
                    <string>X轴目标实体</string>
@@ -671,7 +707,7 @@
          <item>
           <widget class="QStackedWidget" name="stackedWidget_3">
            <property name="currentIndex">
-            <number>2</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="page_8">
             <layout class="QVBoxLayout" name="verticalLayout_19">
@@ -742,9 +778,15 @@
               <layout class="QVBoxLayout" name="verticalLayout_11">
                <item>
                 <widget class="QTableWidget" name="tableWidget_Entity_3">
+                 <property name="editTriggers">
+                  <set>QAbstractItemView::NoEditTriggers</set>
+                 </property>
                  <property name="selectionBehavior">
                   <enum>QAbstractItemView::SelectRows</enum>
                  </property>
+                 <attribute name="horizontalHeaderStretchLastSection">
+                  <bool>true</bool>
+                 </attribute>
                  <column>
                   <property name="text">
                    <string>Y轴实体</string>
@@ -761,6 +803,9 @@
               <layout class="QVBoxLayout" name="verticalLayout_13">
                <item>
                 <widget class="QTableWidget" name="tableWidget_nameUnits_3">
+                 <property name="editTriggers">
+                  <set>QAbstractItemView::NoEditTriggers</set>
+                 </property>
                  <property name="selectionMode">
                   <enum>QAbstractItemView::SingleSelection</enum>
                  </property>
@@ -769,6 +814,9 @@
                  </property>
                  <attribute name="horizontalHeaderDefaultSectionSize">
                   <number>130</number>
+                 </attribute>
+                 <attribute name="horizontalHeaderStretchLastSection">
+                  <bool>true</bool>
                  </attribute>
                  <column>
                   <property name="text">
@@ -810,6 +858,12 @@
               <layout class="QVBoxLayout" name="verticalLayout_21">
                <item>
                 <widget class="QTableWidget" name="tableWidget_Entity_7">
+                 <property name="editTriggers">
+                  <set>QAbstractItemView::NoEditTriggers</set>
+                 </property>
+                 <attribute name="horizontalHeaderStretchLastSection">
+                  <bool>true</bool>
+                 </attribute>
                  <column>
                   <property name="text">
                    <string>Y轴实体</string>
@@ -826,6 +880,12 @@
               <layout class="QVBoxLayout" name="verticalLayout_22">
                <item>
                 <widget class="QTableWidget" name="tableWidget_Entity_8">
+                 <property name="editTriggers">
+                  <set>QAbstractItemView::NoEditTriggers</set>
+                 </property>
+                 <attribute name="horizontalHeaderStretchLastSection">
+                  <bool>true</bool>
+                 </attribute>
                  <column>
                   <property name="text">
                    <string>Y轴目标实体</string>
@@ -930,6 +990,9 @@
           </property>
           <item>
            <widget class="QTableWidget" name="tableWidget_Entity_Attitude1">
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
             <attribute name="horizontalHeaderStretchLastSection">
              <bool>true</bool>
             </attribute>
@@ -945,6 +1008,9 @@
           </item>
           <item>
            <widget class="QTableWidget" name="tableWidget_nameUnits_Attitude1">
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
             <attribute name="horizontalHeaderStretchLastSection">
              <bool>true</bool>
             </attribute>
@@ -989,6 +1055,9 @@
           </property>
           <item>
            <widget class="QTableWidget" name="tableWidget_Entity_Attitude2">
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
             <attribute name="horizontalHeaderStretchLastSection">
              <bool>true</bool>
             </attribute>
@@ -1004,6 +1073,9 @@
           </item>
           <item>
            <widget class="QTableWidget" name="tableWidget_nameUnits_Attitude2">
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
             <attribute name="horizontalHeaderStretchLastSection">
              <bool>true</bool>
             </attribute>
@@ -1224,6 +1296,12 @@
            </property>
            <item>
             <widget class="QTableWidget" name="tableWidget_Entity_4">
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
              <column>
               <property name="text">
                <string>实体</string>
@@ -1239,9 +1317,15 @@
            </item>
            <item>
             <widget class="QTableWidget" name="tableWidget_nameUnits_4">
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
              <property name="selectionBehavior">
               <enum>QAbstractItemView::SelectRows</enum>
              </property>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
              <column>
               <property name="text">
                <string>名称</string>
@@ -1266,6 +1350,9 @@
              <property name="styleSheet">
               <string notr="true">QHeaderView::section{background:lightgray;}</string>
              </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
              <attribute name="horizontalHeaderCascadingSectionResizes">
               <bool>false</bool>
              </attribute>
@@ -1286,6 +1373,9 @@
             <widget class="QTableWidget" name="tableWidgetTextTargetEntity">
              <property name="styleSheet">
               <string notr="true">QHeaderView::section{background:lightgray;}</string>
+             </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
              </property>
              <attribute name="horizontalHeaderStretchLastSection">
               <bool>true</bool>
@@ -1451,6 +1541,9 @@
           <layout class="QVBoxLayout" name="verticalLayout_14">
            <item>
             <widget class="QTableWidget" name="tableWidget_lightEntity">
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
              <attribute name="horizontalHeaderStretchLastSection">
               <bool>true</bool>
              </attribute>
@@ -1470,6 +1563,9 @@
           <layout class="QVBoxLayout" name="verticalLayout_15">
            <item>
             <widget class="QTableWidget" name="tableWidget_lightNameUnits">
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
              <attribute name="horizontalHeaderStretchLastSection">
               <bool>true</bool>
              </attribute>
@@ -1610,6 +1706,12 @@
           <layout class="QVBoxLayout" name="verticalLayout_37">
            <item>
             <widget class="QTableWidget" name="tableWidget_AScopeEntity">
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
              <column>
               <property name="text">
                <string>实体</string>
@@ -1623,7 +1725,11 @@
           </layout>
          </item>
          <item>
-          <widget class="QTableWidget" name="tableWidget_AScopeData"/>
+          <widget class="QTableWidget" name="tableWidget_AScopeData">
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QGroupBox" name="groupBox_9">
