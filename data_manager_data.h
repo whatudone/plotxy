@@ -195,14 +195,15 @@ public:
 
     void insertProtobufPlatinfoData(const USIM_PlatInfoMessage_Proto& plat);
 
+    // 加载ASI格式的数据（二维类型）
+    void loadASIData(const QString& asiFileName);
+
 private:
     //获取secs时间内的实体-属性的最大index
     int getEntityAttrMaxIndexByTime(int32_t entityID, double secs);
 
     // 加载带时间信息的csv数据
     void loadCSVData(const QString& filePath);
-    // 加载ASI格式的数据（二维类型）
-    void loadASIData(const QString& asiFileName);
 
     // 使用正则表达式加载ASI中特定数据格式
     QStringList parsePlatformData(const QString& data);

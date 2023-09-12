@@ -6,7 +6,9 @@
 
 #include "DataManager.h"
 #include "data_manager_data.h"
+#include "file_process_thread.h"
 
+#include <QDialog>
 #include <QFileInfo>
 #include <QMessageBox>
 DataManager::DataManager()
@@ -18,7 +20,19 @@ DataManager::~DataManager() {}
 
 bool DataManager::saveDataToASI(const QString& asiFileName)
 {
-    return DataManagerData::getInstance()->saveDataToASI(asiFileName);
+    FileProcessThread thread(FileProcessThread::TaskType::SaveFile);
+    thread.setFileName(asiFileName);
+    QMessageBox message("保存",
+                        "正在保存数据，请稍后！",
+                        QMessageBox::Information,
+                        QMessageBox::NoButton,
+                        QMessageBox::NoButton,
+                        QMessageBox::NoButton);
+    message.setStandardButtons(QMessageBox::NoButton);
+    connect(&thread, &QThread::finished, &message, &QDialog::accept);
+    thread.start();
+    message.exec();
+    return true;
 }
 
 void DataManager::loadFileData(const QString& filename)
@@ -30,13 +44,20 @@ void DataManager::loadFileData(const QString& filename)
         return;
     }
     QString suffix = info.suffix().toLower();
-    if(suffix == "csv")
+    if(suffix == "asi")
     {
-        DataManagerData::getInstance()->loadCSVData(filename);
-    }
-    else if(suffix == "asi")
-    {
-        DataManagerData::getInstance()->loadASIData(filename);
+        FileProcessThread thread(FileProcessThread::TaskType::LoadFile);
+        thread.setFileName(filename);
+        QMessageBox message("导入",
+                            "正在导入数据，请稍后！",
+                            QMessageBox::Information,
+                            QMessageBox::NoButton,
+                            QMessageBox::NoButton,
+                            QMessageBox::NoButton);
+        message.setStandardButtons(QMessageBox::NoButton);
+        connect(&thread, &QThread::finished, &message, &QDialog::accept);
+        thread.start();
+        message.exec();
     }
     else
     {
