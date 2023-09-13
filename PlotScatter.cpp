@@ -42,7 +42,13 @@ PlotScatter::PlotScatter(QWidget* parent)
     setupLayout();
 }
 
-PlotScatter::~PlotScatter() {}
+PlotScatter::~PlotScatter()
+{
+    if(m_pixmapItem)
+    {
+        m_customPlot->removeItem(m_pixmapItem);
+    }
+}
 
 void PlotScatter::initPlot()
 {
@@ -433,12 +439,8 @@ void PlotScatter::resizeEvent(QResizeEvent* event)
 
 void PlotScatter::setStaticGrid(bool isResetRange)
 {
-    for(const auto& item : m_staticGridItemList)
-    {
-        m_customPlot->removeItem(item);
-    }
-    m_staticGridItemList.clear();
-
+    if(!m_pixmapItem)
+        m_pixmapItem = new QCPItemPixmap(m_customPlot);
     if(m_isShowStaticGrid)
     {
         int gridNum = 0;
@@ -463,7 +465,6 @@ void PlotScatter::setStaticGrid(bool isResetRange)
             m_tmpCoordEndY = m_coordEnd_y;
         }
 
-        QCPItemPixmap* pixmapItem = new QCPItemPixmap(m_customPlot);
         int width = m_customPlot->axisRect()->width();
         int height = m_customPlot->axisRect()->height();
         QPixmap pixmap(width, height);
@@ -490,14 +491,16 @@ void PlotScatter::setStaticGrid(bool isResetRange)
             painter.drawText(int(width * 0.05), height / (gridNum - 1) * gridIndex, yText);
             painter.drawText(int(width * 0.95), height / (gridNum - 1) * gridIndex, yText);
         }
-        pixmapItem->topLeft->setType(QCPItemPosition::ptAxisRectRatio);
-        pixmapItem->topLeft->setCoords(0, 0);
-        pixmapItem->bottomRight->setType(QCPItemPosition::ptAxisRectRatio);
-        pixmapItem->bottomRight->setCoords(1, 1);
-        pixmapItem->setPixmap(pixmap);
-        pixmapItem->setLayer("grid");
-        m_staticGridItemList.append(pixmapItem);
+        m_pixmapItem->topLeft->setType(QCPItemPosition::ptAxisRectRatio);
+        m_pixmapItem->topLeft->setCoords(0, 0);
+        m_pixmapItem->bottomRight->setType(QCPItemPosition::ptAxisRectRatio);
+        m_pixmapItem->bottomRight->setCoords(1, 1);
+        m_pixmapItem->setPixmap(pixmap);
+        m_pixmapItem->setLayer("grid");
+        m_pixmapItem->setVisible(true);
     }
+    else
+        m_pixmapItem->setVisible(false);
 
     m_customPlot->replot();
 }

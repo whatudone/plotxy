@@ -235,11 +235,11 @@ private:
     QFont m_staticFont;
     GridStyle m_staticGridStyle;
     GridDensity m_staticGridDensity;
-    QList<QCPAbstractItem*> m_staticGridItemList;
     double m_tmpCoordBgnX;
     double m_tmpCoordBgnY;
     double m_tmpCoordEndX;
     double m_tmpCoordEndY;
+    QCPItemPixmap* m_pixmapItem = nullptr;
 };
 
 #endif // PLOTSCATTER_H
