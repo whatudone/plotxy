@@ -19,6 +19,7 @@
 #include <QAction>
 #include <QColorDialog>
 #include <QDebug>
+#include <QHash>
 #include <QHeaderView>
 #include <QSlider>
 #include <QString>
@@ -26,6 +27,20 @@
 #include <QTableWidgetItem>
 #include <QTimer>
 #include <QTreeWidget>
+
+const QHash<PlotType, QString> TypeIconMap{
+    {PlotType::Type_PlotBar, ":/bar.svg"},
+    {PlotType::Type_PlotRTI, ":/RTI.svg"},
+    {PlotType::Type_PlotDial, ":/dial.svg"},
+    {PlotType::Type_PlotText, ":/text.svg"},
+    {PlotType::Type_PlotLight, ":/light.svg"},
+    {PlotType::Type_PlotPolar, ":/polar.svg"},
+    {PlotType::Type_PlotTrack, ":/track.svg"},
+    {PlotType::Type_PlotAScope, ":/scope.svg"},
+    {PlotType::Type_PlotDoppler, ":/doppler.svg"},
+    {PlotType::Type_PlotScatter, ":/scatter.svg"},
+    {PlotType::Type_PlotAttitude, ":/attitude.svg"},
+};
 
 PlotManager::PlotManager(QWidget* parent)
     : QWidget(parent)
@@ -88,6 +103,7 @@ void PlotManager::addPlot(const QString& tabName, PlotItemBase* plotItem)
         {
             QTreeWidgetItem* itemselPlotI =
                 new QTreeWidgetItem(QStringList() << plotItem->getName());
+            itemselPlotI->setIcon(0, QIcon(TypeIconMap.value(plotItem->plotType())));
             topWidget[0]->addChild(itemselPlotI);
         }
     }
@@ -98,6 +114,7 @@ void PlotManager::addPlot(const QString& tabName, PlotItemBase* plotItem)
         ui.treeWidget_selectedPlots->expandAll();
 
         QTreeWidgetItem* itemselPlotI = new QTreeWidgetItem(QStringList() << plotItem->getName());
+        itemselPlotI->setIcon(0, QIcon(TypeIconMap.value(plotItem->plotType())));
         itemselPlotH->addChild(itemselPlotI);
 
         //comboBox_tabName
@@ -2023,8 +2040,9 @@ void PlotManager::onUpdatePlotManager()
         ui.treeWidget_selectedPlots->expandAll();
         for(int k = 0; k < plotDataMap[tabName].size(); ++k)
         {
-            QTreeWidgetItem* itemselPlotI =
-                new QTreeWidgetItem(QStringList() << plotDataMap[tabName].at(k)->getName());
+            auto plot = plotDataMap.value(tabName).at(k);
+            QTreeWidgetItem* itemselPlotI = new QTreeWidgetItem(QStringList() << plot->getName());
+            itemselPlotI->setIcon(0, QIcon(TypeIconMap.value(plot->plotType())));
             itemselPlotH->addChild(itemselPlotI);
         }
         //comboBox_tabName

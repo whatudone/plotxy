@@ -7,6 +7,20 @@
 #include <QColorDialog>
 #include <QTableWidgetSelectionRange>
 
+const QHash<PlotType, QString> TypeIconMap{
+    {PlotType::Type_PlotBar, ":/bar.svg"},
+    {PlotType::Type_PlotRTI, ":/RTI.svg"},
+    {PlotType::Type_PlotDial, ":/dial.svg"},
+    {PlotType::Type_PlotText, ":/text.svg"},
+    {PlotType::Type_PlotLight, ":/light.svg"},
+    {PlotType::Type_PlotPolar, ":/polar.svg"},
+    {PlotType::Type_PlotTrack, ":/track.svg"},
+    {PlotType::Type_PlotAScope, ":/scope.svg"},
+    {PlotType::Type_PlotDoppler, ":/doppler.svg"},
+    {PlotType::Type_PlotScatter, ":/scatter.svg"},
+    {PlotType::Type_PlotAttitude, ":/attitude.svg"},
+};
+
 AdvancedDataManager::AdvancedDataManager(QWidget* parent)
     : QWidget(parent)
 {
@@ -1201,9 +1215,10 @@ void AdvancedDataManager::onUpdatePlotPair()
             QVector<DataPair*> dataPairs = tempPlot->getDataPairs();
             for(int k = 0; k < dataPairs.size(); ++k)
 			{
-                auto dataPair = dataPairs[k];
+                auto dataPair = dataPairs.at(k);
                 //界面更新
                 QTableWidgetItem* data1 = new QTableWidgetItem(dataPair->getXEntityAttrPair());
+                data1->setIcon(QIcon(TypeIconMap.value(tempPlot->plotType())));
                 data1->setData(Qt::UserRole + 1, dataPair->getUuid());
                 QTableWidgetItem* data2 = new QTableWidgetItem(dataPair->getYEntityAttrPair());
                 QTableWidgetItem* data3 = new QTableWidgetItem(tempPlot->getName());

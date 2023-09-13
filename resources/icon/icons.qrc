@@ -52,5 +52,16 @@
         <file>WeatherBalloon.bmp</file>
         <file>WeatherBalloon_side.bmp</file>
         <file>x.bmp</file>
+        <file>track.svg</file>
+        <file>polar.svg</file>
+        <file>attitude.svg</file>
+        <file>dial.svg</file>
+        <file>bar.svg</file>
+        <file>doppler.svg</file>
+        <file>RTI.svg</file>
+        <file>scope.svg</file>
+        <file>text.svg</file>
+        <file>light.svg</file>
+        <file>scatter.svg</file>
     </qresource>
 </RCC>
