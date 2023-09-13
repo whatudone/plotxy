@@ -155,7 +155,7 @@ void PlotRTI::updateDataForDataPairsByTime(double secs)
         DataManagerDataInstance->getRTIDataByTime(eid, secs, m_rangeList, m_timeList, m_dataHash);
         updateGraphByDataPair(data, secs);
     }
-    m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
+    m_customPlot->replot(QCustomPlot::rpQueuedReplot);
 }
 
 void PlotRTI::updateGraphByDataPair(DataPair* data, double curSecs)

@@ -507,7 +507,7 @@ void PlotPolar::updateDataForDataPairsByTime(double secs)
     {
         updateGraphByDataPair(m_dataPairs.at(i), secs);
     }
-    m_customPlot->replot();
+    m_customPlot->replot(QCustomPlot::rpQueuedReplot);
 }
 
 void PlotPolar::updateGraphByDataPair(DataPair* data, double curSecs)

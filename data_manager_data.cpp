@@ -560,7 +560,6 @@ QVector<double> DataManagerData::getEntityAttrValueListByMaxTimeAndIniFile(int32
             }
         }
 
-        // length = index +1
         valueList = valueList.mid(nStart, len);
     }
     return valueList;

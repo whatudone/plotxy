@@ -129,7 +129,7 @@ void PlotAScope::updateDataForDataPairsByTime(double secs)
     {
         updateGraphByDataPair(m_dataPairs.at(i), secs);
     }
-    m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
+    m_customPlot->replot(QCustomPlot::rpQueuedReplot);
 }
 
 void PlotAScope::updateGraphByDataPair(DataPair* data, double curSecs)

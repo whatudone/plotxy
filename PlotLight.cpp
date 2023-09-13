@@ -86,7 +86,7 @@ void PlotLight::updateDataForDataPairsByTime(double secs)
         updateGraphByDataPair(dataPair, secs);
     }
 
-    m_customPlot->replot();
+    m_customPlot->replot(QCustomPlot::rpQueuedReplot);
 }
 
 void PlotLight::updateGraphByDataPair(DataPair* data, double curSecs)

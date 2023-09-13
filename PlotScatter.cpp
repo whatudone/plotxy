@@ -237,7 +237,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
     updateMarkers(secs);
     updateConnectionLines();
     updateScrollAxis();
-	m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
+    m_customPlot->replot(QCustomPlot::rpQueuedReplot);
 }
 
 void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)

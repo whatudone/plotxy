@@ -147,7 +147,7 @@ void PlotDoppler::updateDataForDataPairsByTime(double secs)
     m_slicePoint.setX(m_timeList.at(timeIndex));
     m_slicePoint.setY(m_rangeList.at(rangeIndex));
     updateGraphByDataPair(data, secs);
-    m_customPlot->replot(QCustomPlot::rpQueuedRefresh);
+    m_customPlot->replot(QCustomPlot::rpQueuedReplot);
 }
 
 void PlotDoppler::updateGraphByDataPair(DataPair* data, double curSecs)

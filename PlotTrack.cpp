@@ -71,7 +71,7 @@ void PlotTrack::updateDataForDataPairsByTime(double secs)
         updateGraphByDataPair(getDataPairs().at(i), secs);
     }
 
-    m_customPlot->replot();
+    m_customPlot->replot(QCustomPlot::rpQueuedReplot);
 }
 
 void PlotTrack::updateGraphByDataPair(DataPair* dataPair, double curSecs)
