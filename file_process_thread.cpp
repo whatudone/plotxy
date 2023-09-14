@@ -193,10 +193,16 @@ void FileProcessThread::loadASIData(const QString& asiFileName)
                         {
                             break;
                         }
+                        int64_t readSize = fileSize - file.bytesAvailable();
+                        int32_t progress = readSize / static_cast<double>(fileSize) * 100;
+                        emit fileReadProgress(progress);
                     }
                     // 此处有两种情况1、PlatformData数据后面直接文件结束；2、PlatformData读取完成进入新的数据段
                     DataManagerDataInstance->insertEntityData(p.m_platformDataID, attrDataMap);
                     DataManagerDataInstance->insertEntity(p.m_platformDataID, p);
+                    int64_t readSize = fileSize - file.bytesAvailable();
+                    int32_t progress = readSize / static_cast<double>(fileSize) * 100;
+                    emit fileReadProgress(progress);
                 }
                 // 事件(Event)等其他类型数据.tag为了兼容在线数据，也可能是其他类型
                 if(lineData.startsWith("GenericData"))
@@ -215,25 +221,6 @@ void FileProcessThread::loadASIData(const QString& asiFileName)
                         eventDataList.at(4).trimmed(), DataManagerDataInstance->getRefYear());
                     g.m_timeOffset = eventDataList.at(5).trimmed().toInt();
                     DataManagerDataInstance->insertEventByID(p.m_platformDataID, g);
-                    //                    auto genericMap = DataManagerDataInstance->getGenericMap();
-                    //                    if(genericMap.contains(p.m_platformDataID) &&
-                    //                       genericMap.value(p.m_platformDataID).contains(g.m_eventType))
-                    //                    {
-
-                    //                    }
-                    //                    else if(genericMap.contains(p.m_platformDataID) &&
-                    //                            !genericMap.value(p.m_platformDataID).contains(g.m_eventType))
-                    //                    {
-                    //                        QList<GenericData> tmpList;
-                    //                        tmpList.append(g);
-                    //                        m_genericMap[p.m_platformDataID].insert(g.m_eventType, tmpList);
-                    //                    }
-                    //                    else
-                    //                    {
-                    //                        QMap<QString, QList<GenericData>> tmpMap;
-                    //                        tmpMap.insert(g.m_eventType, QList<GenericData>() << g);
-                    //                        m_genericMap.insert(p.m_platformDataID, tmpMap);
-                    //                    }
                 }
             }
         }

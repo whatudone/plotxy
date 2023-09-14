@@ -51,7 +51,7 @@ void DataManager::loadFileData(const QString& filename)
         thread.setFileName(filename);
         QProgressDialog progressDialog("正在导入数据", "取消", 0, 100);
         progressDialog.setWindowTitle("导入数据");
-        progressDialog.setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint);
+        progressDialog.setWindowFlags(Qt::CustomizeWindowHint);
         progressDialog.setMinimumDuration(500); // 500 ms
         progressDialog.setCancelButton(nullptr);
         progressDialog.setValue(0);
