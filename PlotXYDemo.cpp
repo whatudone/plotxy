@@ -182,13 +182,14 @@ void PlotXYDemo::onEntityStatus() {}
 
 void PlotXYDemo::onClassification()
 {
-    ClassificationDialog dialog(m_className, m_textColor, m_textFontSize);
+    ClassificationDialog dialog(m_className, m_textColor, m_textFontSize, m_isShowIcon);
     int32_t ret = dialog.exec();
     if(ret == 1)
     {
         m_className = dialog.getClassName();
         m_textColor = dialog.getTextColor();
         m_textFontSize = dialog.getFontSize();
+        m_isShowIcon = dialog.getIsShowIcon();
         updateTabWidgetLabels();
     }
 }
@@ -733,7 +734,7 @@ void PlotXYDemo::onCurrentTabChange(int32_t index)
 void PlotXYDemo::addTabPage(const QString& tabName)
 {
     TabDrawWidget* tabWidgetItem = new TabDrawWidget();
-    tabWidgetItem->updateLabels(m_className, m_textColor, m_textFontSize);
+    tabWidgetItem->updateLabels(m_className, m_textColor, m_textFontSize, m_isShowIcon);
     tabWidgetItem->setMouseMode(m_mouseMode);
     int currCount = ui.tabWidget->count();
     QString name = tabName;
@@ -858,6 +859,7 @@ void PlotXYDemo::savePXYData(const QString& pxyFileName, bool isSaveData)
     allObject.insert("ClassName", m_className);
     allObject.insert("ClassTextColor", color_transfer::QColorToRGBAStr(m_textColor));
     allObject.insert("ClassTextFontSize", m_textFontSize);
+    allObject.insert("IsShowIcon", m_isShowIcon);
     // 不区分离线还是在线，保存时统一先在一个临时文件中存储数据
     QString dataFileName;
     // 临时文件夹会自动析构时会自动删除整个文件夹，不需要手动释放里面的文件
@@ -988,6 +990,7 @@ void PlotXYDemo::loadPXYData(const QString& pxyFileName)
         m_className = rootObj.value("ClassName").toString();
         m_textColor = color_transfer::QColorFromRGBAStr(rootObj.value("ClassTextColor").toString());
         m_textFontSize = rootObj.value("ClassTextFontSize").toInt();
+        m_isShowIcon = rootObj.value("IsShowIcon").toBool();
     }
 
     QJsonArray allTabJsonArray = rootObj.value("Tabs").toArray();
@@ -1086,7 +1089,7 @@ void PlotXYDemo::updateTabWidgetLabels()
     for(int var = 0; var < count; ++var)
     {
         TabDrawWidget* widget = static_cast<TabDrawWidget*>(ui.tabWidget->widget(var));
-        widget->updateLabels(m_className, m_textColor, m_textFontSize);
+        widget->updateLabels(m_className, m_textColor, m_textFontSize, m_isShowIcon);
     }
 }
 

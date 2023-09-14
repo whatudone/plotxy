@@ -269,6 +269,7 @@ private:
     QString m_className;
     QColor m_textColor = Qt::blue;
     int32_t m_textFontSize = 24;
+    bool m_isShowIcon = false;
 };
 
 #endif // !

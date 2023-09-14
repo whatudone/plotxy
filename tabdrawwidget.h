@@ -55,7 +55,8 @@ public:
     void updateSelectedPlotsBorderVisible();
     void updatePlotsBorderVisible(bool visible);
 
-    void updateLabels(const QString& className, const QColor& color, int32_t fontSize);
+    void
+    updateLabels(const QString& className, const QColor& color, int32_t fontSize, bool isShowIcon);
 
 protected:
     void mouseReleaseEvent(QMouseEvent* event) override;

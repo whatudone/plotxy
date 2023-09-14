@@ -360,7 +360,10 @@ void TabDrawWidget::updatePlotsBorderVisible(bool visible)
     }
 }
 
-void TabDrawWidget::updateLabels(const QString& className, const QColor& color, int32_t fontSize)
+void TabDrawWidget::updateLabels(const QString& className,
+                                 const QColor& color,
+                                 int32_t fontSize,
+                                 bool isShowIcon)
 {
     m_topLabel->setText(className);
     m_topLabel->setFont(QFont("Microsoft YaHei", fontSize));
@@ -372,7 +375,14 @@ void TabDrawWidget::updateLabels(const QString& className, const QColor& color, 
     m_bottomLabel->setFont(QFont("Microsoft YaHei", fontSize));
     m_bottomLabel->setPalette(palette);
 
-    m_rightTopLabel->setPixmap(QPixmap(":/simdis10.png"));
+    if(isShowIcon)
+    {
+        m_rightTopLabel->setPixmap(QPixmap(":/simdis10.png"));
+    }
+    else
+    {
+        m_rightTopLabel->setPixmap(QPixmap());
+    }
 }
 
 bool TabDrawWidget::getIsLockingStack()

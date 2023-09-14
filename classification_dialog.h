@@ -16,12 +16,14 @@ public:
     explicit ClassificationDialog(const QString& className,
                                   const QColor& color,
                                   int32_t fontSize,
+                                  bool isShowIcon,
                                   QWidget* parent = nullptr);
     ~ClassificationDialog();
 
     QString getClassName();
     QColor getTextColor();
     int32_t getFontSize();
+    bool getIsShowIcon();
 
 private:
     Ui::ClassificationDialog* ui;
