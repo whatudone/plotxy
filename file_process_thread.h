@@ -5,6 +5,7 @@
 
 class FileProcessThread : public QThread
 {
+    Q_OBJECT
 public:
     enum class TaskType
     {
@@ -20,6 +21,15 @@ public:
 
 protected:
     void run() override;
+
+private:
+    // 加载ASI格式的数据（二维类型）
+    void loadASIData(const QString& asiFileName);
+    // 使用正则表达式加载ASI中特定数据格式
+    QStringList parsePlatformData(const QString& data);
+signals:
+    // 文件读取进度从0-100
+    void fileReadProgress(int progress);
 
 private:
     TaskType m_taskType = TaskType::LoadFile;

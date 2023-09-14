@@ -9,6 +9,7 @@ ClassificationDialog::ClassificationDialog(const QString& className,
     , ui(new Ui::ClassificationDialog)
 {
     ui->setupUi(this);
+    setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint);
     ui->lineEditClass->setText(className);
     ui->pushButtonColor->setColor(color);
     ui->lineEditFontSize->setText(QString::number(fontSize));

@@ -11,6 +11,7 @@
 #include <QDialog>
 #include <QFileInfo>
 #include <QMessageBox>
+#include <QProgressDialog>
 DataManager::DataManager()
 {
     m_recvThread = new recvThread;
@@ -48,16 +49,18 @@ void DataManager::loadFileData(const QString& filename)
     {
         FileProcessThread thread(FileProcessThread::TaskType::LoadFile);
         thread.setFileName(filename);
-        QMessageBox message("导入",
-                            "正在导入数据，请稍后！",
-                            QMessageBox::Information,
-                            QMessageBox::NoButton,
-                            QMessageBox::NoButton,
-                            QMessageBox::NoButton);
-        message.setStandardButtons(QMessageBox::NoButton);
-        connect(&thread, &QThread::finished, &message, &QDialog::accept);
+        QProgressDialog progressDialog("正在导入数据", "取消", 0, 100);
+        progressDialog.setWindowTitle("导入数据");
+        progressDialog.setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint);
+        progressDialog.setMinimumDuration(500); // 500 ms
+        progressDialog.setCancelButton(nullptr);
+        progressDialog.setValue(0);
+        connect(&thread, &QThread::finished, &progressDialog, &QDialog::accept);
+        connect(&thread, &FileProcessThread::fileReadProgress, &progressDialog, [&](int progress) {
+            progressDialog.setValue(progress);
+        });
         thread.start();
-        message.exec();
+        progressDialog.exec();
     }
     else
     {

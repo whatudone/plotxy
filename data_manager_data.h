@@ -15,6 +15,7 @@
 // 纯数据，和GUI分离
 class DataManagerData
 {
+public:
     struct Platform
     {
         int32_t m_platformDataID;
@@ -101,8 +102,8 @@ public:
 
     const QMap<int32_t, QHash<QString, QVector<double>>>& getDataMap();
     void getMinMaxTime(double& minTime, double& maxTime);
+    void setMinMaxTime(double minTime, double maxTime);
     void getMinMaxRealTime(double& minTime, double& maxTime);
-    int getRefYear();
 
     // 获取最小时间到secs时间内的实体-属性数据list
     QVector<double> getEntityAttrValueListByMaxTime(int32_t entityID,
@@ -195,8 +196,21 @@ public:
 
     void insertProtobufPlatinfoData(const USIM_PlatInfoMessage_Proto& plat);
 
-    // 加载ASI格式的数据（二维类型）
-    void loadASIData(const QString& asiFileName);
+    QVector3D getRefLLAPoint() const;
+    void setRefLLAPoint(const QVector3D& refLLAPoint);
+
+    void setRefYear(int refYear);
+    int getRefYear();
+
+    void insertGOGFile(const QString& fileName);
+    void insertAttrUnit(int32_t id, const QList<QPair<QString, QString>>& attrUnitList);
+    void insertEntityData(int32_t id, const QHash<QString, QVector<double>>& attrDataMap);
+    void insertEntity(int32_t id, const Platform& plat);
+    void insertTimeData(double time);
+
+    QMap<int32_t, QMap<QString, QList<GenericData>>> getGenericMap() const;
+    void setGenericMap(const QMap<int32_t, QMap<QString, QList<GenericData>>>& genericMap);
+    void insertEventByID(int32_t id, const GenericData& event);
 
 private:
     //获取secs时间内的实体-属性的最大index
@@ -205,8 +219,6 @@ private:
     // 加载带时间信息的csv数据
     void loadCSVData(const QString& filePath);
 
-    // 使用正则表达式加载ASI中特定数据格式
-    QStringList parsePlatformData(const QString& data);
     int32_t findIDByName(const QString& name);
 
     // 在线数据时间类型配置信息
