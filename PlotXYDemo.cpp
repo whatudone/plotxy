@@ -31,6 +31,7 @@
 #include "PlotText.h"
 #include "PlotTrack.h"
 #include "Utils.h"
+#include "classification_dialog.h"
 #include "data_manager_data.h"
 #include "rename_tab_dialog.h"
 #include "tabdrawwidget.h"
@@ -179,7 +180,18 @@ void PlotXYDemo::onReferencePoints() {}
 
 void PlotXYDemo::onEntityStatus() {}
 
-void PlotXYDemo::onClassification() {}
+void PlotXYDemo::onClassification()
+{
+    ClassificationDialog dialog(m_className, m_textColor, m_textFontSize);
+    int32_t ret = dialog.exec();
+    if(ret == 1)
+    {
+        m_className = dialog.getClassName();
+        m_textColor = dialog.getTextColor();
+        m_textFontSize = dialog.getFontSize();
+        updateTabWidgetLabels();
+    }
+}
 
 void PlotXYDemo::onOpenFile()
 {
@@ -721,6 +733,7 @@ void PlotXYDemo::onCurrentTabChange(int32_t index)
 void PlotXYDemo::addTabPage(const QString& tabName)
 {
     TabDrawWidget* tabWidgetItem = new TabDrawWidget();
+    tabWidgetItem->updateLabels(m_className, m_textColor, m_textFontSize);
     tabWidgetItem->setMouseMode(m_mouseMode);
     int currCount = ui.tabWidget->count();
     QString name = tabName;
@@ -842,6 +855,9 @@ void PlotXYDemo::savePXYData(const QString& pxyFileName, bool isSaveData)
     QJsonObject allObject;
     // 通用信息
     allObject.insert("Date", QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+    allObject.insert("ClassName", m_className);
+    allObject.insert("ClassTextColor", color_transfer::QColorToRGBAStr(m_textColor));
+    allObject.insert("ClassTextFontSize", m_textFontSize);
     // 不区分离线还是在线，保存时统一先在一个临时文件中存储数据
     QString dataFileName;
     // 临时文件夹会自动析构时会自动删除整个文件夹，不需要手动释放里面的文件
@@ -966,6 +982,14 @@ void PlotXYDemo::loadPXYData(const QString& pxyFileName)
             }
         }
     }
+    // 恢复通用数据
+    if(rootObj.contains("ClassName"))
+    {
+        m_className = rootObj.value("ClassName").toString();
+        m_textColor = color_transfer::QColorFromRGBAStr(rootObj.value("ClassTextColor").toString());
+        m_textFontSize = rootObj.value("ClassTextFontSize").toInt();
+    }
+
     QJsonArray allTabJsonArray = rootObj.value("Tabs").toArray();
     int32_t tabSize = allTabJsonArray.size();
     PlotManagerData::getInstance()->blockSignals(true);
@@ -1053,6 +1077,16 @@ void PlotXYDemo::readHDF5(const QString& inputFileName, QByteArray& pxyData, QBy
     catch(const H5::FileIException& /*e*/)
     {
         QMessageBox::warning(nullptr, "提示", "无法加载中文路径文档");
+    }
+}
+
+void PlotXYDemo::updateTabWidgetLabels()
+{
+    int32_t count = ui.tabWidget->count();
+    for(int var = 0; var < count; ++var)
+    {
+        TabDrawWidget* widget = static_cast<TabDrawWidget*>(ui.tabWidget->widget(var));
+        widget->updateLabels(m_className, m_textColor, m_textFontSize);
     }
 }
 

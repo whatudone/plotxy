@@ -51,7 +51,8 @@ HEADERS += $$PWD/TimeClass.h \
     $$PWD/NetSettingDialog.h \
     $$PWD/GenericDefined.h \
     $$PWD/IO_CommStructer.h \
-    $$PWD/protobuf/USimDataStructm.pb.h
+    $$PWD/protobuf/USimDataStructm.pb.h \
+    $$PWD/classification_dialog.h
 
 SOURCES += $$PWD/AddPlotPair.cpp \
     $$PWD/RecvThread.cpp \
@@ -93,7 +94,8 @@ SOURCES += $$PWD/AddPlotPair.cpp \
     $$PWD/Utils.cpp \
     $$PWD/choose_plot_type_dialog.cpp \
     $$PWD/NetSettingDialog.cpp \
-    $$PWD/protobuf/USimDataStructm.pb.cc
+    $$PWD/protobuf/USimDataStructm.pb.cc \
+    $$PWD/classification_dialog.cpp
 
 FORMS += $$PWD/AddPlotPair.ui \
     $$PWD/AdvancedDataManager.ui \
@@ -114,7 +116,8 @@ FORMS += $$PWD/AddPlotPair.ui \
     $$PWD/label_edit.ui \
     $$PWD/rename_tab_dialog.ui \
     $$PWD/choose_plot_type_dialog.ui\
-    $$PWD/NetSettingDialog.ui
+    $$PWD/NetSettingDialog.ui \
+    $$PWD/classification_dialog.ui
 
 RESOURCES += resources/statusbar.qrc \
     $$PWD/resources/cursor/cursor.qrc \

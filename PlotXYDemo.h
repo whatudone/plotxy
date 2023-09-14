@@ -217,6 +217,8 @@ private:
     writeHDF5(const QString& outputFileName, const QByteArray& pxyData, const QByteArray& asiData);
     void readHDF5(const QString& inputFileName, QByteArray& pxyData, QByteArray& asiData);
 
+    void updateTabWidgetLabels();
+
 protected:
     void closeEvent(QCloseEvent* e) override;
     bool eventFilter(QObject* object, QEvent* event) override;
@@ -263,6 +265,10 @@ private:
     QPoint m_lastPos;
     // 当前tab页
     static QString m_curreentTabName;
+    // 分类名称
+    QString m_className;
+    QColor m_textColor = Qt::blue;
+    int32_t m_textFontSize = 24;
 };
 
 #endif // !

@@ -772,10 +772,10 @@ background-color: rgb(3, 57, 122);
   </action>
   <action name="actionClassification">
    <property name="text">
-    <string>Classification...</string>
+    <string>分类</string>
    </property>
    <property name="visible">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
   </action>
   <action name="actionPlay">

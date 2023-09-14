@@ -1,9 +1,11 @@
 #ifndef TABDRAWWIDGET_H
 #define TABDRAWWIDGET_H
 
+#include <QLabel>
 #include <QLine>
 #include <QMap>
 #include <QWidget>
+
 class QRubberBand;
 enum class MouseMode : uint8_t;
 enum PlotType : int32_t;
@@ -53,10 +55,14 @@ public:
     void updateSelectedPlotsBorderVisible();
     void updatePlotsBorderVisible(bool visible);
 
+    void updateLabels(const QString& className, const QColor& color, int32_t fontSize);
+
 protected:
     void mouseReleaseEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
+
+    void resizeEvent(QResizeEvent*) override;
 
 signals:
     void mouseRelease(QPoint point);
@@ -78,6 +84,8 @@ private:
     void handleBoxZoom(const QRect& rect);
     void handleZoomInOut(double factor);
     void handleMouseMoveWithPan(int offsetX, int offsetY);
+
+    void initLabels();
 
 private:
     // 框选缩放辅助矩形框
@@ -106,6 +114,12 @@ private:
     static bool m_isLockingStack;
     // 平铺展开时固定缩放大小
     const QSize m_tileSize{400, 400};
+    // 顶部文字
+    QLabel* m_topLabel = nullptr;
+    // 底部文字
+    QLabel* m_bottomLabel = nullptr;
+    // 右上角图标
+    QLabel* m_rightTopLabel = nullptr;
 };
 
 #endif // TABDRAWWIDGET_H

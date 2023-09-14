@@ -25,6 +25,7 @@ TabDrawWidget::TabDrawWidget(QWidget* parent)
     QPalette palette = this->palette();
     palette.setColor(QPalette::Window, Qt::black);
     setPalette(palette);
+    initLabels();
 }
 
 void TabDrawWidget::mousePressEvent(QMouseEvent* event)
@@ -98,6 +99,14 @@ void TabDrawWidget::mouseMoveEvent(QMouseEvent* event)
         }
     }
     QWidget::mouseMoveEvent(event);
+}
+
+void TabDrawWidget::resizeEvent(QResizeEvent* /*event*/)
+{
+    // 更新label的位置
+    m_topLabel->setGeometry(0, 0, width(), 160);
+    m_bottomLabel->setGeometry(0, height() - 160, width(), 160);
+    m_rightTopLabel->setGeometry(width() - 200, 0, 200, 200);
 }
 
 void TabDrawWidget::mouseReleaseEvent(QMouseEvent* event)
@@ -300,6 +309,30 @@ void TabDrawWidget::handleMouseMoveWithPan(int offsetX, int offsetY)
     }
 }
 
+void TabDrawWidget::initLabels()
+{
+    m_topLabel = new QLabel(this);
+    m_topLabel->setAlignment(Qt::AlignCenter);
+    m_topLabel->setStyleSheet("background-color: transparent;");
+    m_topLabel->setGeometry(0, 0, width(), 160);
+    m_topLabel->setText("");
+    m_topLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+
+    m_bottomLabel = new QLabel(this);
+    m_bottomLabel->setStyleSheet("background-color: transparent;");
+    m_bottomLabel->setGeometry(0, height() - 160, width(), 160);
+    m_bottomLabel->setAlignment(Qt::AlignCenter);
+    m_bottomLabel->setText("");
+    m_bottomLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+
+    m_rightTopLabel = new QLabel(this);
+    m_rightTopLabel->setFixedSize(200, 200);
+    m_rightTopLabel->setGeometry(width() - 200, 0, 200, 200);
+    m_rightTopLabel->setStyleSheet("background-color: transparent;");
+    m_rightTopLabel->setText("");
+    m_rightTopLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+}
+
 void TabDrawWidget::updateSelectedPlotsBorderVisible()
 {
     auto plots = findAllPlots();
@@ -325,6 +358,21 @@ void TabDrawWidget::updatePlotsBorderVisible(bool visible)
         plot->setIsNeedDrawBorder(visible);
         plot->update();
     }
+}
+
+void TabDrawWidget::updateLabels(const QString& className, const QColor& color, int32_t fontSize)
+{
+    m_topLabel->setText(className);
+    m_topLabel->setFont(QFont("Microsoft YaHei", fontSize));
+    QPalette palette = m_topLabel->palette();
+    palette.setColor(QPalette::WindowText, color);
+    m_topLabel->setPalette(palette);
+
+    m_bottomLabel->setText(className);
+    m_bottomLabel->setFont(QFont("Microsoft YaHei", fontSize));
+    m_bottomLabel->setPalette(palette);
+
+    m_rightTopLabel->setPixmap(QPixmap(":/simdis10.png"));
 }
 
 bool TabDrawWidget::getIsLockingStack()
