@@ -156,6 +156,24 @@ public:
 
     void setStaticGrid(bool isResetRange = false);
 
+    bool getIsEnableXCyclical() const;
+    void setIsEnableXCyclical(bool isEnableXCyclical);
+
+    bool getIsEnableYCyclical() const;
+    void setIsEnableYCyclical(bool isEnableYCyclical);
+
+    double getXCyclicalLowValue() const;
+    void setXCyclicalLowValue(double xCyclicalLowValue);
+
+    double getXCyclicalUpperValue() const;
+    void setXCyclicalUpperValue(double xCyclicalUpperValue);
+
+    double getYCyclicalLowValue() const;
+    void setYCyclicalLowValue(double yCyclicalLowValue);
+
+    double getYCyclicalUpperValue() const;
+    void setYCyclicalUpperValue(double yCyclicalUpperValue);
+
 protected:
     void updateDataForDataPairsByTime(double secs) override;
 
@@ -242,6 +260,13 @@ private:
     double m_tmpCoordEndX;
     double m_tmpCoordEndY;
     QCPItemPixmap* m_pixmapItem = nullptr;
+
+    bool m_isEnableXCyclical;
+    bool m_isEnableYCyclical;
+    double m_xCyclicalLowValue;
+    double m_xCyclicalUpperValue;
+    double m_yCyclicalLowValue;
+    double m_yCyclicalUpperValue;
 };
 
 #endif // PLOTSCATTER_H

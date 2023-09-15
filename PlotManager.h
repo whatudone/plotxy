@@ -131,6 +131,12 @@ public slots:
     void onLineEdit_PrecisionYEditingFinished();
     void onComboBox_XUnitChanged(const QString& newUnit);
     void onComboBox_YUnitChanged(const QString& newUnit);
+    void onCheckBox_enableXCyclicalStateChanged(int state);
+    void onCheckBox_enableYCyclicalStateChanged(int state);
+    void onLineEdit_XCyclicalLowEditingFinished();
+    void onLineEdit_XCyclicalUpperEditingFinished();
+    void onLineEdit_YCyclicalLowEditingFinished();
+    void onLineEdit_YCyclicalUpperEditingFinished();
 
     // Link Axis
     void onLinkAxesCheckedChanged(bool checked);

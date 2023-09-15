@@ -1347,30 +1347,30 @@ color: rgb(255, 255, 255);</string>
                  </widget>
                 </item>
                 <item row="1" column="0" colspan="2">
-                 <widget class="QCheckBox" name="checkBox_7">
+                 <widget class="QCheckBox" name="checkBox_enableXCyclical">
                   <property name="text">
                    <string>X轴</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="2">
-                 <widget class="QLineEdit" name="lineEdit_16"/>
+                 <widget class="QLineEdit" name="lineEdit_XCyclicalLow"/>
                 </item>
                 <item row="1" column="3">
-                 <widget class="QLineEdit" name="lineEdit_17"/>
+                 <widget class="QLineEdit" name="lineEdit_XCyclicalUpper"/>
                 </item>
                 <item row="2" column="0" colspan="2">
-                 <widget class="QCheckBox" name="checkBox_8">
+                 <widget class="QCheckBox" name="checkBox_enableYCyclical">
                   <property name="text">
                    <string>Y轴</string>
                   </property>
                  </widget>
                 </item>
                 <item row="2" column="2">
-                 <widget class="QLineEdit" name="lineEdit_18"/>
+                 <widget class="QLineEdit" name="lineEdit_YCyclicalLow"/>
                 </item>
                 <item row="2" column="3">
-                 <widget class="QLineEdit" name="lineEdit_19"/>
+                 <widget class="QLineEdit" name="lineEdit_YCyclicalUpper"/>
                 </item>
                 <item row="0" column="2">
                  <widget class="QLabel" name="label_28">

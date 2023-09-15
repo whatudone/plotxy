@@ -1353,6 +1353,14 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
             plotObject.insert("StaticGridFontSize", scatter->getStaticFont().pixelSize());
             plotObject.insert("StaticGridStyle", scatter->getStaticGridStyle());
             plotObject.insert("StaticGridDensity", scatter->getStaticGridDensity());
+
+            // cyclical
+            plotObject.insert("CyclicalXEnable", scatter->getIsEnableXCyclical());
+            plotObject.insert("CyclicalYEnable", scatter->getIsEnableYCyclical());
+            plotObject.insert("CyclicalXLowValue", scatter->getXCyclicalLowValue());
+            plotObject.insert("CyclicalXUpperValue", scatter->getXCyclicalUpperValue());
+            plotObject.insert("CyclicalYLowValue", scatter->getYCyclicalLowValue());
+            plotObject.insert("CyclicalYUpperValue", scatter->getYCyclicalUpperValue());
         }
     }
     else if(type == PlotType::Type_PlotText)
@@ -1778,6 +1786,14 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
             scatter->setStaticGridStyle(GridStyle(plotObject.value("StaticGridStyle").toInt()));
             scatter->setStaticGridDensity(
                 GridDensity(plotObject.value("StaticGridDensity").toInt()));
+
+            // cyclical
+            scatter->setIsEnableXCyclical(plotObject.value("CyclicalXEnable").toBool());
+            scatter->setIsEnableYCyclical(plotObject.value("CyclicalYEnable").toBool());
+            scatter->setXCyclicalLowValue(plotObject.value("CyclicalXLowValue").toDouble());
+            scatter->setXCyclicalUpperValue(plotObject.value("CyclicalXUpperValue").toDouble());
+            scatter->setYCyclicalLowValue(plotObject.value("CyclicalYLowValue").toDouble());
+            scatter->setYCyclicalUpperValue(plotObject.value("CyclicalYUpperValue").toDouble());
         }
     }
     else if(type == PlotType::Type_PlotText)

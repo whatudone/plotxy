@@ -315,6 +315,32 @@ void PlotManager::initAxisGridUI()
             this,
             &PlotManager::onComboBox_YUnitChanged);
 
+    // 循环投影
+    connect(ui.checkBox_enableXCyclical,
+            &QCheckBox::stateChanged,
+            this,
+            &PlotManager::onCheckBox_enableXCyclicalStateChanged);
+    connect(ui.checkBox_enableYCyclical,
+            &QCheckBox::stateChanged,
+            this,
+            &PlotManager::onCheckBox_enableYCyclicalStateChanged);
+    connect(ui.lineEdit_XCyclicalLow,
+            &QLineEdit::editingFinished,
+            this,
+            &PlotManager::onLineEdit_XCyclicalLowEditingFinished);
+    connect(ui.lineEdit_XCyclicalUpper,
+            &QLineEdit::editingFinished,
+            this,
+            &PlotManager::onLineEdit_XCyclicalUpperEditingFinished);
+    connect(ui.lineEdit_YCyclicalLow,
+            &QLineEdit::editingFinished,
+            this,
+            &PlotManager::onLineEdit_YCyclicalLowEditingFinished);
+    connect(ui.lineEdit_YCyclicalUpper,
+            &QLineEdit::editingFinished,
+            this,
+            &PlotManager::onLineEdit_YCyclicalUpperEditingFinished);
+
     initUnitData();
 }
 
@@ -1073,7 +1099,7 @@ void PlotManager::refreshAxisGridUI(PlotItemBase* plot)
     ui.lineEdit_PrecisionX->setText(QString::number(plot->getXPrecision()));
     ui.lineEdit_PrecisionY->setText(QString::number(plot->getYPrecision()));
 
-    // 静态网格部分
+    // 静态网格部分及循环投影部分
     auto scatterPlot = dynamic_cast<PlotScatter*>(plot);
     if(scatterPlot)
     {
@@ -1095,6 +1121,13 @@ void PlotManager::refreshAxisGridUI(PlotItemBase* plot)
             ui.comboBox_3->setCurrentIndex(2);
             break;
         }
+
+        ui.checkBox_enableXCyclical->setChecked(scatterPlot->getIsEnableXCyclical());
+        ui.checkBox_enableYCyclical->setChecked(scatterPlot->getIsEnableYCyclical());
+        ui.lineEdit_XCyclicalLow->setText(QString::number(scatterPlot->getXCyclicalLowValue()));
+        ui.lineEdit_XCyclicalUpper->setText(QString::number(scatterPlot->getXCyclicalUpperValue()));
+        ui.lineEdit_YCyclicalLow->setText(QString::number(scatterPlot->getYCyclicalLowValue()));
+        ui.lineEdit_YCyclicalUpper->setText(QString::number(scatterPlot->getYCyclicalUpperValue()));
     }
 
     // scroll
@@ -2729,6 +2762,108 @@ void PlotManager::onComboBox_YUnitChanged(const QString& newUnit)
     double rate = m_rateMap.value(oriUnit).value(newUnit);
     m_curSelectPlot->setYRate(rate);
     m_curSelectPlot->setUnitsY(newUnit);
+}
+
+void PlotManager::onCheckBox_enableXCyclicalStateChanged(int state)
+{
+    if(m_curSelectPlot == nullptr)
+    {
+        return;
+    }
+
+    auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot);
+    if(!plot)
+        return;
+    plot->setIsEnableXCyclical(state == 2);
+}
+
+void PlotManager::onCheckBox_enableYCyclicalStateChanged(int state)
+{
+    if(m_curSelectPlot == nullptr)
+    {
+        return;
+    }
+
+    auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot);
+    if(!plot)
+        return;
+    plot->setIsEnableYCyclical(state == 2);
+}
+
+void PlotManager::onLineEdit_XCyclicalLowEditingFinished()
+{
+    if(m_curSelectPlot == nullptr)
+    {
+        return;
+    }
+
+    auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot);
+    if(!plot)
+        return;
+    double low = ui.lineEdit_XCyclicalLow->text().toDouble();
+    double upper = ui.lineEdit_XCyclicalUpper->text().toDouble();
+    if(low < upper)
+    {
+        plot->setXCyclicalLowValue(low);
+        plot->setXCyclicalUpperValue(upper);
+    }
+}
+
+void PlotManager::onLineEdit_XCyclicalUpperEditingFinished()
+{
+    if(m_curSelectPlot == nullptr)
+    {
+        return;
+    }
+
+    auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot);
+    if(!plot)
+        return;
+    double low = ui.lineEdit_XCyclicalLow->text().toDouble();
+    double upper = ui.lineEdit_XCyclicalUpper->text().toDouble();
+    if(low < upper)
+    {
+        plot->setXCyclicalLowValue(low);
+        plot->setXCyclicalUpperValue(upper);
+    }
+}
+
+void PlotManager::onLineEdit_YCyclicalLowEditingFinished()
+{
+    if(m_curSelectPlot == nullptr)
+    {
+        return;
+    }
+
+    auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot);
+    if(!plot)
+        return;
+    double low = ui.lineEdit_YCyclicalLow->text().toDouble();
+    double upper = ui.lineEdit_YCyclicalUpper->text().toDouble();
+    if(low < upper)
+    {
+        plot->setYCyclicalLowValue(low);
+        plot->setYCyclicalUpperValue(upper);
+    }
+}
+
+void PlotManager::onLineEdit_YCyclicalUpperEditingFinished()
+{
+    if(m_curSelectPlot == nullptr)
+    {
+        return;
+    }
+
+    auto plot = dynamic_cast<PlotScatter*>(m_curSelectPlot);
+    if(!plot)
+        return;
+    double low = ui.lineEdit_YCyclicalLow->text().toDouble();
+    double upper = ui.lineEdit_YCyclicalUpper->text().toDouble();
+    if(low < upper)
+    {
+        plot->setYCyclicalLowValue(low);
+        plot->setYCyclicalUpperValue(upper);
+    }
 }
 
 void PlotManager::onLinkAxesCheckedChanged(bool checked)
