@@ -67,6 +67,7 @@ void PlotScatter::initPlot()
     connect(m_customPlot->yAxis, QOverload<const QCPRange&>::of(&QCPAxis::rangeChanged), [this]() {
         updateBackgroundColorSeg();
     });
+    connect(m_customPlot, &QCustomPlot::mouseMove, this, &PlotScatter::onPlotMouseMove);
     m_customPlot->axisRect()->setupFullAxesBox(true);
 
     m_customPlot->xAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
@@ -435,6 +436,16 @@ void PlotScatter::resizeEvent(QResizeEvent* event)
 {
     setStaticGrid();
     QWidget::resizeEvent(event);
+}
+
+void PlotScatter::onPlotMouseMove(QMouseEvent* event)
+{
+    if(m_isTimeLine)
+    {
+        double xCoord = m_customPlot->xAxis->pixelToCoord(event->x());
+        double yCoord = m_customPlot->yAxis->pixelToCoord(event->y());
+        m_customPlot->setToolTip(QString("X:%1\nY:%2").arg(xCoord).arg(yCoord));
+    }
 }
 
 void PlotScatter::setStaticGrid(bool isResetRange)

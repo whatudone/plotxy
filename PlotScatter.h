@@ -162,6 +162,8 @@ protected:
     void updateGraphByDataPair(DataPair* data, double curSecs) override;
 
     void resizeEvent(QResizeEvent* event) override;
+private slots:
+    void onPlotMouseMove(QMouseEvent* event);
 
 private:
     void initPlot();
