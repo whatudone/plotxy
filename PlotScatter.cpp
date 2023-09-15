@@ -38,6 +38,13 @@ PlotScatter::PlotScatter(QWidget* parent)
     m_tmpCoordEndX = m_coordEnd_x;
     m_tmpCoordEndY = m_coordEnd_y;
 
+    m_isEnableXCyclical = false;
+    m_isEnableYCyclical = false;
+    m_xCyclicalLowValue = 0.0;
+    m_xCyclicalUpperValue = 0.0;
+    m_yCyclicalLowValue = 0.0;
+    m_yCyclicalUpperValue = 0.0;
+
     initPlot();
     setupLayout();
 }
@@ -262,7 +269,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
 void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
 {
     if(!data)
-    {
+	{
         return;
     }
     if(m_isTimeLine)
@@ -286,7 +293,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
         return;
     }
     if(!m_mapScatter.contains(uuid))
-	{
+    {
         DrawComponents info;
         info.graph = m_customPlot->addGraph();
         /*
@@ -356,7 +363,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
                 y.replace(i, y.at(i) + offsetSeconds);
             }
         }
-        graph->setData(x, y, true);
+
         QPen pen(data->dataColor(), data->width());
 		//line mode
         if(data->isLineMode())
@@ -369,14 +376,52 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
             }
 
             pen.setStyle(style);
-            graph->setLineStyle(QCPGraph::lsLine);
-            graph->setScatterStyle(QCPScatterStyle::ssNone);
+
+            if(m_isEnableXCyclical || m_isEnableYCyclical)
+            {
+                graph->setLineStyle(QCPGraph::lsNone);
+                graph->setScatterStyle(QCPScatterStyle::ssDisc);
+            }
+            else
+            {
+                graph->setLineStyle(QCPGraph::lsLine);
+                graph->setScatterStyle(QCPScatterStyle::ssNone);
+            }
 		}
 		else
 		{
             graph->setLineStyle(QCPGraph::lsNone);
             graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, data->width()));
 		}
+
+        if(m_isEnableXCyclical)
+        {
+            double xRange = m_xCyclicalUpperValue - m_xCyclicalLowValue;
+            for(int i = 0; i < x.size(); i++)
+            {
+                double tmp = fmod(x.at(i), xRange);
+                if(tmp < 0)
+                {
+                    tmp += xRange;
+                }
+                x.replace(i, tmp + m_xCyclicalLowValue);
+            }
+        }
+        if(m_isEnableYCyclical)
+        {
+            double yRange = m_yCyclicalUpperValue - m_yCyclicalLowValue;
+            for(int i = 0; i < y.size(); i++)
+            {
+                double tmp = fmod(y.at(i), yRange);
+                if(tmp < 0)
+                {
+                    tmp += yRange;
+                }
+                y.replace(i, tmp + m_yCyclicalLowValue);
+            }
+        }
+
+        graph->setData(x, y, true);
         graph->setPen(pen);
         double lastX = x.last();
         double lastY = y.last();
@@ -1204,6 +1249,72 @@ QPointF PlotScatter::getCurrentAverageXYValue(bool& xNeedScroll, bool& yNeedScro
         yNeedScroll = false;
     }
     return point;
+}
+
+double PlotScatter::getYCyclicalUpperValue() const
+{
+    return m_yCyclicalUpperValue;
+}
+
+void PlotScatter::setYCyclicalUpperValue(double yCyclicalUpperValue)
+{
+    m_yCyclicalUpperValue = yCyclicalUpperValue;
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
+}
+
+double PlotScatter::getYCyclicalLowValue() const
+{
+    return m_yCyclicalLowValue;
+}
+
+void PlotScatter::setYCyclicalLowValue(double yCyclicalLowValue)
+{
+    m_yCyclicalLowValue = yCyclicalLowValue;
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
+}
+
+double PlotScatter::getXCyclicalUpperValue() const
+{
+    return m_xCyclicalUpperValue;
+}
+
+void PlotScatter::setXCyclicalUpperValue(double xCyclicalUpperValue)
+{
+    m_xCyclicalUpperValue = xCyclicalUpperValue;
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
+}
+
+double PlotScatter::getXCyclicalLowValue() const
+{
+    return m_xCyclicalLowValue;
+}
+
+void PlotScatter::setXCyclicalLowValue(double xCyclicalLowValue)
+{
+    m_xCyclicalLowValue = xCyclicalLowValue;
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
+}
+
+bool PlotScatter::getIsEnableYCyclical() const
+{
+    return m_isEnableYCyclical;
+}
+
+void PlotScatter::setIsEnableYCyclical(bool isEnableYCyclical)
+{
+    m_isEnableYCyclical = isEnableYCyclical;
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
+}
+
+bool PlotScatter::getIsEnableXCyclical() const
+{
+    return m_isEnableXCyclical;
+}
+
+void PlotScatter::setIsEnableXCyclical(bool isEnableXCyclical)
+{
+    m_isEnableXCyclical = isEnableXCyclical;
+    updateDataForDataPairsByTime(PlotXYDemo::getSeconds());
 }
 
 GridDensity PlotScatter::getStaticGridDensity() const
