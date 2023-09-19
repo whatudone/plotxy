@@ -85,38 +85,6 @@ void AdvancedDataManager::onPushButton_copyClicked() {}
 
 void AdvancedDataManager::onPushButton_autofitClicked() {}
 
-void AdvancedDataManager::onLineEditChanged()
-{
-    if(m_curSelectDatapair == nullptr)
-		return;
-
-	int sortIndex = ui.comboBox_Sort->currentIndex();
-	QString sortText = ui.lineEdit->text();
-    switch(sortIndex)
-	{
-    case 0: {
-
-		break;
-	}
-    case 1: {
-
-		break;
-	}
-    case 2: {
-
-		break;
-	}
-    case 3: {
-
-		break;
-	}
-	default:
-		break;
-	}
-
-	emit sgnFilterSort(sortText);
-}
-
 void AdvancedDataManager::onPushButton_closeClicked()
 {
 	close();
@@ -698,7 +666,11 @@ void AdvancedDataManager::initGeneralConnections()
             &QPushButton::clicked,
             this,
             &AdvancedDataManager::onPushButton_closeClicked);
-    connect(ui.lineEdit, &QLineEdit::textChanged, this, &AdvancedDataManager::onLineEditChanged);
+    connect(ui.lineEdit, &QLineEdit::editingFinished, this, &AdvancedDataManager::onUpdatePlotPair);
+    connect(ui.comboBox_Sort,
+            &QComboBox::currentTextChanged,
+            this,
+            &AdvancedDataManager::onUpdatePlotPair);
 
     connect(PlotManagerData::getInstance(),
             &PlotManagerData::plotDataChanged,
@@ -902,9 +874,6 @@ void AdvancedDataManager::initConConnections()
 
 void AdvancedDataManager::hideUselessWidget()
 {
-    ui.label->setVisible(false);
-    ui.lineEdit->setVisible(false);
-    ui.comboBox_Sort->setVisible(false);
     ui.pushButton_copy->setVisible(false);
     ui.pushButton_autofit->setVisible(false);
 }
@@ -1201,6 +1170,8 @@ void AdvancedDataManager::onConnectionItemClicked()
 
 void AdvancedDataManager::onUpdatePlotPair()
 {
+    QString filterStr = ui.lineEdit->text();
+    int sortRange = ui.comboBox_Sort->currentIndex();
     auto plotData = PlotManagerData::getInstance()->getPlotManagerData();
     if(plotData.isEmpty())
         return;
@@ -1217,18 +1188,47 @@ void AdvancedDataManager::onUpdatePlotPair()
 			{
                 auto dataPair = dataPairs.at(k);
                 //界面更新
-                QTableWidgetItem* data1 = new QTableWidgetItem(dataPair->getXEntityAttrPair());
-                data1->setIcon(QIcon(TypeIconMap.value(tempPlot->plotType())));
-                data1->setData(Qt::UserRole + 1, dataPair->getUuid());
-                QTableWidgetItem* data2 = new QTableWidgetItem(dataPair->getYEntityAttrPair());
-                QTableWidgetItem* data3 = new QTableWidgetItem(tempPlot->getName());
-                QTableWidgetItem* data4 = new QTableWidgetItem(tempPlot->getTabName());
+                QString str0 = dataPair->getXEntityAttrPair();
+                QString str1 = dataPair->getYEntityAttrPair();
+                QString str2 = tempPlot->getName();
+                QString str3 = tempPlot->getTabName();
+
+                if(!filterStr.isEmpty())
+                {
+                    if(sortRange == 0)
+                    {
+                        if(!str0.contains(filterStr))
+                            continue;
+                    }
+                    else if(sortRange == 1)
+                    {
+                        if(!str1.contains(filterStr))
+                            continue;
+                    }
+                    else if(sortRange == 2)
+                    {
+                        if(!str2.contains(filterStr))
+                            continue;
+                    }
+                    else if(sortRange == 3)
+                    {
+                        if(!str3.contains(filterStr))
+                            continue;
+                    }
+                }
+
+                QTableWidgetItem* data0 = new QTableWidgetItem(str0);
+                data0->setIcon(QIcon(TypeIconMap.value(tempPlot->plotType())));
+                data0->setData(Qt::UserRole + 1, dataPair->getUuid());
+                QTableWidgetItem* data1 = new QTableWidgetItem(str1);
+                QTableWidgetItem* data2 = new QTableWidgetItem(str2);
+                QTableWidgetItem* data3 = new QTableWidgetItem(str3);
                 int row = ui.tableWidget_plotpair->rowCount();
                 ui.tableWidget_plotpair->insertRow(row);
-                ui.tableWidget_plotpair->setItem(row, 0, data1);
-                ui.tableWidget_plotpair->setItem(row, 1, data2);
-                ui.tableWidget_plotpair->setItem(row, 2, data3);
-                ui.tableWidget_plotpair->setItem(row, 3, data4);
+                ui.tableWidget_plotpair->setItem(row, 0, data0);
+                ui.tableWidget_plotpair->setItem(row, 1, data1);
+                ui.tableWidget_plotpair->setItem(row, 2, data2);
+                ui.tableWidget_plotpair->setItem(row, 3, data3);
                 if(!ui.tableWidget_plotpair->currentIndex().isValid())
 				{
                     ui.tableWidget_plotpair->setCurrentItem(data1);

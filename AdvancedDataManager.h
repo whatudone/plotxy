@@ -36,8 +36,7 @@ public slots:
     void onBtnRemoveColorRange();
 
     // 选中不同数据对
-	void onTableWidget_plotpairItemSelectionChanged();
-	void onLineEditChanged();
+    void onTableWidget_plotpairItemSelectionChanged();
 	void onPushButton_addClicked();
 	void onPushButton_copyClicked();
 	void onPushButton_autofitClicked();
