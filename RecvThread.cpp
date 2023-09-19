@@ -50,9 +50,10 @@ void recvThread::run()
         address = setting.value("netConfig/address").toString();
         port = setting.value("netConfig/port").toInt();
     }
-#if 0
+#if 1
     QHostAddress localAddress(address);
-    m_udpSocket->bind(QHostAddress::AnyIPv4, port, QUdpSocket::ShareAddress);
+    m_udpSocket->bind(
+        QHostAddress::AnyIPv4, port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
     bool flag = m_udpSocket->joinMulticastGroup(localAddress);
 #else
     bool flag = m_udpSocket->bind(
