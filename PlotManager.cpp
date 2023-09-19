@@ -933,13 +933,6 @@ void PlotManager::initBarUI()
             QOverload<int>::of(&QSpinBox::valueChanged),
             this,
             &PlotManager::spinboxRightChanged);
-
-    ui.label_116->setVisible(false);
-    ui.label_117->setVisible(false);
-    ui.label_118->setVisible(false);
-    ui.spinBox_between->setVisible(false);
-    ui.spinBox_left->setVisible(false);
-    ui.spinBox_right->setVisible(false);
 }
 
 void PlotManager::initDialUI()
@@ -1457,10 +1450,20 @@ void PlotManager::refreshBarUI(PlotItemBase* plot)
 {
     if(auto bar = dynamic_cast<PlotBar*>(plot))
     {
+        ui.checkBoxBarHor->blockSignals(true);
+        ui.spinBox_between->blockSignals(true);
+        ui.spinBox_right->blockSignals(true);
+        ui.spinBox_left->blockSignals(true);
+
         ui.checkBoxBarHor->setChecked(bar->getIsHorizonBar());
         ui.spinBox_between->setValue(bar->getBarBetweenPadding());
         ui.spinBox_right->setValue(bar->getBarRightPadding());
         ui.spinBox_left->setValue(bar->getBarLeftPadding());
+
+        ui.checkBoxBarHor->blockSignals(false);
+        ui.spinBox_between->blockSignals(false);
+        ui.spinBox_right->blockSignals(false);
+        ui.spinBox_left->blockSignals(false);
     }
 }
 
@@ -2176,17 +2179,26 @@ void PlotManager::onTWSclicked(QTreeWidgetItem* item, int column)
 
 void PlotManager::spinboxBetweenChanged()
 {
-    m_curSelectPlot->setBarBetweenPadding(ui.spinBox_between->value());
+    if(auto bar = dynamic_cast<PlotBar*>(m_curSelectPlot))
+    {
+        bar->setBarBetweenPadding(ui.spinBox_between->value());
+    }
 }
 
 void PlotManager::spinboxLeftChanged()
 {
-    m_curSelectPlot->setBarLeftPadding(ui.spinBox_left->value());
+    if(auto bar = dynamic_cast<PlotBar*>(m_curSelectPlot))
+    {
+        bar->setBarLeftPadding(ui.spinBox_left->value());
+    }
 }
 
 void PlotManager::spinboxRightChanged()
 {
-    m_curSelectPlot->setBarRightPadding(ui.spinBox_right->value());
+    if(auto bar = dynamic_cast<PlotBar*>(m_curSelectPlot))
+    {
+        bar->setBarRightPadding(ui.spinBox_right->value());
+    }
 }
 
 void PlotManager::onRadioPixelClicked()

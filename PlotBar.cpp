@@ -102,6 +102,7 @@ void PlotBar::initPlot()
     m_customPlot->yAxis->setLabelColor(m_yAxisLabelColor);
     m_customPlot->xAxis->setLabelFont(m_xAxisLabelFont);
     m_customPlot->yAxis->setLabelFont(m_yAxisLabelFont);
+    updateBarPads();
 }
 
 void PlotBar::updateGraphByDataPair(DataPair* data, double /*curSecs*/)
@@ -334,6 +335,12 @@ void PlotBar::setIsHorizonBar(bool isHorizonBar)
     }
 }
 
+void PlotBar::resizeEvent(QResizeEvent* event)
+{
+    updateBarPads();
+    PlotItemBase::resizeEvent(event);
+}
+
 QCPAxis* PlotBar::keyAxis()
 
 {
@@ -343,6 +350,132 @@ QCPAxis* PlotBar::keyAxis()
 QCPAxis* PlotBar::valueAxis()
 {
     return getIsHorizonBar() ? m_customPlot->xAxis : m_customPlot->yAxis;
+}
+
+void PlotBar::updateBarPads()
+{
+    // 柱子是以坐标1开始,柱体的宽度为0.75坐标宽度(源码中初始化，此派生类中不对bar的宽度做修改)
+    double barWidth = 0.75;
+    auto size = m_tickLabelMap.size();
+    int32_t width = 0;
+    if(getIsHorizonBar())
+    {
+        width = m_customPlot->axisRect()->height();
+    }
+    else
+    {
+        width = m_customPlot->axisRect()->width();
+    }
+    if(size == 0)
+    {
+        m_barBetweenPadding = width;
+        m_barLeftPadding = width;
+        m_barRightPadding = width;
+    }
+    else
+    {
+        double lower = 0.0;
+        double upper = 0.0;
+        if(getIsHorizonBar())
+        {
+            getCoordRangeY(lower, upper);
+        }
+        else
+        {
+            getCoordRangeX(lower, upper);
+        }
+
+        m_barLeftPadding = width * (1 - barWidth / 2 - lower) / (upper - lower);
+        m_barRightPadding = width * (upper - (size + barWidth / 2)) / (upper - lower);
+        m_barBetweenPadding = width * (1 - barWidth) / (upper - lower);
+    }
+}
+
+void PlotBar::updateCoordRangeByMidPad()
+{
+    // 柱子是以坐标1开始,柱体的宽度为0.75坐标宽度(源码中初始化，此派生类中不对bar的宽度做修改)
+    auto size = m_tickLabelMap.size();
+    if(size > 0)
+    {
+        if(getIsHorizonBar())
+        {
+            double barWidth = 0.75;
+            int32_t width = m_customPlot->axisRect()->height();
+            double lower = 0.0;
+            double upper = 0.0;
+            getCoordRangeY(lower, upper);
+            double oldRange = upper - lower;
+            double newRange = width * (1 - barWidth) / m_barBetweenPadding;
+            double delta = (oldRange - newRange) / 2;
+            setCoordRangeY(lower + delta, upper - delta);
+        }
+        else
+        {
+            double barWidth = 0.75;
+            int32_t width = m_customPlot->axisRect()->width();
+            double lower = 0.0;
+            double upper = 0.0;
+            getCoordRangeX(lower, upper);
+            double oldRange = upper - lower;
+            double newRange = width * (1 - barWidth) / m_barBetweenPadding;
+            double delta = (oldRange - newRange) / 2;
+            setCoordRangeX(lower + delta, upper - delta);
+        }
+    }
+}
+
+void PlotBar::updateCoordRangeByLeftPad(int32_t newLeftPad, int32_t oldleftPad)
+{
+    // 柱子是以坐标1开始,柱体的宽度为0.75坐标宽度(源码中初始化，此派生类中不对bar的宽度做修改)
+    auto size = m_tickLabelMap.size();
+    if(size > 0)
+    {
+        if(getIsHorizonBar())
+        {
+            int32_t width = m_customPlot->axisRect()->height();
+            double lower = 0.0;
+            double upper = 0.0;
+            getCoordRangeY(lower, upper);
+            double delta = (oldleftPad - newLeftPad) * (upper - lower) / width;
+            setCoordRangeY(lower + delta, upper);
+        }
+        else
+        {
+            int32_t width = m_customPlot->axisRect()->width();
+            double lower = 0.0;
+            double upper = 0.0;
+            getCoordRangeX(lower, upper);
+            double delta = (oldleftPad - newLeftPad) * (upper - lower) / width;
+            setCoordRangeX(lower + delta, upper);
+        }
+    }
+}
+
+void PlotBar::updateCoordRangeByRightPad(int32_t newRightPad, int32_t oldRightPad)
+{
+    // 柱子是以坐标1开始,柱体的宽度为0.75坐标宽度(源码中初始化，此派生类中不对bar的宽度做修改)
+    auto size = m_tickLabelMap.size();
+    if(size > 0)
+    {
+        if(getIsHorizonBar())
+        {
+            int32_t width = m_customPlot->axisRect()->height();
+            double lower = 0.0;
+            double upper = 0.0;
+            getCoordRangeY(lower, upper);
+            double delta = (oldRightPad - newRightPad) * (upper - lower) / width;
+            setCoordRangeY(lower, upper - delta);
+        }
+        else
+        {
+            int32_t width = m_customPlot->axisRect()->width();
+            double lower = 0.0;
+            double upper = 0.0;
+            getCoordRangeX(lower, upper);
+            double delta = (oldRightPad - newRightPad) * (upper - lower) / width;
+            setCoordRangeX(lower, upper - delta);
+        }
+    }
 }
 
 void PlotBar::updateKeyAxisTickLabel()
@@ -535,6 +668,7 @@ DataPair* PlotBar::addPlotDataPair(int32_t xEntityID,
     m_itemData.insert(uuid, limit.first);
 
     updateKeyAxisTickLabel();
+    updateBarPads();
     if(!isFromJson)
     {
         emit dataPairsChanged(this);
@@ -573,5 +707,39 @@ void PlotBar::delPlotPairData(const QString& uuid)
         m_barValueLabelHash.remove(uuid);
     }
     updateKeyAxisTickLabel();
+    updateBarPads();
     PlotItemBase::delPlotPairData(uuid);
+}
+
+int PlotBar::getBarRightPadding() const
+{
+    return m_barRightPadding;
+}
+
+void PlotBar::setBarRightPadding(int barRightPadding)
+{
+    updateCoordRangeByRightPad(barRightPadding, m_barRightPadding);
+    m_barRightPadding = barRightPadding;
+}
+
+int PlotBar::getBarBetweenPadding() const
+{
+    return m_barBetweenPadding;
+}
+
+void PlotBar::setBarBetweenPadding(int barBetweenPadding)
+{
+    m_barBetweenPadding = barBetweenPadding;
+    updateCoordRangeByMidPad();
+}
+
+int PlotBar::getBarLeftPadding() const
+{
+    return m_barLeftPadding;
+}
+
+void PlotBar::setBarLeftPadding(int barLeftPadding)
+{
+    updateCoordRangeByLeftPad(barLeftPadding, m_barLeftPadding);
+    m_barLeftPadding = barLeftPadding;
 }

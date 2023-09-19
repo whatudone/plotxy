@@ -25,6 +25,15 @@ public:
         return Type_PlotBar;
     }
 
+    int getBarBetweenPadding() const;
+    void setBarBetweenPadding(int barBetweenPadding);
+
+    int getBarRightPadding() const;
+    void setBarRightPadding(int barRightPadding);
+
+    int getBarLeftPadding() const;
+    void setBarLeftPadding(int barLeftPadding);
+
 public:
     static int m_instanceCount; //实体个数
 
@@ -41,6 +50,12 @@ private:
     QCPAxis* keyAxis();
     // 针对数字value轴
     QCPAxis* valueAxis();
+    // 根据实体数量和坐标范围更新三个间距值
+    void updateBarPads();
+    // 根据间距调整坐标范围
+    void updateCoordRangeByMidPad();
+    void updateCoordRangeByLeftPad(int32_t newLeftPad, int32_t oldleftPad);
+    void updateCoordRangeByRightPad(int32_t newRightPad, int32_t oldRightPad);
 
 protected:
     DataPair* addPlotDataPair(int32_t xEntityID,
@@ -60,6 +75,8 @@ protected:
 
     void setIsHorizonBar(bool isHorizonBar) override;
 
+    void resizeEvent(QResizeEvent* event) override;
+
 private:
     QMap<QString, QList<std::tuple<QString, double, QColor>>>
         m_allColorInfoList; //QString:colorname，double:lower limit,QColor:color
@@ -74,6 +91,10 @@ private:
     QMap<QString, double> m_curValue; //用来存放当前secs对应的数据
     // 每个uuid数据对对应一个label显示当前Bar的数值
     QHash<QString, QCPItemText*> m_barValueLabelHash;
+
+    double m_barBetweenPadding; // Bar之间的间隔,像素值大小
+    double m_barLeftPadding; // Bar和左边的间隔
+    double m_barRightPadding; // Bar和右边的间隔
 };
 
 #endif // _PLOT_BAR_H

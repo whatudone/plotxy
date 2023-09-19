@@ -340,15 +340,6 @@ public:
     bool getIsHorizonBar() const;
     virtual void setIsHorizonBar(bool isHorizonBar);
 
-    int getBarBetweenPadding() const;
-    void setBarBetweenPadding(int barBetweenPadding);
-
-    int getBarRightPadding() const;
-    void setBarRightPadding(int barRightPadding);
-
-    int getBarLeftPadding() const;
-    void setBarLeftPadding(int barLeftPadding);
-
     virtual void rescaleXAxis();
     virtual void rescaleYAxis();
     virtual void rescaleAxis();
@@ -467,9 +458,6 @@ protected:
     int m_yAxisLabelFontSize; //坐标轴标题字体尺寸
 
     bool m_isHorizonBar; // Bar是否是水平
-    int m_barBetweenPadding; // Bar之间的间隔
-    int m_barLeftPadding; // Bar和左边的间隔
-    int m_barRightPadding; // Bar和右边的间隔
 
     int32_t m_topPadding; //绘图间隔-top
     int32_t m_bottomPadding; //绘图间隔-bottom

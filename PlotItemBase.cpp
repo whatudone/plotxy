@@ -18,8 +18,7 @@
 PlotItemBase::PlotItemBase(QWidget* parent)
     : QWidget(parent)
     , m_isHorizonBar(false)
-    , m_barLeftPadding(0.0)
-    , m_barRightPadding(0.0)
+
 {
     ui.setupUi(this);
 
@@ -1396,16 +1395,6 @@ QMap<QString, QList<GOGDataInfo>> PlotItemBase::getGogDataMap() const
     return m_gogDataMap;
 }
 
-int PlotItemBase::getBarLeftPadding() const
-{
-    return m_barLeftPadding;
-}
-
-void PlotItemBase::setBarLeftPadding(int barLeftPadding)
-{
-    m_barLeftPadding = barLeftPadding;
-}
-
 void PlotItemBase::rescaleXAxis()
 {
     if(m_customPlot && m_customPlot->xAxis)
@@ -1493,26 +1482,6 @@ void PlotItemBase::removeGOGFile(const QString& fileName)
 QList<QString> PlotItemBase::getGOGFileList()
 {
     return m_allGOGFileList;
-}
-
-int PlotItemBase::getBarRightPadding() const
-{
-    return m_barRightPadding;
-}
-
-void PlotItemBase::setBarRightPadding(int barRightPadding)
-{
-    m_barRightPadding = barRightPadding;
-}
-
-int PlotItemBase::getBarBetweenPadding() const
-{
-    return m_barBetweenPadding;
-}
-
-void PlotItemBase::setBarBetweenPadding(int barBetweenPadding)
-{
-    m_barBetweenPadding = barBetweenPadding;
 }
 
 bool PlotItemBase::getIsHorizonBar() const
