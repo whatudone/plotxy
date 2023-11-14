@@ -17,9 +17,6 @@ PlotTrack::PlotTrack(QWidget* parent)
 
     m_title = "Track Status";
 
-    m_xAxisLabel = "X Axis";
-    m_yAxisLabel = "Y Axis";
-
     initPlot();
     setupLayout();
 }
@@ -53,13 +50,6 @@ void PlotTrack::initPlot()
 
     m_customPlot->xAxis->setPadding(30);
     m_customPlot->xAxis->setUpperEnding(QCPLineEnding::esSpikeArrow);
-
-    m_customPlot->xAxis->setLabel(m_xAxisLabel);
-    m_customPlot->yAxis->setLabel(m_yAxisLabel);
-    m_customPlot->xAxis->setLabelColor(m_xAxisLabelColor);
-    m_customPlot->yAxis->setLabelColor(m_yAxisLabelColor);
-    m_customPlot->xAxis->setLabelFont(m_xAxisLabelFont);
-    m_customPlot->yAxis->setLabelFont(m_yAxisLabelFont);
 }
 
 void PlotTrack::updateDataForDataPairsByTime(double secs)
