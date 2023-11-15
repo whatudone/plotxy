@@ -34,6 +34,14 @@ void PlotPolar::initPlot()
     m_customPlot->plotLayout()->clear();
 
     m_angularAxis = new QCPPolarAxisAngular(m_customPlot);
+    /*
+     * QCPPolarAxisAngular和grid()都是在main layer中，并且grid会先加入到layer的列表中，也就是说会先进行draw()调用进行绘制
+     * QCPPolarAxisAngular会在后续draw中绘制背景，导致一旦用户给QCPPolarAxisAngular设置了背景，就会覆盖极坐标中间所有区域
+     * 所以此处有两种修改方案：
+     * 1、将grid的创建时机延迟到QCPPolarAxisAngular构造里面setLayer之后，这样grid就在后面绘制，不被影响。但是需要修改源码。
+     * 2、将grid的layer层级改为axes，这样也会把grid放到后面进行绘制，且不需要改动源码
+    */
+    m_angularAxis->grid()->setLayer("axes");
     m_angularAxis->setBasePen(QPen(m_axisColor, m_axisWidth));
     m_customPlot->plotLayout()->addElement(0, 0, m_angularAxis);
 

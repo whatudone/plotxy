@@ -427,10 +427,14 @@ void PlotDial::customPainting(QPainter& painter)
             auto uuid = data->getUuid();
             if(m_valueMap.contains(uuid))
             {
-                //根据当前值计算指针终点
-                if(math::doubleEqual(m_valueMap[uuid], std::numeric_limits<double>::max()))
-                    continue;
-                double angle = (m_endAngle + 90) - (m_valueMap[uuid] - m_coordBgn_x) /
+                //根据当前值计算指针终点,如果不存在的值就默认显示到最小值位置
+                double value = m_valueMap.value(uuid);
+                if(math::doubleEqual(value, std::numeric_limits<double>::max()))
+                {
+                    value = m_coordBgn_x;
+                }
+
+                double angle = (m_endAngle + 90) - (value - m_coordBgn_x) /
                                                        (m_coordEnd_x - m_coordBgn_x) *
                                                        (m_endAngle - m_startAngle);
 
