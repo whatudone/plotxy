@@ -174,6 +174,9 @@ public:
     double getYCyclicalUpperValue() const;
     void setYCyclicalUpperValue(double yCyclicalUpperValue);
 
+    bool getIsSetTimeAxisLabel() const;
+    void setIsSetTimeAxisLabel(bool isSetTimeAxisLabel);
+
 protected:
     void updateDataForDataPairsByTime(double secs) override;
 
@@ -267,6 +270,8 @@ private:
     double m_xCyclicalUpperValue;
     double m_yCyclicalLowValue;
     double m_yCyclicalUpperValue;
+
+    bool m_isSetTimeAxisLabel;
 };
 
 #endif // PLOTSCATTER_H

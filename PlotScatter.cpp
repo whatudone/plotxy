@@ -45,6 +45,8 @@ PlotScatter::PlotScatter(QWidget* parent)
     m_yCyclicalLowValue = 0.0;
     m_yCyclicalUpperValue = 0.0;
 
+    m_isSetTimeAxisLabel = false;
+
     initPlot();
     setupLayout();
 }
@@ -269,7 +271,7 @@ void PlotScatter::updateDataForDataPairsByTime(double secs)
 void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
 {
     if(!data)
-	{
+    {
         return;
     }
     if(m_isTimeLine)
@@ -293,7 +295,7 @@ void PlotScatter::updateGraphByDataPair(DataPair* data, double curSecs)
         return;
     }
     if(!m_mapScatter.contains(uuid))
-    {
+	{
         DrawComponents info;
         info.graph = m_customPlot->addGraph();
         /*
@@ -855,8 +857,17 @@ void PlotScatter::updateTimelineGraph()
             setCoordRangeX(0, 10000);
         }
 
-        m_customPlot->xAxis->setLabel("Time(s)");
-        m_customPlot->yAxis->setLabel("All Platforms");
+        if(!m_isSetTimeAxisLabel)
+        {
+            setxAxisLabel("Time(s)");
+            setyAxisLabel("All Platforms");
+        }
+        else
+        {
+            setxAxisLabel(m_xAxisLabel);
+            setyAxisLabel(m_yAxisLabel);
+        }
+        m_isSetTimeAxisLabel = true;
     }
     m_customPlot->yAxis->grid()->setVisible(false);
     setCoordRangeY(0.0, 1.0);
@@ -1249,6 +1260,16 @@ QPointF PlotScatter::getCurrentAverageXYValue(bool& xNeedScroll, bool& yNeedScro
         yNeedScroll = false;
     }
     return point;
+}
+
+bool PlotScatter::getIsSetTimeAxisLabel() const
+{
+    return m_isSetTimeAxisLabel;
+}
+
+void PlotScatter::setIsSetTimeAxisLabel(bool isSetTimeAxisLabel)
+{
+    m_isSetTimeAxisLabel = isSetTimeAxisLabel;
 }
 
 double PlotScatter::getYCyclicalUpperValue() const
