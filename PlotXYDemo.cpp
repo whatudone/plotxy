@@ -1361,6 +1361,9 @@ void PlotXYDemo::savePlotInfoToJson(PlotItemBase* plot, QJsonObject& plotObject)
             plotObject.insert("CyclicalXUpperValue", scatter->getXCyclicalUpperValue());
             plotObject.insert("CyclicalYLowValue", scatter->getYCyclicalLowValue());
             plotObject.insert("CyclicalYUpperValue", scatter->getYCyclicalUpperValue());
+
+            // time event label
+            plotObject.insert("SetTimeAxisLabel", scatter->getIsSetTimeAxisLabel());
         }
     }
     else if(type == PlotType::Type_PlotText)
@@ -1794,6 +1797,9 @@ PlotItemBase* PlotXYDemo::loadPlotJson(const QJsonObject& plotObject)
             scatter->setXCyclicalUpperValue(plotObject.value("CyclicalXUpperValue").toDouble());
             scatter->setYCyclicalLowValue(plotObject.value("CyclicalYLowValue").toDouble());
             scatter->setYCyclicalUpperValue(plotObject.value("CyclicalYUpperValue").toDouble());
+
+            // time event label
+            scatter->setIsSetTimeAxisLabel(plotObject.value("SetTimeAxisLabel").toBool());
         }
     }
     else if(type == PlotType::Type_PlotText)
